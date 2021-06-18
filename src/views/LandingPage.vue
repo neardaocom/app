@@ -1,37 +1,7 @@
 <template>
   <header>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top navbar-scroll">
-      <div class="container">
-        <a class="navbar-brand" href="#">NEAR DAO</a>
-        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
-          data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#services">Our services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#price">Price</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#about">About</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#contact">Contact</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav d-flex flex-row">
-            <li class="nav-item me-3 me-lg-0">
-              <router-link :to="{name: 'dao', query: {}}" :class="['nav-link']"><i class="fab fa-sketch"></i> Launch DAO</router-link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <Navigation></Navigation>
     <!-- Navbar -->
 
     <!--Section: Design Block-->
@@ -49,6 +19,7 @@
 </template>
 
 <script>
+import Navigation from '@/views/landing_page/Navigation.vue'
 import Introduction from '@/views/landing_page/Introduction.vue'
 import Services from '@/views/landing_page/Services.vue'
 import Statistics from '@/views/landing_page/Statistics.vue'
@@ -58,7 +29,7 @@ import Footer from '@/views/landing_page/Footer.vue'
 export default {
   name: 'Home',
   components: {
-    Introduction, Services, Statistics, Price, Footer
+    Navigation, Introduction, Services, Statistics, Price, Footer
   },
   created () {
     console.log(this.$router)

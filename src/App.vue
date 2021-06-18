@@ -5,8 +5,13 @@
 <script>
   export default {
     components: {
-      
     },
+    data() {
+    },
+    created() {
+      this.$store.commit('accountLogin', 'petrfilla.near')
+      console.log('count is: ' + this.$store.state.accountId) // => "count is: 1"
+    }
   };
 </script>
 
