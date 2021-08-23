@@ -1,22 +1,18 @@
-import { createStore } from 'vuex'
+import { createStore, createLogger } from 'vuex'
+import near from './modules/near'
+
+const debug = process.env.NODE_ENV !== 'production'
 
 export default createStore({
   state() {
-    return {
-      accountId: undefined
-    }
   },
   mutations: {
-    accountLogin (state, accountId) {
-      state.accountId = accountId
-    },
-    accountLogout (state) {
-      state.accountId = undefined
-    }
   },
   actions: {
   },
   modules: {
+    near
   },
-  strict: process.env.NODE_ENV !== 'production'
+  strict: debug,
+  plugins: debug ? [createLogger()] : []
 })

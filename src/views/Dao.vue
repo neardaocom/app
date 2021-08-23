@@ -1,22 +1,26 @@
 <template>
-  <div class="container">
-    <br>
-    <router-link :to="{name: 'landing-page'}" :class="['btn','btn-primary']">Landing page</router-link>
-    <hr>
-    <h1>Working on it...</h1>
-    <!--<p v-t="'default.message'"></p>-->
-    <!--<p>{{ t('default.message') }}</p>-->
-  </div>
+  <header>
+    <Navigation></Navigation>
+  </header>
+
+  <main>
+  </main>
+
+  <Footer></Footer>
 </template>
 
 <script>
+import Navigation from '@/views/dao/Navigation.vue'
+import Footer from '@/views/dao/Footer.vue'
 import { useI18n } from 'vue-i18n'
 
 export default {
+  components: {
+    Navigation, Footer
+  },
   setup() {
     const { t } = useI18n()
     return { t }
   }
 }
-
 </script>

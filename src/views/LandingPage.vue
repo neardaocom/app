@@ -32,7 +32,7 @@ export default {
     Navigation, Introduction, Services, Statistics, Price, Footer
   },
   created () {
-    console.log(this.$router)
+    //console.log(this.$router)
   }
 }
 </script>
@@ -55,7 +55,7 @@ export default {
     }
 
     .navbar-scrolled {
-      background-color: #dddde4;
+      background-color: #fff;
     }
 
     @media (max-width: 450px) {
