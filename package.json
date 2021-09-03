@@ -12,6 +12,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "decimal.js": "^10.2.1",
+    "lodash": "^4.17.21",
     "mdb-vue-ui-kit": "^1.0.0-beta6",
     "near-api-js": "^0.41.0",
     "vue": "^3.0.0",

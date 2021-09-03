@@ -8,17 +8,6 @@
     },
     created() {
       this.$store.dispatch('near/init')
-      //this.nearConfig = getConfig(process.env.NODE_ENV || "development");
-      //this.near = nearAPI.connect(Object.assign({ deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() } }, this.nearConfig));
-      //this.nearWallet = new nearAPI.WalletAccount(this.near);
-      
-      //if (this.nearWallet.getAccountId() !== undefined) {
-      //  this.$store.commit('accountLogin', 'petrfilla.near')
-      //}
-
-      // Getting the Account ID. If unauthorized yet, it's just empty string.
-      //window.accountId = window.walletAccount.getAccountId();
-      //console.log('count is: ' + this.$store.state.accountId) // => "count is: 1"
     }
   };
 </script>
@@ -34,6 +23,17 @@
 
 #nav {
   padding: 30px;
+}
+
+body {
+  background-color: #f0f2f5;
+}
+
+.bg-light {
+  background-color: #f0f2f5 !important;
+}
+.container {
+  max-width: 1140px;
 }
 
 </style>

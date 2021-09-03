@@ -1,11 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LandingPage from '@/views/LandingPage.vue'
+// import LandingPage from '@/views/LandingPage.vue'
+import Dao from '@/views/Dao.vue'
 
 const routes = [
   {
     path: '/',
     name: 'landing-page',
-    component: LandingPage
+    component: Dao
+  },
+  {
+    path: '/daos',
+    name: 'daos',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "about" */ '@/views/DaoList.vue')
   },
   {
     path: '/dao',

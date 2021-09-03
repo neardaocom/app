@@ -12,7 +12,8 @@
             <MDBNavbarItem href="#contact" class="nav-link">Contact</MDBNavbarItem>
           </MDBNavbarNav>
           <MDBBtnGroup aria-label="" class="shadow-0">
-            <router-link :to="{name: 'dao', query: {}}" :class="['nav-link btn brn-ligth']"><MDBIcon icon="sketch" iconStyle="fab" /> Launch DAO</router-link>
+            <router-link :to="{name: 'daos', query: {}}" :class="['nav-link btn brn-ligth']"><MDBIcon icon="sketch" iconStyle="fab" /> Launch DAO</router-link>
+            <router-link :to="{name: 'dao', query: {}}" :class="['nav-link btn brn-ligth']"><MDBIcon icon="flag" iconStyle="far" /> Podilnik</router-link>
             <a v-if="isAccountSigned" @click.prevent="logout()" class="nav-link btn brn-ligth" href="">{{ accountId }} <MDBIcon icon="sign-out-alt" iconStyle="fas" /></a>
             <a v-else @click.prevent="login()" class="nav-link btn brn-ligth" href="">Log In <MDBIcon icon="sign-in-alt" iconStyle="fas"/></a>
           </MDBBtnGroup>
