@@ -21,7 +21,6 @@
     <section>
       <div class="container">
         <Overview v-if="this.$route.query.page === 'overview' || this.$route.query.page === undefined" :dao="dao"/>
-        <Voting v-if="this.$route.query.page === 'overview' || this.$route.query.page === undefined" :dao="dao"/>
         <Voting v-if="this.$route.query.page === 'voting'" :dao="dao"/>
         <Treasury v-if="this.$route.query.page === 'treasury'" :dao="dao"/>
         <Members v-if="this.$route.query.page === 'members'" :dao="dao"/>

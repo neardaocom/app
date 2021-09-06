@@ -29,7 +29,7 @@
                 <td class="fw-bold text-start"><router-link :to="{ name: 'dao', query: { id: dao.id, page: 'overview' }}">{{ dao.name }}</router-link></td>
                 <td class="text-start"><a class="text-reset font-weight-bold" :href="'https://explorer.near.org/accounts/' + dao.wallet">{{ dao.wallet }}</a></td>
                 <td class="text-end">{{ dao.proposals }}</td>
-                <td class="fw-bold text-end text-primary">~ {{ dao.treasury }} $</td>
+                <td class="fw-bold text-end text-primary">~ {{ n(dao.treasury) }} Ⓝ</td>
               </tr>
             </tbody>
           </MDBTable>
@@ -56,12 +56,12 @@ export default {
     Header, Breadcrumb, Footer, MDBContainer, MDBTable
   },
   setup() {
-    const { t } = useI18n()
+    const { t, n } = useI18n()
     const daos = ref(DAOs.data().daos)
     const search = ref('')
     const filter = reactive({})
     const favorites = [1]
-    return { t, daos, search, filter, favorites }
+    return { t, n, daos, search, filter, favorites }
   },
   computed: {
     dao_favorites: function() {

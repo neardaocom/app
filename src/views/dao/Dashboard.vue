@@ -102,50 +102,6 @@
           <BadgePercent :amount="dao.market.w_delta"/>
         </h2>
         <p>≈ <NumberFormatter :amount="dao.market.eth"/> ETH | <NumberFormatter :amount="dao.market.btc"/> BTC | <NumberFormatter :amount="dao.market.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
-        <!--<h5 class="text-center">Government tokeny</h5>
-            <table class="table">
-            <thead>
-                <tr>
-                <th></th>
-                <th>Vlastněné</th>
-                <th>Volné</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                <th scope="col">Rada</th>
-                <td>100 000</td>
-                <td>300 000</td>
-                </tr>
-                <tr>
-                <th scope="col">Komunita</th>
-                <td>0</td>
-                <td>200 000</td>
-                </tr>
-                <tr>
-                <th scope="col">Investor</th>
-                <td>40 000</td>
-                <td>110 000</td>
-                </tr>
-                <tr>
-                <th scope="col">Volný prodej</th>
-                <td>145 432</td>
-                <td>4 568</td>
-                </tr>
-                <tr>
-                <td></td>
-                <td>285 432</td>
-                <td>664 568</td>
-                </tr>
-            </tbody>
-            </table>-->
-        <!--<h5 class="text-center">Můj podíl</h5>
-            <h2>56 432 <small>POD</small> <span class="badge bg-info">≈ 6,43%</span></h2>
-            <h4>≈ 22 066 580,00 Kč</h4>
-            <div class="btn-group" role="group">
-            <button type="button" class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Koupit</button>
-            <button type="button" class="btn btn-warning"><i class="fas fa-money-bill-wave"></i> Prodat</button>
-            </div>-->
       </div>
     </div>
   </section>

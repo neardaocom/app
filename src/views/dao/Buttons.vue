@@ -28,9 +28,9 @@
         <button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>
-        <button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
+        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
-        </button>
+        </button>-->
       </div>
       <!-- Right -->
     </section>
