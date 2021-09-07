@@ -62,7 +62,7 @@
       <div class="col-12 col-md-4">
         <h5 class="text-center">{{ t("default.treasury") }}</h5>
         <h2>
-          {{ n(dao.treasury.near) || '-' }} <span title="NEAR">Ⓝ </span>
+          {{  this.balance === undefined ? "-" : n(this.balance)}} <span title="NEAR">Ⓝ </span>
           <BadgePercent :amount="dao.treasury.w_delta"/>
         </h2>
         <p>≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
@@ -109,9 +109,11 @@
 
 <script>
 import { useI18n } from "vue-i18n";
-import {MDBProgress, MDBProgressBar} from "mdb-vue-ui-kit";
+import {MDBProgress, MDBProgressBar} from "mdb-vue-ui-kit"
 import NumberFormatter from "@/views/helpers/NumberFormatter.vue"
-import BadgePercent from '@/views/helpers/BadgePercent.vue';
+import BadgePercent from '@/views/helpers/BadgePercent.vue'
+import { ref } from 'vue'
+import {utils} from "near-api-js"
 
 export default {
   components: {
@@ -124,8 +126,25 @@ export default {
     },
   },
   setup() {
-    const { t, n } = useI18n();
-    return { t, n };
+    const { t, n } = useI18n()
+    const api = undefined
+    const balance = ref()
+    return { t, n, api, balance };
   },
+
+
+  async created() {
+    this.api = this.$store.state.near.api
+    if (this.api !== undefined){
+      const account = await this.api.account(this.dao.wallet)
+      let accountBalance = await account.getAccountBalance()
+      console.log(accountBalance)
+      accountBalance = accountBalance.total
+      accountBalance = utils.format.formatNearAmount(accountBalance)
+      this.balance = +accountBalance
+    }
+  },
+
+  
 };
 </script>
