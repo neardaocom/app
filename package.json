@@ -13,7 +13,7 @@
     "core-js": "^3.6.5",
     "decimal.js": "^10.2.1",
     "lodash": "^4.17.21",
-    "mdb-vue-ui-kit": "^1.0.0-beta6",
+    "mdb-vue-ui-kit": "./mdb/mdb-vue-ui-kit-1.2.0.tgz",
     "near-api-js": "^0.41.0",
     "vue": "^3.0.0",
     "vue-i18n": "^9.1.0",

@@ -61,8 +61,8 @@ export default {
   },
   created() {
     // dao id
-    if (this.$route.query.id !== undefined) {
-      this.q_id = this.$route.query.id
+    if (this.$route.params.id !== undefined) {
+      this.q_id = this.$route.params.id
     } else {
       console.log('Unknown dao id')
     }
