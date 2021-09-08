@@ -26,5 +26,8 @@
   "voting": "Voting",
   "members": "Members",
   "tokens": "Tokens",
-  "organization": "Organization"
+  "organization": "Organization",
+  "create_new_dao": "Create New DAO",
+  "create": "Create",
+  "close": "Close"
 }

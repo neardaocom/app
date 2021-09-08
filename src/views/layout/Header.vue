@@ -38,6 +38,7 @@
         <!-- Right elements -->
         <ul class="navbar-nav flex-row">
             <li class="nav-item me-3 me-lg-1">
+              <CreateNewDaoForm></CreateNewDaoForm>
             </li>
             <li class="nav-item me-3 me-lg-1">
                 <a v-if="isAccountSigned" class="nav-link btn brn-ligth p-2" :href="app_near_wallet_url" target="_blank"><MDBIcon icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
@@ -70,11 +71,13 @@
   //import { mapGetters } from 'vuex'
   
   import { useI18n } from 'vue-i18n';
+  import CreateNewDaoForm from '@/views/dao/CreateNewDaoForm.vue'
 
   export default {
-      //MDBBtn,
+      
     components: {
-      MDBIcon
+      MDBIcon,
+      CreateNewDaoForm,
     },
     setup() {
       const collapse1 = ref(false);
