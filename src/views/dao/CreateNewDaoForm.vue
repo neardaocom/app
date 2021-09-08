@@ -1,5 +1,5 @@
 <template>
- <button @click="exampleModal = true" class="nav-link btn brn-ligth p-2" > <span class="d-none d-md-inline">{{ t('default.create_new_dao') }}</span></button>
+    <MDBBtn  @click="exampleModal = true" class="btn btn-black btn-rounded mx-2" >{{ t('default.create_new_dao') }}</MDBBtn>
 
     <MDBModal
         id="exampleModal"
@@ -148,7 +148,7 @@
     MDBTextarea,
     MDBInput,
     MDBRow,
-    MDBCol
+    MDBCol,
   } from 'mdb-vue-ui-kit';
 
 export default({
