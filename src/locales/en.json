@@ -29,5 +29,12 @@
   "organization": "Organization",
   "create_new_dao": "Create New DAO",
   "create": "Create",
-  "close": "Close"
+  "close": "Close",
+  "dao_name": "DAO Name",
+  "dao_purpose": "DAO Purpose",
+  "dao_council": "DAO Council",
+  "dao_tags": "Tags",
+  "dao_initital_treasury": "Initial treasury",
+  "dao_form_valid_feedback" : "Looks good!",
+  "dao_form_invalid_feedback": "Please fill in the field"
 }
