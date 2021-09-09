@@ -12,7 +12,7 @@
         <Dashboard :dao="dao"/>
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons/>
+        <Buttons :dao="dao"/>
         <!-- /Buttons -->
       </div>
     </section>

@@ -2,22 +2,22 @@
     <section class="row d-flex justify-content-between align-items-center py-3">
       <!-- Left -->
       <div class="col-12 col-lg-9">
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.overview') }}
         </router-link>
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'voting' }}" :class="[isActive('voting') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.voting') }}
         </router-link>
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'treasury' }}" :class="[isActive('treasury') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
         </router-link>
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'members' }}" :class="[isActive('members') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </router-link>
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </router-link>
-        <router-link :to="{ name: 'dao', query: { id: id, page: 'organization' }}" :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'organization' }}" :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.organization') }}
         </router-link>
       </div>
@@ -50,7 +50,7 @@
       </MDBModalHeader>
       <MDBModalBody class="text-start">
         <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="modalPayoutAccount" :data-mdb-showcounter="true" maxlength="64" required>
+        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="modalPayoutAccount" data-mdb-showcounter="true" maxlength="64" required>
           <span class="input-group-text" id="account-addon">.near</span>
         </MDBInput>
         <br/>
@@ -85,6 +85,12 @@ export default {
   components: {
     MDBBtn, MDBIcon, MDBInput,
     MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+  },
+  props: {
+    dao: {
+      type: Object,
+      required: true
+    }
   },
   setup() {
     const { t } = useI18n();
