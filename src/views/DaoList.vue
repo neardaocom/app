@@ -26,7 +26,7 @@
                   </a>
                 </td>
                 <td>{{ dao.id }}</td>
-                <td class="fw-bold text-start"><router-link :to="{ name: 'dao', query: { id: dao.id, page: 'overview' }}">{{ dao.name }}</router-link></td>
+                <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao.wallet}}">{{ dao.name }}</router-link></td>
                 <td class="text-start"><a class="text-reset font-weight-bold" :href="'https://explorer.near.org/accounts/' + dao.wallet">{{ dao.wallet }}</a></td>
                 <td class="text-end">{{ dao.proposals }}</td>
                 <td class="fw-bold text-end text-primary">~ {{ n(dao.treasury) }} Ⓝ</td>

@@ -17,7 +17,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '@/views/DaoList.vue')
   },
   {
-    path: '/dao',
+    path: '/dao/:id',
     name: 'dao',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route

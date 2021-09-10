@@ -1,6 +1,34 @@
 import { createI18n } from 'vue-i18n'
 
 /**
+ * Supported locales
+ * 
+ * @returns array
+ */
+function getSupportedLocales() {
+  return ['cs', 'en']
+}
+
+/**
+ * Get init locale
+ * 
+ * From browser and then form config
+ * 
+ * @returns Locale for application
+ */
+function getInitLocale() {
+  let locale_browser = navigator.language.split('-').shift()
+  const supported_locales = getSupportedLocales()
+  if (supported_locales.includes(locale_browser)) {
+    null
+  } else {
+    locale_browser = process.env.VUE_APP_I18N_LOCALE || 'en'
+  }
+
+  return locale_browser
+}
+
+/**
  * Load locale messages
  * 
  * The loaded `JSON` locale messages is pre-compiled by `@intlify/vue-i18n-loader`, which is integrated into `vue-cli-plugin-i18n`.
@@ -21,7 +49,7 @@ function loadLocaleMessages() {
 
 export default createI18n({
   legacy: false,
-  locale: process.env.VUE_APP_I18N_LOCALE || 'en',
-  fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
+  locale: getInitLocale(),
+  fallbackLocale: getInitLocale(),
   messages: loadLocaleMessages()
 })
