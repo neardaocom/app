@@ -1,7 +1,7 @@
 <template>
   <div class="container mb-2">
     <div class="row">
-      <div class="col-4">
+      <div class="col-12 col-md-8 col-lg-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h5 class="text-center">Můj podíl</h5>
@@ -19,6 +19,7 @@
     <div class="row mt-2">
       <!-- Novy clen -->
       <div class="col-12">
+        <h2>{{ t('default.voting') }}</h2>
         <section class="mb-4 text-start">
           <div class="card">
             <div class="card-body">

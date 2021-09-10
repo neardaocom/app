@@ -4,7 +4,9 @@
         <div class="col-lg-12">
             <nav aria-label="breadcrumb navbar-light bg-light">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">{{ t('default.landing_page') }}</a></li>
+                <li class="breadcrumb-item">
+                    <router-link :to="{name: 'landing-page'}">{{ t('default.landing_page') }}</router-link>
+                </li>
                 <li class="breadcrumb-item">
                     <router-link :to="{name: listRouter, query: {}}">
                         {{ t('default.' + listName) }}
