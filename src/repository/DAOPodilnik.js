@@ -3,7 +3,7 @@ const data = () => ({
   name: 'Podílník',
   about: 'Tokenizace - nástupce tradičních organizací.',
   description: '',
-  wallet: 'podilnik.near',
+  wallet: 'podilnik.testnet',
   address: 'Praha, CZ',
   domain: 'podilnik.cz',
   web: 'http://www.podilnik.cz',
