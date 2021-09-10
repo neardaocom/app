@@ -100,6 +100,8 @@
                                             
                                 <!-- voteOnlyOnce-->
                                 <MDBCheckbox :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce" />
+
+                                <MDBBtn @click="createDao" color="primary">{{ t('default.create_new_dao') }}</MDBBtn>
                                         
 
                             </MDBStepperContent>
@@ -121,7 +123,7 @@
     import { ref } from 'vue';
     import createDaoFormValidation from "@/createDaoFormValidation";
     import {
-        MDBInput, MDBTextarea, MDBCheckbox,
+        MDBInput, MDBTextarea, MDBCheckbox, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
 
     } from 'mdb-vue-ui-kit';
@@ -132,7 +134,7 @@ export default({
 
     components: {
         Header, Footer,
-        MDBInput, MDBTextarea, MDBCheckbox,
+        MDBInput, MDBTextarea, MDBCheckbox, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent 
     },
 
@@ -315,12 +317,12 @@ export default({
                 //}
            
            
-            let b = await this.contract.create({ "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args},
+            /*let b = await this.contract.create({ "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args},
             3000000000000000,
             1000000000000000000000000
             )
 
-            console.log(b)
+            console.log(b)*/
             
             console.log(accountId, publicKey, info, args)
         },
@@ -337,7 +339,7 @@ export default({
         this.council = [this.accountId]
         this.councilString = this.accountId
     },
-    
+
     /*async created(){
         const account = await this.$store.state.near.api.account("dev-1631206593211-61689593480844")
         this.contract = new nearAPI.Contract(
