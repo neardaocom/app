@@ -15,7 +15,7 @@
             <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="app_near_wallet_url"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
           </li>
           <li class="nav-item">
-            <CreateNewDaoForm></CreateNewDaoForm>
+            <MDBBtn  @click="this.$router.push('create-dao')" class="btn btn-black btn-rounded mx-2" >{{ t('default.create_new_dao') }}</MDBBtn>
           </li>
           <li class="nav-item">
             <MDBBtn v-if="isAccountSigned" @click="logout()" class="btn btn-black btn-rounded mx-2" ><!--<MDBIcon class="pe-2" icon="sign-out-alt" iconStyle="fas" /> -->{{ t('default.log_out') }}</MDBBtn>
@@ -42,11 +42,10 @@
   //import { mapGetters } from 'vuex'
   
   import { useI18n } from 'vue-i18n';
-  import CreateNewDaoForm from '@/views/dao/CreateNewDaoForm.vue'
 
   export default {
     components: {
-      MDBIcon, MDBNavbar, MDBNavbarToggler, MDBNavbarBrand, MDBNavbarNav, MDBNavbarItem, MDBCollapse, MDBBtn,CreateNewDaoForm
+      MDBIcon, MDBNavbar, MDBNavbarToggler, MDBNavbarBrand, MDBNavbarNav, MDBNavbarItem, MDBCollapse, MDBBtn
     },
     setup() {
       const collapse = ref(false);
