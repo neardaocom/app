@@ -6,7 +6,8 @@ import getConfig from "@/near/config"
 const state = () => ({
   config: undefined,
   api: undefined,
-  wallet: undefined
+  wallet: undefined,
+  factoryContract: undefined
 })
 
 // getters
@@ -16,7 +17,10 @@ const getters = {
     },
     getAccountId: (state) => {
       return state.wallet !== undefined ? state.wallet.getAccountId() : undefined
-    }
+    },
+    getFactoryContract: (state) => {
+      return state.factoryContract
+    },
 }
 
 // actions
@@ -31,7 +35,15 @@ const actions = {
         //console.log(api)
         let wallet = new nearAPI.WalletConnection(api);
         //console.log(wallet)
-        commit('setState', {config: config, api: api, wallet: wallet})
+        // let factoryContract = await nearAPI.Contract(state.wallet.account(), state.config.contractName, {
+        let factoryContract = new nearAPI.Contract(
+          wallet.account(), 'sputnikdao.near', {
+            viewMethods: ['get_dao_list'],
+            changeMethods: ['create'],
+          }
+        )
+        //console.log(factoryContract)
+        commit('setState', {config: config, api: api, wallet: wallet, factoryContract: factoryContract})
     }
 }
 
@@ -41,6 +53,7 @@ const mutations = {
     state.config = payload.config
     state.api = payload.api
     state.wallet = payload.wallet
+    state.factoryContract = payload.factoryContract
   },
   signIn(state) {
     state.wallet.requestSignIn(

@@ -79,12 +79,14 @@ import {
   MDBModalTitle,
   MDBModalBody,
   MDBModalFooter
+  //, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBIcon, MDBInput,
-    MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    MDBBtn, MDBIcon, MDBInput
+    , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    //, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
   },
   props: {
     dao: {
@@ -97,10 +99,12 @@ export default {
     const modalPayout = ref(false)
     const modalPayoutAccount = ref('')
     const modalPayoutAmount = ref(0)
+    const dropdownActions = ref(false)
 
     return {
       t,
       modalPayout, modalPayoutAccount, modalPayoutAmount
+      , dropdownActions
     };
   },
   methods: {
