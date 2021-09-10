@@ -1,6 +1,6 @@
 <template>
   <span class="badge bg-info" v-if="amount == undefined"> — %</span>
-  <span class="badge bg-primary" v-else-if="amount > 0.0"><i class="fas fa-caret-up"></i> {{ n(amount) }} %</span>
+  <span class="badge bg-success" v-else-if="amount > 0.0"><i class="fas fa-caret-up"></i> {{ n(amount) }} %</span>
   <span class="badge bg-danger" v-else-if="amount < 0.0"><i class="fas fa-caret-down"></i> {{ n(amount) }} %</span>
   <span class="badge bg-info" v-else><i class="fas fa-caret-right"></i> 0 %</span>
 </template>
