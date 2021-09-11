@@ -61,7 +61,7 @@ export default {
   },
   computed: {
     progress() {
-      return this.proposal.state === 'in_progress' ? '30' : undefined
+      return this.proposal.state === 'in_progress' ? 30 : undefined
     },
     results() {
       return [
