@@ -24,11 +24,11 @@
 
                             <!-- Description -->
                             <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
-                            <MDBTextarea id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
+                            <MDBInput id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
 
                             <!-- Councils -->
                             <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
-                            <MDBTextarea id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
+                            <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                         
                         </MDBStepperContent>
                     </MDBStepperStep>
@@ -40,15 +40,15 @@
 
                             <!-- ftName -->
                             <label for="dao-ft-name" class="form-label">{{ t('default.dao_ft_name') }}</label>
-                            <MDBInput inputGroup  id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
+                            <MDBInput id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
 
                             <!-- ftAmount -->
                             <label for="dao-ft-amount" class="form-label">{{ t('default.dao_ft_amount') }}</label>
-                            <MDBInput inputGroup id="dao-ft-amount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
+                            <MDBInput id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
 
                             <!-- ftInsiderInitDistribution -->
                             <label for="dao-ft-insider-init-distribution" class="form-label">{{ t('default.dao_ft_insider_init_distribution') }}</label>
-                            <MDBInput inputGroup id="dao-ft-insider-init-distribution" @keyup="validateFtIIDistribution" @blur="validateFtIIDistribution"  v-model.number="ftInsiderInitDistribution" :isValid="!errors.ftIIDistribution" :isValidated="isValidated.ftIIDistribution" :invalidFeedback="errors.ftIIDistribution" type="number"/>
+                            <MDBInput id="dao-ft-insider-init-distribution" @keyup="validateFtIIDistribution" @blur="validateFtIIDistribution"  v-model.number="ftInsiderInitDistribution" :isValid="!errors.ftIIDistribution" :isValidated="isValidated.ftIIDistribution" :invalidFeedback="errors.ftIIDistribution" type="number"/>
 
 
 
@@ -123,7 +123,8 @@
     import { ref } from 'vue';
     import createDaoFormValidation from "@/createDaoFormValidation";
     import {
-        MDBInput, MDBTextarea, MDBCheckbox, MDBBtn,
+        MDBInput, //MDBTextarea,
+        MDBCheckbox, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
 
     } from 'mdb-vue-ui-kit';
@@ -134,7 +135,8 @@ export default({
 
     components: {
         Header, Footer,
-        MDBInput, MDBTextarea, MDBCheckbox, MDBBtn,
+        MDBInput, //MDBTextarea,
+        MDBCheckbox, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent 
     },
 
@@ -189,15 +191,18 @@ export default({
         })
 
         const {errors, validateAccountField, validateNameField,
-            validateDescriptionField, validateCouncilField, validateFtNameField, 
-            validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether} = createDaoFormValidation()
+            validateDescriptionField, validateCouncilField, validateFtNameField, validateFtAmountField,
+            validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether,
+            validateVoteSpamTresholdField, validateVoteDurationDaysField, validateVoteDurationHoursField,
+            validateVoteQuorumField, validateVoteApproveTreshholdField} = createDaoFormValidation()
 
         return{
            t, exampleModal, account, name, 
            description, ftName, ftAmount, ftInsiderInitDistribution, ftInsiderShare, ftFundationShare, ftCommunityShare,
            ftPublicShare, voteSpamTreshold, voteDurationDays, voteDurationHours, voteQuorum, voteApproveTreshhold, voteOnlyOnce,
            council, councilString, isValidated, errors,  validateAccountField, validateNameField, validateDescriptionField, validateCouncilField,
-           validateFtNameField, validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether ,contract
+           validateFtNameField, validateFtAmountField, validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether, validateVoteSpamTresholdField,
+           validateVoteDurationDaysField, validateVoteDurationHoursField, validateVoteQuorumField, validateVoteApproveTreshholdField, contract
         } 
         
     },
@@ -217,11 +222,15 @@ export default({
         validateDescription(){
             this.validateDescriptionField("description", this.description)
             this.isValidated.description = true
+            console.log(this.description, this.errors.description)
         },
 
         validateCouncil(){ // TODO
-            this.validateCouncilField("council", this.council)
+            this.validateCouncilField("council", this.councilString)
             this.isValidated.council = true
+            /*if(!this.error.council){
+                this.council = this.councilString
+            }*/
         },
 
         validateFtName(){ // TODO
@@ -229,43 +238,60 @@ export default({
             this.isValidated.ftName = true
         },
 
-        /*validateFtAmount(){ // TODO
-            this.validateFtNameAmount("ftAmount", this.ftAmount)
+        validateFtAmount(){
+            this.validateFtAmountField("ftAmount", this.ftAmount)
+            this.validateFtIIDistributionField("ftIIDistribution", this.ftInsiderInitDistribution, this.ftAmount)
             this.isValidated.ftAmount = true
-        },*/
+        },
 
-        validateFtIIDistribution(){ // TODO
+        validateFtIIDistribution(){
             this.validateFtIIDistributionField("ftIIDistribution", this.ftInsiderInitDistribution, this.ftAmount)
             this.isValidated.ftIIDistribution = true
         },
 
         validateFfShares(fieldName, event){
-            console.log(event.target.value)
-            this.validateFfSharesFields(fieldName, event.target.value)
-            this.isValidated[fieldName] = true
             this.validateFfSharesTogether()
+            if (!this.errors[fieldName]){
+                this.validateFfSharesFields(fieldName, event.target.value)
+                this.isValidated[fieldName] = true
+            }
         },
 
         validateFfSharesTogether(){
             this.ftPublicShare = 100 - (this.ftInsiderShare + this.ftFundationShare + this.ftCommunityShare)
             if (this.ftPublicShare < 0) {
                 this.ftPublicShare = 0
-                this.errors.ftInsiderShare = `The  fields should not be greater than `
-                this.errors.ftFundationShare = `The  fields should not be greater than `
-                this.errors.ftCommunityShare = `The  fields should not be greater than `
-                this.errors.ftPublicShare = `The  fields should not be greater than `
-            } else{
-                this.errors.ftInsiderShare = ``
-                this.errors.ftFundationShare = ``
-                this.errors.ftCommunityShare = ``
-                this.errors.ftPublicShare = ``
             }
-            //this.validateFfSharesFieldsTogether(["ftInsiderShare", "ftFundationShare", "ftCommunityShare", "ftPublicShare"], this.ftInsiderShare, this.ftFundationShare, this.ftCommunityShare, this.ftPublicShare)
+            this.validateFfSharesFieldsTogether(["ftInsiderShare", "ftFundationShare", "ftCommunityShare", "ftPublicShare"], this.ftInsiderShare, this.ftFundationShare, this.ftCommunityShare, this.ftPublicShare)
             this.isValidated.ftInsiderShare = true
             this.isValidated.ftFundationShare = true
             this.isValidated.ftCommunityShare = true
             this.isValidated.ftPublicShare = true
-            console.log(this.errors.ftInsiderShare)
+        },
+
+        validateVoteSpamTreshold(){
+            this.validateVoteSpamTresholdField("voteSpamTreshold", this.voteSpamTreshold, 100)
+            this.isValidated.voteSpamTreshold = true
+        },
+
+        validateVoteDurationDays(){
+            this.validateVoteDurationDaysField("voteDurationDays", this.voteDurationDays)
+            this.isValidated.voteDurationDays = true
+        },
+
+        validateVoteDurationHours(){
+            this.validateVoteDurationHoursField("voteDurationHours", this.voteDurationHours)
+            this.isValidated.voteDurationHours = true
+        },
+
+        validateVoteQuorum(){
+            this.validateVoteQuorumField("voteQuorum", this.voteQuorum, 100)
+            this.isValidated.voteQuorum = true 
+        },
+
+        validateVoteApproveTreshhold(){
+            this.validateVoteApproveTreshholdField("voteApproveTreshhold", this.voteApproveTreshhold, 100)
+            this.isValidated.voteApproveTreshhold = true
         },
 
 
