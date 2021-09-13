@@ -33,11 +33,10 @@ export default function Validators() {
     }
 
     const maxValue = (fieldName, fieldValue, max) => {
-        return fieldValue > max ? `The ${fieldName} field value should not be greater than ftAmount` : "";
+        return fieldValue > max ? `The ${fieldName} field value should not be greater than ${max == "" ? 0 : max}` : "";
     }
 
     const sumMaxValue = (fieldNames, fieldValue, max) => {
-        console.log(fieldValue)
         fieldValue = fieldValue.map(function(num) {
             return num === "" ? 0 : num
         })
@@ -45,5 +44,16 @@ export default function Validators() {
         return fieldValue.reduce(reducer) > max ? `The ${fieldNames} fields should not be greater than ${max}` : "";
     }
 
-    return {isEmpty, minLength, maxLength, lengthbetween, isRootAccount, isNumber, maxValue, sumMaxValue}
+    const isCouncilRootAccounts = (fieldName, fieldValue) => {
+        let councilArray = fieldValue.split(",")
+        let error = ""
+        councilArray.forEach(council => {            
+            if (isRootAccount(fieldName, council.trim())){
+                error = "One of council is not a root account"
+            }
+        })
+        return error
+    }
+
+    return {isEmpty, minLength, maxLength, lengthbetween, isRootAccount, isNumber, maxValue, sumMaxValue, isCouncilRootAccounts}
 }
