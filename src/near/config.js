@@ -1,7 +1,7 @@
 const CONTRACT_NAME = process.env.VUE_APP_NEAR_CONTRACT_NAME || 'neardao'; /* TODO: fill this in! */
 console.log(CONTRACT_NAME)
 function getConfig (env) {
-  switch ('production') { // env, 'testnet', 'production'
+  switch ('testnet') { // env, 'testnet', 'production'
     case 'production':
     case 'mainnet':
       return {

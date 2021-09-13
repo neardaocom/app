@@ -14,11 +14,9 @@
           <li v-if="isAccountSigned" class="nav-item">
             <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="app_near_wallet_url"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
           </li>
+          <MDBNavbarItem :to="{name: 'createDao'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4" >{{ t('default.create_dao') }}</MDBNavbarItem>
           <li class="nav-item">
-            <MDBBtn  @click="this.$router.push('create-dao')" class="btn btn-black btn-rounded mx-2" >{{ t('default.create_new_dao') }}</MDBBtn>
-          </li>
-          <li class="nav-item">
-            <MDBBtn v-if="isAccountSigned" @click="logout()" class="btn btn-black btn-rounded mx-2" ><!--<MDBIcon class="pe-2" icon="sign-out-alt" iconStyle="fas" /> -->{{ t('default.log_out') }}</MDBBtn>
+            <MDBBtn v-if="isAccountSigned" @click="logout()" class="btn btn-black btn-rounded mx-2"><!--<MDBIcon class="pe-2" icon="sign-out-alt" iconStyle="fas" /> -->{{ t('default.log_out') }}</MDBBtn>
             <MDBBtn v-else @click="login()" class="btn btn-black btn-rounded mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In"><!-- <MDBIcon class="pe-2" icon="sign-in-alt" iconStyle="fas"/> -->{{ t('default.log_in') }}</MDBBtn>
           </li>
         </MDBNavbarNav>

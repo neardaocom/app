@@ -20,7 +20,8 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Overview v-if="this.$route.query.page === 'overview' || this.$route.query.page === undefined" :dao="dao"/>
+        <Overview v-if="this.$route.query.page === 'overview' && this.$route.query.page === undefined" :dao="dao"/>
+        <Voting v-if="this.$route.query.page === 'overview' || this.$route.query.page === undefined" :dao="dao"/>
         <Voting v-if="this.$route.query.page === 'voting'" :dao="dao"/>
         <Treasury v-if="this.$route.query.page === 'treasury'" :dao="dao"/>
         <Members v-if="this.$route.query.page === 'members'" :dao="dao"/>
@@ -53,6 +54,7 @@ import { ref, reactive } from 'vue'
 import _ from 'lodash'
 import Breadcrumb from '@/views/dao/Breadcrumb.vue'
 import DAOPodilnik from '@/repository/DAOPodilnik'
+import * as nearAPI from "near-api-js"
 
 export default {
   components: {
@@ -63,6 +65,12 @@ export default {
     // dao id
     if (this.$route.params.id !== undefined) {
       this.q_id = this.$route.params.id
+      this.contract = new nearAPI.Contract(
+          this.wallet.account(), this.q_id, {
+            viewMethods: ['statistics_ft', 'statistics_members', 'registred_user_count', 'proposal', 'proposals', 'ft_balance_of', 'ft_total_supply', 'ft_metadata'],
+            changeMethods: ['add_proposal', 'vote', 'finish_proposal'],
+          }
+        )
     } else {
       console.log('Unknown dao id')
     }
@@ -74,6 +82,10 @@ export default {
       this.q_page = 'overview'
     }
   },
+  async mounted() {
+    this.proposals = await this.contract.proposals(0, 100);
+    this.statistics_ft = await this.contract.statistics_ft();
+  },
   setup() {
     const { t } = useI18n()
     const daos = ref(DAOs.data().daos)
@@ -83,14 +95,20 @@ export default {
     const q_id = null
     const q_page = null
     const dao = ref(DAOPodilnik.data())
+    const contract = null
+    const proposals = null
+    const statistics_ft = null
 
-    return { t, dao, daos, q_id, q_page, search, filter, favorites}
+    return { t, dao, daos, q_id, q_page, search, filter, favorites, contract, proposals, statistics_ft}
   },
   computed: {
     dao_favorites: function() {
       return this.daos.map(dao => dao.id)
       //this.data.map(tooth => this.parseMeasure(tooth.measure))
-    }
+    },
+    wallet() {
+      return this.$store.getters['near/getWallet']
+    },
   },
   methods: {
     favorite_switch: function (id) {
