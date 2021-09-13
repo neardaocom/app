@@ -222,15 +222,14 @@ export default({
         validateDescription(){
             this.validateDescriptionField("description", this.description)
             this.isValidated.description = true
-            console.log(this.description, this.errors.description)
         },
 
         validateCouncil(){ // TODO
             this.validateCouncilField("council", this.councilString)
             this.isValidated.council = true
-            /*if(!this.error.council){
-                this.council = this.councilString
-            }*/
+            if(!this.errors.council){
+                this.council = this.councilString.split(",").map(s => s.trim())  // not array, but Proxy
+            }
         },
 
         validateFtName(){ // TODO
@@ -307,8 +306,8 @@ export default({
                 tags: ['organization', 'dao']
             }
 
-            //const args = {
-            const args = Buffer.from(JSON.stringify({
+            const args = {
+            //const args = Buffer.from(JSON.stringify({
                 name: this.name,
                 total_supply: this.ftAmount, // TODO: check 
                 init_distribution: this.ftInsiderInitDistribution,
@@ -339,8 +338,8 @@ export default({
                     }
                 ],
                 founders: this.council
-                })).toString('base64')
-                //}
+                //})).toString('base64')
+                }
            
            
             /*let b = await this.contract.create({ "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args},

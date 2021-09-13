@@ -49,7 +49,6 @@ export default function Validators() {
         let error = ""
         councilArray.forEach(council => {            
             if (isRootAccount(fieldName, council.trim())){
-                console.log("from root",error)
                 error = "One of council is not a root account"
             }
         })

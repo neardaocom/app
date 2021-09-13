@@ -15,13 +15,12 @@ export default function createDaoFormValidation() {
     }
 
     const validateDescriptionField = (fieldName, fieldValue) => {
-        console.log("validateDescriptionField",maxLength(fieldName, fieldValue, 3000))
-        errors[fieldName] = maxLength(fieldName, fieldValue, 3)
+        errors[fieldName] = maxLength(fieldName, fieldValue, 3000)
     }
 
     const validateCouncilField = (fieldName, fieldValue) => {
         let notRoot = isCouncilRootAccounts(fieldName, fieldValue)
-        errors[fieldName] = notRoot ? notRoot : maxLength(fieldName, fieldValue, 200)
+        errors[fieldName] = notRoot ? notRoot : maxLength(fieldName, fieldValue, 3000)
     }
 
     const validateFtNameField = (fieldName, fieldValue) => {
