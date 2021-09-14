@@ -18,9 +18,15 @@ const getters = {
     getAccountId: (state) => {
       return state.wallet !== undefined ? state.wallet.getAccountId() : undefined
     },
+    getWallet: (state) => {
+      return state.wallet !== undefined ? state.wallet : undefined
+    },
     getFactoryContract: (state) => {
       return state.factoryContract
     },
+    getApiKeyStore: (state) => {
+      return state.api.keyStores.BrowserLocalStorageKeyStore()
+    }
 }
 
 // actions
@@ -33,16 +39,17 @@ const actions = {
           }
         }, config));
         //console.log(api)
+        //let factoryAccount = await api.account("podilnik.testnet");
+        //console.log(await factory.getAccountDetails())
         let wallet = new nearAPI.WalletConnection(api);
-        //console.log(wallet)
-        // let factoryContract = await nearAPI.Contract(state.wallet.account(), state.config.contractName, {
+        // console.log(wallet)
         let factoryContract = new nearAPI.Contract(
-          wallet.account(), 'sputnikdao.near', {
-            viewMethods: ['get_dao_list'],
+          wallet.account(), config.contractName, {
+            viewMethods: ['get_dao_list', 'get_dao_info'],
             changeMethods: ['create'],
           }
         )
-        //console.log(factoryContract)
+        console.log(factoryContract)
         commit('setState', {config: config, api: api, wallet: wallet, factoryContract: factoryContract})
     }
 }

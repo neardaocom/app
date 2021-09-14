@@ -5,22 +5,21 @@
             <div class="container">
 
 
-                <MDBStepper vertical>
+                <MDBStepper vertical class="text-start">
                     <MDBStepperStep active>
                         <MDBStepperHead icon="1">
-                            step1
+                            {{ t('default.basic_information') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
-
                             <!-- Account -->
                             <label for="dao-account" class="form-label">{{ t('default.account') }}</label>
-                            <MDBInput id="dao-account" @keyup="validateAccount" @blur="validateAccount" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account" :data-mdb-showcounter="true">
-                                <span class="input-group-text" id="dao-account">.near</span>
+                            <MDBInput class="mb-3" id="dao-account" @keyup="validateAccount" @blur="validateAccount" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account" :data-mdb-showcounter="true">
+                                <span class="input-group-text" id="dao-account">.{{ envContactName }}.near</span>
                             </MDBInput>
 
                             <!-- Name -->
                             <label for="dao-name" class="form-label">{{ t('default.dao_name') }}</label>
-                            <MDBInput  id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
+                            <MDBInput class="mb-3" id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
 
                             <!-- Description -->
                             <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
@@ -34,76 +33,74 @@
                     </MDBStepperStep>
                     <MDBStepperStep>
                         <MDBStepperHead icon="2">
-                            step2
+                            {{ t('default.tokens') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
 
                             <!-- ftName -->
                             <label for="dao-ft-name" class="form-label">{{ t('default.dao_ft_name') }}</label>
-                            <MDBInput id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
+                            <MDBInput class="mb-3" inputGroup  id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
 
                             <!-- ftAmount -->
-                            <label for="dao-ft-amount" class="form-label">{{ t('default.dao_ft_amount') }}</label>
-                            <MDBInput id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
+                            <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
+                            <MDBInput class="mb-3" inputGroup id="dao-ft-amount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
 
                             <!-- ftInsiderInitDistribution -->
                             <label for="dao-ft-insider-init-distribution" class="form-label">{{ t('default.dao_ft_insider_init_distribution') }}</label>
-                            <MDBInput id="dao-ft-insider-init-distribution" @keyup="validateFtIIDistribution" @blur="validateFtIIDistribution"  v-model.number="ftInsiderInitDistribution" :isValid="!errors.ftIIDistribution" :isValidated="isValidated.ftIIDistribution" :invalidFeedback="errors.ftIIDistribution" type="number"/>
+                            <MDBInput class="mb-3" inputGroup id="dao-ft-insider-init-distribution" @keyup="validateFtIIDistribution" @blur="validateFtIIDistribution"  v-model.number="ftInsiderInitDistribution" :isValid="!errors.ftIIDistribution" :isValidated="isValidated.ftIIDistribution" :invalidFeedback="errors.ftIIDistribution" type="number"/>
 
 
 
                             <!-- ftInsiderShare -->
                             <label for="ft-insider-share" class="form-label">{{ t('default.dao_ft_insider_share') }}</label>
-                            <MDBInput  id="ft-insider-share" @keyup="validateFfShares('ftInsiderShare', $event)" @blur="validateFfShares('ftInsiderShare', $event)"  v-model.number="ftInsiderShare" :isValid="!errors.ftInsiderShare" :isValidated="isValidated.ftInsiderShare" :invalidFeedback="errors.ftInsiderShare" type="number"/>
+                            <MDBInput class="mb-3" id="ft-insider-share" @keyup="validateFfShares('ftInsiderShare', $event)" @blur="validateFfShares('ftInsiderShare', $event)"  v-model.number="ftInsiderShare" :isValid="!errors.ftInsiderShare" :isValidated="isValidated.ftInsiderShare" :invalidFeedback="errors.ftInsiderShare" type="number"/>
 
                             <!-- ftFundationShare -->
                             <label for="ft-fundation-share" class="form-label">{{ t('default.dao_ft_fundation_share') }}</label>
-                            <MDBInput  id="ft-fundation-share" @keyup="validateFfShares('ftFundationShare', $event)" @blur="validateFfShares('ftFundationShare', $event)"  v-model.number="ftFundationShare" :isValid="!errors.ftFundationShare" :isValidated="isValidated.ftFundationShare" :invalidFeedback="errors.ftFundationShare" type="number"/>
+                            <MDBInput class="mb-3" id="ft-fundation-share" @keyup="validateFfShares('ftFundationShare', $event)" @blur="validateFfShares('ftFundationShare', $event)"  v-model.number="ftFundationShare" :isValid="!errors.ftFundationShare" :isValidated="isValidated.ftFundationShare" :invalidFeedback="errors.ftFundationShare" type="number"/>
 
                             <!-- ftCommunityShare -->
                             <label for="ft-community-share" class="form-label">{{ t('default.dao_ft_community_share') }}</label>
-                            <MDBInput  id="ft-community-share" @keyup="validateFfShares('ftCommunityShare', $event)" @blur="validateFfShares('ftCommunityShare', $event)"  v-model.number="ftCommunityShare" :isValid="!errors.ftCommunityShare" :isValidated="isValidated.ftCommunityShare" :invalidFeedback="errors.ftCommunityShare" type="number"/>
+                            <MDBInput class="mb-3" id="ft-community-share" @keyup="validateFfShares('ftCommunityShare', $event)" @blur="validateFfShares('ftCommunityShare', $event)"  v-model.number="ftCommunityShare" :isValid="!errors.ftCommunityShare" :isValidated="isValidated.ftCommunityShare" :invalidFeedback="errors.ftCommunityShare" type="number"/>
 
                             <!-- ftPublicShare -->
                             <label for="ft-public-share" class="form-label">{{ t('default.dao_ft_public_share') }}</label>
-                            <MDBInput  id="ft-public-share" @keyup="validateFfShares('ftPublicShare', $event)" @blur="validateFfShares('ftPublicShare', $event)"  v-model.number="ftPublicShare" :isValid="!errors.ftPublicShare" :isValidated="isValidated.ftPublicShare" :invalidFeedback="errors.ftPublicShare" type="number" wrapperClass="mb-8"/>
+                            <MDBInput id="ft-public-share" @keyup="validateFfShares('ftPublicShare', $event)" @blur="validateFfShares('ftPublicShare', $event)"  v-model.number="ftPublicShare" :isValid="!errors.ftPublicShare" :isValidated="isValidated.ftPublicShare" :invalidFeedback="errors.ftPublicShare" type="number" wrapperClass="mb-8"/>
 
                         </MDBStepperContent>
                     </MDBStepperStep>
                     <MDBStepperStep>
                         <MDBStepperHead icon="3">
-                            step3
+                            {{ t('default.voting') }}
                         </MDBStepperHead>
                             <MDBStepperContent>
 
-                                <!-- voteSpamTreshold -->
+                                <!-- voteSpamThreshold -->
                                 <label for="dao-vote-spam-treshold" class="form-label">{{ t('default.dao_vote_spam_treshold') }}</label>
-                                <MDBInput  id="dao-vote-spam-treshold" @keyup="validateVoteSpamTreshold" @blur="validateVoteSpamTreshold"  v-model.number="voteSpamTreshold" :isValid="!errors.voteSpamTreshold" :isValidated="isValidated.voteSpamTreshold" :invalidFeedback="errors.voteSpamTreshold" type="number"/>
+                                <MDBInput class="mb-3" id="dao-vote-spam-treshold" @keyup="validateVoteSpamThreshold" @blur="validateVoteSpamThreshold"  v-model.number="voteSpamThreshold" :isValid="!errors.voteSpamThreshold" :isValidated="isValidated.voteSpamThreshold" :invalidFeedback="errors.voteSpamThreshold" type="number"/>
 
 
                                 <!-- voteDurationDays -->
                                 <label for="dao-vote-duration-days" class="form-label">{{ t('default.dao_vote_duration_days') }}</label>
-                                <MDBInput  id="dao-vote-duration-days" @keyup="validateVoteDurationDays" @blur="validateVoteDurationDays"  v-model.number="voteDurationDays" :isValid="!errors.voteDurationDays" :isValidated="isValidated.voteDurationDays" :invalidFeedback="errors.voteDurationDays" type="number"/>
+                                <MDBInput class="mb-3" id="dao-vote-duration-days" @keyup="validateVoteDurationDays" @blur="validateVoteDurationDays"  v-model.number="voteDurationDays" :isValid="!errors.voteDurationDays" :isValidated="isValidated.voteDurationDays" :invalidFeedback="errors.voteDurationDays" type="number"/>
 
 
                                 <!-- voteDurationHours -->
                                 <label for="dao-vote-duration-hours" class="form-label">{{ t('default.dao_vote_duration_hours') }}</label>
-                                <MDBInput  id="dao-vote-duration-hours" @keyup="validateVoteDurationHours" @blur="validateVoteDurationHours"  v-model.number="voteDurationHours" :isValid="!errors.voteDurationHours" :isValidated="isValidated.voteDurationHours" :invalidFeedback="errors.voteDurationHours" type="number"/>
+                                <MDBInput class="mb-3" id="dao-vote-duration-hours" @keyup="validateVoteDurationHours" @blur="validateVoteDurationHours"  v-model.number="voteDurationHours" :isValid="!errors.voteDurationHours" :isValidated="isValidated.voteDurationHours" :invalidFeedback="errors.voteDurationHours" type="number"/>
                             
                                 <!-- voteQuorum -->
                                 <label for="dao-vote-quorum" class="form-label">{{ t('default.dao_vote_quorum') }}</label>
-                                <MDBInput  id="dao-vote-quorum" @keyup="validateVoteQuorum" @blur="validateVoteQuorum"  v-model.number="voteQuorum" :isValid="!errors.voteQuorum" :isValidated="isValidated.voteQuorum" :invalidFeedback="errors.voteQuorum" type="number"/>
+                                <MDBInput class="mb-3" id="dao-vote-quorum" @keyup="validateVoteQuorum" @blur="validateVoteQuorum"  v-model.number="voteQuorum" :isValid="!errors.voteQuorum" :isValidated="isValidated.voteQuorum" :invalidFeedback="errors.voteQuorum" type="number"/>
                             
                                 <!-- voteApproveTreshhold -->
                                 <label for="dao-vote-approve-treshhold" class="form-label">{{ t('default.dao_vote_approve_treshhold') }}</label>
-                                <MDBInput  id="dao-vote-approve-treshhold" @keyup="validateVoteApproveTreshhold" @blur="validateVoteApproveTreshhold"  v-model.number="voteApproveTreshhold" :isValid="!errors.voteApproveTreshhold" :isValidated="isValidated.voteApproveTreshhold" :invalidFeedback="errors.voteApproveTreshhold" type="number"/>
+                                <MDBInput class="mb-3" id="dao-vote-approve-treshhold" @keyup="validateVoteApproveTreshhold" @blur="validateVoteApproveTreshhold"  v-model.number="voteApproveTreshhold" :isValid="!errors.voteApproveTreshhold" :isValidated="isValidated.voteApproveTreshhold" :invalidFeedback="errors.voteApproveTreshhold" type="number"/>
                                             
                                 <!-- voteOnlyOnce-->
                                 <MDBCheckbox :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce" />
 
-                                <MDBBtn @click="createDao" color="primary">{{ t('default.create_new_dao') }}</MDBBtn>
-                                        
-
+                                <MDBBtn class="mt-3" @click="createDao()" color="primary">{{ t('default.create_dao') }}</MDBBtn>
                             </MDBStepperContent>
                         </MDBStepperStep>
                 </MDBStepper>
@@ -129,7 +126,7 @@
 
     } from 'mdb-vue-ui-kit';
 
-    //import * as nearAPI from "near-api-js";
+    import * as nearAPI from "near-api-js"
 
 export default({
 
@@ -156,16 +153,16 @@ export default({
         
         // tokens
         const ftName = ref('')   // governance token 
-        const ftAmount = ref(0) 
+        const ftAmount = ref(1_000_000) 
         const ftInsiderInitDistribution = ref(0) // 0 ... ftAmount
-        const ftInsiderShare = ref(0) // 0 ... 100 all shareing 
+        const ftInsiderShare = ref(50) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
-        const ftPublicShare = ref(100) // 0 ... 100 all shareing
+        const ftPublicShare = ref(50) // 0 ... 100 all shareing
         // voting 
-        const voteSpamTreshold = ref(0) // 0 .. 100 
+        const voteSpamThreshold = ref(80) // 0 .. 100 
         const voteDurationDays = ref(0)
-        const voteDurationHours = ref(0)
+        const voteDurationHours = ref(1)
         const voteQuorum = ref(50) // 10 ... 100
         const voteApproveTreshhold = ref(50) // 0 .. 100
         const voteOnlyOnce = ref(true)
@@ -182,7 +179,7 @@ export default({
             ftFundationShare: false,
             ftCommunityShare: false,
             ftPublicShare: false,
-            voteSpamTreshold: false,
+            voteSpamThreshold: false,
             voteDurationDays: false,
             voteDurationHours: false,
             voteQuorum: false,
@@ -199,7 +196,7 @@ export default({
         return{
            t, exampleModal, account, name, 
            description, ftName, ftAmount, ftInsiderInitDistribution, ftInsiderShare, ftFundationShare, ftCommunityShare,
-           ftPublicShare, voteSpamTreshold, voteDurationDays, voteDurationHours, voteQuorum, voteApproveTreshhold, voteOnlyOnce,
+           ftPublicShare, voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, voteApproveTreshhold, voteOnlyOnce,
            council, councilString, isValidated, errors,  validateAccountField, validateNameField, validateDescriptionField, validateCouncilField,
            validateFtNameField, validateFtAmountField, validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether, validateVoteSpamTresholdField,
            validateVoteDurationDaysField, validateVoteDurationHoursField, validateVoteQuorumField, validateVoteApproveTreshholdField, contract
@@ -296,7 +293,8 @@ export default({
 
 
         async createDao(){
-            const accountId = this.account + ".near" // all
+            const accountId = this.account // + ".podilnik.testnet" // all
+            console.log(accountId)
             const publicKey = null
             const info = {
                 name: this.name,
@@ -305,6 +303,7 @@ export default({
                 ft_amount: this.ftAmount, // 1.. 1_000_000_000
                 tags: ['organization', 'dao']
             }
+            console.log(info)
 
             const args = {
             //const args = Buffer.from(JSON.stringify({
@@ -325,16 +324,17 @@ export default({
                     fundation_share: this.ftFundationShare,
                     community_share: this.ftCommunityShare,
                     description: this.description,
-                    vote_spam_treshold: this.voteSpamTreshold,
+                    vote_spam_threshold: this.voteSpamThreshold,
                 },
-                release_config: 'voting',
+                release_config: 'Voting',
                 vote_policy_configs : [
                     {
                         proposal_kind: 'Pay', // TODO: PStu fill in
                         duration: ((this.voteDurationHours * 3_600) + (this.voteDurationDays * 3_600 * 24)) * Math.pow(10,9),
                         quorum: this.voteQuorum,
-                        approve_treshhold: this.voteApproveTreshhold,
-                        vote_only_once: this.voteOnlyOnce 
+                        approve_threshold: this.voteApproveTreshhold,
+                        vote_only_once: this.voteOnlyOnce,
+                        waiting_open_duration: 0
                     }
                 ],
                 founders: this.council
@@ -342,44 +342,41 @@ export default({
                 }
            
            
-            /*let b = await this.contract.create({ "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args},
-            3000000000000000,
-            1000000000000000000000000
+            const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
+            let b = await this.factoryContract.create(
+                { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
+                "300000000000000", // gas 1000 TGas
+                "10000000000000000000000000" // 1 NEAR
             )
-
-            console.log(b)*/
+            console.log(b)
+        
             
             console.log(accountId, publicKey, info, args)
         },
     },
-
     computed: {
         accountId(){
             return this.$store.getters['near/getAccountId']
-        }
-    },        
-
-    
-    mounted(){
+        },
+        factoryContract() {
+            return this.$store.getters['near/getFactoryContract']
+        },
+        apiKeyStore() {
+            return this.$store.getters['near/getApiKeyStore']
+        },
+        envContactName() {
+            return process.env.VUE_APP_NEAR_CONTRACT_NAME
+        },
+    },
+    created() {
+    },
+    mounted() {
         this.council = [this.accountId]
         this.councilString = this.accountId
+        const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore()
+        const keyPair = keyStore.getKey('testnet', 'petrfilla.testnet')
+        console.log(keyPair.publicKey)
     },
-
-    /*async created(){
-        const account = await this.$store.state.near.api.account("dev-1631206593211-61689593480844")
-        this.contract = new nearAPI.Contract(
-            account, // the account object that is connecting
-            "dev-1631206593211-61689593480844",
-            {
-                // name of contract you're connecting to
-                viewMethods: ["get_dao_list"], // view methods do not change state but usually return a value
-                changeMethods: ["create"], // change methods modify state
-                sender: account, // account object to initialize and sign transactions.
-            })
-
-            let v =await this.contract.get_dao_list({ } );
-            console.log(v)
-    }*/
 })
 
 </script>

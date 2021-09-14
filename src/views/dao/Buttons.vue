@@ -31,7 +31,7 @@
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
         </button>-->
-        <MDBBtn aria-controls="modalPayout" @click="modalPayout = true" class="btn btn-primary px-3 me-2" data-mdb-ripple-color="dark">
+        <MDBBtn aria-controls="modalPayout" @click="modalPayoutFocus()" class="btn btn-primary px-3 me-2" data-mdb-ripple-color="dark">
           <MDBIcon icon="paper-plane pe-2"/> {{ t('default.payout')}}
         </MDBBtn>
       </div>
@@ -50,14 +50,19 @@
       </MDBModalHeader>
       <MDBModalBody class="text-start">
         <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="modalPayoutAccount" data-mdb-showcounter="true" maxlength="64" required>
+        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="modalPayoutAccount" data-mdb-showcounter="true" maxlength="64" required
+          @keyup="validateModalPayoutAccount()" @blur="validateModalPayoutAccount()" :isValid="!errors.modalPayoutAccount" :isValidated="isValidated.modalPayoutAccount" :invalidFeedback="errors.modalPayoutAccount"
+        >
           <span class="input-group-text" id="account-addon">.near</span>
         </MDBInput>
         <br/>
         <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
-        <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model="modalPayoutAmount" required>
+        <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="modalPayoutAmount" required
+          @keyup="validateModalPayoutAmount()" @blur="validateModalPayoutAmount()" :isValid="!errors.modalPayoutAmount" :isValidated="isValidated.modalPayoutAmount" :invalidFeedback="errors.modalPayoutAmount"
+        >
           <span class="input-group-text" id="amount-addon">Ⓝ</span>
         </MDBInput>
+        
       </MDBModalBody>
       <MDBModalFooter>
         <MDBBtn color="secondary" @click="modalPayoutClose()">{{ t('default.close') }}</MDBBtn>
@@ -69,7 +74,9 @@
 
 <script>
 import { ref } from "vue";
+import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
+import useValidators from '@/validators'
 import {
   MDBBtn,
   MDBInput,
@@ -79,6 +86,7 @@ import {
   MDBModalTitle,
   MDBModalBody,
   MDBModalFooter
+  //, MDBRow, MDBCol
   //, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
 } from "mdb-vue-ui-kit";
 
@@ -87,6 +95,7 @@ export default {
     MDBBtn, MDBIcon, MDBInput
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
     //, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
+    //, MDBRow, MDBCol
   },
   props: {
     dao: {
@@ -100,25 +109,66 @@ export default {
     const modalPayoutAccount = ref('')
     const modalPayoutAmount = ref(0)
     const dropdownActions = ref(false)
+    // validation
+    const isValidated = ref({
+        modalPayoutAccount: false,
+        modalPayoutAmount: false
+    })
+    const errors = reactive({});
+    const { isEmpty, isRootAccount, isNumber, maxValue} = useValidators()
 
     return {
       t,
       modalPayout, modalPayoutAccount, modalPayoutAmount
       , dropdownActions
+      , isValidated, errors
+      , isEmpty, isRootAccount, isNumber, maxValue
     };
   },
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalPayoutVote() {
-      this.modalPayoutAccount = null
-      this.modalPayoutAmount = null
-      this.modalPayout = false
+    modalPayoutFocus() {
+      this.modalPayout = true
+      // this.$refs.refModalPayoutAccount.focus()
     },
     modalPayoutClose() {
       this.modalPayout = false
-    }
+    },
+    validateAccountField(fieldName, fieldValue) {
+      if (fieldValue === undefined || fieldValue === '') {
+        this.errors[fieldName] = this.isEmpty(fieldName, fieldValue)
+      } else {
+        this.errors[fieldName] = this.isRootAccount(fieldName, fieldValue)
+      }
+    },
+    validateAmountField(fieldName, fieldValue) {
+      if (fieldValue === undefined || fieldValue === '') {
+        this.errors[fieldName] = this.isEmpty(fieldName, fieldValue)
+      } else if (/^\d+\.?\d*$/.test(fieldValue)) {
+        this.errors[fieldName] = this.maxValue(fieldName, fieldValue, 1_000.0)
+      } else {
+        this.errors[fieldName] = this.isNumber(fieldName, fieldValue)
+      }
+    },
+    validateModalPayoutAccount(){
+      this.validateAccountField("modalPayoutAccount", this.modalPayoutAccount)
+      this.isValidated.modalPayoutAccount = true
+    },
+    validateModalPayoutAmount(){
+      this.validateAmountField("modalPayoutAmount", this.modalPayoutAmount)
+      this.isValidated.modalPayoutAmount = true
+    },
+    modalPayoutVote() {
+      this.validateModalPayoutAccount()
+      this.validateModalPayoutAmount()
+      if (this.errors["modalPayoutAccount"] === '' && this.errors["modalPayoutAmount"] === '') {
+        this.modalPayoutAccount = null
+        this.modalPayoutAmount = null
+        this.modalPayout = false
+      }
+    },
   }
 };
 </script>

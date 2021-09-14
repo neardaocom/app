@@ -62,7 +62,7 @@
       <div class="col-12 col-md-4">
         <h5 class="text-center">{{ t("default.treasury") }}</h5>
         <h2>
-          {{  this.balance === undefined ? "-" : n(this.balance)}} <span title="NEAR">Ⓝ </span>
+          <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
           <BadgePercent :amount="dao.treasury.w_delta"/>
         </h2>
         <p>≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
