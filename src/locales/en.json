@@ -65,5 +65,12 @@
   "dao_vote_duration_hours": "Duration in hours",
   "dao_vote_quorum": "Quorum",
   "dao_vote_approve_treshhold": "Approve threshhold",
-  "dao_vote_only_once": "Vote only once"
+  "dao_vote_only_once": "Vote only once",
+  "validator_required": "Required field",
+  "validator_at_least_characters": "At least {min} characters",
+  "validator_maximum_characters": "Maximum {max} letters",
+  "validator_invalid_near_root_account": "Invalid NEAR root Account",
+  "validator_not_number": "It's not number",
+  "validator_min_number": "Minimum value is {min}",
+  "validator_max_number": "Miximum value is {max}"
 }

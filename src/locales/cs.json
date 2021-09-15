@@ -65,5 +65,12 @@
   "dao_vote_duration_hours": "Doba trvání - hodiny",
   "dao_vote_quorum": "Quorum",
   "dao_vote_approve_treshhold": "Schválení práh",
-  "dao_vote_only_once": "Volit pouze jednou"
+  "dao_vote_only_once": "Volit pouze jednou",
+  "validator_required": "Povinné pole",
+  "validator_at_least_characters": "Alepoň {min} znaky",
+  "validator_maximum_characters": "Maximálně {max} znaků",
+  "validator_invalid_near_root_account": "Nevalidní NEAR hlavní účet",
+  "validator_not_number": "Není číslo",
+  "validator_min_number": "Nejmenší možné číslo je {min}",
+  "validator_max_number": "Největší možné číslo je {max}"
 }
