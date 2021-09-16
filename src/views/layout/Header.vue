@@ -12,7 +12,7 @@
           <MDBNavbarItem class="mx-2" :to="{name: 'landing-page', query: {}}" :title="t('default.landing_page')"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.landing_page') }}</span></MDBNavbarItem>
           <MDBNavbarItem class="mx-2" :to="{name: 'daos', query: {}}" :title="t('default.organizations')"><MDBIcon class="pe-2" icon="building" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
           <li v-if="isAccountSigned" class="nav-item">
-            <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="app_near_wallet_url"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
+            <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="walletUrl"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
           </li>
           <MDBNavbarItem :to="{name: 'createDao'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4" >{{ t('default.create_dao') }}</MDBNavbarItem>
           <li class="nav-item">
@@ -47,10 +47,8 @@
     },
     setup() {
       const collapse = ref(false);
-      const app_near_wallet_url = process.env.VUE_APP_NEAR_WALLET_URL;
       const { t } = useI18n();
       return {
-        app_near_wallet_url,
         t,
         collapse
       }
@@ -59,6 +57,9 @@
       accountId() {
         console.log(this.$store.getters['near/getAccountId'])
         return this.$store.getters['near/getAccountId']
+      },
+      walletUrl() {
+        return this.$store.getters['near/getWalletUrl']
       },
       isAccountSigned() {
         return this.$store.getters['near/isSignedIn'] || false

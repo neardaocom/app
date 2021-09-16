@@ -153,6 +153,9 @@
     } from 'mdb-vue-ui-kit';
 
     import * as nearAPI from "near-api-js"
+    import Decimal from 'decimal.js';
+    import {TGas, yoktoNear} from '@/services/nearService/constants.ts'
+    import {toNanoseconds} from '@/utils/date.js'
 
 export default({
 
@@ -327,7 +330,7 @@ export default({
                 name: this.name,
                 description: this.description,
                 ft_name: this.ftName,
-                ft_amount: this.ftAmount, // 1.. 1_000_000_000
+                ft_amount: this.ftAmount, // 1..1_000_000_000
                 tags: ['organization', 'dao']
             }
             console.log(info)
@@ -357,7 +360,7 @@ export default({
                 vote_policy_configs : [
                     {
                         proposal_kind: 'Pay', // TODO: PStu fill in
-                        duration: ((this.voteDurationHours * 3_600) + (this.voteDurationDays * 3_600 * 24)) * Math.pow(10,9),
+                        duration: toNanoseconds(this.voteDurationDays, this.voteDurationHours, 0, 0),
                         quorum: this.voteQuorum,
                         approve_threshold: this.voteApproveThreshold,
                         vote_only_once: this.voteOnlyOnce,
@@ -372,8 +375,8 @@ export default({
             const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
             let b = await this.factoryContract.create(
                 { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
-                "300000000000000", // gas 1000 TGas
-                "10000000000000000000000000" // 1 NEAR
+                Decimal.mul(300, TGas).toString(), // gas 300 TGas
+                Decimal.mul(10, yoktoNear).toString() // 10 NEAR
             )
             console.log(b)
         

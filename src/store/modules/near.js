@@ -21,6 +21,9 @@ const getters = {
     getWallet: (state) => {
       return state.wallet !== undefined ? state.wallet : undefined
     },
+    getWalletUrl: (state) => {
+      return state.config !== undefined ? state.config.walletUrl : undefined
+    },
     getFactoryContract: (state) => {
       return state.factoryContract
     },
