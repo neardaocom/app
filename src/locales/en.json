@@ -42,7 +42,7 @@
   "vote_state_spam": "SPAM",
   "vote_state_invalid": "Invalid",
   "members": "Members",
-  "tokens": "Tokens",
+  "tokens": "Governance Tokens",
   "organization": "Organization",
   "create_dao": "Create DAO",
   "create": "Create",
@@ -60,10 +60,11 @@
   "dao_ft_fundation_share": "Fundation - share",
   "dao_ft_community_share": "Community - share",
   "dao_ft_public_share": "Public sale - share",
-  "dao_vote_spam_treshold": "SPAM threshold",
+  "dao_vote_spam_threshold": "SPAM threshold",
   "dao_vote_duration_days": "Duration in days",
   "dao_vote_duration_hours": "Duration in hours",
   "dao_vote_quorum": "Quorum",
-  "dao_vote_approve_treshhold": "Approve threshhold",
-  "dao_vote_only_once": "Vote only once"
+  "dao_vote_approve_threshold": "Approve threshhold",
+  "dao_vote_only_once": "Vote only once",
+  "form_required_field" : "This field is required"
 }

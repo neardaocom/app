@@ -12,14 +12,19 @@ export default function Validators() {
         return fieldValue.length > max ? `The ${fieldName} field can contain a maximum of ${max} letters` : "";
     }
 
-    const lengthbetween = (fieldName, fieldValue, min, max) => {
+    const lengthBetween = (fieldName, fieldValue, min, max) => {
         return fieldValue.length > max || fieldValue.length < min ? `The ${fieldName} must contain between ${min} and ${max} characters` : "";
     }
 
-    const isRootAccount = (fieldName, fieldValue) => {
-        const validLength = lengthbetween(fieldName, fieldValue, 2 , 64) 
+    const isRootAccount = (fieldName, fieldValue, withNear = false) => {
+        const validLength = lengthBetween(fieldName, fieldValue, 2 , 64) 
         if (validLength === ""){
-            let re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d]+$/
+            let re
+            if (!withNear){
+                re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d]+$/
+            }else{
+                re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].near+$/
+            }
             return !re.test(fieldValue) ? "The input is not a valid " + fieldName + " Root Account" : "";
         }
         else{
@@ -36,6 +41,10 @@ export default function Validators() {
         return fieldValue > max ? `The ${fieldName} field value should not be greater than ${max == "" ? 0 : max}` : "";
     }
 
+    const valueBetween = (fieldName, fieldValue, min, max) => {
+        return fieldValue > max || fieldValue < min ? `The ${fieldName} must be between ${min} and ${max}` : "";
+    }
+
     const sumMaxValue = (fieldNames, fieldValue, max) => {
         fieldValue = fieldValue.map(function(num) {
             return num === "" ? 0 : num
@@ -48,12 +57,18 @@ export default function Validators() {
         let councilArray = fieldValue.split(",")
         let error = ""
         councilArray.forEach(council => {            
-            if (isRootAccount(fieldName, council.trim())){
+            if (isRootAccount(fieldName, council.trim(), true)){
                 error = "One of council is not a root account"
             }
         })
         return error
     }
 
-    return {isEmpty, minLength, maxLength, lengthbetween, isRootAccount, isNumber, maxValue, sumMaxValue, isCouncilRootAccounts}
+    const isAlphanumericUpperecase = (fieldName, fieldValue) => {
+        let re = /^[A-Z0-9]+$/
+        return !re.test(fieldValue) ? "This field must be alphanumeric and uppercase" : "";
+    } 
+
+    return {isEmpty, minLength, maxLength, lengthBetween, isRootAccount, isNumber,
+         maxValue, valueBetween, sumMaxValue, isCouncilRootAccounts, isAlphanumericUpperecase}
 }

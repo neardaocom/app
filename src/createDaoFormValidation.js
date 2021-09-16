@@ -2,7 +2,7 @@ import { reactive } from "@vue/reactivity";
 import useValidators from '@/validators'
 
 const errors = reactive({});
-const { isEmpty, isRootAccount, lengthbetween, maxLength, isNumber, maxValue, sumMaxValue, isCouncilRootAccounts /*minLength*/ } = useValidators()
+const { isEmpty, isRootAccount, lengthBetween, maxLength, isNumber, maxValue, valueBetween, sumMaxValue, isCouncilRootAccounts, isAlphanumericUpperecase /*minLength*/ } = useValidators()
 
 export default function createDaoFormValidation() {
 
@@ -11,7 +11,7 @@ export default function createDaoFormValidation() {
     }
 
     const validateNameField = (fieldName, fieldValue) => {
-        errors[fieldName] = !fieldValue ? isEmpty(fieldName, fieldValue) : lengthbetween(fieldName, fieldValue, 3, 64)
+        errors[fieldName] = !fieldValue ? isEmpty(fieldName, fieldValue) : lengthBetween(fieldName, fieldValue, 3, 64)
     }
 
     const validateDescriptionField = (fieldName, fieldValue) => {
@@ -24,11 +24,19 @@ export default function createDaoFormValidation() {
     }
 
     const validateFtNameField = (fieldName, fieldValue) => {
-        errors[fieldName] = isEmpty(fieldName, fieldValue)
+        let message = lengthBetween(fieldName, fieldValue, 3, 64)
+        if(isEmpty(fieldName, fieldValue) !== ''){
+            message = isEmpty(fieldName, fieldValue)
+        }
+        else if (isAlphanumericUpperecase(fieldName, fieldValue) !== '' ){
+            message = isAlphanumericUpperecase(fieldName, fieldValue)
+        }
+        errors[fieldName] = message
     }
 
     const validateFtAmountField = (fieldName, fieldValue) => {
-        errors[fieldName] = isNumber(fieldName, fieldValue)
+        let isNum = isNumber(fieldName, fieldValue)
+        errors[fieldName] = isNum === "" ? valueBetween(fieldName, fieldValue, 1, 1_000_000_000) : isNum
     }
 
     const validateFtIIDistributionField = (fieldName, fieldValue, ftAmount) => {
@@ -51,7 +59,7 @@ export default function createDaoFormValidation() {
         })
     }
 
-    const validateVoteSpamTresholdField = (fieldName, fieldValue ,max) => {
+    const validateVoteSpamThresholdField = (fieldName, fieldValue ,max) => {
         let isNum = isNumber(fieldName, fieldValue)
         errors[fieldName] = isNum ? isNum  :  maxValue(fieldName, fieldValue, max)
     }
@@ -69,7 +77,7 @@ export default function createDaoFormValidation() {
         errors[fieldName] = isNum ? isNum  :  maxValue(fieldName, fieldValue, max)
     }
 
-    const validateVoteApproveTreshholdField = (fieldName, fieldValue, max) => {
+    const validateVoteApproveThresholdField = (fieldName, fieldValue, max) => {
         let isNum = isNumber(fieldName, fieldValue)
         errors[fieldName] = isNum ? isNum  :  maxValue(fieldName, fieldValue, max)
     }
@@ -77,8 +85,8 @@ export default function createDaoFormValidation() {
     return { 
         errors, validateAccountField, validateNameField, validateDescriptionField,
         validateCouncilField, validateFtNameField, validateFtAmountField, validateFtIIDistributionField,
-        validateFfSharesFields, validateFfSharesFieldsTogether, validateVoteSpamTresholdField,
+        validateFfSharesFields, validateFfSharesFieldsTogether, validateVoteSpamThresholdField,
         validateVoteDurationDaysField, validateVoteDurationHoursField,  validateVoteQuorumField,
-        validateVoteApproveTreshholdField,
+        validateVoteApproveThresholdField,
     }
 }

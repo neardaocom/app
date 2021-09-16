@@ -42,7 +42,7 @@
   "vote_state_spam": "SPAM",
   "vote_state_invalid": "Neplatný",
   "members": "Členové",
-  "tokens": "Tokeny",
+  "tokens": "Governance Tokeny",
   "organization": "Organizace",
   "create_dao": "Vytvořit DAO",
   "create": "Vytvořit",
@@ -60,10 +60,11 @@
   "dao_ft_fundation_share": "Investor - podíl",
   "dao_ft_community_share": "Komunita - podíl",
   "dao_ft_public_share": "Volný prodej - podíl",
-  "dao_vote_spam_treshold": "SPAM práh",
+  "dao_vote_spam_threshold": "SPAM práh",
   "dao_vote_duration_days": "Doba trvání - dny",
   "dao_vote_duration_hours": "Doba trvání - hodiny",
   "dao_vote_quorum": "Quorum",
-  "dao_vote_approve_treshhold": "Schválení práh",
-  "dao_vote_only_once": "Volit pouze jednou"
+  "dao_vote_approve_threshold": "Schválení práh",
+  "dao_vote_only_once": "Volit pouze jednou",
+  "form_required_field" : "Toto pole je povinné"
 }
