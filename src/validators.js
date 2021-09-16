@@ -50,7 +50,7 @@ export default function Validators() {
             return num === "" ? 0 : num
         })
         const reducer = (accumulator, curr) => accumulator + curr;
-        return fieldValue.reduce(reducer) > max ? `The ${fieldNames} fields should not be greater than ${max}` : "";
+        return fieldValue.reduce(reducer) > max ? `The Shares should not be greater than ${max}%` : "";
     }
 
     const isCouncilRootAccounts = (fieldName, fieldValue) => {

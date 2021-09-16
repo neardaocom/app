@@ -52,9 +52,9 @@ export default function createDaoFormValidation() {
     const validateFfSharesFieldsTogether = (fieldNames,  ftInsiderShare, ftFundationShare, ftCommunityShare, ftPublicShare) => {
         let error = sumMaxValue(
             ["dao_ft_insider_share","dao_ft_fundation_share", "dao_ft_community_share", "dao_ft_public_share"],
-            [ftInsiderShare, ftFundationShare, ftCommunityShare,ftPublicShare],
+            [ftFundationShare, ftCommunityShare,ftPublicShare],
              100)
-        fieldNames.forEach(fieldName => {            
+        fieldNames.forEach(fieldName => {          
             errors[fieldName] = error
         })
     }
