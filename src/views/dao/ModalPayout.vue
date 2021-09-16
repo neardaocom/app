@@ -13,7 +13,7 @@
         <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
             @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
         >
-            <span class="input-group-text" id="account-addon">.near</span>
+            <span class="input-group-text" id="account-addon">{{ factoryAccount }}</span>
         </MDBInput>
         <br/>
         <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
@@ -85,6 +85,11 @@ export default {
       , isValidated, errors
     };
   },
+  computed: {
+    factoryAccount() {
+      return this.$store.getters['near/getFactoryAccount']
+    },
+  },
   methods: {
     validateAccount(){
       const field = "formAccount"
@@ -103,7 +108,7 @@ export default {
       const field = "formAmount"
       const requiredVal = requiredValidator(this.formAmount)
       const isNumberVal = isNumber(this.formAmount)
-      const minNumberVal = minNumber(this.formAmount, 1.0)
+      const minNumberVal = minNumber(this.formAmount, 0.0)
       const maxNumberVal = maxNumber(this.formAmount, 1000000.0)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)

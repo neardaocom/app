@@ -128,7 +128,7 @@
 
     import * as nearAPI from "near-api-js"
     import Decimal from 'decimal.js';
-    import {TGas, yoktoNear} from '@/services/nearService/constants.ts'
+    import {TGas, yoktoNear} from '@/services/nearService/constants.js'
     import {toNanoseconds} from '@/utils/date.js'
 
 export default({

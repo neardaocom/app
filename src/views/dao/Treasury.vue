@@ -5,7 +5,7 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h2>
-              {{ n(dao.treasury.near) || "-" }} <span title="NEAR">Ⓝ </span>
+              {{ n(dao.treasury.near) ?? '—' }} <span title="NEAR">Ⓝ </span>
               <BadgePercent :amount="dao.treasury.w_delta" />
             </h2>
             <p>

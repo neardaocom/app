@@ -1,5 +1,5 @@
 <template>
-  <span v-if="amount != undefined">{{ n(amount) }}</span>
+  <span v-if="amount !== undefined && amount !== null">{{ n(amount) }}</span>
   <span v-else>—</span>
 </template>
 

@@ -1,78 +1,58 @@
-import * as nearAPI from "near-api-js"
-import getConfig from "@/near/config"
+import getConfig from "@/config/near"
+import { NearService } from "@/services/nearService"
 //import { signTransaction } from "near-api-js/lib/transaction"
 
 // initial state
 const state = () => ({
-  config: undefined,
-  api: undefined,
-  wallet: undefined,
-  factoryContract: undefined
+  service: undefined
 })
 
 // getters
 const getters = {
     isSignedIn: (state) => {
-      return state.wallet !== undefined ? state.wallet.isSignedIn() : false
+      return state.service.walletConnection.isSignedIn()
     },
     getAccountId: (state) => {
-      return state.wallet !== undefined ? state.wallet.getAccountId() : undefined
+      return state.service.walletConnection.getAccountId()
+    },
+    getFactoryAccount: (state) => {
+      return state.service.config !== undefined ? state.service.config.contractName : undefined
     },
     getWallet: (state) => {
-      return state.wallet !== undefined ? state.wallet : undefined
+      return state.service.walletConnection !== undefined ? state.service.walletConnection : undefined
     },
     getWalletUrl: (state) => {
-      return state.config !== undefined ? state.config.walletUrl : undefined
+      return state.service.config !== undefined ? state.service.config.walletUrl : undefined
     },
     getFactoryContract: (state) => {
-      return state.factoryContract
+      return state.service.factoryContract
     },
-    getApiKeyStore: (state) => {
-      return state.api.keyStores.BrowserLocalStorageKeyStore()
+    getService: (state) => {
+      return state.service
     }
 }
 
 // actions
 const actions = {
     async init ({ commit }) {
-        let config = getConfig(process.env.NODE_ENV || "development");
-        let api = await nearAPI.connect(Object.assign({
-          deps: { 
-            keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore()
-          }
-        }, config));
-        //console.log(api)
-        //let factoryAccount = await api.account("podilnik.testnet");
-        //console.log(await factory.getAccountDetails())
-        let wallet = new nearAPI.WalletConnection(api);
-        // console.log(wallet)
-        let factoryContract = new nearAPI.Contract(
-          wallet.account(), config.contractName, {
-            viewMethods: ['get_dao_list', 'get_dao_info'],
-            changeMethods: ['create'],
-          }
-        )
-        console.log(factoryContract)
-        commit('setState', {config: config, api: api, wallet: wallet, factoryContract: factoryContract})
+        const config = getConfig(process.env.NODE_ENV || "development");
+        let service = new NearService(config)
+        await service.init()
+        //console.log(service)
+        commit('setState', {service: service})
     }
 }
 
 // mutations
 const mutations = {
   setState(state, payload) {
-    state.config = payload.config
-    state.api = payload.api
-    state.wallet = payload.wallet
-    state.factoryContract = payload.factoryContract
+    state.service = payload.service
   },
   signIn(state) {
-    state.wallet.requestSignIn(
-        state.config.contractName,
-        'NEAR DAO'
-    )
+    state.service.signIn()
   },
   signOut(state) {
-    state.wallet.signOut()
+    state.service.signOut()
   },
 }
 

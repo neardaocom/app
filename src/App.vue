@@ -36,4 +36,47 @@ body {
   max-width: 1140px;
 }
 
+.skeleton {
+  display: inline-block;
+  background-color: #b0c0c7;
+  animation-name: shine;
+  animation-duration: 2.4s;
+  animation-iteration-count: infinite;
+}
+
+.skeleton-text {
+  height: 16px;
+  margin-bottom: 5px;
+}
+
+.skeleton-h1 {
+  height: 48px;
+  margin-bottom: 5px;
+}
+
+.skeleton-h2 {
+  height: 36px;
+  margin-bottom: 5px;
+}
+
+.skeleton-avatar {
+  float: left;
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  margin-bottom: 5px;
+}
+
+@keyframes shine {
+  0% { 
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 </style>
