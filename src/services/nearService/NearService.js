@@ -10,8 +10,9 @@ import { toNanoseconds } from '@/utils/date';
 
 import Decimal from 'decimal.js';
 
-import { yoktoNear, TGas } from './constants';
+import { yoctoNear, TGas } from './constants';
 import { ContractPool } from './ContractPool';
+import { getPublicSalePercent } from './utils';
 
 
 
@@ -174,7 +175,7 @@ class NearService {
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
     const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoktoNear).toFixed();
+    const amountYokto = amount.mul(yoctoNear).toFixed();
 
     return this.factoryContract.create(
       {
@@ -200,19 +201,28 @@ class NearService {
     , tags
     , transactions
     , amountToTransfer
+    , accountId
   ) {
     const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoktoNear).toFixed();
+    const amountYokto = amount.mul(yoctoNear).toFixed();
 
+    //console.log(contractId)
+    //console.log(description)
+    //console.log(tags)
+    //console.log(transactions)
+    //console.log(amountToTransfer)
+    //console.log(accountId)
+    //return;
     return this.contractPool.get(contractId).add_proposal(
       {
         proposal_input: {
           description: description,
           tags: tags,
           transaction: transactions
-        }
+        },
+        account_id: accountId
       },
-      Decimal.mul(30, TGas).toString(),
+      Decimal.mul(100, TGas).toString(),
       amountYokto.toString()
     );
   }
@@ -231,7 +241,8 @@ class NearService {
         vote_kind: vote,
         account_id: this.walletConnection.getAccountId()
       },
-      Decimal.mul(30, TGas).toString()
+      Decimal.mul(10, TGas).toString(),
+      new Decimal(1).mul(yoctoNear).toFixed()
     );
   }
 
@@ -246,7 +257,8 @@ class NearService {
       {
         proposal_id: proposalId,
         account_id: this.walletConnection.getAccountId()
-      }
+      },
+      Decimal.mul(100, TGas).toString()
     );
   }
 
@@ -261,68 +273,92 @@ class NearService {
 
   async getDaoById(daoAccount) {
     const daoId = daoAccount.split('.').at(0)
-    const daoDetails = await Promise.all([
+    const data = await Promise.all([
       this.getDaoAmount(daoAccount),
       this.getDaoInfo(daoId),
+      this.getStatisticsMembers(daoAccount),
+      this.getStatisticsFt(daoAccount),
+      this.getProposals(daoAccount, 0, 1000),
       //this.getBond(daoId),
       //this.getPurpose(daoId),
       //this.getVotePeriod(daoId),
       //this.getNumProposals(daoId),
       //this.getCouncil(daoId),
-    ]).catch(() => null);
+    ]).catch((e) => {
+      console.log(e)
+    });
 
-    //id: daoId,
-    //amount: ,
-    //bond: daoDetails[1],
-    //purpose: daoDetails[2],
-    //votePeriod: daoDetails[3],
-    //numberOfProposals: daoDetails[4],
-    //numberOfMembers: daoDetails[5].length,
-    //members: daoDetails[5],
+    console.log(data)
 
-    if (daoDetails !== null) {
+    const amount = new Decimal(data[0]).toNumber()
+    const ft_total_released = new Decimal(data[3].total_released);
+    const ft_free_released = new Decimal(data[3].free);
+    const ft_shared = ft_total_released.minus(data[3].free);
+    const ft_insiders_shared = new Decimal(data[3].insiders_ft_shared)
+    const ft_community_shared = new Decimal(data[3].community_ft_shared)
+    const ft_foundation_shared = new Decimal(data[3].foundation_ft_shared)
+    const ft_public_sale_shared = ft_shared.minus(ft_insiders_shared).minus(ft_community_shared).minus(ft_foundation_shared)
+
+    // token state
+    const members = data[2].insiders.concat(data[2].community, data[2].foundation)
+    let member_promises = []
+    members.forEach(accountId => {
+      member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
+    });
+    console.log(member_promises)
+    const balances = await Promise.all(member_promises).catch((e) => {
+      console.log(e)
+    });
+    let token_account = {}
+    members.forEach((accountId, index) => {
+      token_account[accountId] = new Decimal(balances[index]).toNumber()
+    });
+    //console.log(token_account)
+
+    if (data !== null) {
       return {
         id: daoId,
-        name: daoDetails[1].name,
+        name: data[1].name,
         about: null,
-        description: daoDetails[1].description,
+        description: data[1].description,
         wallet: daoAccount,
         address: null,
         domain: null,
         web: null,
-        token: daoDetails[1].ft_amount,
-        token_name: daoDetails[1].ft_name,
+        token: data[1].ft_amount,
+        token_name: data[1].ft_name,
         token_unlocked: {
-          council: 30,
-          community: 10,
-          investor: 50,
-          public_sale: 0
+          council: ft_insiders_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          community: ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          investor: ft_foundation_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          public_sale: ft_public_sale_shared.dividedBy(ft_shared).times(100).round().toNumber()
         },
+        token_released: ft_total_released.toNumber(),
+        token_free: ft_free_released.toNumber(),
+        token_holders: token_account,
         groups: {
           council: {
-            amount: 40,
-            wallets: [
-              'petrfilla.near', 'chaplin.near', 'petrstudynka.near', 'jansladky.near'
-            ]
+            amount: data[2].insiders_share_percent,
+            wallets: data[2].insiders
           },
           community: {
-            amount: 20,
-            wallets: []
+            amount: data[2].community_share_percent,
+            wallets: data[2].community
           },
           investor: {
-            amount: 15,
-            wallets: []
+            amount: data[2].foundation_share_percent,
+            wallets: data[2].foundation
           },
           public_sale: {
-            amount: 25,
+            amount: getPublicSalePercent(data[2].insiders_share_percent, data[2].community_share_percent, data[2].foundation_share_percent),
             wallets: []
           },
         },
         tags: [
-          daoDetails[1].tags
+          data[1].tags[0]
         ],
         treasury: {
-          near: daoDetails[0],
+          near: amount,
           w_delta: null,
           currency: 'czk',
           currency_amount: null
@@ -334,7 +370,8 @@ class NearService {
           btc: null,
           currency: 'czk',
           currency_amount: null
-        }
+        },
+        proposals: data[4]
       };
     }
 
@@ -345,14 +382,35 @@ class NearService {
     const state = await this.getDaoState(contractId);
     const amountYokto = new Decimal(state.amount);
 
-    return amountYokto.div(yoktoNear).toFixed(2);
+    return amountYokto.div(yoctoNear).toFixed(2);
+  }
+
+  async getStatisticsMembers(contractId) {
+    return this.contractPool.get(contractId).statistics_members();
+  }
+
+  async getStatisticsFt(contractId) {
+    return this.contractPool.get(contractId).statistics_ft();
+  }
+
+  async getProposals(contractId, fromIndex, limit) {
+    return this.contractPool.get(contractId).proposals({
+      from_index: fromIndex ?? 0,
+      limit: limit ?? 1000
+    });
+  }
+
+  async getFtBalanceOf(contractId, accountId) {
+    return this.contractPool.get(contractId).ft_balance_of({
+      account_id: accountId
+    });
   }
 
   /*
   async getBond(contractId): Promise<string> {
     const bond = await this.contractPool.get(contractId).get_bond();
 
-    return new Decimal(bond.toString()).div(yoktoNear).toString();
+    return new Decimal(bond.toString()).div(yoctoNear).toString();
   }
 
   async getVotePeriod(contractId): Promise<string> {

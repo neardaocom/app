@@ -19,6 +19,7 @@
   "wallet": "Peněženka",
   "marks": "Značky",
   "market": "Burza",
+  "note": "Poznámka",
   "treasury": "Pokladna",
   "toggle_navigation": "Přepínání navigace",
   "products": "Produkty",
@@ -37,10 +38,10 @@
   "vote_type_yes": "ANO",
   "vote_type_no": "NE",
   "vote_type_spam": "SPAM",
-  "vote_state_accepted": "Schváleno",
-  "vote_state_rejected": "Zamítnuto",
-  "vote_state_spam": "SPAM",
-  "vote_state_invalid": "Neplatný",
+  "vote_status_accepted": "Schváleno",
+  "vote_status_rejected": "Zamítnuto",
+  "vote_status_spam": "SPAM",
+  "vote_status_invalid": "Neplatný",
   "members": "Členové",
   "tokens": "Tokeny",
   "organization": "Organizace",
@@ -72,5 +73,7 @@
   "validator_invalid_near_root_account": "Nevalidní NEAR hlavní účet",
   "validator_not_number": "Není číslo",
   "validator_min_number": "Nejmenší možné číslo je {min}",
-  "validator_max_number": "Největší možné číslo je {max}"
+  "validator_max_number": "Největší možné číslo je {max}",
+  "validator_min_length": "Minimální délka je {min}",
+  "validator_max_length": "Maximální délka je {max}"
 }

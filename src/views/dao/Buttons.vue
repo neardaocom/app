@@ -38,7 +38,7 @@
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" />
+    <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
 </template>
 
 <script>

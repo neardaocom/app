@@ -128,7 +128,7 @@
 
     import * as nearAPI from "near-api-js"
     import Decimal from 'decimal.js';
-    import {TGas, yoktoNear} from '@/services/nearService/constants.js'
+    import {TGas, yoctoNear} from '@/services/nearService/constants.js'
     import {toNanoseconds} from '@/utils/date.js'
 
 export default({
@@ -349,7 +349,7 @@ export default({
             let b = await this.factoryContract.create(
                 { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
                 Decimal.mul(300, TGas).toString(), // gas 300 TGas
-                Decimal.mul(10, yoktoNear).toString() // 10 NEAR
+                Decimal.mul(10, yoctoNear).toString() // 10 NEAR
             )
             console.log(b)
         

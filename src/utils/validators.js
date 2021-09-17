@@ -86,3 +86,19 @@ export const maxNumber = (value, max) => {
     }
     return validation;
 }
+
+export const minLength = (value, min) => {
+    let validation = successValidation()
+    if (value.length() < min) {
+        validation = errorValidation('min_length', {min: min})
+    }
+    return validation;
+}
+
+export const maxLength = (value, max) => {
+    let validation = successValidation()
+    if (value.length > max) {
+        validation = errorValidation('max_length', {max: max})
+    }
+    return validation;
+}

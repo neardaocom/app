@@ -10,7 +10,7 @@ const state = () => ({
 // getters
 const getters = {
     isSignedIn: (state) => {
-      return state.service.walletConnection.isSignedIn()
+      return state.service.walletConnection.isSignedIn() ?? false
     },
     getAccountId: (state) => {
       return state.service.walletConnection.getAccountId()
@@ -47,6 +47,9 @@ const actions = {
 const mutations = {
   setState(state, payload) {
     state.service = payload.service
+  },
+  setContract(state, contractId) {
+    state.service.contractPool.get(contractId)
   },
   signIn(state) {
     state.service.signIn()

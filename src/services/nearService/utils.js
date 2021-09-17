@@ -1,8 +1,13 @@
-import Decimal from 'decimal.js';
-import { Proposal, ProposalRaw, ProposalType } from 'types/proposal';
-import camelcaseKeys from 'camelcase-keys';
-import { convertDuration } from '../../utils';
-import { yoktoNear } from './constants';
+export const getPublicSalePercent = (council, community, investor) => {
+  return 100 - (council ?? 0) - (community ?? 0) - (investor ?? 0)
+}
+
+
+//import Decimal from 'decimal.js';
+//import { Proposal, ProposalRaw, ProposalType } from 'types/proposal';
+//import camelcaseKeys from 'camelcase-keys';
+//import { convertDuration } from '../../utils';
+//import { yoctoNear } from './constants';
 
 /*
 export const parseForumUrl = (url: string): string => {
@@ -55,7 +60,7 @@ export const mapProposalRawToProposal = (
       ...proposal,
       kind: {
         type: ProposalType.Payout,
-        amount: amountYokto.div(yoktoNear).toFixed(2),
+        amount: amountYokto.div(yoctoNear).toFixed(2),
       },
     };
   }

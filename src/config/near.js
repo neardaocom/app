@@ -18,6 +18,7 @@ function getConfig(env) {
     case 'testnet':
       return {
         networkId: 'testnet',
+        topLevelAccount: 'testnet',
         nodeUrl: 'https://rpc.testnet.near.org',
         name: NAME,
         contractName: CONTRACT_NAME + '.testnet',

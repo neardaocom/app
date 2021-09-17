@@ -62,7 +62,7 @@
         return this.$store.getters['near/getWalletUrl']
       },
       isAccountSigned() {
-        return this.$store.getters['near/isSignedIn'] || false
+        return this.$store.getters['near/isSignedIn']
       },
       contractName() {
         return process.env.VUE_APP_NEAR_CONTRACT_NAME

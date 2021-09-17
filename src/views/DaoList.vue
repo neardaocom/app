@@ -25,25 +25,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="dao in daos" :key="dao.id">
-                    <!-- <td><a @click="favorite_switch(dao.id)" class="">
-                        <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
-                        <i v-else class="far fa-star fa-xs pe-1" ></i>
-                      </a>
-                    </td>-->
-                    <td>{{ dao.id }}</td>
-                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao.wallet}}">{{ dao.name }}</router-link></td>
-                    <td class="text-start"><a class="text-reset font-weight-bold" :href="'https://explorer.near.org/accounts/' + dao.wallet">{{ dao.wallet }}</a></td>
-                    <td class="text-end">POD</td>
-                    <td class="fw-bold text-end text-primary">{{ n(1000000) }}</td>
-                  </tr>
                   <tr v-for="(dao, index) in list" :key="index">
                     <!-- <td><a @click="favorite_switch(dao.id)" class="">
                         <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
                         <i v-else class="far fa-star fa-xs pe-1" ></i>
                       </a>
                     </td>-->
-                    <td>{{ index + 2 }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + 'podilnik.testnet'}}">{{ dao[1].name }}</router-link></td>
                     <td class="text-start"><a class="text-reset font-weight-bold" :href="'https://explorer.near.org/accounts/' + dao[0] + '.' + 'podilnik.testnet'">{{ dao[0] + '.' + 'podilnik.testnet' }}</a></td>
                     <td class="text-end">{{ dao[1].ft_name }}</td>

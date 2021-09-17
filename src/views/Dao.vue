@@ -9,12 +9,12 @@
         <Breadcrumb :account="q_id" :list-router="'daos'" :list-name="'organizations'"/>
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
-        <Dashboard v-if="loaded" :dao="dao_data"/>
+        <Dashboard v-if="loaded === true" :dao="dao"/>
         <DashboardSkeleton v-else />
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao_data"/>
+        <Buttons v-if="loaded" :dao="dao"/>
         <ButtonsSkeleton v-else />
         <!-- /Buttons -->
       </div>
@@ -99,6 +99,7 @@ export default {
     } else {
       this.q_id = process.env.VUE_APP_DAO_DEFAULT
     }
+    this.$store.commit('near/setContract', this.q_id)
 
     // page
     if (this.$route.query.page !== undefined) {
@@ -112,10 +113,6 @@ export default {
     this.dao.wallet = this.q_id
   },
   computed: {
-    dao_favorites: function() {
-      return this.daos.map(dao => dao.id)
-      //this.data.map(tooth => this.parseMeasure(tooth.measure))
-    },
     wallet() {
       return this.$store.getters['near/getWallet']
     },
@@ -124,7 +121,8 @@ export default {
     },
   },
   mounted() {
-    //this.getState()
+    this.$store.commit('near/setContract', this.q_id)
+    this.getState()
     //this.proposals = await this.contract.proposals(0, 100);
     //this.statistics_ft = await this.contract.statistics_ft();
   },
@@ -133,10 +131,10 @@ export default {
       console.log('getState')
       this.nearService.getDaoById(this.q_id)
         .then(r => {
-          console.log('getState: ' + r)
+          console.log(r)
           //this.dao_state = r
           this.dao = r
-          //this.loaded = true
+          this.loaded = true
         })
         .catch((e) => {
           console.log(e)

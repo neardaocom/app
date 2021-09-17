@@ -11,7 +11,7 @@
     <div class="row">
       <div class="col-12 col-md-4">
         <ul class="list-unstyled text-muted">
-          <li>
+          <li v-if="dao.address">
             <i class="fas fa-home fa-fw me-3 mb-3"></i>
             <a class="text-reset font-weight-bold" href="">{{ dao.address }}</a>
           </li>
@@ -23,7 +23,7 @@
               >{{ t("default.wallet") }}</a
             >
           </li>
-          <li>
+          <li v-if="dao.web">
             <i class="fas fa-globe fa-fw me-3 mb-3"></i
             ><a class="text-reset font-weight-bold" :href="dao.web">{{ dao.domain }}</a>
           </li>
