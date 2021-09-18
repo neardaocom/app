@@ -67,52 +67,35 @@
                                 </div>
                             </div>
 
+                            <!-- error message for shares -->
+                            <div ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
 
                             <!-- ftInsiderShare -->
                             <div class="row mb-4">
-                                <MDBRange wrapperClass="col-md-6" :label="t('default.dao_ft_insider_share')" v-model="ftInsiderShare" disabled :min="0" :max="100" />
-                                <label class="form-label col-md-6">{{ ftInsiderShare }}%</label>
-                                <div class="col text-danger" style="font-size:0.875rem">{{this.errors.ftShares}}</div>
+                                <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_ft_insider_share')" v-model="ftInsiderShare" disabled :min="0" :max="100" />
+                                <label class="form-label col-md-6 col-3">{{ ftInsiderShare }}%</label>
                             </div>
 
                             <!-- ftFundationShare -->
-                            <MDBSwitch :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/> <!-- @change="addFtFundationShar" -->
-                            <div  ref="refFtFundationShare" class="row invisible">
-                                <MDBRange wrapperClass="col-md-6" @change="validateFfShares" v-model="ftFundationShare" :min="0" :max="100" />
-                                <label class="form-label col-md-6">{{ ftFundationShare }}%</label>
+                            <MDBSwitch :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
+                            <div  ref="refFtFundationShare" class="row mb-1 invisible">
+                                <MDBRange wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
+                                <label class="form-label col-md-6 col-3">{{ ftFundationShare }}%</label>
                             </div>
 
                             <!-- ftCommunityShare -->
                             <MDBSwitch :label="t('default.add_ft_community_share')" v-model="addFtCommunityShare"/>
-                            <div  ref="refFtCommunityShare" class="row invisible">
-                                <MDBRange wrapperClass="col-md-6" @change="validateFfShares" v-model="ftCommunityShare" :min="0" :max="100" />
-                                <label class="form-label col-md-6">{{ ftCommunityShare }}%</label>
+                            <div  ref="refFtCommunityShare" class="row mb-1 invisible">
+                                <MDBRange wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
+                                <label class="form-label col-md-6 col-3">{{ ftCommunityShare }}%</label>
                             </div>
 
                             <!-- ftPublicShare -->
                             <MDBSwitch :label="t('default.add_ft_public_share')" v-model="addFtPublicShare"/>
-                            <div  ref="refFtPublicShare" class="row invisible">
-                                <MDBRange wrapperClass="col-md-6" @change="validateFfShares" v-model="ftPublicShare" :min="0" :max="100" />
-                                <label class="form-label col-md-6">{{ ftPublicShare }}%</label>
+                            <div  ref="refFtPublicShare" class="row mb-1 invisible">
+                                <MDBRange wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
+                                <label class="form-label col-md-6 col-3">{{ ftPublicShare }}%</label> 
                             </div>
-                            
-
-                             <!-- ftInsiderShare
-                            <label for="ft-insider-share" class="form-label">{{ t('default.dao_ft_insider_share') }}</label>
-                            <MDBInput class="mb-3" id="ft-insider-share" @keyup="validateFfShares('ftInsiderShare', $event)" @blur="validateFfShares('ftInsiderShare', $event)"  v-model.number="ftInsiderShare" :isValid="!errors.ftInsiderShare" :isValidated="isValidated.ftInsiderShare" :invalidFeedback="errors.ftInsiderShare" type="number"/>
-
-                            ftFundationShare 
-                            <label for="ft-fundation-share" class="form-label">{{ t('default.dao_ft_fundation_share') }}</label>
-                            <MDBInput class="mb-3" id="ft-fundation-share" @keyup="validateFfShares('ftFundationShare', $event)" @blur="validateFfShares('ftFundationShare', $event)"  v-model.number="ftFundationShare" :isValid="!errors.ftFundationShare" :isValidated="isValidated.ftFundationShare" :invalidFeedback="errors.ftFundationShare" type="number"/>
-
-                            ftCommunityShare 
-                            <label for="ft-community-share" class="form-label">{{ t('default.dao_ft_community_share') }}</label>
-                            <MDBInput class="mb-3" id="ft-community-share" @keyup="validateFfShares('ftCommunityShare', $event)" @blur="validateFfShares('ftCommunityShare', $event)"  v-model.number="ftCommunityShare" :isValid="!errors.ftCommunityShare" :isValidated="isValidated.ftCommunityShare" :invalidFeedback="errors.ftCommunityShare" type="number"/>
-
-                            ftPublicShare 
-                            <label for="ft-public-share" class="form-label">{{ t('default.dao_ft_public_share') }}</label>
-                            <MDBInput id="ft-public-share" @keyup="validateFfShares('ftPublicShare', $event)" @blur="validateFfShares('ftPublicShare', $event)"  v-model.number="ftPublicShare" :isValid="!errors.ftPublicShare" :isValidated="isValidated.ftPublicShare" :invalidFeedback="errors.ftPublicShare" type="number" wrapperClass="mb-8"/>
-                            -->
 
                         </MDBStepperContent>
                     </MDBStepperStep>
@@ -122,42 +105,36 @@
                         </MDBStepperHead>
                             <MDBStepperContent>
 
-                                
-                                <div class = "row">
-                                    <div class="col-md-6">
-                                        <!-- voteQuorum -->
-                                        <label for="dao-vote-quorum" class="form-label">{{ t('default.dao_vote_quorum') }}</label>
-                                        <MDBInput wrapperClass="mb-4" id="dao-vote-quorum" @keyup="validateVoteQuorum" @blur="validateVoteQuorum"  v-model.number="voteQuorum" :isValid="!errors.voteQuorum" :isValidated="isValidated.voteQuorum" :invalidFeedback="errors.voteQuorum" type="number"/>
-                                    </div>
+                                <!-- voteQuorum -->
+                                <div class="row mb-4">
+                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_quorum')" v-model="voteQuorum" :min="1" :max="100" />
+                                    <label class="form-label col-md-6 col-3">{{ voteQuorum }}</label>
+                                </div>
+
                                 <!-- voteApproveThreshold -->
-                                    <div class="col-md-6">
-                                        <label for="dao-vote-approve-threshold" class="form-label">{{ t('default.dao_vote_approve_threshold') }}</label>
-                                        <MDBInput wrapperClass="mb-4" id="dao-vote-approve-threshold" @keyup="validateVoteApproveThreshold" @blur="validateVoteApproveThreshold"  v-model.number="voteApproveThreshold" :isValid="!errors.voteApproveThreshold" :isValidated="isValidated.voteApproveThreshold" :invalidFeedback="errors.voteApproveThreshold" type="number"/>
-                                    </div>
+                                <div class="row mb-4">
+                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_approve_threshold')" v-model="voteApproveThreshold" :min="1" :max="100" />
+                                    <label class="form-label col-md-6 col-3">{{ voteApproveThreshold }}</label>
                                 </div>
-                                
-                                <div class = "row">
-                                    <!-- voteDurationDays -->
-                                    <div class="col-md-6">
-                                        <label for="dao-vote-duration-days" class="form-label">{{ t('default.dao_vote_duration_days') }}</label>
-                                        <MDBInput wrapperClass="mb-4" id="dao-vote-duration-days" @keyup="validateVoteDurationDays" @blur="validateVoteDurationDays"  v-model.number="voteDurationDays" :isValid="!errors.voteDurationDays" :isValidated="isValidated.voteDurationDays" :invalidFeedback="errors.voteDurationDays" type="number"/>
-                                    </div>
-                                    <!-- voteDurationHours -->
-                                    <div class="col-md-6">
-                                        <label for="dao-vote-duration-hours" class="form-label">{{ t('default.dao_vote_duration_hours') }}</label>
-                                        <MDBInput wrapperClass="mb-4" id="dao-vote-duration-hours" @keyup="validateVoteDurationHours" @blur="validateVoteDurationHours"  v-model.number="voteDurationHours" :isValid="!errors.voteDurationHours" :isValidated="isValidated.voteDurationHours" :invalidFeedback="errors.voteDurationHours" type="number"/>
-                                    </div>
 
+                                <!-- voteDurationDays -->
+                                <div class="row mb-4">
+                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_days')" v-model="voteDurationDays" :min="0" :max="31" />
+                                    <label class="form-label col-md-6 col-3">{{ voteDurationDays }} </label>
                                 </div>
-                                
 
-                                <div class = "row">
-                                    <!-- voteSpamThreshold -->
-                                    <div class="col-md-6">
-                                        <label for="dao-vote-spam-threshold" class="form-label">{{ t('default.dao_vote_spam_threshold') }}</label>
-                                        <MDBInput wrapperClass="mb-4" id="dao-vote-spam-threshold" @keyup="validateVoteSpamThreshold" @blur="validateVoteSpamThreshold"  v-model.number="voteSpamThreshold" :isValid="!errors.voteSpamThreshold" :isValidated="isValidated.voteSpamThreshold" :invalidFeedback="errors.voteSpamThreshold" type="number"/>
-                                    </div>
-                                </div>    
+                                <!-- voteDurationHours -->
+                                <div class="row mb-4">
+                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="voteDurationHours" :min="0" :max="23" />
+                                    <label class="form-label col-md-6 col-3">{{ voteDurationHours }}h</label>
+                                </div>
+
+
+                                 <!-- voteSpamThreshold -->
+                                <div class="row mb-4">
+                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_spam_threshold')" v-model="voteSpamThreshold" :min="1" :max="100" />
+                                    <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}</label>
+                                </div>
 
                                 <!-- voteOnlyOnce-->
                                 <MDBSwitch wrapperClass="mb-2" :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce"/>
@@ -169,7 +146,8 @@
             </div>
         </section>
     </main>
-
+    <MDBAlert v-model="fieldErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
+    <MDBAlert v-model="createDaoErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
   <Footer></Footer>
 </template>
 
@@ -178,14 +156,18 @@
 <script>
     import Header from '@/views/layout/Header.vue'
     import Footer from '@/views/layout/Footer.vue'
-    import { useI18n } from 'vue-i18n';
-    import { ref } from 'vue';
-    import createDaoFormValidation from "@/createDaoFormValidation";
+    import { useI18n } from 'vue-i18n'
+    import { ref } from 'vue'
+    import { reactive } from "@vue/reactivity"
+    import {
+        requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
+        isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
+    } from '@/utils/validators'
     import {
         MDBInput, MDBTextarea,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange
+        MDBRange, MDBAlert
     } from 'mdb-vue-ui-kit';
 
     import * as nearAPI from "near-api-js"
@@ -197,7 +179,7 @@ export default({
         MDBInput, MDBTextarea,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange
+        MDBRange, MDBAlert
     },
 
     setup() {
@@ -243,10 +225,6 @@ export default({
             ftAmount: false,
             ftIIDistribution: false,
             ftShares: false,
-            //ftInsiderShare: false,
-            //ftFundationShare: false,
-            //ftCommunityShare: false,
-            //ftPublicShare: false,
             voteSpamThreshold: false,
             voteDurationDays: false,
             voteDurationHours: false,
@@ -255,20 +233,18 @@ export default({
             voteOnlyOnce: false
         })
 
-        const {errors, validateAccountField, validateNameField,
-            validateDescriptionField, validateCouncilField, validateFtNameField, validateFtAmountField,
-            validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether,
-            validateVoteSpamThresholdField, validateVoteDurationDaysField, validateVoteDurationHoursField,
-            validateVoteQuorumField, validateVoteApproveThresholdField} = createDaoFormValidation()
-
+        const errors = reactive({})
+        const fieldErrorAlert = ref(false);
+        const createDaoErrorAlert = ref(false);
+        
         return{
            t, exampleModal, account, name, 
            description, ftName, ftAmount, ftInsiderInitDistribution, 
            ftInsiderShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
-           voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, voteApproveThreshold, voteOnlyOnce,
-           council, councilString, addFtFundationShare,addFtCommunityShare, addFtPublicShare, isValidated, errors,  validateAccountField, validateNameField, validateDescriptionField, validateCouncilField,
-           validateFtNameField, validateFtAmountField, validateFtIIDistributionField, validateFfSharesFields, validateFfSharesFieldsTogether, validateVoteSpamThresholdField,
-           validateVoteDurationDaysField, validateVoteDurationHoursField, validateVoteQuorumField, validateVoteApproveThresholdField, contract
+           voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
+           voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
+           addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
+           createDaoErrorAlert, contract
         } 
         
     },
@@ -279,188 +255,339 @@ export default({
             if (newValue === false ){
                 this.ftFundationShare = 0
             }
-            this.validateFfShares()
+            this.validateFtShares()
         },
         addFtCommunityShare(newValue) {
             this.$refs.refFtCommunityShare.classList.toggle('invisible')
             if (newValue === false ){
                 this.ftCommunityShare = 0
             }
-            this.validateFfShares()
+            this.validateFtShares()
         },
         addFtPublicShare(newValue) {
             this.$refs.refFtPublicShare.classList.toggle('invisible')
             if (newValue === false ){
                 this.ftPublicShare = 0
             }
-            this.validateFfShares()
+            this.validateFtShares()
         },
 
-        /*ftFundationShare(){
-            this.validateFfShares()
-        }*/
+        ftFundationShare(){
+            this.validateFtShares()
+        },
+        ftCommunityShare(){
+            this.validateFtShares()
+        },
+        ftPublicShare(){
+            this.validateFtShares()
+        }
     },
     
     methods:{
-
-        /*addFtFundationShar(newValue) {
-            console.log(this.addFtFundationShare)
-            this.$refs.refFtFundationShare.classList.toggle('invisible')
-            if (newValue.value === false ){
-                this.ftFundationShare = 0
-            }
-        },*/
         validateAccount(){
-            this.validateAccountField("account", this.account)
+            const field = "account"
+            const required = requiredValidator(this.account)
+            const rootAccount = nearRootAccountValidator(this.account)
+            if (required.valid === false) {
+                this.errors[field] = this.t('default.' + required.message, required.params)
+            } else if (rootAccount.valid === false) {
+                this.errors[field] = this.t('default.' + rootAccount.message, rootAccount.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.account = true
         },
 
-        validateName(){
-            this.validateNameField("name", this.name)
+        validateName(){ //TODO
+            const field = "name"
+            const required = requiredValidator(this.name)
+            const minLengthVal = minLength(this.name, 3)
+            const maxLengthVal = maxLength(this.name, 64)
+            if (required.valid === false) {
+                this.errors[field] = this.t('default.' + required.message, required.params)
+            } else if (minLengthVal.valid === false) {
+                this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
+            } else if (maxLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+            }else {
+                this.errors[field] = null
+            }
             this.isValidated.name = true
         },
 
         validateDescription(){
-            this.validateDescriptionField("description", this.description)
+            const field = "description"
+            const maxLengthVal = maxLength(this.name, 3000)
+            if (maxLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+            }else{
+                this.errors[field] = null
+            }
             this.isValidated.description = true
         },
 
-        validateCouncil(){ // TODO
-            this.validateCouncilField("council", this.councilString)
+        validateCouncil(){
+            const field = "council"
+            const councilArray = this.councilString.split(",").map(s => s.trim())
+            let councilAccountVal = true
+            councilArray.forEach(council => {      
+                councilAccountVal = councilAccountValidator(council)      
+            })
+            if (councilAccountVal.valid === false){
+                this.errors[field] = this.t('default.' + councilAccountVal.message, councilAccountVal.params)
+            }else{
+                this.errors[field] = null
+            }
+
             this.isValidated.council = true
-            if(!this.errors.council){
+            if(!this.errors[field]){
                 this.council = this.councilString.split(",").map(s => s.trim())
             }
         },
 
         validateFtName(){ // TODO
-            this.validateFtNameField("ftName", this.ftName)
+            const field = "ftName"
+            const required = requiredValidator(this.ftName)
+            const minLengthVal = minLength(this.ftName, 3)
+            const maxLengthVal = maxLength(this.ftName, 64)
+            const alphaUpper = isAlphanumericUpperecase(this.ftName)
+            if (required.valid === false){
+                this.errors[field] = this.t('default.' + required.message, required.params)
+            }else if( minLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
+            }else if( maxLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+            }else if(alphaUpper.valid === false){
+                this.errors[field] = this.t('default.' + alphaUpper.message, alphaUpper.params)
+            }else{
+                this.errors[field] = null
+            }
             this.isValidated.ftName = true
         },
 
         validateFtAmount(){
-            this.validateFtAmountField("ftAmount", this.ftAmount)
-            this.validateFtIIDistributionField("ftIIDistribution", this.ftInsiderInitDistribution, this.ftAmount)
+            const field = "ftAmount"
+            const requiredVal = requiredValidator(this.ftAmount)
+            const isNumberVal = isNumber(this.ftAmount)
+            const minNumberVal = minNumber(this.ftAmount, 1.0)
+            const maxNumberVal = maxNumber(this.ftAmount, 1_000_000_000.0)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            }else if (minNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
+            } else if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            } else {
+                this.errors[field] = null
+            }
+            this.validateFtIIDistribution(false)
             this.isValidated.ftAmount = true
         },
 
-        validateFtIIDistribution(){
-            this.validateFtIIDistributionField("ftIIDistribution", this.ftInsiderInitDistribution, this.ftAmount)
-            this.isValidated.ftIIDistribution = true
-        },
-
-        validateFfShares(){
-            this.ftInsiderShare = 100 - (this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare)
-            this.validateFfSharesFieldsTogether(["ftShares"], this.ftInsiderShare, this.ftFundationShare, this.ftCommunityShare, this.ftPublicShare)
-        },
-
-        /*validateFfShares(fieldName, event){
-            this.validateFfSharesTogether()
-            if (!this.errors[fieldName]){
-                this.validateFfSharesFields(fieldName, event.target.value)
-                this.isValidated[fieldName] = true
+        validateFtIIDistribution(isValidated = true){
+            const field = "ftIIDistribution"
+            const requiredVal = requiredValidator(this.ftInsiderInitDistribution)
+            const isNumberVal = isNumber(this.ftInsiderInitDistribution)
+            const maxNumberVal = maxNumber(this.ftInsiderInitDistribution, this.ftAmount)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            } else {
+                this.errors[field] = null
+            }
+            if(isValidated){
+                this.isValidated.ftIIDistribution = true
             }
         },
 
-        validateFfSharesTogether(){
-            this.ftPublicShare = 100 - (this.ftInsiderShare + this.ftFundationShare + this.ftCommunityShare)
-            if (this.ftPublicShare < 0) {
-                this.ftPublicShare = 0
+        validateFtShares(){
+            const field = "ftShares"
+            const maxNumberVal = sharesValidator(this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare)
+            if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+                this.$refs.refFtShares.classList.remove('invisible')
+            } else {
+                this.errors[field] = null
+                this.$refs.refFtShares.classList.add('invisible')
             }
-            this.validateFfSharesFieldsTogether(["ftInsiderShare", "ftFundationShare", "ftCommunityShare", "ftPublicShare"], this.ftInsiderShare, this.ftFundationShare, this.ftCommunityShare, this.ftPublicShare)
-            this.isValidated.ftInsiderShare = true
-            this.isValidated.ftFundationShare = true
-            this.isValidated.ftCommunityShare = true
-            this.isValidated.ftPublicShare = true
-        },*/
+            const sum = this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare
+            if (sum > 100){
+                this.ftInsiderShare = 0
+            }else{
+                this.ftInsiderShare = 100 - sum
+            }
+        },
 
         validateVoteSpamThreshold(){
-            this.validateVoteSpamThresholdField("voteSpamThreshold", this.voteSpamThreshold, 100)
+            const field = "voteSpamThreshold"
+            const requiredVal = requiredValidator(this.voteSpamThreshold)
+            const isNumberVal = isNumber(this.voteSpamThreshold)
+            const maxNumberVal = maxNumber(this.voteSpamThreshold, 100.0)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.voteSpamThreshold = true
         },
 
         validateVoteDurationDays(){
-            this.validateVoteDurationDaysField("voteDurationDays", this.voteDurationDays)
+            const field = "voteDurationDays"
+            const requiredVal = requiredValidator(this.voteDurationDays)
+            const isNumberVal = isNumber(this.voteDurationDays)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.voteDurationDays = true
         },
 
         validateVoteDurationHours(){
-            this.validateVoteDurationHoursField("voteDurationHours", this.voteDurationHours)
+            const field = "voteDurationHours"
+            const requiredVal = requiredValidator(this.voteDurationHours)
+            const isNumberVal = isNumber(this.voteDurationHours)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.voteDurationHours = true
         },
 
         validateVoteQuorum(){
-            this.validateVoteQuorumField("voteQuorum", this.voteQuorum, 100)
+            const field = "voteQuorum"
+            const requiredVal = requiredValidator(this.voteQuorum)
+            const isNumberVal = isNumber(this.voteQuorum)
+            const maxNumberVal = maxNumber(this.voteQuorum, 100.0)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.voteQuorum = true 
         },
 
         validateVoteApproveThreshold(){
-            this.validateVoteApproveThresholdField("voteApproveThreshold", this.voteApproveThreshold, 100)
+            const field = "voteApproveThreshold"
+            const requiredVal = requiredValidator(this.voteApproveThreshold)
+            const isNumberVal = isNumber(this.voteApproveThreshold)
+            const maxNumberVal = maxNumber(this.voteApproveThreshold, 100.0)
+            if (isNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            }else if (requiredVal.valid === false) {
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else if (maxNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            } else {
+                this.errors[field] = null
+            }
             this.isValidated.voteApproveThreshold = true
         },
 
-
+        validate(){
+            this.validateAccount()
+            this.validateName()
+            this.validateDescription()
+            this.validateCouncil()
+            this.validateFtName()
+            this.validateFtAmount()
+            this.validateFtIIDistribution()
+            this.validateFtShares()
+            this.validateVoteSpamThreshold()
+            this.validateVoteDurationDays()
+            this.validateVoteDurationHours()
+            this.validateVoteQuorum()
+            this.validateVoteApproveThreshold()
+        },
 
         async createDao(){
-            const accountId = this.account // + ".podilnik.testnet" // all
-            console.log(accountId)
-            const publicKey = null
-            const info = {
-                name: this.name,
-                description: this.description,
-                ft_name: this.ftName,
-                ft_amount: this.ftAmount, // 1.. 1_000_000_000
-                tags: ['organization', 'dao']
-            }
-            console.log(info)
-
-            const args = {
-            //const args = Buffer.from(JSON.stringify({
-                name: this.name,
-                total_supply: this.ftAmount, // TODO: check 
-                init_distribution: this.ftInsiderInitDistribution,
-                ft_metadata: {
-                    spec: "ft-1.0.0",
-                    name: this.ftName,
-                    symbol: this.account.toUpperCase(),
-                    icon: null,
-                    reference: null,
-                    reference_hash: null,
-                    decimals: 0
-                },
-                config : {
-                    insiders_share: this.ftInsiderShare,
-                    fundation_share: this.ftFundationShare,
-                    community_share: this.ftCommunityShare,
+            this.validate()
+            if (isValid(this.errors) === false) {
+                this.fieldErrorAlert = true
+            }else{
+                const accountId = this.account // + ".podilnik.testnet" // all
+                console.log(accountId)
+                const publicKey = null
+                const info = {
+                    name: this.name,
                     description: this.description,
-                    vote_spam_threshold: this.voteSpamThreshold,
-                },
-                release_config: 'Voting',
-                vote_policy_configs : [
-                    {
-                        proposal_kind: 'Pay', // TODO: PStu fill in
-                        duration: ((this.voteDurationHours * 3_600) + (this.voteDurationDays * 3_600 * 24)) * Math.pow(10,9),
-                        quorum: this.voteQuorum,
-                        approve_threshold: this.voteApproveThreshold,
-                        vote_only_once: this.voteOnlyOnce,
-                        waiting_open_duration: 0
-                    }
-                ],
-                founders: this.council
-                //})).toString('base64')
+                    ft_name: this.ftName,
+                    ft_amount: this.ftAmount, // 1.. 1_000_000_000
+                    tags: ['organization', 'dao']
                 }
-           
-           
-            const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
-            let b = await this.factoryContract.create(
-                { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
-                "300000000000000", // gas 1000 TGas
-                "10000000000000000000000000" // 1 NEAR
-            )
-            console.log(b)
-        
+                console.log(info)
+
+                const args = {
+                //const args = Buffer.from(JSON.stringify({
+                    name: this.name,
+                    total_supply: this.ftAmount, // TODO: check 
+                    init_distribution: this.ftInsiderInitDistribution,
+                    ft_metadata: {
+                        spec: "ft-1.0.0",
+                        name: this.ftName,
+                        symbol: this.account.toUpperCase(),
+                        icon: null,
+                        reference: null,
+                        reference_hash: null,
+                        decimals: 0
+                    },
+                    config : {
+                        insiders_share: this.ftInsiderShare,
+                        fundation_share: this.ftFundationShare,
+                        community_share: this.ftCommunityShare,
+                        description: this.description,
+                        vote_spam_threshold: this.voteSpamThreshold,
+                    },
+                    release_config: 'Voting',
+                    vote_policy_configs : [
+                        {
+                            proposal_kind: 'Pay', // TODO: PStu fill in
+                            duration: ((this.voteDurationHours * 3_600) + (this.voteDurationDays * 3_600 * 24)) * Math.pow(10,9),
+                            quorum: this.voteQuorum,
+                            approve_threshold: this.voteApproveThreshold,
+                            vote_only_once: this.voteOnlyOnce,
+                            waiting_open_duration: 0
+                        }
+                    ],
+                    founders: this.council
+                    //})).toString('base64')
+                    }
             
-            console.log(accountId, publicKey, info, args)
+            
+                const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
+                let b = await this.factoryContract.create(
+                    { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
+                    "300000000000000", // gas 1000 TGas
+                    "10000000000000000000000000" // 1 NEAR
+                )
+                console.log(b)
+                console.log(accountId, publicKey, info, args)
+                
+                if(b === true){
+                    //this.$router.push({name: 'dao', params: {id: dao[0] + '.' + 'podilnik.testnet'})
+                }else{
+                    this.createDaoErrorAlert = true
+                }
+                
+            }
         },
     },
     computed: {

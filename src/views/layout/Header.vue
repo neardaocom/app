@@ -76,6 +76,10 @@
         logout() {
             console.log('logout')
             this.$store.commit('near/signOut')
+            
+            if (this.$route.name === "createDao"){
+              this.$router.push({name: 'landing-page'})
+            }
         }
     }
   };
