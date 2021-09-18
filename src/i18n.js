@@ -6,8 +6,7 @@ import { createI18n } from 'vue-i18n'
  * @returns array
  */
 function getSupportedLocales() {
-  //return process.env.VUE_APP_I18N_SUPPORTED.split(',')
-  return ['cs', 'en']
+  return process.env.VUE_APP_I18N_SUPPORTED.split(',')
 }
 
 /**

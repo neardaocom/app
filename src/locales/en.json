@@ -73,7 +73,13 @@
   "validator_at_least_characters": "At least {min} characters",
   "validator_maximum_characters": "Maximum {max} letters",
   "validator_invalid_near_root_account": "Invalid NEAR root Account",
+  "validator_invalid_council_account": "Invalid council Account",
+  "validator_alphanumeric_uppercase": "Only aplhanumeric and uppercase",
+  "validator_shares_sum": "Distributed more than 100% of all shares",
   "validator_not_number": "It's not number",
   "validator_min_number": "Minimum value is {min}",
-  "validator_max_number": "Miximum value is {max}"
+  "validator_max_number": "Miximum value is {max}",
+  "invalid_field_form" : "Some form fields contain invalid values",
+  "create_dao_failed" : "Something went wrong, Dao was not created"
+
 }

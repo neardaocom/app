@@ -62,6 +62,37 @@ export const nearRootAccountValidator = (value) => {
     return validation
 }
 
+export const councilAccountValidator = (value) => {
+    let validation = successValidation()
+    const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].near+$/
+    if (value.length < 2) {
+        validation = errorValidation('at_least_characters', { min: 2 })
+    } else if (value.length > 64) {
+        validation = errorValidation('maximum_characters', { max: 64 })
+    } else if (!re.test(value)) {
+        validation = errorValidation('invalid_council_account', {})
+    }
+
+    return validation
+}
+
+export const isAlphanumericUpperecase = (value) => {
+    let validation = successValidation()
+    let re = /^[A-Z0-9]+$/
+    if (!re.test(value)){
+        validation = errorValidation('alphanumeric_uppercase', {})
+    }
+    return validation
+} 
+
+export const sharesValidator = (value) => {
+    let validation = maxNumber(value, 100)
+    if(validation.valid === false){
+        validation = errorValidation('shares_sum', {})
+    }
+    return validation
+}
+
 export const isNumber = (value) => {
     let validation = successValidation()
     const re = /^\d+\.?\d*$/
@@ -83,6 +114,22 @@ export const maxNumber = (value, max) => {
     let validation = successValidation()
     if (value > max) {
         validation = errorValidation('max_number', {max: max})
+    }
+    return validation;
+}
+
+export const minLength = (value, min) => {
+    let validation = successValidation()
+    if (value.length < min) {
+        validation = errorValidation('at_least_characters', {min: min})
+    }
+    return validation;
+}
+
+export const maxLength = (value, max) => {
+    let validation = successValidation()
+    if (value.length > max) {
+        validation = errorValidation('maximum_characters', {max: max})
     }
     return validation;
 }
