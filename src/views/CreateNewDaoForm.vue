@@ -17,7 +17,7 @@
                                 <div class="col-md-6">
                                     <label for="dao-account" class="form-label">{{ t('default.account') }}</label>
                                     <MDBInput wrapperClass="mb-4" id="dao-account" @keyup="validateAccount" @blur="validateAccount" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account" :data-mdb-showcounter="true">
-                                        <span class="input-group-text" id="dao-account">.{{ envContactName }}.near</span>
+                                        <span class="input-group-text" id="dao-account">.{{ factoryAccount }}</span>
                                     </MDBInput>
                                 </div>
 
@@ -32,7 +32,7 @@
                             <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
                             <MDBTextarea  wrapperClass="mb-4" id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
                             
-                            <!-- Councils -->
+                            <!-- Councils -->0
                             <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
                             <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                         
@@ -108,13 +108,13 @@
                                 <!-- voteQuorum -->
                                 <div class="row mb-4">
                                     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_quorum')" v-model="voteQuorum" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteQuorum }}</label>
+                                    <label class="form-label col-md-6 col-3">{{ voteQuorum }}%</label>
                                 </div>
 
                                 <!-- voteApproveThreshold -->
                                 <div class="row mb-4">
                                     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_approve_threshold')" v-model="voteApproveThreshold" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteApproveThreshold }}</label>
+                                    <label class="form-label col-md-6 col-3">{{ voteApproveThreshold }}%</label>
                                 </div>
 
                                 <!-- voteDurationDays -->
@@ -133,7 +133,7 @@
                                  <!-- voteSpamThreshold -->
                                 <div class="row mb-4">
                                     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_spam_threshold')" v-model="voteSpamThreshold" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}</label>
+                                    <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}%</label>
                                 </div>
 
                                 <!-- voteOnlyOnce-->
@@ -170,9 +170,8 @@
         MDBRange, MDBAlert
     } from 'mdb-vue-ui-kit';
 
-    import * as nearAPI from "near-api-js"
-    import Decimal from 'decimal.js';
-    import {TGas, yoctoNear} from '@/services/nearService/constants.js'
+    //import Decimal from 'decimal.js';
+    //import {TGas, yoctoNear} from '@/services/nearService/constants.js'
     //import {toNanoseconds} from '@/utils/date.js'
 
 export default({
@@ -202,7 +201,7 @@ export default({
         // tokens
         const ftName = ref('')   // governance token 
         const ftAmount = ref(1_000_000) 
-        const ftInsiderInitDistribution = ref(0) // 0 ... ftAmount
+        const ftInsiderInitDistribution = ref(1) // 0 ... ftAmount
         const ftInsiderShare = ref(100) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
@@ -320,10 +319,13 @@ export default({
 
         validateDescription(){
             const field = "description"
-            const maxLengthVal = maxLength(this.name, 3000)
-            if (maxLengthVal.valid === false){
+            const minLengthVal = minLength(this.description, 1)
+            const maxLengthVal = maxLength(this.description, 3000)
+            if (minLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
+            } else if (maxLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
-            }else{
+            } else {
                 this.errors[field] = null
             }
             this.isValidated.description = true
@@ -333,8 +335,8 @@ export default({
             const field = "council"
             const councilArray = this.councilString.split(",").map(s => s.trim())
             let councilAccountVal = true
-            councilArray.forEach(council => {      
-                councilAccountVal = councilAccountValidator(council)      
+            councilArray.forEach(council => {
+                councilAccountVal = councilAccountValidator(council)
             })
             if (councilAccountVal.valid === false){
                 this.errors[field] = this.t('default.' + councilAccountVal.message, councilAccountVal.params)
@@ -393,11 +395,14 @@ export default({
             const field = "ftIIDistribution"
             const requiredVal = requiredValidator(this.ftInsiderInitDistribution)
             const isNumberVal = isNumber(this.ftInsiderInitDistribution)
+            const minNumberVal = minNumber(this.ftInsiderInitDistribution, 1)
             const maxNumberVal = maxNumber(this.ftInsiderInitDistribution, this.ftAmount)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
                 this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else if (minNumberVal.valid === false) {
+                this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
             } else if (maxNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
             } else {
@@ -526,70 +531,34 @@ export default({
             if (isValid(this.errors) === false) {
                 this.fieldErrorAlert = true
             }else{
-                const accountId = this.account // + ".podilnik.testnet" // all
-                console.log(accountId)
-                const publicKey = null
-                const info = {
-                    name: this.name,
-                    description: this.description,
-                    ft_name: this.ftName,
-                    ft_amount: this.ftAmount, // 1.. 1_000_000_000
-                    tags: ['organization', 'dao']
-                }
-                console.log(info)
-
-                const args = {
-                //const args = Buffer.from(JSON.stringify({
-                    name: this.name,
-                    total_supply: this.ftAmount, // TODO: check 
-                    init_distribution: this.ftInsiderInitDistribution,
-                    ft_metadata: {
-                        spec: "ft-1.0.0",
-                        name: this.ftName,
-                        symbol: this.account.toUpperCase(),
-                        icon: null,
-                        reference: null,
-                        reference_hash: null,
-                        decimals: 0
-                    },
-                    config : {
-                        insiders_share: this.ftInsiderShare,
-                        fundation_share: this.ftFundationShare,
-                        community_share: this.ftCommunityShare,
-                        description: this.description,
-                        vote_spam_threshold: this.voteSpamThreshold,
-                    },
-                    release_config: 'Voting',
-                    vote_policy_configs : [
-                        {
-                            proposal_kind: 'Pay', // TODO: PStu fill in
-                            duration: ((this.voteDurationHours * 3_600) + (this.voteDurationDays * 3_600 * 24)) * Math.pow(10,9),
-                            quorum: this.voteQuorum,
-                            approve_threshold: this.voteApproveThreshold,
-                            vote_only_once: this.voteOnlyOnce,
-                            waiting_open_duration: 0
-                        }
-                    ],
-                    founders: this.council
-                    //})).toString('base64')
-                    }
-           
-                const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
-                let b = await this.factoryContract.create(
-                    { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
-                    Decimal.mul(300, TGas).toString(), // gas 300 TGas
-                    Decimal.mul(10, yoctoNear).toString() // 10 NEAR
+                //const accountId = this.account // + ".podilnik.testnet" // all
+                let created = await this.nearService.createDao(
+                    this.account
+                    , null
+                    , this.name
+                    , this.description
+                    , ['organization', 'dao']
+                    , this.council // founders
+                    , this.ftName // ftName
+                    , this.ftAmount // ftAmount
+                    , this.ftInsiderInitDistribution // ftInsiderInitDistribution
+                    , this.ftInsiderShare // ftInsiderShare
+                    , this.ftFundationShare // ftFundationShare
+                    , this.ftCommunityShare // ftCommunityShare
+                    , this.voteSpamThreshold // voteSpamThreshold
+                    , this.voteDurationDays // voteDurationDays
+                    , this.voteDurationHours // voteDurationHours
+                    , this.voteQuorum // voteQuorum
+                    , this.voteApproveThreshold // voteApproveThreshold
+                    , this.voteOnlyOnce // voteOnlyOnce
+                    , 10 // amountToTransfer
                 )
-                console.log(b)
 
-                console.log(accountId, publicKey, info, args)
-                
-                if(b === true){
-                    //this.$router.push({name: 'dao', params: {id: dao[0] + '.' + 'podilnik.testnet'})
+                if(created === true){
+                    this.$router.push({name: 'dao', params: {id: (this.account + '.' + this.factoryAccount)}})
                 }else{
                     this.createDaoErrorAlert = true
                 }
-                
             }
         },
     },
@@ -597,8 +566,14 @@ export default({
         accountId(){
             return this.$store.getters['near/getAccountId']
         },
+        nearService(){
+            return this.$store.getters['near/getService']
+        },
         factoryContract() {
             return this.$store.getters['near/getFactoryContract']
+        },
+        factoryAccount() {
+            return this.$store.getters['near/getFactoryAccount']
         },
         apiKeyStore() {
             return this.$store.getters['near/getApiKeyStore']
@@ -612,9 +587,6 @@ export default({
     mounted() {
         this.council = [this.accountId]
         this.councilString = this.accountId
-        const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore()
-        const keyPair = keyStore.getKey('testnet', 'petrfilla.testnet')
-        console.log(keyPair.publicKey)
     },
 })
 

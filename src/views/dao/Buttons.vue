@@ -24,7 +24,7 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div class="col-12 col-lg-3">
+      <div v-if="canVote === true" class="col-12 col-lg-3">
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>-->
@@ -67,6 +67,14 @@ export default {
     return {
       t, modalPayout
     };
+  },
+  computed: {
+    accountId() {
+      return this.$store.getters['near/getAccountId']
+    },
+    canVote() {
+      return Object.keys(this.dao.token_holders).includes(this.accountId)
+    },
   },
   methods: {
     isActive(button_page) {

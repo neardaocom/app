@@ -11,6 +11,7 @@
   "currency_czk": "CZK",
   "description": "Description",
   "free": "Free",
+  "finalize": "Finalize",
   "investor": "Investor",
   "public_sale": "Public sale",
   "token_unlocked": "Unlocked tokens",
@@ -86,5 +87,4 @@
   "validator_max_number": "Miximum value is {max}",
   "invalid_field_form" : "Some form fields contain invalid values",
   "create_dao_failed" : "Something went wrong, Dao was not created"
-
 }

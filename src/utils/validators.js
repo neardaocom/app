@@ -64,7 +64,7 @@ export const nearRootAccountValidator = (value) => {
 
 export const councilAccountValidator = (value) => {
     let validation = successValidation()
-    const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].near+$/
+    const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].(near|testnet)+$/
     if (value.length < 2) {
         validation = errorValidation('at_least_characters', { min: 2 })
     } else if (value.length > 64) {

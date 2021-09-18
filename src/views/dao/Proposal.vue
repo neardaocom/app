@@ -31,7 +31,7 @@
         </li>
         <li>&nbsp;</li>
       </ul>
-      <div v-if="proposal.status === 'InProgress' && isOver() === false && isVoted() === false" class="btn-group" role="group">
+      <div v-if="canVote === true && proposal.status === 'InProgress' && isOver() === false && isVoted() === false" class="btn-group" role="group">
         <button @click="vote(1)" type="button" class="btn btn-primary">
           <i class="fas fa-check me-2"></i> {{ t('default.vote_type_yes') }}
         </button>
@@ -40,6 +40,11 @@
         </button>
         <button @click="vote(0)" type="button" class="btn btn-dark">
           <i class="fas fa-trash me-2"></i> {{ t('default.vote_type_spam') }}
+        </button>
+      </div>
+      <div v-else-if="canVote === true && isOver() === true" class="btn-group" role="group">
+        <button @click="finalize()" type="button" class="btn btn-primary">
+          <i class="fas fa-certificate me-2"></i> {{ t('default.finalize') }}
         </button>
       </div>
     </div>
@@ -127,6 +132,9 @@ export default {
           // {choice: this.choice(), percent: 20}
       ]
     },
+    canVote() {
+      return Object.keys(this.token_holders).includes(this.accountId)
+    },
     choice() {
       let kind_to_choice = ''
       switch (this.proposal.votes[this.accountId]) {
@@ -204,11 +212,8 @@ export default {
       }).catch((e) => {
           console.log(e)
       })
-    }
-  },
-  mounted() {
-    if (false) {
-    //if (this.isOver()) {
+    },
+    finalize() {
       this.nearService.finalize(
         this.contractId,
         this.proposalId
@@ -218,6 +223,8 @@ export default {
           console.log(e)
       })
     }
+  },
+  mounted() {
   }
 };
 </script>

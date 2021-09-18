@@ -123,7 +123,7 @@ class NearService {
     , voteDurationDays
     , voteDurationHours
     , voteQuorum
-    , voteApproveTreshhold
+    , voteApproveThreshold
     , voteOnlyOnce
     , amountToTransfer
   ) {
@@ -134,7 +134,7 @@ class NearService {
         ft_name: ftName,
         ft_amount: ftAmount
     };
-    // console.log(info)
+    console.log(info)
 
     const args = {
         name: name,
@@ -162,15 +162,38 @@ class NearService {
                 proposal_kind: 'Pay',
                 duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
                 quorum: voteQuorum,
-                approve_threshold: voteApproveTreshhold,
+                approve_threshold: voteApproveThreshold,
                 vote_only_once: voteOnlyOnce,
                 waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'AddMember',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'RemoveMember',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'RegularPayment',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
             }
         ],
         founders: founders
     }
-    // console.log(args)
-
+    console.log(args)
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
@@ -206,13 +229,6 @@ class NearService {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    //console.log(contractId)
-    //console.log(description)
-    //console.log(tags)
-    //console.log(transactions)
-    //console.log(amountToTransfer)
-    //console.log(accountId)
-    //return;
     return this.contractPool.get(contractId).add_proposal(
       {
         proposal_input: {
@@ -279,11 +295,6 @@ class NearService {
       this.getStatisticsMembers(daoAccount),
       this.getStatisticsFt(daoAccount),
       this.getProposals(daoAccount, 0, 1000),
-      //this.getBond(daoId),
-      //this.getPurpose(daoId),
-      //this.getVotePeriod(daoId),
-      //this.getNumProposals(daoId),
-      //this.getCouncil(daoId),
     ]).catch((e) => {
       console.log(e)
     });
