@@ -32,8 +32,8 @@
                       </a>
                     </td>-->
                     <td>{{ index + 1 }}</td>
-                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + 'podilnik.testnet'}}">{{ dao[1].name }}</router-link></td>
-                    <td class="text-start"><a class="text-reset font-weight-bold" :href="'https://explorer.near.org/accounts/' + dao[0] + '.' + 'podilnik.testnet'">{{ dao[0] + '.' + 'podilnik.testnet' }}</a></td>
+                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }}</router-link></td>
+                    <td class="text-start"><a class="text-reset font-weight-bold" :href="walletUrl + '/accounts/' + dao[0] + '.' + this.factoryAccount">{{ dao[0] + '.' + this.factoryAccount }}</a></td>
                     <td class="text-end">{{ dao[1].ft_name }}</td>
                     <td class="fw-bold text-end text-primary">{{ n(dao[1].ft_amount) }}</td>
                   </tr>
@@ -78,7 +78,13 @@ export default {
   computed: {
     nearService() {
       return this.$store.getters['near/getService']
-    }
+    },
+    factoryAccount() {
+        return this.$store.getters['near/getFactoryAccount']
+    },
+    walletUrl() {
+        return this.$store.getters['near/getWalletUrl']
+    },
   },
   mounted() {
     this.loadingProgress = getRandom(5, 15)
