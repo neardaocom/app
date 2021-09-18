@@ -171,6 +171,9 @@
     } from 'mdb-vue-ui-kit';
 
     import * as nearAPI from "near-api-js"
+    import Decimal from 'decimal.js';
+    import {TGas, yoctoNear} from '@/services/nearService/constants.js'
+    //import {toNanoseconds} from '@/utils/date.js'
 
 export default({
 
@@ -570,15 +573,15 @@ export default({
                     founders: this.council
                     //})).toString('base64')
                     }
-            
-            
+           
                 const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
                 let b = await this.factoryContract.create(
                     { "acc_name": accountId, "public_key": publicKey, "dao_info": info, "args": args_base64},
-                    "300000000000000", // gas 1000 TGas
-                    "10000000000000000000000000" // 1 NEAR
+                    Decimal.mul(300, TGas).toString(), // gas 300 TGas
+                    Decimal.mul(10, yoctoNear).toString() // 10 NEAR
                 )
                 console.log(b)
+
                 console.log(accountId, publicKey, info, args)
                 
                 if(b === true){

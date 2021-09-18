@@ -11,7 +11,7 @@
     <div class="row">
       <div class="col-12 col-md-4">
         <ul class="list-unstyled text-muted">
-          <li>
+          <li v-if="dao.address">
             <i class="fas fa-home fa-fw me-3 mb-3"></i>
             <a class="text-reset font-weight-bold" href="">{{ dao.address }}</a>
           </li>
@@ -23,16 +23,13 @@
               >{{ t("default.wallet") }}</a
             >
           </li>
-          <li>
+          <li v-if="dao.web">
             <i class="fas fa-globe fa-fw me-3 mb-3"></i
-            ><a class="text-reset font-weight-bold" :href="dao.web">{{
-              dao.domain
-            }}</a>
+            ><a class="text-reset font-weight-bold" :href="dao.web">{{ dao.domain }}</a>
           </li>
           <li>
             <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-            <span class="text-reset font-weight-bold">{{ n(dao.token) }}</span>
-            POD
+            <span class="text-reset font-weight-bold">{{ n(dao.token) }}</span> {{ dao.token_name }}
           </li>
           <li>
             <i class="fas fa-users fa-fw me-3 mb-3"></i
@@ -96,7 +93,7 @@
         </ul>
       </div>
       <div class="col-12 col-md-4">
-        <h5 class="text-center mt-1">{{ t('default.market') }}</h5>
+        <h5 class="text-center">{{ t('default.market') }}</h5>
         <h2>
           <NumberFormatter :amount="dao.market.near"/> Ⓝ
           <BadgePercent :amount="dao.market.w_delta"/>
@@ -113,7 +110,7 @@ import {MDBProgress, MDBProgressBar} from "mdb-vue-ui-kit"
 import NumberFormatter from "@/views/helpers/NumberFormatter.vue"
 import BadgePercent from '@/views/helpers/BadgePercent.vue'
 import { ref } from 'vue'
-import {utils} from "near-api-js"
+//import {utils} from "near-api-js"
 
 export default {
   components: {
@@ -131,18 +128,8 @@ export default {
     const balance = ref()
     return { t, n, api, balance };
   },
-
-
-  async created() {
-    this.api = this.$store.state.near.api
-    if (this.api !== undefined){
-      const account = await this.api.account(this.dao.wallet)
-      let accountBalance = await account.getAccountBalance()
-      console.log(accountBalance)
-      accountBalance = accountBalance.total
-      accountBalance = utils.format.formatNearAmount(accountBalance)
-      this.balance = +accountBalance
-    }
+  created() {
+    
   },
 
   

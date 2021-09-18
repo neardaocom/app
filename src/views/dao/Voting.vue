@@ -25,29 +25,9 @@
     <!-- /Order -->
     <!-- Proposal in progress -->
     <div class="row">
-      <div class="col-md-6 mb-4 mb-md-0">
+      <div v-for="(proposal, index) in listOrderDesc" :key="index" class="col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="{type: 'payout', state: 'in_progress', args: {account: 'petrfilla.near', amount: 50.22} }"/>
-        </section>
-      </div>
-      <div class="col-md-6 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
-          <Proposal :proposal="{type: 'payout', state: 'accepted', args: {account: 'petrfilla.near', amount: 50.22} }"/>
-        </section>
-      </div>
-      <div class="col-md-6 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
-          <Proposal :proposal="{type: 'payout', state: 'rejected', args: {account: 'petrfilla.near', amount: 50.22} }"/>
-        </section>
-      </div>
-      <div class="col-md-6 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
-          <Proposal :proposal="{type: 'payout', state: 'spam', args: {account: 'petrfilla.near', amount: 50.22} }"/>
-        </section>
-      </div>
-      <div class="col-md-6 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
-          <Proposal :proposal="{type: 'payout', state: 'invalid', args: {account: 'petrfilla.near', amount: 50.22} }"/>
+          <Proposal :proposal="proposal[1]" :proposalId="proposal[0]" :contractId="dao.wallet" :token_holders="dao.token_holders" :token_blocked="dao.token_released - dao.token_free"/>
         </section>
       </div>
     </div>
@@ -56,6 +36,7 @@
 
 <script>
 //import { MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
+import { toRefs } from "vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/views/dao/Proposal.vue";
 
@@ -70,9 +51,17 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const { dao } = toRefs(props)
     const { t } = useI18n();
     return { t };
   },
+  computed: {
+    listOrderDesc() {
+      return this.dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid)
+    },
+  },
+  methods: {
+  }
 };
 </script>

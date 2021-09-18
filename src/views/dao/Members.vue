@@ -6,9 +6,9 @@
           <div class="card-body">
             <h5 class="card-title">{{ t('default.council') }}</h5>
             <ul>
-              <li>chaplin.near</li>
-              <li>petrfilla.near</li>
-              <li>radoslav.near</li>
+              <li v-for="(item, index) in dao.groups.council.wallets" :key="index">
+                {{ item }}
+              </li>
             </ul>
           </div>
         </div>
@@ -18,8 +18,9 @@
           <div class="card-body">
             <h5 class="card-title">{{ t('default.community') }}</h5>
             <ul>
-              <li>petrstudynka.near</li>
-              <li>jansladky.near</li>
+              <li v-for="(item, index) in dao.groups.community.wallets" :key="index">
+                {{ item }}
+              </li>
             </ul>
           </div>
         </div>
@@ -29,7 +30,9 @@
           <div class="card-body">
             <h5 class="card-title">{{ t('default.investor') }}</h5>
             <ul>
-              <li>petrcastek.near</li>
+              <li v-for="(item, index) in dao.groups.investor.wallets" :key="index">
+                {{ item }}
+              </li>
             </ul>
           </div>
         </div>

@@ -4,40 +4,30 @@
       <div class="col-12">
         <div class="card text-start">
           <div class="card-body">
-            <h5 class="card-title">Governance tokeny</h5>
+            <h5 class="card-title">{{ t('default.governance_token') }}</h5>
             <table class="table">
               <thead>
                 <tr>
                   <th></th>
-                  <th>Vlastněné</th>
-                  <th>Volné</th>
+                  <th>{{ t('default.amount') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <th scope="col">Rada</th>
-                  <td>100 000</td>
-                  <td>300 000</td>
+                  <th scope="col">{{ t('default.released') }}</th>
+                  <td>{{ n(dao.token_released) }}</td>
                 </tr>
                 <tr>
-                  <th scope="col">Komunita</th>
-                  <td>0</td>
-                  <td>200 000</td>
+                  <th scope="col">{{ t('default.owned') }}</th>
+                  <td>{{ n(dao.token_released - dao.token_free) }}</td>
                 </tr>
                 <tr>
-                  <th scope="col">Investor</th>
-                  <td>40 000</td>
-                  <td>110 000</td>
+                  <th scope="col">{{ t('default.free') }}</th>
+                  <td>{{ n(dao.token_free) }}</td>
                 </tr>
-                <tr>
-                  <th scope="col">Volný prodej</th>
-                  <td>145 432</td>
-                  <td>4 568</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>285 432</td>
-                  <td>664 568</td>
+                <tr v-for="(value, account) in dao.token_holders" :key="account">
+                  <td>{{ account }}</td>
+                  <td>{{ n(value) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -61,8 +51,8 @@ export default {
     },
   },
   setup() {
-    const { t } = useI18n();
-    return { t };
+    const { t, n } = useI18n();
+    return { t, n };
   },
 };
 </script>

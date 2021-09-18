@@ -1,2 +1,2 @@
 export { default as NearService } from './NearService';
-export { yoktoNear } from './constants';
+export { yoctoNear, TGas } from './constants';

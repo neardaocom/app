@@ -1,9 +1,15 @@
-import Decimal from 'decimal.js';
-import { Proposal, ProposalRaw, ProposalType } from 'types/proposal';
-import camelcaseKeys from 'camelcase-keys';
-import { convertDuration } from '../../utils';
-import { yoktoNear } from './constants';
+export const getPublicSalePercent = (council, community, investor) => {
+  return 100 - (council ?? 0) - (community ?? 0) - (investor ?? 0)
+}
 
+
+//import Decimal from 'decimal.js';
+//import { Proposal, ProposalRaw, ProposalType } from 'types/proposal';
+//import camelcaseKeys from 'camelcase-keys';
+//import { convertDuration } from '../../utils';
+//import { yoctoNear } from './constants';
+
+/*
 export const parseForumUrl = (url: string): string => {
   const a = url.replace(/\/$/, '').split('/');
   const last = a[a.length - 1];
@@ -27,7 +33,7 @@ export const parseForumUrl = (url: string): string => {
     : `/t/${category}/${subCategory}`;
 };
 
-export const URLTest = (url: string): boolean => {
+export const URLTest = (url) => {
   const regExp = /^(ftp|http|https):\/\/[^ "]+$/;
   const regExp2 = /^https:\/\/gov.near.org\/[a-z0-9\\/]+$/;
 
@@ -54,7 +60,7 @@ export const mapProposalRawToProposal = (
       ...proposal,
       kind: {
         type: ProposalType.Payout,
-        amount: amountYokto.div(yoktoNear).toFixed(2),
+        amount: amountYokto.div(yoctoNear).toFixed(2),
       },
     };
   }
@@ -62,3 +68,4 @@ export const mapProposalRawToProposal = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (camelcaseKeys(proposal, { deep: true }) as any) as Proposal;
 };
+*/
