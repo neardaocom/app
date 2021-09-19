@@ -62,6 +62,20 @@ export const nearRootAccountValidator = (value) => {
     return validation
 }
 
+export const nearAccountValidator = (value) => {
+    let validation = successValidation()
+    const re = /^([a-z\d]+[a-z\d-_]*[a-z\d]+)([.][a-z\d]+[a-z\d-_]*[a-z\d]+)*$/
+    if (value.length < 2) {
+        validation = errorValidation('at_least_characters', { min: 2 })
+    } else if (value.length > 64) {
+        validation = errorValidation('maximum_characters', { max: 64 })
+    } else if (!re.test(value)) {
+        validation = errorValidation('invalid_near_account', {})
+    }
+
+    return validation
+}
+
 export const councilAccountValidator = (value) => {
     let validation = successValidation()
     const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].(near|testnet)+$/

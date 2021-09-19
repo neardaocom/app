@@ -83,7 +83,7 @@ export default {
       required: true,
     },
     token_blocked: {
-      type: Object,
+      type: Number,
       required: true,
     },
   },
@@ -106,13 +106,17 @@ export default {
       let progress = undefined
       if (this.proposal.status === 'InProgress') {
         const end = this.durationTo.valueOf()
-        let beginDate = this.durationTo
-        // beginDate.setMonth(this.durationTo.getMonth() - 1) // TODO: get from config of dao
-        beginDate.setHours(this.durationTo.getHours() - 1) // TODO: get from config of dao
-        const begin = beginDate.valueOf()
         const now = new Date().valueOf()
+        // TODO: get from config of dao
+        // let beginDate = this.durationTo
+        // beginDate.setMonth(this.durationTo.getMonth() - 1)
+        // const begin = beginDate.valueOf()
+        const begin = this.durationTo.valueOf() - (7 * 86400000)
         const nowFromBegin = now - begin;
         const endFromBegin = end - begin;
+        console.log(begin)
+        console.log(now)
+        console.log(end)
         if (endFromBegin >= 0) {
           progress = new Decimal(nowFromBegin).div(endFromBegin).times(100).round().toNumber()
         }
@@ -160,6 +164,12 @@ export default {
         case 'SendNear':
           type = 'payout'
           break;
+        case 'AddMember':
+          type = 'add_member'
+          break;
+        case 'RemoveMember':
+          type = 'remove_member'
+          break;
         default:
           break;
       }
@@ -175,6 +185,18 @@ export default {
           args = {
             account: actions.SendNear.account_id,
             amount: new Decimal(actions.SendNear.amount_near).div(yoctoNear).toFixed()
+          }
+          break;
+        case 'AddMember':
+          args = {
+            account: actions.AddMember.account_id,
+            group: this.groupTranslate(actions.AddMember.group)
+          }
+          break;
+        case 'RemoveMember':
+          args = {
+            account: actions.RemoveMember.account_id,
+            group: this.groupTranslate(actions.RemoveMember.group)
           }
           break;
         default:
@@ -200,6 +222,23 @@ export default {
     },
     isVoted() {
       return Object.keys(this.proposal.votes).includes(this.accountId)
+    },
+    groupTranslate(value) {
+      let trans = ''
+      switch (value) {
+        case 'Insiders':
+          trans = this.t('default.council')
+          break;
+        case 'Community':
+          trans = this.t('default.community')
+          break;
+        case 'Foundation':
+          trans = this.t('default.investor')
+          break;
+        default:
+          break;
+      }
+      return trans
     },
     vote(choice) {
       console.log(choice)

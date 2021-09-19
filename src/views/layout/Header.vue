@@ -1,7 +1,7 @@
 <template>
   <header style="margin-top: 58px">
     <MDBNavbar expand="lg" light bg="white" position="top" container>
-      <MDBNavbarBrand href="/"><MDBIcon icon="chart-pie" iconStyle="fas"/></MDBNavbarBrand>
+      <MDBNavbarBrand href="/"><MDBIcon icon="flag" iconStyle="far"/></MDBNavbarBrand>
       <MDBNavbarToggler
         @click="collapse = !collapse"
         target="#sidenav"

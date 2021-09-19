@@ -13,9 +13,9 @@ export const parseFromNanoseconds = (nanoseconds) => {
 }
 
 export const toDateString = (date) => {
-    return date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear();
+    return date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
 }
 
 export const toTimeString = (date) => {
-    return date.getHours() + ':' + date.getMinutes();
+    return date.getHours() + ':' + date.toISOString().substring(14,16);
 }

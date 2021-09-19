@@ -1,38 +1,34 @@
 <template>
     <MDBModal
-        id="modalPayout"
+        id="modalRemoveMember"
         tabindex="-1"
-        labelledby="modalPayoutLabel"
+        labelledby="modalRemoveMemberLabel"
         v-model="active"
     >
         <MDBModalHeader>
-        <MDBModalTitle id="modalPayoutLabel"> {{ t('default.payout') }} </MDBModalTitle>
+          <MDBModalTitle id="modalRemoveMemberLabel"> {{ t('default.remove_member') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-        <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-            @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-        >
-            <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
-        </MDBInput>
-        <br/>
-        <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
-        <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
-            @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
-        >
-            <span class="input-group-text" id="amount-addon">Ⓝ</span>
-        </MDBInput>
-        <br/>
-        <label for="note-input" class="form-label">{{ t('default.note') }}</label>
-        <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
-            @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
-        >
-        </MDBInput>
-        
+          <label for="account-input" class="form-label">{{ t('default.account') }}</label>
+          <MDBSelect class="text-left" id="account-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model:options="accountsDropdown" v-model:selected="formAccount"
+              @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+          />
+          <br/>
+          <label for="group-input" class="form-label">{{ t('default.group') }}</label>
+          <MDBSelect class="text-left" id="group-input" inputGroup :formOutline="false" aria-describedby="group-addon" v-model:options="groupsDropdown" v-model:selected="formGroup"
+              @keyup="validateGroup()" @blur="validateGroup()" :isValid="!errors.formGroup" :isValidated="isValidated.formGroup" :invalidFeedback="errors.formGroup"
+          />
+          <br/>
+          <label for="note-input" class="form-label">{{ t('default.note') }}</label>
+          <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
+              @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
+          >
+          </MDBInput>
+          
         </MDBModalBody>
         <MDBModalFooter>
-        <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-        <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+          <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
+          <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -41,23 +37,22 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber, maxLength} from '@/utils/validators'
+import {requiredValidator, nearAccountValidator, isValid, maxLength} from '@/utils/validators'
 import {
   MDBBtn,
   MDBInput,
+  MDBSelect,
   MDBModal,
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
   MDBModalFooter
 } from "mdb-vue-ui-kit";
-import { yoctoNear } from "@/services/nearService/constants"
-import Decimal from 'decimal.js';
 
 export default {
   components: {
     MDBBtn
-    , MDBInput
+    , MDBInput, MDBSelect
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
   },
   props: {
@@ -67,6 +62,14 @@ export default {
     },
     contractId: {
       type: String,
+      required: true
+    },
+    groups: {
+      type: Object,
+      required: true
+    },
+    tokenHolders: {
+      type: Object,
       required: true
     }
   },
@@ -82,12 +85,12 @@ export default {
     watch(show, openModal)
 
     const formAccount = ref('')
-    const formAmount = ref(0)
+    const formGroup = ref('Community')
     const formNote = ref('')
 
     const isValidated = ref({
         formAccount: false,
-        formAmount: false,
+        formGroup: false,
         formNote: false,
     })
 
@@ -95,7 +98,7 @@ export default {
 
     return {
       t, active
-      , formAccount, formAmount, formNote
+      , formAccount, formGroup, formNote
       , isValidated, errors
     };
   },
@@ -108,6 +111,16 @@ export default {
     },
     nearService() {
       return this.$store.getters['near/getService']
+    },
+    accountsDropdown() {
+      return Object.keys(this.tokenHolders).map(accountId => {return {value: accountId, text: accountId}})
+    },
+    groupsDropdown() {
+      return [
+        {value: 'Insiders', text: this.t('default.council')},
+        {value: 'Community', text: this.t('default.community')},
+        {value: 'Foundation', text: this.t('default.investor')},
+      ]
     },
   },
   methods: {
@@ -124,24 +137,15 @@ export default {
       }
       this.isValidated.formAccount = true
     },
-    validateAmount(){
-      const field = "formAmount"
-      const requiredVal = requiredValidator(this.formAmount)
-      const isNumberVal = isNumber(this.formAmount)
-      const minNumberVal = minNumber(this.formAmount, 0.0)
-      const maxNumberVal = maxNumber(this.formAmount, 1000000.0)
+    validateGroup(){
+      const field = "formGroup"
+      const requiredVal = requiredValidator(this.formGroup)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
-      } else if (isNumberVal.valid === false) {
-        this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
-      } else if (minNumberVal.valid === false) {
-        this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
-      } else if (maxNumberVal.valid === false) {
-        this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
       } else {
         this.errors[field] = null
       }
-      this.isValidated.formAmount = true
+      this.isValidated.formGroup = true
     },
     validateNote(){
       const field = "formNote"
@@ -155,21 +159,21 @@ export default {
     },
     validate(){
       this.validateAccount()
-      this.validateAmount()
+      this.validateGroup()
       this.validateNote()
     },
     vote() {
       this.validate()
       if (isValid(this.errors) === true) {
-          console.log(this.formAmount)
-          console.log(yoctoNear)
+        console.log(this.formGroup)
+        console.log(this.formAccount)
         this.nearService.addProposal(
             this.contractId
             , this.formNote
-            , [this.t('default.payout')]
+            , [this.t('default.remove_member')]
             , {
-                'Pay': {
-                    amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
+                'RemoveMember': {
+                    group: this.formGroup,
                     account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
                 }
             }
@@ -178,7 +182,8 @@ export default {
         ).then(r => {
             console.log(r)
             this.formAccount = ''
-            this.formAmount = 0
+            this.formGroup = 0
+            this.formNote = ''
             this.active = false
         }).catch((e) => {
             console.log(e)

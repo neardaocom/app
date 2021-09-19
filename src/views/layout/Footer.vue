@@ -45,9 +45,12 @@
                 <!-- Products -->
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4">{{ t('default.products') }}</h6>
+                <h6 class="text-uppercase mb-4">{{ t('default.about') }}</h6>
                 <p>
                     <a href="https://en.wikipedia.org/wiki/The_DAO_(organization)" class="text-reset" target="_blank">{{ t('default.dao_organization') }}</a>
+                </p>
+                <p>
+                    <a href="https://medium.com/neardao/neardao-proof-of-concept-is-live-1bdf371441ff" class="text-reset" target="_blank">{{ t('default.neardao_launch') }}</a>
                 </p>
                 </div>
                 <!-- Products -->
@@ -57,10 +60,10 @@
                 <!-- Links -->
                 <h6 class="text-uppercase mb-4">{{ t('default.useful_links') }}</h6>
                 <p>
-                    <a href="https://near.org/" class="text-reset">NEAR</a>
+                    <a href="https://near.org/" class="text-reset">Near.org</a>
                 </p>
                 <p>
-                    <a href="https://wallet.near.org/profile/podilnik.near" class="text-reset">{{ t('default.wallet') }}</a>
+                    <a href="https://wallet.near.org/profile/dao.near" class="text-reset">{{ t('default.wallet') }}</a>
                 </p>
                 </div>
                 <!-- Links -->

@@ -31,28 +31,41 @@
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
         </button>-->
-        <MDBBtn aria-controls="modalPayout" @click="modalPayoutOpen()" class="btn btn-primary px-3 me-2" data-mdb-ripple-color="dark">
-          <MDBIcon icon="paper-plane pe-2"/> {{ t('default.payout')}}
-        </MDBBtn>
+        <MDBDropdown btnGroup v-model="dropdownAction">
+          <MDBBtn aria-controls="modalPayout" @click="modalPayoutOpen()" class="btn btn-primary" data-mdb-ripple-color="dark">
+            <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
+          </MDBBtn>
+          <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
+          <MDBDropdownMenu>
+            <MDBDropdownItem class="dropdown-item" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
+            <MDBDropdownItem class="dropdown-item" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
+          </MDBDropdownMenu>
+        </MDBDropdown>
       </div>
       <!-- /Right -->
     </section>
 
     <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
+    <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
 </template>
 
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ModalPayout from '@/views/dao/ModalPayout'
+import ModalAddMember from '@/views/dao/ModalAddMember'
+import ModalRemoveMember from '@/views/dao/ModalRemoveMember'
 import {
+  MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,
   MDBIcon,
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBIcon, ModalPayout
+    MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember
   },
   props: {
     dao: {
@@ -63,9 +76,12 @@ export default {
   setup() {
     const { t } = useI18n();
     const modalPayout = ref(0)
+    const modalAddMember = ref(0)
+    const modalRemoveMember = ref(0)
+    const dropdownAction = ref(false);
 
     return {
-      t, modalPayout
+      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction
     };
   },
   computed: {
@@ -82,6 +98,12 @@ export default {
     },
     modalPayoutOpen() {
       this.modalPayout += 1
+    },
+    modalAddMemberOpen() {
+      this.modalAddMember += 1
+    },
+    modalRemoveMemberOpen() {
+      this.modalRemoveMember += 1
     },
   }
 };
