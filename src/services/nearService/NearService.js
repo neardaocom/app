@@ -288,7 +288,8 @@ class NearService {
   }
 
   async getDaoById(daoAccount) {
-    const daoId = daoAccount.split('.').at(0)
+    const daoId = daoAccount.split('.')[0]
+    console.log(daoId)
     const data = await Promise.all([
       this.getDaoAmount(daoAccount),
       this.getDaoInfo(daoId),

@@ -31,8 +31,9 @@
                             <!-- Description -->
                             <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
                             <MDBTextarea  wrapperClass="mb-4" id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
+                            <div v-if="errors.description" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.description }}</div>
                             
-                            <!-- Councils -->0
+                            <!-- Councils -->
                             <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
                             <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                         
@@ -130,11 +131,11 @@
                                 </div>
 
 
-                                 <!-- voteSpamThreshold -->
-                                <div class="row mb-4">
-                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_spam_threshold')" v-model="voteSpamThreshold" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}%</label>
-                                </div>
+                                <!-- voteSpamThreshold -->
+                                <!-- <div class="row mb-4"> -->
+                                <!--     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_spam_threshold')" v-model="voteSpamThreshold" :min="1" :max="100" /> -->
+                                <!--     <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}%</label> -->
+                                <!-- </div> -->
 
                                 <!-- voteOnlyOnce-->
                                 <MDBSwitch wrapperClass="mb-2" :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce"/>
@@ -531,7 +532,10 @@ export default({
             if (isValid(this.errors) === false) {
                 this.fieldErrorAlert = true
             }else{
-                //const accountId = this.account // + ".podilnik.testnet" // all
+                const accountId = this.account + '.' + this.factoryAccount
+                // set accountId to localStorage because of redirection
+                localStorage.create_dao_account = accountId
+                // create
                 let created = await this.nearService.createDao(
                     this.account
                     , null
@@ -555,7 +559,7 @@ export default({
                 )
 
                 if(created === true){
-                    this.$router.push({name: 'dao', params: {id: (this.account + '.' + this.factoryAccount)}})
+                    // this.$router.push({name: 'dao', params: {id: (this.account + '.' + this.factoryAccount)}})
                 }else{
                     this.createDaoErrorAlert = true
                 }
@@ -585,6 +589,11 @@ export default({
     created() {
     },
     mounted() {
+        if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
+            const accountId = localStorage.create_dao_account
+            localStorage.create_dao_account = ''
+            this.$router.push({name: 'dao', params: {id: accountId}})
+        }
         this.council = [this.accountId]
         this.councilString = this.accountId
     },

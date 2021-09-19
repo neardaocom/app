@@ -13,7 +13,7 @@
         <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
             @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
         >
-            <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.').at(1) }}</span>
+            <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
         </MDBInput>
         <br/>
         <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
@@ -170,7 +170,7 @@ export default {
             , {
                 'Pay': {
                     amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
-                    account_id: (this.formAccount + '.' + this.factoryAccount.split('.').at(1))
+                    account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
                 }
             }
             , 1

@@ -38,9 +38,9 @@
         <button @click="vote(2)" type="button" class="btn btn-primary">
           <i class="fas fa-times me-2"></i> {{ t('default.vote_type_no') }}
         </button>
-        <button @click="vote(0)" type="button" class="btn btn-dark">
-          <i class="fas fa-trash me-2"></i> {{ t('default.vote_type_spam') }}
-        </button>
+        <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->
+        <!--  <i class="fas fa-trash me-2"></i> {{ t('default.vote_type_spam') }} -->
+        <!--</button> -->
       </div>
       <div v-else-if="canVote === true && isOver() === true" class="btn-group" role="group">
         <button @click="finalize()" type="button" class="btn btn-primary">
@@ -128,7 +128,7 @@ export default {
       return [
           {choice: 'yes', percent: new Decimal(results[1]).div(this.token_blocked).times(100).round().toNumber(), bg: 'success'},
           {choice: 'no', percent: new Decimal(results[2]).div(this.token_blocked).times(100).round().toNumber(), bg: 'danger'},
-          {choice: 'spam', percent: new Decimal(results[0]).div(this.token_blocked).times(100).round().toNumber(), bg: 'black'}
+          // {choice: 'spam', percent: new Decimal(results[0]).div(this.token_blocked).times(100).round().toNumber(), bg: 'black'}
           // {choice: this.choice(), percent: 20}
       ]
     },
@@ -155,8 +155,8 @@ export default {
     type() {
       let type = ''
       const actions = this.proposal.transactions.actions[0]
-      // console.log(Object.keys(actions).at(0))
-      switch (Object.keys(actions).at(0)) {
+      // console.log(Object.keys(actions)[0])
+      switch (Object.keys(actions)[0]) {
         case 'SendNear':
           type = 'payout'
           break;
@@ -168,7 +168,7 @@ export default {
     typeArgs() {
       let args = {}
       const actions = this.proposal.transactions.actions[0]
-      const action_key = Object.keys(actions).at(0)
+      const action_key = Object.keys(actions)[0]
       // console.log()
       switch (action_key) {
         case 'SendNear':

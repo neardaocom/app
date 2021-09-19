@@ -39,17 +39,17 @@
         <h5 class="text-center">{{ t("default.treasury") }}</h5>
         <div class="skeleton skeleton-h2 rounded w-100"></div>
         <div class="skeleton skeleton-text rounded w-25"></div>
-        <hr class="d-none d-md-block" />
+        <!--<hr class="d-none d-md-block" />-->
+      </div>
+      <div class="col-12 col-md-4">
         <h5 class="text-center mt-1">{{ t('default.token_unlocked') }}</h5>
         <div class="skeleton skeleton-text rounded my-3 w-100"></div>
         <div class="skeleton skeleton-text rounded mb-3 w-100"></div>
         <div class="skeleton skeleton-text rounded mb-3 w-100"></div>
         <div class="skeleton skeleton-text rounded w-100"></div>
-      </div>
-      <div class="col-12 col-md-4">
-        <h5 class="text-center">{{ t('default.market') }}</h5>
-        <div class="skeleton skeleton-h2 rounded w-100"></div>
-        <div class="skeleton skeleton-text rounded w-50"></div>
+        <!--<h5 class="text-center">{{ t('default.market') }}</h5>-->
+        <!--<div class="skeleton skeleton-h2 rounded w-100"></div>-->
+        <!--<div class="skeleton skeleton-text rounded w-50"></div>-->
       </div>
     </div>
   </section>

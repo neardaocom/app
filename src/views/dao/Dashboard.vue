@@ -63,7 +63,9 @@
           <BadgePercent :amount="dao.treasury.w_delta"/>
         </h2>
         <p>≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
-        <hr class="d-none d-md-block" />
+        <!-- <hr class="d-none d-md-block" /> -->
+      </div>
+      <div class="col-12 col-md-4">
         <h5 class="text-center mt-1">{{ t('default.token_unlocked') }}</h5>
         <ul class="list-unstyled text-muted">
           <li class="mb-2">
@@ -91,14 +93,12 @@
             </MDBProgress>
           </li>
         </ul>
-      </div>
-      <div class="col-12 col-md-4">
-        <h5 class="text-center">{{ t('default.market') }}</h5>
-        <h2>
-          <NumberFormatter :amount="dao.market.near"/> Ⓝ
-          <BadgePercent :amount="dao.market.w_delta"/>
-        </h2>
-        <p>≈ <NumberFormatter :amount="dao.market.eth"/> ETH | <NumberFormatter :amount="dao.market.btc"/> BTC | <NumberFormatter :amount="dao.market.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
+        <!--<h5 class="text-center">{{ t('default.market') }}</h5>-->
+        <!--<h2>-->
+        <!--  <NumberFormatter :amount="dao.market.near"/> Ⓝ-->
+        <!--  <BadgePercent :amount="dao.market.w_delta"/>-->
+        <!--</h2>-->
+        <!--<p>≈ <NumberFormatter :amount="dao.market.eth"/> ETH | <NumberFormatter :amount="dao.market.btc"/> BTC | <NumberFormatter :amount="dao.market.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>-->
       </div>
     </div>
   </section>

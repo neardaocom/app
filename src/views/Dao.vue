@@ -61,7 +61,7 @@ import _ from 'lodash'
 import Breadcrumb from '@/views/dao/Breadcrumb.vue'
 import DAO from '@/types/DAO'
 import DAOs from '@/types/DAOs'
-import * as nearAPI from "near-api-js"
+//import * as nearAPI from "near-api-js"
 
 export default {
   components: {
@@ -79,23 +79,16 @@ export default {
     const q_page = null
     const dao = ref(DAO.data)
     const dao_data = ref(DAO.data)
-    const contract = null
     const proposals = null
     const statistics_ft = null
     const loaded = ref(false)
 
-    return { t, dao, daos, q_id, q_page, search, filter, favorites, contract, proposals, statistics_ft, loaded, dao_data}
+    return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
   },
   created() {
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id
-      this.contract = new nearAPI.Contract(
-          this.wallet.account(), this.q_id, {
-            viewMethods: ['statistics_ft', 'statistics_members', 'registred_user_count', 'proposal', 'proposals', 'ft_balance_of', 'ft_total_supply', 'ft_metadata'],
-            changeMethods: ['add_proposal', 'vote', 'finish_proposal'],
-          }
-        )
     } else {
       this.q_id = process.env.VUE_APP_DAO_DEFAULT
     }
@@ -123,8 +116,6 @@ export default {
   mounted() {
     this.$store.commit('near/setContract', this.q_id)
     this.getState()
-    //this.proposals = await this.contract.proposals(0, 100);
-    //this.statistics_ft = await this.contract.statistics_ft();
   },
   methods: {
     getState() {
