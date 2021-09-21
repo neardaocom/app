@@ -1,0 +1,25 @@
+[package]
+name = "near_dao"
+version = "0.1.0"
+authors = ["Petr Studýnka <studynkapetr@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+near-sdk = "3.1.0"
+near-contract-standards = "3.2.0"
+
+[dev-dependencies]
+near-sdk-sim = "3.2.0"
+dao_factory = { path = "./dao_factory"}
+dao = { path = "./dao"}
+
+[profile.release]
+codegen-units = 1       
+opt-level = "z"         
+lto = true              
+debug = false           
+panic = "abort"         
+overflow-checks = true 
+
+[workspace]
+members = ["dao", "dao_factory"]

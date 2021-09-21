@@ -36,7 +36,7 @@
 
 <script>
 //import { MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
-//import { toRefs } from "vue";
+import { ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/views/dao/Proposal.vue";
 
@@ -51,10 +51,16 @@ export default {
       required: true,
     },
   },
-  setup() {
-    //const { dao } = toRefs(props)
+  setup(props) {
+    const { dao } = toRefs(props)
+    let orderedProposals = ref({})
+
+    const orderProposal = () => { orderedProposals = dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid) }
+
+    watch(orderedProposals, orderProposal)
+
     const { t } = useI18n();
-    return { t };
+    return { t, orderedProposals };
   },
   computed: {
     //listOrderDesc() {
