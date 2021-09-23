@@ -2,22 +2,21 @@ const CONTRACT_NAME = process.env.VUE_APP_NEAR_CONTRACT_NAME
 const NAME = process.env.VUE_APP_NEAR_NAME
 
 function getConfig(env) {
-  switch (env) { // env, 'testnet', 'production'
+  switch (env) {
     case 'production':
     case 'mainnet':
-      //return {
-      //  networkId: 'mainnet',
-      //  nodeUrl: 'https://rpc.mainnet.near.org',
-      //  name: NAME,
-      //  contractName: CONTRACT_NAME + '.near',
-      //  walletUrl: 'https://wallet.near.org',
-      //  helperUrl: 'https://helper.mainnet.near.org'
-      //}
+      return {
+        networkId: 'testnet',
+        nodeUrl: 'https://rpc.mainnet.near.org',
+        name: NAME,
+        contractName: CONTRACT_NAME + '.near',
+        walletUrl: 'https://wallet.near.org',
+        helperUrl: 'https://helper.mainnet.near.org'
+      }
     case 'development':
     case 'testnet':
       return {
         networkId: 'testnet',
-        topLevelAccount: 'testnet',
         nodeUrl: 'https://rpc.testnet.near.org',
         name: NAME,
         contractName: CONTRACT_NAME + '.testnet',

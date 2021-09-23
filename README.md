@@ -14,6 +14,11 @@ npm run serve
 ```
 npm run build
 ```
+for testnet
+```
+npm run build_mainnet
+```
+for mainnet
 
 ### Lints and fixes files
 ```

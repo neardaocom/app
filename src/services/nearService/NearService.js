@@ -4,7 +4,6 @@ import {
   keyStores,
   WalletConnection,
 } from 'near-api-js';
-// import getConfig from "@/config/near"
 import { toNanoseconds } from '@/utils/date';
 
 
