@@ -2,6 +2,7 @@
   "account": "Account",
   "add_member": "Add member",
   "add_member_message": "Add new account ID <strong>{account}</strong> into <strong>{group}</strong>",
+  "all_rights_reserved": "All rights reserved",
   "remove_member": "Remove member",
   "remove_member_message": "Remove account ID <strong>{account}</strong> from <strong>{group}</strong>",
   "account_id": "Account ID",

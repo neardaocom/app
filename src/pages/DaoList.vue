@@ -50,8 +50,9 @@
 </template>
 
 <script>
-import Header from '@/views/layout/Header.vue'
-import Footer from '@/views/layout/Footer.vue'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/types/DAOs'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
@@ -59,7 +60,6 @@ import {
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-import Breadcrumb from './dao_list/Breadcrumb.vue'
 import { getRandom } from '@/utils/integer'
 
 export default {

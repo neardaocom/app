@@ -1,13 +1,5 @@
 <template>
-  <header>
-    <!-- Navbar -->
-    <Navigation></Navigation>
-    <!-- Navbar -->
-
-    <!--Section: Design Block-->
-    <Introduction></Introduction>
-    <!--Section: Design Block-->
-  </header>
+  <Header></Header>
 
   <main>
     <Services></Services>
@@ -19,20 +11,25 @@
 </template>
 
 <script>
-import Navigation from '@/views/landing_page/Navigation.vue'
-import Introduction from '@/views/landing_page/Introduction.vue'
-import Services from '@/views/landing_page/Services.vue'
-import Statistics from '@/views/landing_page/Statistics.vue'
-import Price from '@/views/landing_page/Price.vue'
-import Footer from '@/views/landing_page/Footer.vue'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import Services from '@/components/landingPage/Services.vue'
+import Statistics from '@/components/landingPage/Statistics.vue'
+import Price from '@/components/landingPage/Price.vue'
 
 export default {
   name: 'Home',
   components: {
-    Navigation, Introduction, Services, Statistics, Price, Footer
+    Services, Statistics, Price, Footer, Header
   },
-  created () {
-    //console.log(this.$router)
+  setup() {
+    const daoDefault = process.env.VUE_APP_DAO_DEFAULT
+    return { daoDefault }
+  },
+  created() {
+  },
+  mounted() {
+    this.$router.push({ name: 'dao', params: { id: this.daoDefault }})
   }
 }
 </script>

@@ -10,11 +10,11 @@
       <MDBCollapse v-model="collapse" id="sidenav">
         <MDBNavbarNav center class="ms-auto align-items-center">
           <MDBNavbarItem class="mx-2" :to="{name: 'landing-page', query: {}}" :title="t('default.landing_page')"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.landing_page') }}</span></MDBNavbarItem>
-          <MDBNavbarItem class="mx-2" :to="{name: 'daos', query: {}}" :title="t('default.organizations')"><MDBIcon class="pe-2" icon="building" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
+          <MDBNavbarItem class="mx-2" :to="{name: 'dao-list', query: {}}" :title="t('default.organizations')"><MDBIcon class="pe-2" icon="building" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
           <li v-if="isAccountSigned" class="nav-item">
             <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="walletUrl"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
           </li>
-          <MDBNavbarItem v-if="isAccountSigned" :to="{name: 'createDao'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4" >{{ t('default.create_dao') }}</MDBNavbarItem>
+          <MDBNavbarItem v-if="isAccountSigned" :to="{name: 'dao-create'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4" >{{ t('default.create_dao') }}</MDBNavbarItem>
           <li class="nav-item">
             <MDBBtn v-if="isAccountSigned" @click="logout()" class="btn btn-black btn-rounded mx-2"><!--<MDBIcon class="pe-2" icon="sign-out-alt" iconStyle="fas" /> -->{{ t('default.log_out') }}</MDBBtn>
             <MDBBtn v-else @click="login()" class="btn btn-black btn-rounded mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In"><!-- <MDBIcon class="pe-2" icon="sign-in-alt" iconStyle="fas"/> -->{{ t('default.log_in') }}</MDBBtn>
@@ -76,8 +76,8 @@
         logout() {
             console.log('logout')
             this.$store.commit('near/signOut')
-            
-            if (this.$route.name === "createDao"){
+
+            if (this.$route.name === "dao-create"){
               this.$router.push({name: 'landing-page'})
             }
         }

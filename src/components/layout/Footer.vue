@@ -84,7 +84,7 @@
 
         <!-- Copyright -->
         <div class="text-center p-4" style="background-color: hsla(0, 0%, 17%, 0.04)">
-            © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a>
+            © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a> {{ t('default.all_rights_reserved') }}
         </div>
     <!-- Copyright -->
     </footer>

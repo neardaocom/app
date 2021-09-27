@@ -3,8 +3,6 @@
     <main>
         <section class="bg-white shadow-2 mb-3">
             <div class="container">
-
-
                 <MDBStepper vertical class="text-start">
                     <MDBStepperStep active>
                         <MDBStepperHead icon="1">
@@ -152,31 +150,24 @@
   <Footer></Footer>
 </template>
 
-
-
 <script>
-    import Header from '@/views/layout/Header.vue'
-    import Footer from '@/views/layout/Footer.vue'
-    import { useI18n } from 'vue-i18n'
-    import { ref } from 'vue'
-    import { reactive } from "@vue/reactivity"
-    import {
-        requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
-        isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
-    } from '@/utils/validators'
-    import {
-        MDBInput, MDBTextarea,
-        MDBSwitch, MDBBtn,
-        MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange, MDBAlert
-    } from 'mdb-vue-ui-kit';
-
-    //import Decimal from 'decimal.js';
-    //import {TGas, yoctoNear} from '@/services/nearService/constants.js'
-    //import {toNanoseconds} from '@/utils/date.js'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import { useI18n } from 'vue-i18n'
+import { ref } from 'vue'
+import { reactive } from "@vue/reactivity"
+import {
+    requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
+    isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
+} from '@/utils/validators'
+import {
+    MDBInput, MDBTextarea,
+    MDBSwitch, MDBBtn,
+    MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
+    MDBRange, MDBAlert
+} from 'mdb-vue-ui-kit';
 
 export default({
-
     components: {
         Header, Footer,
         MDBInput, MDBTextarea,
@@ -184,7 +175,6 @@ export default({
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert
     },
-
     setup() {
         const { t } = useI18n();
         const exampleModal = ref(false)
@@ -192,7 +182,7 @@ export default({
         const contract = ref(undefined)
         
         // form feilds
-        // basic        
+        // basic
         const account = ref('');  // TODO: podilni.near, not dot
         const name = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
         const description = ref('') // textare max 3000
@@ -248,8 +238,7 @@ export default({
            voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
            createDaoErrorAlert, contract
-        } 
-        
+        }
     },
 
     watch: {
@@ -558,9 +547,9 @@ export default({
                     , 10 // amountToTransfer
                 )
 
-                if(created === true){
-                    // this.$router.push({name: 'dao', params: {id: (this.account + '.' + this.factoryAccount)}})
-                }else{
+                if(created === true) {
+                    null
+                } else {
                     this.createDaoErrorAlert = true
                 }
             }
@@ -569,6 +558,9 @@ export default({
     computed: {
         accountId(){
             return this.$store.getters['near/getAccountId']
+        },
+        isAccountSigned() {
+            return this.$store.getters['near/isSignedIn']
         },
         nearService(){
             return this.$store.getters['near/getService']
@@ -579,9 +571,6 @@ export default({
         factoryAccount() {
             return this.$store.getters['near/getFactoryAccount']
         },
-        apiKeyStore() {
-            return this.$store.getters['near/getApiKeyStore']
-        },
         envContactName() {
             return process.env.VUE_APP_NEAR_CONTRACT_NAME
         },
@@ -589,6 +578,7 @@ export default({
     created() {
     },
     mounted() {
+        // redirect after dao created
         if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
             const accountId = localStorage.create_dao_account
             localStorage.create_dao_account = ''

@@ -53,9 +53,9 @@
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import ModalPayout from '@/views/dao/ModalPayout'
-import ModalAddMember from '@/views/dao/ModalAddMember'
-import ModalRemoveMember from '@/views/dao/ModalRemoveMember'
+import ModalPayout from '@/components/dao/ModalPayout'
+import ModalAddMember from '@/components/dao/ModalAddMember'
+import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,

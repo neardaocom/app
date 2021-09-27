@@ -6,16 +6,16 @@
     <section class="bg-white shadow-2 mb-3">
       <div class="container">
         <!-- Breadcrumb -->
-        <Breadcrumb :account="q_id" :list-router="'daos'" :list-name="'organizations'"/>
+        <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'"/>
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
         <Dashboard v-if="loaded === true" :dao="dao"/>
-        <DashboardSkeleton v-else />
+        <SkeletonDashboard v-else />
 
         <!-- /Dashboard -->
         <!-- Buttons -->
         <Buttons v-if="loaded" :dao="dao"/>
-        <ButtonsSkeleton v-else />
+        <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
     </section>
@@ -30,7 +30,7 @@
         <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
         <Organization v-if="loaded === true && this.$route.query.page === 'organization'" :dao="dao"/>
-        <BodySkeleton v-if="loaded === false" />
+        <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
     <!-- /Parts -->
@@ -40,25 +40,25 @@
 </template>
 
 <script>
-import Header from '@/views/layout/Header.vue'
-import Footer from '@/views/layout/Footer.vue'
-import Dashboard from '@/views/dao/Dashboard.vue'
-import DashboardSkeleton from '@/views/dao/DashboardSkeleton.vue'
-import Buttons from '@/views/dao/Buttons.vue'
-import ButtonsSkeleton from '@/views/dao/ButtonsSkeleton.vue'
-import Overview from '@/views/dao/Overview.vue'
-import Voting from '@/views/dao/Voting.vue'
-import Treasury from '@/views/dao/Treasury.vue'
-import Members from '@/views/dao/Members.vue'
-import Tokens from '@/views/dao/Tokens.vue'
-import Organization from '@/views/dao/Organization.vue'
-import BodySkeleton from '@/views/dao/BodySkeleton.vue'
+import Header from '@/components/layout/Header.vue'
+import Footer from '@/components/layout/Footer.vue'
+import Breadcrumb from '@/components/dao/Breadcrumb.vue'
+import SkeletonBody from '@/components/dao/SkeletonBody.vue'
+import Buttons from '@/components/dao/Buttons.vue'
+import Dashboard from '@/components/dao/Dashboard.vue'
+import Members from '@/components/dao/Members.vue'
+import Organization from '@/components/dao/Organization.vue'
+import Overview from '@/components/dao/Overview.vue'
+import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
+import SkeletonDashboard from '@/components/dao/SkeletonDashboard.vue'
+import Treasury from '@/components/dao/Treasury.vue'
+import Tokens from '@/components/dao/Tokens.vue'
+import Voting from '@/components/dao/Voting.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
 import { ref, reactive } from 'vue'
 import _ from 'lodash'
-import Breadcrumb from '@/views/dao/Breadcrumb.vue'
 import DAO from '@/types/DAO'
 import DAOs from '@/types/DAOs'
 //import * as nearAPI from "near-api-js"
@@ -66,7 +66,7 @@ import DAOs from '@/types/DAOs'
 export default {
   components: {
     Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Organization
-    , DashboardSkeleton, ButtonsSkeleton, BodySkeleton
+    , SkeletonDashboard, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
   setup() {

@@ -107,8 +107,8 @@
 <script>
 import { useI18n } from "vue-i18n";
 import {MDBProgress, MDBProgressBar} from "mdb-vue-ui-kit"
-import NumberFormatter from "@/views/helpers/NumberFormatter.vue"
-import BadgePercent from '@/views/helpers/BadgePercent.vue'
+import NumberFormatter from "@/components/NumberFormatter.vue"
+import BadgePercent from '@/components/BadgePercent.vue'
 import { ref } from 'vue'
 //import {utils} from "near-api-js"
 

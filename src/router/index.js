@@ -1,43 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import LandingPage from '@/views/LandingPage.vue'
-import Dao from '@/views/Dao.vue'
-import store from '../store/index'
+import LandingPage from '@/pages/LandingPage.vue'
+import store from '@/store/index'
 
 const routes = [
   {
     path: '/',
     name: 'landing-page',
-    component: Dao
+    component: LandingPage
   },
   {
     path: '/daos',
-    name: 'daos',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/DaoList.vue')
+    name: 'dao-list',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoList.vue')
   },
   {
     path: '/dao/:id',
     name: 'dao',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/Dao.vue')
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/Dao.vue')
   },
   {
-    path: '/create-dao',
-    name: 'createDao',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '@/views/CreateNewDaoForm.vue'),
+    path: '/create',
+    name: 'dao-create',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreate.vue'),
     beforeEnter: (to, from, next) => {
-      if (store.getters['near/isSignedIn']){
+      if (store.getters['near/isSignedIn']) {
         next()
-      }else{
+      } else {
         store.commit('near/signIn')
-        next(false) 
+        next(false)
       }
     }
   }

@@ -38,7 +38,7 @@
 //import { MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
 import { ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import Proposal from "@/views/dao/Proposal.vue";
+import Proposal from "@/components/dao/Proposal.vue";
 
 export default {
   components: {
