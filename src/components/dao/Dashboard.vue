@@ -19,7 +19,8 @@
             <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
             <a
               class="text-reset font-weight-bold"
-              :href="'https://explorer.near.org/accounts/' + dao.wallet"
+              :href="nearWalletUrl + '/accounts/' + dao.wallet"
+              target="_blank"
               >{{ t("default.wallet") }}</a
             >
           </li>
@@ -120,6 +121,11 @@ export default {
     dao: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    nearWalletUrl() {
+      return this.$store.getters['near/getWalletUrl']
     },
   },
   setup() {

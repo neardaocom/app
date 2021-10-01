@@ -1,4 +1,7 @@
 module.exports = {
+  css: {
+    extract: true
+  },
   pluginOptions: {
     i18n: {
       locale: 'en',

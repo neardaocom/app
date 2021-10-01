@@ -31,14 +31,14 @@
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
         </button>-->
-        <MDBDropdown btnGroup v-model="dropdownAction">
+        <MDBDropdown btnGroup :align="['end']" v-model="dropdownAction">
           <MDBBtn aria-controls="modalPayout" @click="modalPayoutOpen()" class="btn btn-primary" data-mdb-ripple-color="dark">
             <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
           </MDBBtn>
           <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
           <MDBDropdownMenu>
-            <MDBDropdownItem class="dropdown-item" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
-            <MDBDropdownItem class="dropdown-item" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.self.prevent="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
