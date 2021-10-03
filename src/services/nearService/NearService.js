@@ -188,7 +188,31 @@ class NearService {
               approve_threshold: voteApproveThreshold,
               vote_only_once: voteOnlyOnce,
               waiting_open_duration: 0
-            }
+            },
+            {
+              proposal_kind: 'GeneralProposal',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'AddDocFile',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'InvalidateFile',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
         ],
         founders: founders
     }

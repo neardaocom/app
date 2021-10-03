@@ -86,6 +86,7 @@ export default {
     return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
   },
   created() {
+    console.log(process.env.VUE_APP_DAO_DEFAULT)
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id

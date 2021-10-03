@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title mt-1 mb-1"><small class="me-2 text-muted">#{{ proposal.uuid }}</small>{{ t('default.' + type) }}</h5>
+      <h5 class="card-title mt-1 mb-1"><small class="me-2 text-muted">#{{ proposal.uuid }}</small>{{ t('default.' + type) + (type == 'general_proposal' ? ': ' + proposalTitle : '')  }}</h5>
       <MDBProgress v-if="proposal.status === 'InProgress' && isOver() === false" :height="4">
         <MDBProgressBar :value="progress" bg="primary" />
       </MDBProgress>
@@ -9,7 +9,8 @@
       <span v-else-if="proposal.status === 'Rejected'" class="badge bg-danger mb-2">{{ t('default.vote_status_rejected') }}</span>
       <span v-else-if="proposal.status === 'Spam'" class="badge bg-dark mb-2">{{ t('default.vote_status_spam') }}</span>
       <span v-else-if="proposal.status === 'Invalid'" class="badge bg-info mb-2">{{ t('default.vote_status_invalid') }}</span>
-      <p class="mt-2" v-html="t('default.' + type + '_message', typeArgs)"/>
+      <p class="mt-2" v-if="type !== 'general_proposal'" v-html="t('default.' + type + '_message', typeArgs)"/>
+      <p class="mt-2" v-if="type == 'general_proposal'" v-html="proposal.description"/>
       <ul class="list-unstyled text-muted">
         <li>
           <i class="far fa-calendar fa-fw me-3 mb-3"></i> {{ toDateString }}
@@ -58,6 +59,7 @@ import { useI18n } from "vue-i18n";
 import Decimal from 'decimal.js';
 
 import { yoctoNear } from "@/services/nearService/constants"
+import { getProposalKind, getProposalTitle } from "@/services/nearService/utils"
 import { parseFromNanoseconds, toDateString, toTimeString} from "@/utils/date"
 
 export default {
@@ -126,7 +128,7 @@ export default {
     results() {
       let results = {0:0, 1:0, 2:0}
       Object.keys(this.proposal.votes).forEach(voter => {
-        results[this.proposal.votes[voter]] += this.token_holders[voter]
+        results[this.proposal.votes[voter]] += this.token_holders[voter] ?? 0
       })
 
       return [
@@ -158,9 +160,7 @@ export default {
     },
     type() {
       let type = ''
-      const actions = this.proposal.transactions.actions[0]
-      // console.log(Object.keys(actions)[0])
-      switch (Object.keys(actions)[0]) {
+      switch (getProposalKind(this.proposal)) {
         case 'SendNear':
           type = 'payout'
           break;
@@ -170,6 +170,15 @@ export default {
         case 'RemoveMember':
           type = 'remove_member'
           break;
+        case 'GeneralProposal':
+          type = "general_proposal"
+        break;
+        case 'AddDocFile':
+          type = "add_doc_file"
+        break;
+        case 'InvalidateFile':
+          type = "invalidate_file"
+        break;
         default:
           break;
       }
@@ -203,6 +212,10 @@ export default {
           break;
       }
       return args
+    },
+    proposalTitle() {
+      let title = getProposalTitle(this.proposal)
+      return title
     },
     nearService() {
       return this.$store.getters['near/getService']

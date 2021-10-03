@@ -5,6 +5,8 @@
   "all_rights_reserved": "Všechna práva vyhrazena",
   "remove_member": "Odebrat člena",
   "remove_member_message": "Odebrání účtu ID <strong>{account}</strong> z <strong>{group}</strong>",
+  "general_proposal": "Obecné hlasování",
+  "title": "Nadpis",
   "account_id": "Účet ID",
   "amount": "Částka",
   "about": "O nás",

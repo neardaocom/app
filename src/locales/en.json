@@ -5,6 +5,8 @@
   "all_rights_reserved": "All rights reserved",
   "remove_member": "Remove member",
   "remove_member_message": "Remove account ID <strong>{account}</strong> from <strong>{group}</strong>",
+  "general_proposal": "General",
+  "title": "Title",
   "account_id": "Account ID",
   "amount": "Amount",
   "about": "About",
