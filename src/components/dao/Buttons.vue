@@ -1,7 +1,7 @@
 <template>
     <section class="row d-flex justify-content-between align-items-center py-3">
       <!-- Left -->
-      <div class="col-12 col-lg-9">
+      <div class="col-12 col-lg-10">
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.overview') }}
         </router-link>
@@ -20,6 +20,7 @@
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'organization' }}" :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.organization') }}
         </router-link>
+        <MDBBtn @click="modalDocumentsOpen()" class="btn btn-link btn-lg px-3" style="color:black" data-mdb-ripple-color="dark">{{ t('default.documents') }}</MDBBtn>
       </div>
       <!-- Left -->
 
@@ -50,6 +51,7 @@
     <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalDocuments :show="modalDocuments" :contractId="dao.wallet" :docs="dao.docs" />
 </template>
 
 <script>
@@ -58,6 +60,7 @@ import { useI18n } from "vue-i18n";
 import ModalPayout from '@/components/dao/ModalPayout'
 import ModalAddMember from '@/components/dao/ModalAddMember'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
+import ModalDocuments from '@/components/dao/ModalDocuments'
 import ModalGeneral from '@/components/dao/ModalGeneral'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
@@ -68,7 +71,7 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalGeneral
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalGeneral, ModalDocuments
   },
   props: {
     dao: {
@@ -82,10 +85,11 @@ export default {
     const modalAddMember = ref(0)
     const modalRemoveMember = ref(0)
     const modalGeneral = ref(0)
+    const modalDocuments = ref(0)
     const dropdownAction = ref(false);
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, modalGeneral, dropdownAction
+      t, modalPayout, modalAddMember, modalRemoveMember, modalGeneral, modalDocuments, dropdownAction
     };
   },
   computed: {
@@ -112,6 +116,9 @@ export default {
     modalGeneralOpen() {
       this.modalGeneral += 1
     },
+    modalDocumentsOpen() {
+      this.modalDocuments += 1
+    }
   }
 };
 </script>

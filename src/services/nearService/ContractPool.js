@@ -22,7 +22,10 @@ export class ContractPool {
         'proposals',
         'ft_balance_of',
         'ft_total_supply',
-        'ft_metadata'
+        'ft_metadata',
+        'dao_fees',
+        'payments',
+        'doc_files',
       ],
       changeMethods: [
         'add_proposal',
