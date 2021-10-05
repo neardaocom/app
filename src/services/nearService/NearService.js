@@ -364,6 +364,7 @@ class NearService {
       doc.valid = element[1].valid
       doc.category = data[5].map["Doc"].categories[element[1].category]
       doc.address = element[0]
+      doc.version = element[1].v ?? '1.0'
 
       file_list.push(doc)
     });

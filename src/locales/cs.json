@@ -17,6 +17,8 @@
   "valid": "Platný",
   "link": "Odkaz",
   "documents": "Dokumenty",
+  "document": "Dokument",
+  "version": "Verze",
   "no_doc_files": "Dao zatím nemá žádné dokumenty.",
   "account_id": "Účet ID",
   "amount": "Částka",

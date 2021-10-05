@@ -17,6 +17,8 @@
   "valid": "Valid",
   "link": "Link",
   "documents": "Documents",
+  "document": "Document",
+  "version": "Version",
   "no_doc_files": "Dao does not have any documents yet.",
   "account_id": "Account ID",
   "amount": "Amount",
