@@ -48,6 +48,14 @@ export const requiredValidator = (value) => {
     return validation
 }
 
+export const requiredArrayValidator = (value) => {
+    let validation = successValidation()
+    if (Array.isArray(value) !== true || value.length === 0) {
+        validation = errorValidation('required', {})
+    }
+    return validation
+}
+
 export const nearRootAccountValidator = (value) => {
     let validation = successValidation()
     const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d]+$/

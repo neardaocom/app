@@ -22,12 +22,15 @@ export class ContractPool {
         'proposals',
         'ft_balance_of',
         'ft_total_supply',
-        'ft_metadata'
+        'ft_metadata',
+        'doc_files',
       ],
       changeMethods: [
         'add_proposal',
         'vote',
-        'finish_proposal'
+        'finish_proposal',
+        'add_doc_file',
+        'invalide_file',
       ],
     });
 

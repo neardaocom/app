@@ -39,6 +39,7 @@
           <MDBDropdownMenu>
             <MDBDropdownItem href="#" @click.self.prevent="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
             <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.prevent="modalAddDocumentOpen()"><MDBIcon icon="file" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -48,12 +49,14 @@
     <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
     <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
 </template>
 
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ModalPayout from '@/components/dao/ModalPayout'
+import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import {
@@ -65,7 +68,7 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument
   },
   props: {
     dao: {
@@ -77,11 +80,12 @@ export default {
     const { t } = useI18n();
     const modalPayout = ref(0)
     const modalAddMember = ref(0)
+    const modalAddDocument = ref(0)
     const modalRemoveMember = ref(0)
     const dropdownAction = ref(false);
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction
+      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument
     };
   },
   computed: {
@@ -104,6 +108,9 @@ export default {
     },
     modalRemoveMemberOpen() {
       this.modalRemoveMember += 1
+    },
+    modalAddDocumentOpen() {
+      this.modalAddDocument += 1
     },
   }
 };

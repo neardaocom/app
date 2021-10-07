@@ -242,6 +242,68 @@ class NearService {
     );
   }
 
+  async addDoc(
+    contractId
+    , name
+    , description
+    , ipfs_hash
+    , categoryId
+    , category
+    , ext
+    , tagsIds
+    , tags
+    , amountToTransfer
+  ) {
+    const amount = new Decimal(amountToTransfer);
+    const amountYokto = amount.mul(yoctoNear).toFixed();
+
+    return this.contractPool.get(contractId).add_file_doc(
+      {
+        description: description,
+        transaction_input: {
+          AddFileDoc: {
+            uuid: ipfs_hash,
+            metadata: {
+              name: name,
+              description: description ,
+              tags: tagsIds,
+              category: categoryId,
+              ext: ext,
+              valid: true
+            },
+            new_tags: tags,
+            new_category: category,
+          }
+        }
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  async invalideDoc(
+    contractId
+    , ipfs_hash
+    , description
+    , amountToTransfer
+  ) {
+    const amount = new Decimal(amountToTransfer);
+    const amountYokto = amount.mul(yoctoNear).toFixed();
+
+    return this.contractPool.get(contractId).invalide_file(
+      {
+        description: description,
+        transaction_input: {
+          InvalidateFile: {
+            uuid: ipfs_hash
+          }
+        }
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
   /**
    * Voting in proposal
    */
@@ -416,6 +478,7 @@ class NearService {
       account_id: accountId
     });
   }
+
 }
 
 export default NearService;

@@ -36,6 +36,10 @@ body {
   max-width: 1140px;
 }
 
+.autocomplete-dropdown-container {
+  z-index: 1100;
+}
+
 .skeleton {
   display: inline-block;
   background-color: #b0c0c7;

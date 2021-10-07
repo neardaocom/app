@@ -59,11 +59,11 @@
       </div>
       <div class="col-12 col-md-4">
         <h5 class="text-center">{{ t("default.treasury") }}</h5>
-        <h2>
+        <h2 class="text-center">
           <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
           <BadgePercent :amount="dao.treasury.w_delta"/>
         </h2>
-        <p>≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
+        <p class="text-center">≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
         <!-- <hr class="d-none d-md-block" /> -->
       </div>
       <div class="col-12 col-md-4">

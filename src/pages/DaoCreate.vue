@@ -53,7 +53,8 @@
                                 <!-- ftAmount -->
                                 <div class="col-md-6">
                                     <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
-                                    <MDBInput  wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" v-mask="'### ### ###'" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
+                                    
                                 </div>
                              </div>
                              
@@ -155,6 +156,7 @@ import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import {
     requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
@@ -174,6 +176,9 @@ export default({
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert
+    },
+    directives: {
+        mask
     },
     setup() {
         const { t } = useI18n();
