@@ -8,6 +8,7 @@
     },
     created() {
       this.$store.dispatch('near/init')
+      this.$store.dispatch('ipfs/init')
     }
   };
 </script>

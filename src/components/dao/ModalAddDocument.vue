@@ -184,6 +184,9 @@ export default {
     nearService() {
       return this.$store.getters['near/getService']
     },
+    ipfsService() {
+      return this.$store.getters['ipfs/getService']
+    },
     documentTypeDropdown() {
       return {
         pdf: this.t('default.pdf'),
@@ -290,13 +293,18 @@ export default {
     handleUpload(files) {
       this.formFiles = files
     },
-    vote() {
+    async vote() {
       this.validate()
       // console.log(this.$refs.refWysiwyg.getCode())
       if (isValid(this.errors) === true) {
 
         // IPFS
-        const ipfs_hash = null // TODO: IPFS service
+        let ipfs_hash = null
+        try{
+          ipfs_hash = await this.ipfsService.storeFiles(this.formFiles, this.formName)
+        }catch(e){
+          console.log(e);
+        }
 
         // BLOCKCHAIN
         this.nearService.addDoc(
