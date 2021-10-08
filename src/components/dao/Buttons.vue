@@ -39,7 +39,8 @@
           <MDBDropdownMenu>
             <MDBDropdownItem href="#" @click.self.prevent="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
             <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalAddDocumentOpen()"><MDBIcon icon="file" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.prevent="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.prevent="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -50,6 +51,7 @@
     <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
 </template>
 
 <script>
@@ -58,6 +60,7 @@ import { useI18n } from "vue-i18n";
 import ModalPayout from '@/components/dao/ModalPayout'
 import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
+import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
@@ -68,7 +71,7 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument
   },
   props: {
     dao: {
@@ -79,13 +82,14 @@ export default {
   setup() {
     const { t } = useI18n();
     const modalPayout = ref(0)
-    const modalAddMember = ref(0)
     const modalAddDocument = ref(0)
+    const modalAddMember = ref(0)
+    const modalRemoveDocument = ref(0)
     const modalRemoveMember = ref(0)
     const dropdownAction = ref(false);
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument
+      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument, modalRemoveDocument
     };
   },
   computed: {
@@ -111,6 +115,9 @@ export default {
     },
     modalAddDocumentOpen() {
       this.modalAddDocument += 1
+    },
+    modalRemoveDocumentOpen() {
+      this.modalRemoveDocument += 1
     },
   }
 };
