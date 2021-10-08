@@ -272,7 +272,7 @@ export default {
       // console.log(this.$refs.refWysiwyg.getCode())
       this.formHtml = ref(this.$refs.refWysiwyg.getCode())
       this.validateName()
-      this.validateFileUpload()
+      this.validateCategory()
       switch (this.formDocumentType) {
         case 'flush-pdf':
           this.validateFileUpload()
@@ -313,7 +313,6 @@ export default {
         ).then(r => {
             console.log(r)
             this.formName = ''
-            this.formDescription = 0
             this.formCategory = ''
             this.active = false
         }).catch((e) => {
