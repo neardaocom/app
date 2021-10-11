@@ -88,7 +88,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoList() {
-    return this.factoryContract.get_dao_list();
+    return this.factoryContract.get_dao_list(); // TODO: Get lang of DAO from factory
   }
 
   /**
@@ -112,6 +112,7 @@ class NearService {
     , description
     , tags
     , founders
+    , politicalState
     , ftName
     , ftAmount
     , ftInsiderInitDistribution
@@ -149,6 +150,7 @@ class NearService {
             decimals: 0
         },
         config : {
+            lang: politicalState,
             description: description,
             insiders_share: ftInsiderShare,
             fundation_share: ftFundationShare,
@@ -183,6 +185,30 @@ class NearService {
             },
             {
               proposal_kind: 'RegularPayment',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'GeneralProposal',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'AddDocFile',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'InvalidateFile',
               duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
               quorum: voteQuorum,
               approve_threshold: voteApproveThreshold,
@@ -392,6 +418,7 @@ class NearService {
       return {
         id: daoId,
         name: data[1].name,
+        state: null,
         about: null,
         description: data[1].description,
         wallet: daoAccount,

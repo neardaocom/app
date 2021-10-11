@@ -10,9 +10,9 @@
                         </MDBStepperHead>
                         <MDBStepperContent>
 
-                            <div class="row " >
+                            <div class="row mb-4" >
                                 <!-- Account --> 
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label for="dao-account" class="form-label">{{ t('default.account') }}</label>
                                     <MDBInput wrapperClass="mb-4" id="dao-account" @keyup="validateAccount" @blur="validateAccount" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account" :data-mdb-showcounter="true">
                                         <span class="input-group-text" id="dao-account">.{{ factoryAccount }}</span>
@@ -20,9 +20,15 @@
                                 </div>
 
                                 <!-- Name -->
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-6">
                                     <label for="dao-name" class="form-label">{{ t('default.dao_name') }}</label>
                                     <MDBInput  wrapperClass="mb-4" id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
+                                </div>
+
+                                <!-- Political State -->
+                                <div class="col-12 col-md-6">
+                                    <label for="dao-political-state" class="form-label">{{ t('default.political_state') }}</label>
+                                    <MDBSelect filter v-model:selected="politicalState" v-model:options="politicalStatesOptions" wrapperClass="mb-4" id="dao-political-state" @keyup="validatePoliticalState" @blur="validatePoliticalState" :isValid="!errors.politicalState" :isValidated="isValidated.politicalState" :invalidFeedback="errors.politicalState"/>
                                 </div>
                             </div>
 
@@ -30,6 +36,8 @@
                             <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
                             <MDBTextarea  wrapperClass="mb-4" id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
                             <div v-if="errors.description" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.description }}</div>
+
+                            
                             
                             <!-- Councils -->
                             <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
@@ -162,8 +170,9 @@ import {
     requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
 } from '@/utils/validators'
+import { states } from '@/config/states.js'
 import {
-    MDBInput, MDBTextarea,
+    MDBInput, MDBTextarea, MDBSelect,
     MDBSwitch, MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
     MDBRange, MDBAlert
@@ -172,7 +181,7 @@ import {
 export default({
     components: {
         Header, Footer,
-        MDBInput, MDBTextarea,
+        MDBInput, MDBTextarea, MDBSelect,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert
@@ -185,19 +194,18 @@ export default({
         const exampleModal = ref(false)
 
         const contract = ref(undefined)
-        
         // form feilds
         // basic
         const account = ref('');  // TODO: podilni.near, not dot
         const name = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
         const description = ref('') // textare max 3000
+        const politicalState = ref('cz')
         const council = [] // at least 1 root account something.near
         const councilString = ref('')
-        
         // tokens
         const ftName = ref('')   // governance token 
         const ftAmount = ref(1_000_000) 
-        const ftInsiderInitDistribution = ref(1) // 0 ... ftAmount
+        const ftInsiderInitDistribution = ref(10_000) // 0 ... ftAmount
         const ftInsiderShare = ref(100) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
@@ -206,8 +214,8 @@ export default({
         const voteSpamThreshold = ref(80) // 0 .. 100 
         const voteDurationDays = ref(0)
         const voteDurationHours = ref(1)
-        const voteQuorum = ref(50) // 10 ... 100
-        const voteApproveThreshold = ref(50) // 0 .. 100
+        const voteQuorum = ref(20) // 10 ... 100
+        const voteApproveThreshold = ref(51) // 0 .. 100
         const voteOnlyOnce = ref(true)
 
         const addFtFundationShare = ref(false)
@@ -218,6 +226,7 @@ export default({
             account: false,
             name: false,
             description: false,
+            politicalState: false,
             council: false,
             ftName: false,
             ftAmount: false,
@@ -237,7 +246,7 @@ export default({
         
         return{
            t, exampleModal, account, name, 
-           description, ftName, ftAmount, ftInsiderInitDistribution, 
+           description, politicalState, ftName, ftAmount, ftInsiderInitDistribution, 
            ftInsiderShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
            voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
@@ -324,6 +333,20 @@ export default({
                 this.errors[field] = null
             }
             this.isValidated.description = true
+        },
+
+        validatePoliticalState(){
+            const field = "politicalState"
+            const minLengthVal = minLength(this.politicalState, 2)
+            const maxLengthVal = maxLength(this.politicalState, 2)
+            if (minLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
+            } else if (maxLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.politicalState = true
         },
 
         validateCouncil(){
@@ -509,6 +532,7 @@ export default({
             this.validateAccount()
             this.validateName()
             this.validateDescription()
+            this.validatePoliticalState()
             this.validateCouncil()
             this.validateFtName()
             this.validateFtAmount()
@@ -537,6 +561,7 @@ export default({
                     , this.description
                     , ['organization', 'dao']
                     , this.council // founders
+                    , this.politicalState // politicalState
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
                     , this.ftInsiderInitDistribution // ftInsiderInitDistribution
@@ -578,6 +603,11 @@ export default({
         },
         envContactName() {
             return process.env.VUE_APP_NEAR_CONTRACT_NAME
+        },
+        politicalStatesOptions() {
+            const listEmpty = [{text: this.t('default.global'), value: null}]
+            const listStates = Object.keys(states).map(x => { return { text: states[x] + ' (' + x.toUpperCase() + ')', value: x}})
+            return listEmpty.concat(listStates)
         },
     },
     created() {

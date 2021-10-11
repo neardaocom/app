@@ -32,7 +32,7 @@
                       </a>
                     </td>-->
                     <td>{{ index + 1 }}</td>
-                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }}</router-link></td>
+                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }} <MDBIcon v-if="dao[1].lang != null" :flag="dao[1].state"/></router-link></td>
                     <td class="text-start"><a class="text-reset font-weight-bold" :href="walletUrl + '/accounts/' + dao[0] + '.' + this.factoryAccount">{{ dao[0] + '.' + this.factoryAccount }}</a></td>
                     <td class="text-end">{{ dao[1].ft_name }}</td>
                     <td class="fw-bold text-end text-primary">{{ n(dao[1].ft_amount) }}</td>
@@ -56,7 +56,7 @@ import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/types/DAOs'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
-  , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText
+  , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBIcon
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
@@ -67,6 +67,7 @@ export default {
     Header, Breadcrumb, Footer, MDBContainer, MDBTable
     , MDBProgress, MDBProgressBar
     , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText
+    , MDBIcon
   },
   setup() {
     const { t, n } = useI18n()
