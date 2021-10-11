@@ -47,6 +47,10 @@ const data = {
     btc: null,
     currency: 'czk',
     currency_amount: null
+  },
+  doc: {
+    files: [],
+    map: {}
   }
 }
 

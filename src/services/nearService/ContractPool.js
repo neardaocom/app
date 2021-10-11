@@ -23,6 +23,8 @@ export class ContractPool {
         'ft_balance_of',
         'ft_total_supply',
         'ft_metadata',
+        'dao_fees',
+        'payments',
         'doc_files',
       ],
       changeMethods: [
