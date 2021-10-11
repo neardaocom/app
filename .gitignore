@@ -5,6 +5,8 @@
 /mdb/*
 /.mdb
 
+contract/target/*
+contract/Cargo.lock
 
 # local env files
 .env.local

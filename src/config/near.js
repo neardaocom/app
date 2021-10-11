@@ -19,7 +19,7 @@ function getConfig(env) {
         networkId: 'testnet',
         nodeUrl: 'https://rpc.testnet.near.org',
         name: NAME,
-        contractName: CONTRACT_NAME + '.testnet',
+        contractName: CONTRACT_NAME /* + '.testnet'*/,
         walletUrl: 'https://wallet.testnet.near.org',
         helperUrl: 'https://helper.testnet.near.org'
       }

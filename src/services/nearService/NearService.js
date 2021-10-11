@@ -188,7 +188,31 @@ class NearService {
               approve_threshold: voteApproveThreshold,
               vote_only_once: voteOnlyOnce,
               waiting_open_duration: 0
-            }
+            },
+            {
+              proposal_kind: 'GeneralProposal',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'AddDocFile',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
+            {
+              proposal_kind: 'InvalidateFile',
+              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+              quorum: voteQuorum,
+              approve_threshold: voteApproveThreshold,
+              vote_only_once: voteOnlyOnce,
+              waiting_open_duration: 0
+            },
         ],
         founders: founders
     }
@@ -357,6 +381,7 @@ class NearService {
       this.getStatisticsMembers(daoAccount),
       this.getStatisticsFt(daoAccount),
       this.getProposals(daoAccount, 0, 1000),
+      this.getDocFiles(daoAccount),
     ]).catch((e) => {
       console.log(e)
     });
@@ -387,6 +412,24 @@ class NearService {
       token_account[accountId] = new Decimal(balances[index]).toNumber()
     });
     //console.log(token_account)
+
+    // Mapping Doc files tags and categories
+    let file_list = [];
+    data[5].files.forEach(element => {
+      let doc = {tags: []}
+     for (let [i, val] of element[1].tags.entries()) {
+        doc.tags[i] = data[5].map["Doc"].tags[val]
+      }
+      doc.name = element[1].name
+      doc.ext = element[1].ext
+      doc.description = element[1].description
+      doc.valid = element[1].valid
+      doc.category = data[5].map["Doc"].categories[element[1].category]
+      doc.address = element[0]
+      doc.version = element[1].v ?? '1.0'
+
+      file_list.push(doc)
+    });
 
     if (data !== null) {
       return {
@@ -444,7 +487,11 @@ class NearService {
           currency: 'czk',
           currency_amount: null
         },
-        proposals: data[4]
+        proposals: data[4],
+        docs: {
+          files: file_list,
+          map: data[5].map.Doc
+        }
       };
     }
 
@@ -471,6 +518,10 @@ class NearService {
       from_index: fromIndex ?? 0,
       limit: limit ?? 1000
     });
+  }
+
+  async getDocFiles(contractId) {
+    return this.contractPool.get(contractId).doc_files();
   }
 
   async getFtBalanceOf(contractId, accountId) {
