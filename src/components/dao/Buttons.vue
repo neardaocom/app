@@ -77,11 +77,7 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-<<<<<<< HEAD
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument
-=======
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalGeneral
->>>>>>> feature/general_proposal
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral
   },
   props: {
     dao: {

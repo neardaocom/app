@@ -1,20 +1,19 @@
 <template>
-    <MDBModal
-        id="modalDocument"
-        tabindex="-1"
-        labelledby="modalDocumentLabel"
-        v-model="active"
-        size="xl"
-    >
-        <MDBModalHeader>
-        <MDBModalTitle id="modalDocumentLabel"> {{ t('default.document') + ': ' + doc.name + doc.ext + ', ' + t('default.version') + ': ' + doc.version}} </MDBModalTitle>
-        </MDBModalHeader>
-        <MDBModalBody class="text-start">
-          <object v-if="doc.ext.includes('pdf')" type="application/pdf" :data="doc.data" width="100%" height="500px"></object>
-          <iframe v-else-if="doc.ext.includes('html')" :srcdoc="doc.data" width="100%" height="500px"></iframe>
-          <div v-else width="100%" height="500px">{{ doc.data }}</div>
-        </MDBModalBody>
-    </MDBModal>
+  <MDBModal
+      id="modalDocument"
+      tabindex="-1"
+      labelledby="modalDocumentLabel"
+      v-model="active"
+      size="xl"
+  >
+    <MDBModalHeader>
+      <MDBModalTitle class="ms-3" id="modalDocumentLabel">{{ doc.name }} <small class="ms-4">{{ doc.category }} | v{{ doc.version }}</small></MDBModalTitle>
+    </MDBModalHeader>
+    <MDBModalBody class="text-start">
+      <pdf class="m-3" v-if="doc.ext == 'pdf'" :src="content" :page="1"></pdf>
+      <section class="m-3" v-if="doc.ext == 'html'" v-html="content"></section>
+    </MDBModalBody>
+  </MDBModal>
 </template>
 
 <script>
@@ -26,10 +25,12 @@ import {
   MDBModalTitle,
   MDBModalBody,
 } from "mdb-vue-ui-kit";
+import pdf from 'pdfvuer'
 
 export default {
   components: {
     MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody
+    , pdf
   },
   props: {
     show: {
@@ -44,22 +45,46 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const { show } = toRefs(props)
+    const { show, doc } = toRefs(props)
 
     const active = ref(false)
+    const content = ref('')
     
     const openModal = () => { active.value = true }
+    const changeDoc = async () => { 
+      console.log('Change doc')
+      if (props.doc.name) {
+        // console.log(props.doc.ext)
+        switch (props.doc.ext) {
+          case 'html':
+            content.value = await props.doc.data.text()
+            break;
+          case 'pdf':
+            content.value = URL.createObjectURL(props.doc.data)
+            break;
+          default:
+            break;
+        }
+        // console.log(content.value)
+      }
+    }
 
     watch(show, openModal)
+    watch(doc, changeDoc)
 
     return {
-      t, active
+      t, active, content, changeDoc
     };
   },
   methods: {
     close() {
       this.active = false
-    },
+    }
+
+  },
+  mounted() {
+    this.changeDoc()
   }
 };
 </script>
+<style src="pdfvuer/dist/pdfvuer.css"></style>

@@ -605,7 +605,7 @@ export default({
             return process.env.VUE_APP_NEAR_CONTRACT_NAME
         },
         politicalStatesOptions() {
-            const listEmpty = [{text: this.t('default.global'), value: null}]
+            const listEmpty = [{text: this.t('default.global') + ' (EN)', value: null}]
             const listStates = Object.keys(states).map(x => { return { text: states[x] + ' (' + x.toUpperCase() + ')', value: x}})
             return listEmpty.concat(listStates)
         },

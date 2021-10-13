@@ -17,6 +17,7 @@
           v-model="formName"
           :filter="filterFormName"
           maxlength="100"
+          :close="validateName()"
           @keyup="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
         />
       </div>
@@ -28,6 +29,7 @@
           v-model="formCategory"
           :filter="filterFormCategory"
           maxlength="100"
+          :close="validateCategory()"
           @keyup="validateCategory()" @blur="validateCategory()" :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
         />
       </div>
@@ -176,9 +178,6 @@ export default {
       this.validateName()
       this.validateCategory()
     },
-    handleUpload(files) {
-      this.formFiles = files
-    },
     vote() {
       this.validate()
       // console.log(this.$refs.refWysiwyg.getCode())
@@ -192,7 +191,8 @@ export default {
           this.contractId,
           ipfs_hash,
           null,
-          1
+          1,
+          this.accountId
         ).then(r => {
             console.log(r)
             this.formName = ''

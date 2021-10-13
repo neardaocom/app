@@ -11,13 +11,13 @@
         <MDBModalBody class="text-start">
         <label for="title-id-input" class="form-label">{{ t('default.title') }}</label>
         <MDBInput id="title-id-input" inputGroup :formOutline="false" aria-describedby="title-addon" v-model="formTitle"
-        @blur="validateTitle()" :isValid="!errors.formTitle" :isValidated="isValidated.formTitle" :invalidFeedback="errors.formTitle"
+         @keyup="validateTitle()" @blur="validateTitle()" :isValid="!errors.formTitle" :isValidated="isValidated.formTitle" :invalidFeedback="errors.formTitle"
         >
         </MDBInput>
         <br/>
         <label for="description-id-input" class="form-label">{{ t('default.description') }}</label>
         <MDBInput class="text-left" id="description-id-input" inputGroup aria-describedby="description-addon" v-model="formDescription"
-         @blur="validateDescription()" :isValid="!errors.formDescription" :isValidated="isValidated.formDescription" :invalidFeedback="errors.formDescription"
+         @keyup="validateDescription()" @blur="validateDescription()" :isValid="!errors.formDescription" :isValidated="isValidated.formDescription" :invalidFeedback="errors.formDescription"
          >
         </MDBInput>
         </MDBModalBody>
@@ -118,7 +118,7 @@ export default {
       const field = "formDescription"
       const requiredVal = requiredValidator(this.formDescription)
       const maxLengthVal = maxLength(this.formDescription, 300)
-      const minLengthVal = minLength(this.formTitle, 10)
+      const minLengthVal = minLength(this.formDescription, 10)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (maxLengthVal.valid === false) {

@@ -26,6 +26,7 @@ export class ContractPool {
         'dao_fees',
         'payments',
         'doc_files',
+        'dao_config',
       ],
       changeMethods: [
         'add_proposal',
