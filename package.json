@@ -11,10 +11,12 @@
     "start": "vue-cli-service serve --open"
   },
   "dependencies": {
+    "@firebase/logger": "^0.3.0",
     "@tiptap/starter-kit": "^2.0.0-beta.116",
     "@tiptap/vue-3": "^2.0.0-beta.67",
     "core-js": "^3.17.2",
     "decimal.js": "^10.3.1",
+    "firebase": "^9.1.2",
     "lodash": "^4.17.21",
     "mdb-vue-file-upload": "./mdb/mdb-vue-file-upload-1.0.0.tgz",
     "mdb-vue-ui-kit": "./mdb/mdb-vue-ui-kit-1.4.0.tgz",
