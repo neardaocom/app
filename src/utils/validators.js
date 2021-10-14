@@ -48,6 +48,16 @@ export const requiredValidator = (value) => {
     return validation
 }
 
+export const urlValidator = (value) => {
+    let validation = successValidation()
+    let validUrl = require('valid-url');
+    if (validUrl.isWebUri(value) == undefined) {
+        validation = errorValidation('invalid_url', {})
+    }
+
+    return validation
+}
+
 export const requiredArrayValidator = (value) => {
     let validation = successValidation()
     if (Array.isArray(value) !== true || value.length === 0) {

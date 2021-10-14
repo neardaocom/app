@@ -18,6 +18,7 @@
           v-model="formName"
           :filter="filterFormName"
           maxlength="100"
+          :close="validateName()"
           @keyup="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
         />
       </div>
@@ -29,27 +30,33 @@
           v-model="formCategory"
           :filter="filterFormCategory"
           maxlength="100"
+          :close="validateCategory()"
           @keyup="validateCategory()" @blur="validateCategory()" :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
         />
       </div>
-      <br/>
-      <MDBSwitch wrapperClass="mb-2" :label="t('default.version_upgrade_major')" v-model="formVersionUpgrageMajor"/>
-      <br/>
+      <MDBSwitch v-if="true === false" wrapperClass="mb-2" :label="t('default.version_upgrade_major')" v-model="formVersionUpgrageMajor"/>
+      <!-- <br/> -->
+      <label for="add-document-input" class="form-label mt-2">{{ t('default.document') }}</label>
 
-      <p class="note note-danger" v-if="errors.formFiles != null"  color="danger" static>{{ errors.formFiles }}</p>
-      <p class="note note-danger" v-if="errors.formUrl != null"  color="danger" static>{{ errors.formUrl }}</p>
-      <p class="note note-danger" v-if="errors.formHtml != null"  color="danger" static>{{ errors.formHtml }}</p>
+      <p class="note note-danger" v-if="formDocumentType == 'flush-pdf' && errors.formFiles != null"  color="danger" static>{{ errors.formFiles }}</p>
+      <p class="note note-danger" v-if="formDocumentType == 'flush-url' && errors.formUrl != null"  color="danger" static>{{ errors.formUrl }}</p>
+      <p class="note note-danger" v-if="formDocumentType == 'flush-html' && errors.formHtml != null"  color="danger" static>{{ errors.formHtml }}</p>
 
-      <MDBAccordion v-model="formDocumentType" flush fluid>
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accourdition-pdf-open' : '']">
+      <MDBAccordion v-model="formDocumentType" flush fluid class="mx-2">
+        <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
           <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
             :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
             :removeBtn="fileUploadMsg.removeBtn"
           />
         </MDBAccordionItem>
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.link" collapseId="flush-url" :class="[formDocumentType === 'flush-url' ? 'accourdition-url-open' : '']">
+        <MDBAccordionItem :headerTitle="documentTypeDropdown.link" collapseId="flush-url" :class="[formDocumentType === 'flush-url' ? 'accordition-url-open' : '']">
           <label for="add-document-url-input" class="form-label">{{ t('default.url') }}</label>
-          <MDBInput id="add-document-url-input" type="url" :formOutline="false" inputGroup v-model="formUrl"/>
+          <MDBInput id="add-document-url-input" type="url" :formOutline="false" inputGroup v-model="formUrl" aria-describedby="add-document-url-input-text"
+            @keyup="validateUrl()" @blur="validateUrl()" :isValid="!errors.formUrl" :isValidated="isValidated.formUrl" :invalidFeedback="errors.formUrl"
+          />
+          <div class="col-auto">
+            <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
+          </div>
         </MDBAccordionItem>
         <MDBAccordionItem :headerTitle="documentTypeDropdown.editor" collapseId="flush-html">
           <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
@@ -69,7 +76,7 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, requiredArrayValidator, isValid, minLength, maxLength } from '@/utils/validators'
+import { requiredValidator, requiredArrayValidator, isValid, minLength, maxLength, urlValidator } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
 import {
   MDBBtn,
@@ -85,6 +92,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
+import { makeFileFromString } from "@/services/ipfsService/IpfsService"
 
 import { Logger } from '@firebase/logger';
 
@@ -259,9 +267,12 @@ export default {
     },
     validateUrl(){
       const field = "formUrl"
-      const requiredVal = requiredArrayValidator(this.formUrl)
+      const requiredVal = requiredValidator(this.formUrl)
+      const urlVal = urlValidator(this.formUrl)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+      } else if (urlVal.valid === false) {
+        this.errors[field] = this.t('default.' + urlVal.message, urlVal.params)
       } else {
         this.errors[field] = null
       }
@@ -269,7 +280,7 @@ export default {
     },
     validateHtml(){
       const field = "formHtml"
-      const requiredVal = requiredArrayValidator(this.formHtml)
+      const requiredVal = requiredValidator(this.formHtml)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -306,48 +317,75 @@ export default {
 
         // IPFS
         let ipfs_hash = null
-        try{
-          ipfs_hash = await this.ipfsService.storeFiles(this.formFiles, this.formName)
-        }catch(e){
+        try {
+          ipfs_hash = await this.ipfsService.storeFiles(this.getIpfsData(), this.formName)
+        } catch(e){
           console.log(e);
         }
 
         // BLOCKCHAIN
-        this.nearService.addDoc(
-            this.contractId,
-            this.formName, // name
-            this.formDescription, // description
-            ipfs_hash, // ipfs_hash
-            null, // categoryId
-            this.formCategory, // category
-            this.formDocumentType.replace('flush-', ''), // ext
-            [], // tagsIds
-            [], // tags
-            1,
-        ).then(r => {
-            console.log(r)
-            this.formName = ''
-            this.formCategory = ''
-            this.active = false
-        }).catch((e) => {
-            console.log(e)
-        })
+        if (ipfs_hash) {
+          this.nearService.addDoc(
+              this.contractId,
+              this.formName, // name
+              this.formDescription, // description
+              ipfs_hash, // ipfs_hash
+              0, // categoryId
+              this.formCategory, // category
+              this.getExt(), // ext
+              [], // tagsIds
+              [], // tags
+              '1.0', // version
+              1,
+              this.accountId
+          ).then(r => {
+              console.log(r)
+              this.formName = ''
+              this.formCategory = ''
+              this.active = false
+          }).catch((e) => {
+              console.log(e)
+          })
+        }
       }
     },
     close() {
       this.active = false
     },
+    getExt() {
+      return this.formDocumentType.replace('flush-', '')
+    },
+    getFullname() {
+      return this.formName + '.' + this.getExt()
+    },
+    getIpfsData() {
+      let ipfsData = null
+      switch (this.formDocumentType) {
+        case 'flush-pdf':
+          ipfsData = this.formFiles
+          break;
+        case 'flush-url':
+          ipfsData = makeFileFromString(this.formUrl, this.getFullname())
+          break;
+        case 'flush-html':
+          ipfsData = makeFileFromString(this.formHtml, this.getFullname())
+          break;
+        default:
+          break;
+      }
+      return ipfsData
+    }
   }
 };
 </script>
 
 <style>
-.accourdition-pdf-open {
+.accordition-pdf-open {
   min-height: 280px;
 }
 
-.accourdition-url-open {
-  min-height: 120px;
+.accordition-url-open {
+  min-height: 160px;
 }
 
 </style>

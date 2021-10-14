@@ -1,7 +1,7 @@
 <template>
     <section class="row d-flex justify-content-between align-items-center py-3">
       <!-- Left -->
-      <div class="col-12 col-lg-9">
+      <div class="col-12 col-lg-10">
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.overview') }}
         </router-link>
@@ -19,6 +19,9 @@
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'organization' }}" :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.organization') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.documents') }}
         </router-link>
       </div>
       <!-- Left -->
@@ -41,6 +44,7 @@
             <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
             <MDBDropdownItem href="#" @click.prevent="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem href="#" @click.prevent="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
+            <MDBDropdownItem href="#" @click.prevent="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -52,6 +56,7 @@
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
 </template>
 
 <script>
@@ -62,6 +67,7 @@ import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
 import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
+import ModalGeneral from '@/components/dao/ModalGeneral'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,
@@ -71,7 +77,7 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral
   },
   props: {
     dao: {
@@ -86,10 +92,11 @@ export default {
     const modalAddMember = ref(0)
     const modalRemoveDocument = ref(0)
     const modalRemoveMember = ref(0)
+    const modalGeneral = ref(0)
     const dropdownAction = ref(false);
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument, modalRemoveDocument
+      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument, modalRemoveDocument, modalGeneral
     };
   },
   computed: {
@@ -118,6 +125,9 @@ export default {
     },
     modalRemoveDocumentOpen() {
       this.modalRemoveDocument += 1
+    },
+    modalGeneralOpen() {
+      this.modalGeneral += 1
     },
   }
 };

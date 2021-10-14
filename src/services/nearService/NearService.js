@@ -37,7 +37,7 @@ class NearService {
 
   async init() {
     this.near = await connect(Object.assign({
-      deps: { 
+      deps: {
         keyStore: new keyStores.BrowserLocalStorageKeyStore()
       }
     }, this.config));
@@ -88,7 +88,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoList() {
-    return this.factoryContract.get_dao_list();
+    return this.factoryContract.get_dao_list(); // TODO: Get lang of DAO from factory
   }
 
   /**
@@ -96,7 +96,7 @@ class NearService {
    * 
    * @returns Promise
    */
-   async getDaoInfo(daoId) {
+  async getDaoInfo(daoId) {
     return this.factoryContract.get_dao_info({
       account: daoId
     });
@@ -112,6 +112,7 @@ class NearService {
     , description
     , tags
     , founders
+    , politicalState
     , ftName
     , ftAmount
     , ftInsiderInitDistribution
@@ -127,70 +128,95 @@ class NearService {
     , amountToTransfer
   ) {
     const info = {
-        name: name,
-        description: description,
-        tags: tags,
-        ft_name: ftName,
-        ft_amount: ftAmount
+      name: name,
+      description: description,
+      tags: tags,
+      ft_name: ftName,
+      ft_amount: ftAmount
     };
     console.log(info)
 
     const args = {
-        name: name,
-        total_supply: ftAmount,
-        init_distribution: ftInsiderInitDistribution,
-        ft_metadata: {
-            spec: "ft-1.0.0",
-            name: ftName,
-            symbol: accountId.toUpperCase(),
-            icon: null,
-            reference: null,
-            reference_hash: null,
-            decimals: 0
+      name: name,
+      total_supply: ftAmount,
+      init_distribution: ftInsiderInitDistribution,
+      ft_metadata: {
+        spec: "ft-1.0.0",
+        name: ftName,
+        symbol: accountId.toUpperCase(),
+        icon: null,
+        reference: null,
+        reference_hash: null,
+        decimals: 0
+      },
+      config: {
+        lang: politicalState,
+        description: description,
+        insiders_share: ftInsiderShare,
+        fundation_share: ftFundationShare,
+        community_share: ftCommunityShare,
+        vote_spam_threshold: voteSpamThreshold
+      },
+      release_config: 'Voting',
+      vote_policy_configs: [
+        {
+          proposal_kind: 'Pay',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
         },
-        config : {
-            description: description,
-            insiders_share: ftInsiderShare,
-            fundation_share: ftFundationShare,
-            community_share: ftCommunityShare,
-            vote_spam_threshold: voteSpamThreshold
+        {
+          proposal_kind: 'AddMember',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
         },
-        release_config: 'Voting',
-        vote_policy_configs : [
-            {
-                proposal_kind: 'Pay',
-                duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-                quorum: voteQuorum,
-                approve_threshold: voteApproveThreshold,
-                vote_only_once: voteOnlyOnce,
-                waiting_open_duration: 0
-            },
-            {
-              proposal_kind: 'AddMember',
-              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-              quorum: voteQuorum,
-              approve_threshold: voteApproveThreshold,
-              vote_only_once: voteOnlyOnce,
-              waiting_open_duration: 0
-            },
-            {
-              proposal_kind: 'RemoveMember',
-              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-              quorum: voteQuorum,
-              approve_threshold: voteApproveThreshold,
-              vote_only_once: voteOnlyOnce,
-              waiting_open_duration: 0
-            },
-            {
-              proposal_kind: 'RegularPayment',
-              duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-              quorum: voteQuorum,
-              approve_threshold: voteApproveThreshold,
-              vote_only_once: voteOnlyOnce,
-              waiting_open_duration: 0
-            }
-        ],
-        founders: founders
+        {
+          proposal_kind: 'RemoveMember',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'RegularPayment',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'GeneralProposal',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'AddDocFile',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'InvalidateFile',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        }
+      ],
+      founders: founders
     }
     console.log(args)
 
@@ -201,10 +227,10 @@ class NearService {
 
     return this.factoryContract.create(
       {
-          acc_name: accountId,
-          public_key: publicKey,
-          dao_info: info,
-          args: args_base64
+        acc_name: accountId,
+        public_key: publicKey,
+        dao_info: info,
+        args: args_base64
       },
       Decimal.mul(300, TGas).toString(),
       amountYokto.toString()
@@ -252,29 +278,36 @@ class NearService {
     , ext
     , tagsIds
     , tags
+    , version
     , amountToTransfer
+    , accountId
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_file_doc(
+    return this.contractPool.get(contractId).add_proposal(
       {
-        description: description,
-        transaction_input: {
-          AddFileDoc: {
-            uuid: ipfs_hash,
-            metadata: {
-              name: name,
-              description: description ,
-              tags: tagsIds,
-              category: categoryId,
-              ext: ext,
-              valid: true
-            },
-            new_tags: tags,
-            new_category: category,
+        proposal_input: {
+          description: description,
+          tags: tags,
+          transaction: {
+            AddDocFile: {
+              uuid: ipfs_hash,
+              metadata: {
+                name: name,
+                description: description,
+                tags: tagsIds,
+                category: categoryId,
+                ext: ext,
+                valid: true,
+                v: version
+              },
+              new_tags: tags,
+              new_category: category
+            }
           }
-        }
+        },
+        account_id: accountId
       },
       Decimal.mul(100, TGas).toString(),
       amountYokto.toString()
@@ -286,18 +319,23 @@ class NearService {
     , ipfs_hash
     , description
     , amountToTransfer
+    , accountId
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).invalide_file(
+    return this.contractPool.get(contractId).add_proposal(
       {
-        description: description,
-        transaction_input: {
-          InvalidateFile: {
-            uuid: ipfs_hash
+        proposal_input: {
+          description: description,
+          tags: [],
+          transaction: {
+            InvalidateFile: {
+              uuid: ipfs_hash
+            }
           }
-        }
+        },
+        account_id: accountId
       },
       Decimal.mul(100, TGas).toString(),
       amountYokto.toString()
@@ -357,6 +395,8 @@ class NearService {
       this.getStatisticsMembers(daoAccount),
       this.getStatisticsFt(daoAccount),
       this.getProposals(daoAccount, 0, 1000),
+      this.getDocFiles(daoAccount),
+      this.getDaoConfig(daoAccount),
     ]).catch((e) => {
       console.log(e)
     });
@@ -388,16 +428,36 @@ class NearService {
     });
     //console.log(token_account)
 
+    // Mapping Doc files tags and categories
+    let file_list = [];
+    data[5].files.forEach(element => {
+      let doc = { tags: [] }
+      for (let [i, val] of element[1].tags.entries()) {
+        doc.tags[i] = data[5].map["Doc"].tags[val]
+      }
+      doc.name = element[1].name
+      doc.ext = element[1].ext
+      doc.description = element[1].description
+      doc.valid = element[1].valid
+      doc.category = data[5].map["Doc"].categories[element[1].category]
+      doc.ipfs_hash = element[0]
+      doc.version = element[1].v ?? '1.0'
+
+      file_list.push(doc)
+    });
+
     if (data !== null) {
       return {
         id: daoId,
         name: data[1].name,
-        about: null,
+        state: null,
+        about: data[1].description,
         description: data[1].description,
         wallet: daoAccount,
         address: null,
         domain: null,
         web: null,
+        lang: data[6].lang,
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
         token_unlocked: {
@@ -444,7 +504,11 @@ class NearService {
           currency: 'czk',
           currency_amount: null
         },
-        proposals: data[4]
+        proposals: data[4],
+        docs: {
+          files: file_list,
+          map: data[5].map.Doc
+        }
       };
     }
 
@@ -473,10 +537,18 @@ class NearService {
     });
   }
 
+  async getDocFiles(contractId) {
+    return this.contractPool.get(contractId).doc_files();
+  }
+
   async getFtBalanceOf(contractId, accountId) {
     return this.contractPool.get(contractId).ft_balance_of({
       account_id: accountId
     });
+  }
+
+  async getDaoConfig(contractId) {
+    return this.contractPool.get(contractId).dao_config();
   }
 
 }
