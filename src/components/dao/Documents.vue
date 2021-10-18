@@ -12,7 +12,7 @@
                   <th scope="col">{{ t("default.name")}}</th>
                   <th scope="col">{{ t("default.category")}}</th>
                   <th scope="col" style="min-width:200px">{{ t("default.description")}}</th>
-                  <th scope="col" style="min-width:200px">{{ t("default.tags")}}</th>
+                  <!-- <th scope="col" style="min-width:200px">{{ t("default.tags")}}</th>-->
                   <th scope="col">{{ t("default.valid")}}</th>
                   <th scope="col">{{ t("default.version")}}</th>
                 </tr>
@@ -24,7 +24,7 @@
                   <td class="fw-bold text-start"><a href="#" @click="openDoc(index)">{{ doc.name }} <MDBIcon v-if="doc.ext.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
                   <td class="text-start">{{ doc.category }}</td>
                   <td>{{ doc.description }}</td>
-                  <td class="text-start">{{ doc.tags.join(', ') }}</td>
+                  <!-- <td class="text-start">{{ doc.tags.join(', ') }}</td>-->
                   <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                   <td class="text-start">{{ doc.version }}</td>
                   </tr>

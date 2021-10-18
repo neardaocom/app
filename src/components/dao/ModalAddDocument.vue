@@ -11,27 +11,31 @@
     </MDBModalHeader>
     <MDBModalBody class="text-start">
       <div class="form-outline mb-4">
-        <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
-        <MDBAutocomplete
-          :class="[!errors.formName ? '' : 'is-invalid']"
-          :id="'add-document-name-input-' + formNameId"
-          v-model="formName"
-          :filter="filterFormName"
-          maxlength="100"
-          :close="validateName()"
-          @keyup="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
-        />
-      </div>
-      <div class="form-outline mb-4">
         <label :for="'add-document-category-input-' + formCategoryId" class="form-label">{{ t('default.category') }}</label>
         <MDBAutocomplete
-          :class="[!errors.formCategory ? '' : 'is-invalid']"
+          :class="[isValidated.formCategory && errors.formCategory && errors.formCategory.length > 0 ? 'is-invalid' : '']"
           :id="'add-document-category-input-' + formCategoryId"
+          :no-results-text="noResults"
           v-model="formCategory"
           :filter="filterFormCategory"
           maxlength="100"
-          :close="validateCategory()"
-          @keyup="validateCategory()" @blur="validateCategory()" :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
+          @change="validateCategory()"
+          @blur="validateCategory()"
+          @keyup.enter="validateCategory()"
+          :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
+        />
+      </div>
+      <div class="form-outline mb-4">
+        <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
+        <MDBAutocomplete
+          :class="[isValidated.formName && errors.formName && errors.formName.length > 0 ? 'is-invalid' : '']"
+          :id="'add-document-name-input-' + formNameId"
+          :no-results-text="noResults"
+          v-model="formName"
+          :filter="filterFormName"
+          maxlength="100"
+          @change="validateName()"
+          @keyup.enter="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
         />
       </div>
       <MDBSwitch v-if="true === false" wrapperClass="mb-2" :label="t('default.version_upgrade_major')" v-model="formVersionUpgrageMajor"/>
@@ -76,6 +80,7 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
+import _ from "lodash";
 import { requiredValidator, requiredArrayValidator, isValid, minLength, maxLength, urlValidator } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
 import {
@@ -119,6 +124,10 @@ export default {
     tokenHolders: {
       type: Object,
       required: true
+    },
+    docs: {
+      type: Object,
+      required: true
     }
   },
   setup(props) {
@@ -134,10 +143,10 @@ export default {
 
     const formName = ref("")
     const formNameId = getRandom(1000, 9999)
-    const formNameOptions = ref([ t('default.founding_document') ])
+    const formNameOptions = ref([]) // t('default.founding_document')
     const formCategory = ref("")
     const formCategoryId = getRandom(1000, 9999)
-    const formCategoryOptions = ref([ t('default.fundamental') ])
+    const formCategoryOptions = ref([t('default.fundamental')]) // t('default.fundamental')
     const formDescription = ref('')
     const formTagsNew = ref([])
     const formTags = ref([])
@@ -173,7 +182,10 @@ export default {
         formVersionUpgrageMajor: false,
     })
 
-    const errors = reactive({});
+    const errors = reactive({
+      formCategory: '',
+      formName: '',
+    });
 
     return {
       t, active
@@ -195,6 +207,9 @@ export default {
     ipfsService() {
       return this.$store.getters['ipfs/getService']
     },
+    noResults() {
+      return this.t('default.no_results')
+    },
     documentTypeDropdown() {
       return {
         pdf: this.t('default.pdf'),
@@ -211,10 +226,28 @@ export default {
         removeBtn: this.t('default.file_upload_remove_btn')
       }
     },
+    getCategories() {
+      let categories = [ this.t('default.fundamental')]
+      this.docs.map.categories.forEach(item => {
+        if (_.isEqual(categories[0], item) !== true) {
+          categories.push(item)
+        }
+      })
+      return categories
+    },
+    getNames() {
+      let names = []
+      if (this.formCategory.length > 0) {
+        names = _.sortedUniq(this.docs.files.filter(item => _.isEqual(this.formCategory, item.category)).map(item => item.name).sort())
+      } else {
+        names = _.sortedUniq(this.docs.files.map(item => item.name).sort())
+      }
+      return names
+    }
   },
   mounted() {
-    // this.formNameOptions.concat([]) // TODO: Add document names in dao
-    // this.formCategoryOptions.concat([]) // TODO: Add document names in dao
+    //this.formCategoryOptions = this.getCategories
+    //this.formNameOptions.value = this.getNames
   },
   methods: {
     validateName(){
