@@ -3,14 +3,19 @@
     <main>
         <section class="bg-white shadow-2 mb-3">
             <div class="container">
-                <MDBStepper vertical class="text-start">
+                <MDBStepper vertical class="text-start pb-4">
                     <MDBStepperStep active>
                         <MDBStepperHead icon="1">
                             {{ t('default.basic_information') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
+                            <div class="row" >
+                                <!-- Name -->
+                                <div class="col-12 col-md-6">
+                                    <label for="dao-name" class="form-label">{{ t('default.dao_name') }}</label>
+                                    <MDBInput  wrapperClass="mb-4" id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
+                                </div>
 
-                            <div class="row mb-4" >
                                 <!-- Account --> 
                                 <div class="col-12 col-md-6">
                                     <label for="dao-account" class="form-label">{{ t('default.account') }}</label>
@@ -19,29 +24,39 @@
                                     </MDBInput>
                                 </div>
 
-                                <!-- Name -->
-                                <div class="col-12 col-md-6">
-                                    <label for="dao-name" class="form-label">{{ t('default.dao_name') }}</label>
-                                    <MDBInput  wrapperClass="mb-4" id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
+                                <!-- Slogan -->
+                                <div class="col-12 col-md-8">
+                                    <label for="dao-slogan" class="form-label">{{ t('default.slogan') }}</label>
+                                    <MDBInput wrapperClass="mb-4" id="dao-slogan" @keyup="validateSlogan" @blur="validateSlogan" v-model="slogan" :isValid="!errors.slogan" :isValidated="isValidated.slogan" :invalidFeedback="errors.slogan"/>
                                 </div>
 
-                                <!-- Political State -->
+                                <!-- Type -->
                                 <div class="col-12 col-md-6">
-                                    <label for="dao-political-state" class="form-label">{{ t('default.political_state') }}</label>
-                                    <MDBSelect filter v-model:selected="politicalState" v-model:options="politicalStatesOptions" wrapperClass="mb-4" id="dao-political-state" @keyup="validatePoliticalState" @blur="validatePoliticalState" :isValid="!errors.politicalState" :isValidated="isValidated.politicalState" :invalidFeedback="errors.politicalState"/>
+                                    <label for="dao-type" class="form-label">{{ t('default.type') }}</label>
+                                    <MDBSelect filter ref="refDaoType" :preselect="false" v-model:selected="type" v-model:options="typeOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-type" @keyup="validateType" @blur="validateType" :isValid="!errors.type" :isValidated="isValidated.type" :invalidFeedback="errors.type"/>
+                                </div>
+
+                                <!-- Location -->
+                                <div class="col-12 col-md-6 mb-4">
+                                    <label for="dao-location" class="form-label">{{ t('default.location') }}</label>
+                                    <MDBSelect filter v-model:selected="location" v-model:options="locationOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-location" @keyup="validateLocation" @blur="validateLocation" :isValid="!errors.location" :isValidated="isValidated.location" :invalidFeedback="errors.location"/>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="col-12 mb-4">
+                                    <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
+                                    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+                                        <p v-html="description"></p>
+                                    </MDBWysiwyg>
+                                    <div v-if="errors.description" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.description }}</div>
+                                </div>
+
+                                <!-- Councils -->
+                                <div class="col-12">
+                                    <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
+                                    <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                                 </div>
                             </div>
-
-                            <!-- Description -->
-                            <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
-                            <MDBTextarea  wrapperClass="mb-4" id="dao-description" @keyup="validateDescription" @blur="validateDescription" v-model="description" :isValid="!errors.description" :isValidated="isValidated.description" :invalidFeedback="errors.description"  rows="4" />
-                            <div v-if="errors.description" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.description }}</div>
-
-                            
-                            
-                            <!-- Councils -->
-                            <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
-                            <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                         
                         </MDBStepperContent>
                     </MDBStepperStep>
@@ -62,16 +77,14 @@
                                 <div class="col-md-6">
                                     <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
                                     <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" v-mask="'### ### ###'" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
-                                    
                                 </div>
                              </div>
-                             
 
-                            <!-- ftInsiderInitDistribution -->
+                            <!-- ftInitDistribution -->
                             <div class = "row">
                                 <div class="col-md-6">
-                                    <label for="dao-ft-insider-init-distribution" class="form-label">{{ t('default.dao_ft_insider_init_distribution') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-insider-init-distribution" @keyup="validateFtIIDistribution" @blur="validateFtIIDistribution"  v-model.number="ftInsiderInitDistribution" :isValid="!errors.ftIIDistribution" :isValidated="isValidated.ftIIDistribution" :invalidFeedback="errors.ftIIDistribution" type="number"/>
+                                    <label for="dao-ft-init-distribution" class="form-label">{{ t('default.dao_ft_init_distribution') }}</label>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-init-distribution" @keyup="validateFtInitDistribution" @blur="validateFtInitDistribution"  v-model.number="ftInitDistribution" :isValid="!errors.ftInitDistribution" :isValidated="isValidated.ftInitDistribution" :invalidFeedback="errors.ftInitDistribution" type="number"/>
                                 </div>
                             </div>
 
@@ -147,7 +160,7 @@
                                 <!-- voteOnlyOnce-->
                                 <MDBSwitch wrapperClass="mb-2" :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce"/>
 
-                                <MDBBtn class="mt-3" @click="createDao()" color="primary">{{ t('default.create_dao') }}</MDBBtn>
+                                <MDBBtn class="mt-3 mb-2" @click="createDao()" color="primary">{{ t('default.create_dao') }}</MDBBtn>
                             </MDBStepperContent>
                         </MDBStepperStep>
                 </MDBStepper>
@@ -170,21 +183,23 @@ import {
     requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
 } from '@/utils/validators'
-import { states } from '@/config/states.js'
+import { locationList } from '@/composables/location.js'
+import { compareByText } from '@/utils/object.js'
 import {
-    MDBInput, MDBTextarea, MDBSelect,
+    MDBInput, MDBSelect,
     MDBSwitch, MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
     MDBRange, MDBAlert
 } from 'mdb-vue-ui-kit';
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 
 export default({
     components: {
         Header, Footer,
-        MDBInput, MDBTextarea, MDBSelect,
+        MDBInput, MDBSelect,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange, MDBAlert
+        MDBRange, MDBAlert, MDBWysiwyg
     },
     directives: {
         mask
@@ -198,14 +213,17 @@ export default({
         // basic
         const account = ref('');  // TODO: podilni.near, not dot
         const name = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
+        const type = ref('corporation')
+        const typeOptions = ref([])
+        const slogan = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
         const description = ref('') // textare max 3000
-        const politicalState = ref('cz')
+        const location = ref('')
         const council = [] // at least 1 root account something.near
         const councilString = ref('')
         // tokens
         const ftName = ref('')   // governance token 
         const ftAmount = ref(1_000_000) 
-        const ftInsiderInitDistribution = ref(10_000) // 0 ... ftAmount
+        const ftInitDistribution = ref(10_000) // 0 ... ftAmount
         const ftInsiderShare = ref(100) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
@@ -225,12 +243,14 @@ export default({
         const isValidated = ref({
             account: false,
             name: false,
+            type: false,
+            slogan: false,
             description: false,
-            politicalState: false,
+            location: false,
             council: false,
             ftName: false,
             ftAmount: false,
-            ftIIDistribution: false,
+            ftInitDistribution: false,
             ftShares: false,
             voteSpamThreshold: false,
             voteDurationDays: false,
@@ -245,8 +265,8 @@ export default({
         const createDaoErrorAlert = ref(false);
         
         return{
-           t, exampleModal, account, name, 
-           description, politicalState, ftName, ftAmount, ftInsiderInitDistribution, 
+           t, exampleModal, account, name, slogan, type, typeOptions,
+           description, location, ftName, ftAmount, ftInitDistribution, 
            ftInsiderShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
            voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
@@ -321,6 +341,17 @@ export default({
             this.isValidated.name = true
         },
 
+        validateSlogan(){ //TODO
+            const field = "slogan"
+            const maxLengthVal = maxLength(this.slogan, 100)
+            if (maxLengthVal.valid === false){
+                this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+            }else {
+                this.errors[field] = null
+            }
+            this.isValidated.slogan = true
+        },
+
         validateDescription(){
             const field = "description"
             const minLengthVal = minLength(this.description, 1)
@@ -335,10 +366,10 @@ export default({
             this.isValidated.description = true
         },
 
-        validatePoliticalState(){
-            const field = "politicalState"
-            const minLengthVal = minLength(this.politicalState, 2)
-            const maxLengthVal = maxLength(this.politicalState, 2)
+        validateLocation(){
+            const field = "location"
+            const minLengthVal = minLength(this.location, 2)
+            const maxLengthVal = maxLength(this.location, 3)
             if (minLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
             } else if (maxLengthVal.valid === false){
@@ -346,7 +377,18 @@ export default({
             } else {
                 this.errors[field] = null
             }
-            this.isValidated.politicalState = true
+            this.isValidated.location = true
+        },
+
+        validateType(){
+            const field = "type"
+            const required = requiredValidator(this.type)
+            if (required.valid === false){
+                this.errors[field] = this.t('default.' + required.message, required.params)
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.type = true
         },
 
         validateCouncil(){
@@ -405,16 +447,16 @@ export default({
             } else {
                 this.errors[field] = null
             }
-            this.validateFtIIDistribution(false)
+            this.validateFtInitDistribution(false)
             this.isValidated.ftAmount = true
         },
 
-        validateFtIIDistribution(isValidated = true){
-            const field = "ftIIDistribution"
-            const requiredVal = requiredValidator(this.ftInsiderInitDistribution)
-            const isNumberVal = isNumber(this.ftInsiderInitDistribution)
-            const minNumberVal = minNumber(this.ftInsiderInitDistribution, 1)
-            const maxNumberVal = maxNumber(this.ftInsiderInitDistribution, this.ftAmount)
+        validateFtInitDistribution(isValidated = true){
+            const field = "ftInitDistribution"
+            const requiredVal = requiredValidator(this.ftInitDistribution)
+            const isNumberVal = isNumber(this.ftInitDistribution)
+            const minNumberVal = minNumber(this.ftInitDistribution, 1)
+            const maxNumberVal = maxNumber(this.ftInitDistribution, this.ftAmount)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -427,7 +469,7 @@ export default({
                 this.errors[field] = null
             }
             if(isValidated){
-                this.isValidated.ftIIDistribution = true
+                this.isValidated.ftInitDistribution = true
             }
         },
 
@@ -531,12 +573,14 @@ export default({
         validate(){
             this.validateAccount()
             this.validateName()
-            this.validateDescription()
-            this.validatePoliticalState()
+            this.validateSlogan()
+            // this.validateDescription()
+            this.validateType()
+            this.validateLocation()
             this.validateCouncil()
             this.validateFtName()
             this.validateFtAmount()
-            this.validateFtIIDistribution()
+            this.validateFtInitDistribution()
             this.validateFtShares()
             this.validateVoteSpamThreshold()
             this.validateVoteDurationDays()
@@ -559,12 +603,12 @@ export default({
                     , null
                     , this.name
                     , this.description
-                    , ['organization', 'dao']
+                    , [this.type]
                     , this.council // founders
-                    , this.politicalState // politicalState
+                    , this.location // location
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
-                    , this.ftInsiderInitDistribution // ftInsiderInitDistribution
+                    , this.ftInitDistribution // ftInitDistribution
                     , this.ftInsiderShare // ftInsiderShare
                     , this.ftFundationShare // ftFundationShare
                     , this.ftCommunityShare // ftCommunityShare
@@ -574,7 +618,7 @@ export default({
                     , this.voteQuorum // voteQuorum
                     , this.voteApproveThreshold // voteApproveThreshold
                     , this.voteOnlyOnce // voteOnlyOnce
-                    , 10 // amountToTransfer
+                    , 5 // amountToTransfer
                 )
 
                 if(created === true) {
@@ -604,13 +648,15 @@ export default({
         envContactName() {
             return process.env.VUE_APP_NEAR_CONTRACT_NAME
         },
-        politicalStatesOptions() {
-            const listEmpty = [{text: this.t('default.global') + ' (EN)', value: null}]
-            const listStates = Object.keys(states).map(x => { return { text: states[x] + ' (' + x.toUpperCase() + ')', value: x}})
-            return listEmpty.concat(listStates)
+        locationOptions() {
+            return locationList()
+        },
+        noResults() {
+            return this.t('default.no_results')
         },
     },
     created() {
+        
     },
     mounted() {
         // redirect after dao created
@@ -621,6 +667,15 @@ export default({
         }
         this.council = [this.accountId]
         this.councilString = this.accountId
+        
+        // type loading
+        this.nearService.getTags().then((tags) => {
+            this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(compareByText)
+            this.$refs.refDaoType.setValue('corporation')
+        })
+        // type select
+        //this.$refs.refDaoType.setValue('')
+        //console.log(this.type)
     },
 })
 

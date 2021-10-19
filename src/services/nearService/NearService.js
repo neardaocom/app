@@ -49,10 +49,12 @@ class NearService {
     this.factoryContract = new Contract(account, this.config.contractName, {
       viewMethods: [
         'get_dao_list',
-        'get_dao_info'
+        'get_dao_info',
+        'get_tags',
       ],
       changeMethods: [
-        'create'
+        'create',
+        'add_tags',
       ],
     });
 
@@ -88,7 +90,15 @@ class NearService {
    * @returns Promise
    */
   async getDaoList() {
-    return this.factoryContract.get_dao_list(); // TODO: Get lang of DAO from factory
+    return this.factoryContract.get_dao_list();
+  }
+
+  /**
+   * Get tags
+   * @returns 
+   */
+  async getTags() {
+    return this.factoryContract.get_tags();
   }
 
   /**
