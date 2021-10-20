@@ -94,8 +94,6 @@ import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService"
 
-import { Logger } from '@firebase/logger';
-
 export default {
   components: {
     MDBBtn
@@ -148,9 +146,6 @@ export default {
     const formHtml = ref('')
     const formVersionUpgrageMajor = ref(false)
     const formDocumentType = ref('flush-pdf');
-
-    const logClient = new Logger(`@firebase/<COMPONENT>`);
-    logClient.log('zkouska')
 
 
     const filterFormName = value => {

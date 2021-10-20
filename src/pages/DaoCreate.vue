@@ -581,6 +581,7 @@ export default({
                     null
                 } else {
                     this.createDaoErrorAlert = true
+                    this.$log.error('B', 'DAO', 'DAO could not be created', `User [${this.accountId}] could not create dao [${this.name}]`)
                 }
             }
         },
@@ -617,6 +618,7 @@ export default({
         if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
             const accountId = localStorage.create_dao_account
             localStorage.create_dao_account = ''
+            this.$logger.notice('B', 'dao', 'create', `User [${this.accountId}] created DAO named [${accountId}]`)
             this.$router.push({name: 'dao', params: {id: accountId}})
         }
         this.council = [this.accountId]
