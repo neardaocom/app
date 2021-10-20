@@ -38,7 +38,7 @@
     MDBIcon
   } from 'mdb-vue-ui-kit';
   //import { mapGetters } from 'vuex'
-  
+
   import { useI18n } from 'vue-i18n';
 
   export default {
@@ -70,16 +70,14 @@
     },
     methods: {
         login() {
-            console.log('login')
-            this.$store.commit('near/signIn')
+            this.$store.commit('near/signIn')                    
         },
         logout() {
-            console.log('logout')
-            this.$store.commit('near/signOut')
-
-            if (this.$route.name === "dao-create"){
-              this.$router.push({name: 'landing-page'})
-            }
+          this.$store.commit('near/signOut')
+          this.$logger.info('B', 'User', 'Logout', `Wallet ${this.accountId} is logged out`)
+          if (this.$route.name === "dao-create"){
+            this.$router.push({name: 'landing-page'})
+          }
         }
     }
   };
