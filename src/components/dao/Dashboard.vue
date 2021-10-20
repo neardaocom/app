@@ -3,7 +3,7 @@
     <div class="row d-flex justify-content-center">
       <div class="col-lg-6">
         <h1>{{ dao.name }}</h1>
-        <p class="text-muted">{{ dao.about }}</p>
+        <p class="text-muted">{{ dao.slogan }}</p>
       </div>
     </div>
   </section>
@@ -53,17 +53,17 @@
             class="badge bg-info"
             v-for="(tag, index) in dao.tags"
             :key="index"
-            >{{ tag }}</span
+            >{{ t('default.' + tag) }}</span
           >
         </p>
       </div>
       <div class="col-12 col-md-4">
         <h5 class="text-center">{{ t("default.treasury") }}</h5>
         <h2 class="text-center">
-          <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
-          <BadgePercent :amount="dao.treasury.w_delta"/>
+          ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
+          <BadgePercent v-if="false" :amount="dao.treasury.w_delta"/>
         </h2>
-        <p class="text-center">≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
+        <p class="text-center" v-if="false">≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
         <!-- <hr class="d-none d-md-block" /> -->
       </div>
       <div class="col-12 col-md-4">

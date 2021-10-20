@@ -17,7 +17,7 @@
     "decimal.js": "^10.3.1",
     "lodash": "^4.17.21",
     "mdb-vue-file-upload": "./mdb/mdb-vue-file-upload-1.0.0.tgz",
-    "mdb-vue-ui-kit": "./mdb/mdb-vue-ui-kit-1.4.0.tgz",
+    "mdb-vue-ui-kit": "./mdb/mdb-vue-ui-kit-1.5.0.tgz",
     "mdb-vue-wysiwyg-editor": "./mdb/mdb-vue-wysiwyg-editor-1.0.0.tgz",
     "near-api-js": "^0.41.0",
     "pdfvuer": "^2.0.1",

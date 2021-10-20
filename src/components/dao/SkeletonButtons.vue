@@ -2,9 +2,6 @@
     <section class="row d-flex justify-content-between align-items-center py-3">
       <!-- Left -->
       <div class="col-12 col-lg-9">
-        <a :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
-          {{ t('default.overview') }}
-        </a>
         <a :class="[isActive('voting') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.voting') }}
         </a>
@@ -20,6 +17,9 @@
         <a :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.organization') }}
         </a>
+        <a :class="[isActive('documents') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.documents') }}
+        </a>
       </div>
       <!-- Left -->
 
@@ -31,9 +31,12 @@
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
         </button>-->
-        <MDBBtn aria-controls="modalPayout" class="btn btn-primary px-3 me-2" data-mdb-ripple-color="dark">
-          <MDBIcon icon="paper-plane pe-2"/> {{ t('default.payout')}}
-        </MDBBtn>
+        <MDBDropdown btnGroup :align="['end']">
+          <MDBBtn aria-controls="modalPayout" class="btn btn-primary" data-mdb-ripple-color="dark">
+            <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
+          </MDBBtn>
+          <MDBDropdownToggle/>
+        </MDBDropdown>
       </div>
       <!-- /Right -->
     </section>
@@ -44,11 +47,12 @@ import { useI18n } from "vue-i18n";
 import {
   MDBBtn,
   MDBIcon,
+  MDBDropdown, MDBDropdownToggle
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBIcon
+    MDBBtn, MDBIcon, MDBDropdown, MDBDropdownToggle
   },
   setup() {
     const { t } = useI18n();
@@ -59,7 +63,7 @@ export default {
   },
   methods: {
     isActive(button_page) {
-      return button_page === (this.$route.query.page || 'overview')
+      return button_page === (this.$route.query.page || 'voting')
     },
   }
 };

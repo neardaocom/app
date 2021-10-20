@@ -1,10 +1,7 @@
 <template>
     <section class="row d-flex justify-content-between align-items-center py-3">
       <!-- Left -->
-      <div class="col-12 col-lg-10">
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
-          {{ t('default.overview') }}
-        </router-link>
+      <div class="col-12 col-lg-9">
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.voting') }}
         </router-link>

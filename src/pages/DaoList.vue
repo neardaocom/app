@@ -2,7 +2,7 @@
   <Header></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb :list-name="'organization'" />
+      <Breadcrumb :list-name="'organizations'" />
     </MDBContainer>
     <MDBContainer>
       <div class="row mt-4 mb-4">
@@ -19,9 +19,9 @@
                     <!-- <th scope="col"></th>-->
                     <th scope="col">#</th>
                     <th scope="col" class="text-start">{{ t('default.organization') }}</th>
+                    <th scope="col" class="text-start">{{ t('default.marks') }}</th>
                     <th scope="col" class="text-start">{{ t('default.wallet') }}</th>
                     <th scope="col" class="text-end">{{ t('default.tokens') }}</th>
-                    <th scope="col" class="text-end">{{ t('default.count') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -32,10 +32,29 @@
                       </a>
                     </td>-->
                     <td>{{ index + 1 }}</td>
-                    <td class="fw-bold text-start"><router-link :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }} <MDBIcon v-if="dao[1].lang != null" :flag="dao[1].state"/></router-link></td>
-                    <td class="text-start"><a class="text-reset font-weight-bold" :href="walletUrl + '/accounts/' + dao[0] + '.' + this.factoryAccount">{{ dao[0] + '.' + this.factoryAccount }}</a></td>
-                    <td class="text-end">{{ dao[1].ft_name }}</td>
-                    <td class="fw-bold text-end text-primary">{{ n(dao[1].ft_amount) }}</td>
+                    <td class="text-start">
+                      <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }} <MDBIcon v-if="dao[1].lang != null" :flag="dao[1].state"/></router-link>
+                      <br>
+                      <span class="fw-light">{{dao[1].description}}</span>
+                    </td>
+                    <td class="text-start">
+                      <span
+                        class="badge bg-info"
+                        v-for="(tag, index) in dao[1].tags"
+                        :key="index"
+                        >{{ t('default.' + this.tags[tag]) }}</span
+                      >
+                    </td>
+                    <td class="text-start">
+                      <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao[0] + '.' + this.factoryAccount">
+                        {{ dao[0] + '.' + this.factoryAccount }} <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />
+                      </a>
+                    </td>
+                    <td class="text-end">
+                      <span class="fw-bold">{{ dao[1].ft_name }}</span>
+                      <br>
+                      <span class="fw-light">{{ n(dao[1].ft_amount) }}</span>
+                    </td>
                   </tr>
                 </tbody>
               </MDBTable>
@@ -53,7 +72,7 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
-import DAOs from '@/types/DAOs'
+import DAOs from '@/data/DAOs'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
   , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBIcon
@@ -73,8 +92,9 @@ export default {
     const { t, n } = useI18n()
     const daos = ref(DAOs.data().daos)
     const list = ref([])
+    const tags = ref([])
     const loadingProgress = ref(0)
-    return { t, n, daos, list, loadingProgress}
+    return { t, n, daos, list, tags, loadingProgress}
   },
   computed: {
     nearService() {
@@ -93,14 +113,17 @@ export default {
   },
   methods: {
     fetchList() {
-      this.nearService.getDaoList()
-        .then(r => {
-          this.list = r
-          this.loadingProgress = 100
-        })
-        .catch((e) => {
-          console.log(e)
-        })
+      Promise.all([
+        this.nearService.getDaoList(),
+        this.nearService.getTags(),
+      ]).then(r => {
+        console.log(r)
+        this.list = r[0]
+        this.tags = r[1]
+        this.loadingProgress = 100
+      }).catch((e) => {
+        console.log(e)
+      })
       this.loadingProgress = getRandom(25, 75)
     }
   }

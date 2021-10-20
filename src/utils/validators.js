@@ -94,6 +94,15 @@ export const nearAccountValidator = (value) => {
     return validation
 }
 
+export const nearAccountExistsValidator = (value) => {
+    let validation = successValidation()
+    if (value) {
+        validation = errorValidation('near_account_exists', {})
+    }
+
+    return validation
+}
+
 export const councilAccountValidator = (value) => {
     let validation = successValidation()
     const re = /^(([a-z\d]+[-_])*[a-z\d]+)*([a-z\d]+[-_])*[a-z\d].(near|testnet)+$/

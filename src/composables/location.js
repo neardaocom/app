@@ -1,5 +1,5 @@
 import { useI18n } from 'vue-i18n'
-import { states } from '@/config/states.js'
+import { states } from '@/data/states.js'
 import { compareByText } from '@/utils/object.js'
 
 export const locationList = () => {

@@ -11,6 +11,19 @@
     </MDBModalHeader>
     <MDBModalBody class="text-start">
       <div class="form-outline mb-4">
+        <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
+        <MDBAutocomplete
+          :class="[isValidated.formName && errors.formName && errors.formName.length > 0 ? 'is-invalid' : '']"
+          :id="'add-document-name-input-' + formNameId"
+          :no-results-text="noResults"
+          v-model="formName"
+          :filter="filterFormName"
+          maxlength="100"
+          @change="validateName()"
+          @keyup.enter="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
+        />
+      </div>
+      <div class="form-outline mb-4">
         <label :for="'add-document-category-input-' + formCategoryId" class="form-label">{{ t('default.category') }}</label>
         <MDBAutocomplete
           :class="[isValidated.formCategory && errors.formCategory && errors.formCategory.length > 0 ? 'is-invalid' : '']"
@@ -25,19 +38,6 @@
           :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
         />
       </div>
-      <div class="form-outline mb-4">
-        <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
-        <MDBAutocomplete
-          :class="[isValidated.formName && errors.formName && errors.formName.length > 0 ? 'is-invalid' : '']"
-          :id="'add-document-name-input-' + formNameId"
-          :no-results-text="noResults"
-          v-model="formName"
-          :filter="filterFormName"
-          maxlength="100"
-          @change="validateName()"
-          @keyup.enter="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
-        />
-      </div>
       <MDBSwitch v-if="true === false" wrapperClass="mb-2" :label="t('default.version_upgrade_major')" v-model="formVersionUpgrageMajor"/>
       <!-- <br/> -->
       <label for="add-document-input" class="form-label mt-2">{{ t('default.document') }}</label>
@@ -46,7 +46,7 @@
       <p class="note note-danger" v-if="formDocumentType == 'flush-url' && errors.formUrl != null"  color="danger" static>{{ errors.formUrl }}</p>
       <p class="note note-danger" v-if="formDocumentType == 'flush-html' && errors.formHtml != null"  color="danger" static>{{ errors.formHtml }}</p>
 
-      <MDBAccordion v-model="formDocumentType" flush fluid class="mx-2">
+      <MDBAccordion v-model="formDocumentType" flush fluid class="mx-4">
         <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
           <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
             :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
@@ -98,6 +98,7 @@ import {
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService"
+import { getCategories, getNames } from "@/models/document"
 
 export default {
   components: {
@@ -131,9 +132,13 @@ export default {
     }
   },
   setup(props) {
+    const { show, docs } = toRefs(props)
     const { t } = useI18n();
 
-    const { show } = toRefs(props)
+    const categoryOptions = getCategories(docs.value, t);
+    const nameOptions = getNames(docs.value, '', t);
+    // console.log(names)
+
 
     const active = ref(false)
     
@@ -143,10 +148,10 @@ export default {
 
     const formName = ref("")
     const formNameId = getRandom(1000, 9999)
-    const formNameOptions = ref([]) // t('default.founding_document')
+    let formNameOptions = ref(nameOptions)
     const formCategory = ref("")
     const formCategoryId = getRandom(1000, 9999)
-    const formCategoryOptions = ref([t('default.fundamental')]) // t('default.fundamental')
+    const formCategoryOptions = ref(categoryOptions)
     const formDescription = ref('')
     const formTagsNew = ref([])
     const formTags = ref([])
@@ -155,6 +160,9 @@ export default {
     const formHtml = ref('')
     const formVersionUpgrageMajor = ref(false)
     const formDocumentType = ref('flush-pdf');
+
+    const changeNames = () => { formNameOptions.value = getNames(docs.value, formCategory.value, t) }
+    watch(formCategory, changeNames)
 
     const filterFormName = value => {
       return formNameOptions.value.filter(item => {

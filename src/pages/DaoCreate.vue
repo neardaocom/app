@@ -13,13 +13,13 @@
                                 <!-- Name -->
                                 <div class="col-12 col-md-6">
                                     <label for="dao-name" class="form-label">{{ t('default.dao_name') }}</label>
-                                    <MDBInput  wrapperClass="mb-4" id="dao-name" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
+                                    <MDBInput  wrapperClass="mb-4" id="dao-name" @change="generateAccountId(false)" @keyup="validateName" @blur="validateName" v-model="name" :isValid="!errors.name" :isValidated="isValidated.name" :invalidFeedback="errors.name"/>
                                 </div>
 
                                 <!-- Account --> 
                                 <div class="col-12 col-md-6">
                                     <label for="dao-account" class="form-label">{{ t('default.account') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-account" @keyup="validateAccount" @blur="validateAccount" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account" :data-mdb-showcounter="true">
+                                    <MDBInput wrapperClass="mb-4" id="dao-account" @change="validateAccountExists" @keyup="validateAccount" @blur="validateAccountExists" v-model="account" :isValid="!errors.account" :isValidated="isValidated.account" :invalidFeedback="errors.account" inputGroup :formOutline="false" aria-describedby="dao-account">
                                         <span class="input-group-text" id="dao-account">.{{ factoryAccount }}</span>
                                     </MDBInput>
                                 </div>
@@ -33,7 +33,7 @@
                                 <!-- Type -->
                                 <div class="col-12 col-md-6">
                                     <label for="dao-type" class="form-label">{{ t('default.type') }}</label>
-                                    <MDBSelect filter ref="refDaoType" :preselect="false" v-model:selected="type" v-model:options="typeOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-type" @keyup="validateType" @blur="validateType" :isValid="!errors.type" :isValidated="isValidated.type" :invalidFeedback="errors.type"/>
+                                    <MDBSelect filter ref="refDaoType" :preselect="true" v-model:selected="type" v-model:options="typeOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-type" @keyup="validateType" @blur="validateType" :isValid="!errors.type" :isValidated="isValidated.type" :invalidFeedback="errors.type"/>
                                 </div>
 
                                 <!-- Location -->
@@ -42,13 +42,13 @@
                                     <MDBSelect filter v-model:selected="location" v-model:options="locationOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-location" @keyup="validateLocation" @blur="validateLocation" :isValid="!errors.location" :isValidated="isValidated.location" :invalidFeedback="errors.location"/>
                                 </div>
 
-                                <!-- Description -->
+                                <!-- Purpose -->
                                 <div class="col-12 mb-4">
-                                    <label for="dao-description" class="form-label">{{ t('default.dao_description') }}</label>
+                                    <label for="dao-purpose" class="form-label">{{ t('default.purpose') }}</label>
                                     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-                                        <p v-html="description"></p>
+                                        <p v-html="purpose"></p>
                                     </MDBWysiwyg>
-                                    <div v-if="errors.description" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.description }}</div>
+                                    <div v-if="errors.purpose" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.purpose }}</div>
                                 </div>
 
                                 <!-- Councils -->
@@ -76,7 +76,7 @@
                                 <!-- ftAmount -->
                                 <div class="col-md-6">
                                     <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" v-mask="'### ### ###'" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount" type="number"/>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
                                 </div>
                              </div>
 
@@ -91,10 +91,10 @@
                             <!-- error message for shares -->
                             <div ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
 
-                            <!-- ftInsiderShare -->
+                            <!-- ftCouncilShare -->
                             <div class="row mb-4">
-                                <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_ft_insider_share')" v-model="ftInsiderShare" disabled :min="0" :max="100" />
-                                <label class="form-label col-md-6 col-3">{{ ftInsiderShare }}%</label>
+                                <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_ft_insider_share')" v-model="ftCouncilShare" disabled :min="0" :max="100" />
+                                <label class="form-label col-md-6 col-3">{{ ftCouncilShare }}%</label>
                             </div>
 
                             <!-- ftFundationShare -->
@@ -180,7 +180,7 @@ import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import {
-    requiredValidator, nearRootAccountValidator, minLength, maxLength, councilAccountValidator,
+    requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength, councilAccountValidator,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
 } from '@/utils/validators'
 import { locationList } from '@/composables/location.js'
@@ -216,25 +216,27 @@ export default({
         const type = ref('corporation')
         const typeOptions = ref([])
         const slogan = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
-        const description = ref('') // textare max 3000
+        const purpose = ref('') // textare max 3000
         const location = ref('')
         const council = [] // at least 1 root account something.near
         const councilString = ref('')
         // tokens
         const ftName = ref('')   // governance token 
         const ftAmount = ref(1_000_000) 
-        const ftInitDistribution = ref(10_000) // 0 ... ftAmount
-        const ftInsiderShare = ref(100) // 0 ... 100 all shareing 
+        const ftInitDistribution = ref(100_000) // 0 ... ftAmount 10%
+        const ftCouncilShare = ref(100) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
         const ftPublicShare = ref(0) // 0 ... 100 all shareing
         // voting 
         const voteSpamThreshold = ref(80) // 0 .. 100 
-        const voteDurationDays = ref(0)
-        const voteDurationHours = ref(1)
+        const voteDurationDays = ref(3)
+        const voteDurationHours = ref(0)
         const voteQuorum = ref(20) // 10 ... 100
         const voteApproveThreshold = ref(51) // 0 .. 100
         const voteOnlyOnce = ref(true)
+
+        const nearTags = reactive([])
 
         const addFtFundationShare = ref(false)
         const addFtCommunityShare = ref(false)
@@ -245,7 +247,7 @@ export default({
             name: false,
             type: false,
             slogan: false,
-            description: false,
+            purpose: false,
             location: false,
             council: false,
             ftName: false,
@@ -266,12 +268,12 @@ export default({
         
         return{
            t, exampleModal, account, name, slogan, type, typeOptions,
-           description, location, ftName, ftAmount, ftInitDistribution, 
-           ftInsiderShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
+           purpose, location, ftName, ftAmount, ftInitDistribution, 
+           ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
            voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
-           createDaoErrorAlert, contract
+           createDaoErrorAlert, contract, nearTags
         }
     },
 
@@ -310,6 +312,17 @@ export default({
     },
     
     methods:{
+        generateAccountId(overwrite) {
+            console.log('Generation account id')
+            if (overwrite || this.account === '') {
+                console.log(this.account)
+                if (this.name.length > 0) {
+                    this.account = this.name.trim().toLowerCase()
+                    this.validateAccountExists()
+                }
+            }
+        },
+
         validateAccount(){
             const field = "account"
             const required = requiredValidator(this.account)
@@ -318,6 +331,25 @@ export default({
                 this.errors[field] = this.t('default.' + required.message, required.params)
             } else if (rootAccount.valid === false) {
                 this.errors[field] = this.t('default.' + rootAccount.message, rootAccount.params)
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.account = true
+        },
+    
+        async validateAccountExists(){
+            const field = "account"
+            let accountState = false
+            try {
+                accountState = await this.nearService.getAccountState(this.account + '.' + this.factoryAccount);
+                console.log(accountState)
+            } catch (error) {
+                null
+            }
+
+            const existsAccount = nearAccountExistsValidator(accountState)
+            if (existsAccount.valid === false) {
+                this.errors[field] = this.t('default.' + existsAccount.message, existsAccount.params)
             } else {
                 this.errors[field] = null
             }
@@ -341,7 +373,7 @@ export default({
             this.isValidated.name = true
         },
 
-        validateSlogan(){ //TODO
+        validateSlogan(){
             const field = "slogan"
             const maxLengthVal = maxLength(this.slogan, 100)
             if (maxLengthVal.valid === false){
@@ -352,10 +384,10 @@ export default({
             this.isValidated.slogan = true
         },
 
-        validateDescription(){
-            const field = "description"
-            const minLengthVal = minLength(this.description, 1)
-            const maxLengthVal = maxLength(this.description, 3000)
+        validatePurpose(){
+            const field = "purpose"
+            const minLengthVal = minLength(this.purpose, 1)
+            const maxLengthVal = maxLength(this.purpose, 100000)
             if (minLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
             } else if (maxLengthVal.valid === false){
@@ -363,7 +395,7 @@ export default({
             } else {
                 this.errors[field] = null
             }
-            this.isValidated.description = true
+            this.isValidated.purpose = true
         },
 
         validateLocation(){
@@ -485,9 +517,9 @@ export default({
             }
             const sum = this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare
             if (sum > 100){
-                this.ftInsiderShare = 0
+                this.ftCouncilShare = 0
             }else{
-                this.ftInsiderShare = 100 - sum
+                this.ftCouncilShare = 100 - sum
             }
         },
 
@@ -572,9 +604,10 @@ export default({
 
         validate(){
             this.validateAccount()
+            this.validateAccountExists()
             this.validateName()
             this.validateSlogan()
-            // this.validateDescription()
+            // this.validatePurpose()
             this.validateType()
             this.validateLocation()
             this.validateCouncil()
@@ -597,19 +630,20 @@ export default({
                 const accountId = this.account + '.' + this.factoryAccount
                 // set accountId to localStorage because of redirection
                 localStorage.create_dao_account = accountId
+                localStorage.purpose = this.purpose
                 // create
                 let created = await this.nearService.createDao(
                     this.account
                     , null
                     , this.name
-                    , this.description
-                    , [this.type]
+                    , this.slogan
+                    , [this.nearTags.value.indexOf(this.type)] // tags
                     , this.council // founders
                     , this.location // location
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
                     , this.ftInitDistribution // ftInitDistribution
-                    , this.ftInsiderShare // ftInsiderShare
+                    , this.ftCouncilShare // ftCouncilShare
                     , this.ftFundationShare // ftFundationShare
                     , this.ftCommunityShare // ftCommunityShare
                     , this.voteSpamThreshold // voteSpamThreshold
@@ -670,8 +704,9 @@ export default({
         
         // type loading
         this.nearService.getTags().then((tags) => {
+            this.nearTags.value = tags
             this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(compareByText)
-            this.$refs.refDaoType.setValue('corporation')
+            // this.$refs.refDaoType.setValue('corporation')
         })
         // type select
         //this.$refs.refDaoType.setValue('')

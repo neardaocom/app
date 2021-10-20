@@ -85,6 +85,18 @@ class NearService {
   }
 
   /**
+   * 
+   * @param {*} accountId Near account id
+   * @throws Error if account not exists
+   * @returns state
+   */
+  async getAccountState(accountId) {
+    const account = await this.near.account(accountId);
+    const state = await account.state();
+    return state;
+  }
+
+  /**
    * Get dao list
    * 
    * @returns Promise
@@ -95,7 +107,7 @@ class NearService {
 
   /**
    * Get tags
-   * @returns 
+   * @returns
    */
   async getTags() {
     return this.factoryContract.get_tags();
@@ -119,14 +131,14 @@ class NearService {
     accountId
     , publicKey
     , name
-    , description
+    , slogan
     , tags
     , founders
-    , politicalState
+    , location
     , ftName
     , ftAmount
-    , ftInsiderInitDistribution
-    , ftInsiderShare
+    , ftInitDistribution
+    , ftCouncilShare
     , ftFundationShare
     , ftCommunityShare
     , voteSpamThreshold
@@ -139,8 +151,8 @@ class NearService {
   ) {
     const info = {
       name: name,
-      description: description,
       tags: tags,
+      description: slogan,
       ft_name: ftName,
       ft_amount: ftAmount
     };
@@ -149,7 +161,7 @@ class NearService {
     const args = {
       name: name,
       total_supply: ftAmount,
-      init_distribution: ftInsiderInitDistribution,
+      init_distribution: ftInitDistribution,
       ft_metadata: {
         spec: "ft-1.0.0",
         name: ftName,
@@ -160,9 +172,10 @@ class NearService {
         decimals: 0
       },
       config: {
-        lang: politicalState,
-        description: description,
-        insiders_share: ftInsiderShare,
+        lang: location,
+        slogan: slogan,
+        description: slogan,
+        council_share: ftCouncilShare,
         fundation_share: ftFundationShare,
         community_share: ftCommunityShare,
         vote_spam_threshold: voteSpamThreshold
@@ -366,8 +379,8 @@ class NearService {
         vote_kind: vote,
         account_id: this.walletConnection.getAccountId()
       },
-      Decimal.mul(10, TGas).toString(),
-      new Decimal(1).mul(yoctoNear).toFixed()
+      Decimal.mul(10, TGas).toString()
+      // new Decimal(1).mul(yoctoNear).toFixed()
     );
   }
 
@@ -407,6 +420,7 @@ class NearService {
       this.getProposals(daoAccount, 0, 1000),
       this.getDocFiles(daoAccount),
       this.getDaoConfig(daoAccount),
+      this.getTags(),
     ]).catch((e) => {
       console.log(e)
     });
@@ -417,13 +431,13 @@ class NearService {
     const ft_total_released = new Decimal(data[3].total_released);
     const ft_free_released = new Decimal(data[3].free);
     const ft_shared = ft_total_released.minus(data[3].free);
-    const ft_insiders_shared = new Decimal(data[3].insiders_ft_shared)
+    const ft_council_shared = new Decimal(data[3].council_ft_shared)
     const ft_community_shared = new Decimal(data[3].community_ft_shared)
     const ft_foundation_shared = new Decimal(data[3].foundation_ft_shared)
-    const ft_public_sale_shared = ft_shared.minus(ft_insiders_shared).minus(ft_community_shared).minus(ft_foundation_shared)
+    const ft_public_sale_shared = ft_shared.minus(ft_council_shared).minus(ft_community_shared).minus(ft_foundation_shared)
 
     // token state
-    const members = data[2].insiders.concat(data[2].community, data[2].foundation)
+    const members = data[2].council.concat(data[2].community, data[2].foundation)
     let member_promises = []
     members.forEach(accountId => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
@@ -461,17 +475,17 @@ class NearService {
         id: daoId,
         name: data[1].name,
         state: null,
-        about: data[1].description,
+        slogan: data[1].description,
         description: data[1].description,
         wallet: daoAccount,
         address: null,
         domain: null,
         web: null,
-        lang: data[6].lang,
+        location: data[6].lang, // TODO: renameing at SC
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
         token_unlocked: {
-          council: ft_insiders_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          council: ft_council_shared.dividedBy(ft_shared).times(100).round().toNumber(),
           community: ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),
           investor: ft_foundation_shared.dividedBy(ft_shared).times(100).round().toNumber(),
           public_sale: ft_public_sale_shared.dividedBy(ft_shared).times(100).round().toNumber()
@@ -481,8 +495,8 @@ class NearService {
         token_holders: token_account,
         groups: {
           council: {
-            amount: data[2].insiders_share_percent,
-            wallets: data[2].insiders
+            amount: data[2].council_share_percent,
+            wallets: data[2].council
           },
           community: {
             amount: data[2].community_share_percent,
@@ -493,13 +507,11 @@ class NearService {
             wallets: data[2].foundation
           },
           public_sale: {
-            amount: getPublicSalePercent(data[2].insiders_share_percent, data[2].community_share_percent, data[2].foundation_share_percent),
+            amount: getPublicSalePercent(data[2].council_share_percent, data[2].community_share_percent, data[2].foundation_share_percent),
             wallets: []
           },
         },
-        tags: [
-          data[1].tags[0]
-        ],
+        tags: data[1].tags.map(tag => data[7][tag]), // system tag
         treasury: {
           near: amount,
           w_delta: null,
@@ -517,7 +529,7 @@ class NearService {
         proposals: data[4],
         docs: {
           files: file_list,
-          map: data[5].map.Doc
+          map: data[5].map.Doc || {categories: []}
         }
       };
     }

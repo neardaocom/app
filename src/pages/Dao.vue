@@ -62,7 +62,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, reactive } from 'vue'
 import _ from 'lodash'
 import DAO from '@/types/DAO'
-import DAOs from '@/types/DAOs'
+import DAOs from '@/data/DAOs'
 //import * as nearAPI from "near-api-js"
 
 export default {
@@ -101,7 +101,7 @@ export default {
     if (this.$route.query.page !== undefined) {
       this.q_page = this.$route.query.page
     } else {
-      this.q_page = 'overview'
+      this.q_page = 'voting'
     }
 
     // dao

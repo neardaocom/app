@@ -36,3 +36,11 @@ export const majorUp = (version) => {
     }
     return undefined
 }
+
+export const toCompare = (version) => {
+    const parsed = parse(version)
+    if (parsed !== undefined) {
+        return version[0] * 1000 + version[1]
+    }
+    return undefined
+}
