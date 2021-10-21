@@ -10,41 +10,59 @@
       <MDBModalTitle id="modalAddDocumentLabel"> {{ t('default.add_document') }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-      <div class="form-outline mb-4">
-        <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
-        <MDBAutocomplete
-          :class="[isValidated.formName && errors.formName && errors.formName.length > 0 ? 'is-invalid' : '']"
-          :id="'add-document-name-input-' + formNameId"
-          :no-results-text="noResults"
-          v-model="formName"
-          :filter="filterFormName"
-          maxlength="100"
-          @change="validateName()"
-          @keyup.enter="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
-        />
+      <div class="row">
+        <div class="col-12 col-lg-6 mb-4">
+          <label :for="'add-document-name-input-' + formNameId" class="form-label">{{ t('default.name') }}</label>
+          <MDBAutocomplete
+            :class="[isValidated.formName && errors.formName && errors.formName.length > 0 ? 'is-invalid' : '']"
+            :id="'add-document-name-input-' + formNameId"
+            :no-results-text="noResults"
+            :displayValue="nameDisplayValueTemplate"
+            :itemContent="nameItemTemplate"
+            v-model="formName"
+            :filter="filterFormName"
+            maxlength="100"
+            @change="validateName()"
+            @itemSelect="handleNameChange"
+            @keyup.enter="validateName()" @blur="validateName()" :isValid="!errors.formName" :isValidated="isValidated.formName" :invalidFeedback="errors.formName"
+          />
+        </div>
+      
+        <div class="col-12 col-lg-6 mb-4">
+          <label :for="'add-document-category-input-' + formCategoryId" class="form-label">{{ t('default.category') }}</label>
+          <MDBAutocomplete
+            :class="[isValidated.formCategory && errors.formCategory && errors.formCategory.length > 0 ? 'is-invalid' : '']"
+            :id="'add-document-category-input-' + formCategoryId"
+            :no-results-text="noResults"
+            v-model="formCategory"
+            :filter="filterFormCategory"
+            maxlength="100"
+            @update="validateCategory()"
+            @blur="validateCategory()"
+            @keyup.enter="validateCategory()"
+            :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
+          />
+        </div>
       </div>
-      <div class="form-outline mb-4">
-        <label :for="'add-document-category-input-' + formCategoryId" class="form-label">{{ t('default.category') }}</label>
-        <MDBAutocomplete
-          :class="[isValidated.formCategory && errors.formCategory && errors.formCategory.length > 0 ? 'is-invalid' : '']"
-          :id="'add-document-category-input-' + formCategoryId"
-          :no-results-text="noResults"
-          v-model="formCategory"
-          :filter="filterFormCategory"
-          maxlength="100"
-          @change="validateCategory()"
-          @blur="validateCategory()"
-          @keyup.enter="validateCategory()"
-          :isValid="!errors.formCategory" :isValidated="isValidated.formCategory" :invalidFeedback="errors.formCategory"
-        />
+      <div class="row">
+        <div class="col-12 mt-1 mb-4">
+          <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('default.upgrade_version', {version: getNewVersion}) : t('default.update_version', {version: getNewVersion})" v-model="formVersionUpgrageMajor"/>
+        </div>
       </div>
-      <MDBSwitch v-if="true === false" wrapperClass="mb-2" :label="t('default.version_upgrade_major')" v-model="formVersionUpgrageMajor"/>
+      <div class="row">
+        <div class="col-12 mb-4">
+          <label for="add-document-description-id-input" class="form-label">{{ t('default.description') }}</label>
+          <MDBInput class="text-left" id="add-document-description-id-input" v-model="formDescription" max="161"
+            @keyup="validateDescription()" @blur="validateDescription()" :isValid="!errors.formDescription" :isValidated="isValidated.formDescription" :invalidFeedback="errors.formDescription"
+          />
+        </div>
+      </div>
       <!-- <br/> -->
       <label for="add-document-input" class="form-label mt-2">{{ t('default.document') }}</label>
 
-      <p class="note note-danger" v-if="formDocumentType == 'flush-pdf' && errors.formFiles != null"  color="danger" static>{{ errors.formFiles }}</p>
-      <p class="note note-danger" v-if="formDocumentType == 'flush-url' && errors.formUrl != null"  color="danger" static>{{ errors.formUrl }}</p>
-      <p class="note note-danger" v-if="formDocumentType == 'flush-html' && errors.formHtml != null"  color="danger" static>{{ errors.formHtml }}</p>
+      <MDBAlert color="danger" static v-if="formDocumentType == 'flush-pdf' && errors.formFiles != null">{{ errors.formFiles }}</MDBAlert>
+      <MDBAlert color="danger" static v-if="formDocumentType == 'flush-url' && errors.formUrl != null">{{ errors.formUrl }}</MDBAlert>
+      <MDBAlert color="danger" static v-if="formDocumentType == 'flush-html' && errors.formHtml != null">{{ errors.formHtml }}</MDBAlert>
 
       <MDBAccordion v-model="formDocumentType" flush fluid class="mx-4">
         <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
@@ -83,6 +101,7 @@ import { useI18n } from "vue-i18n";
 import _ from "lodash";
 import { requiredValidator, requiredArrayValidator, isValid, minLength, maxLength, urlValidator } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
+import { minorUp, majorUp } from '@/utils/version'
 import {
   MDBBtn,
   MDBInput, //, MDBSelect,
@@ -93,12 +112,13 @@ import {
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter
+  MDBModalFooter,
+  MDBAlert
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService"
-import { getCategories, getNames } from "@/models/document"
+import { getCategories, getFiles, getIndexInFiles } from "@/models/document"
 
 export default {
   components: {
@@ -108,6 +128,7 @@ export default {
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
     , MDBAccordion, MDBAccordionItem
     , MDBFileUpload, MDBWysiwyg
+    , MDBAlert
   },
   props: {
     show: {
@@ -134,12 +155,24 @@ export default {
   setup(props) {
     const { show, docs } = toRefs(props)
     const { t } = useI18n();
+  
+    const files = getFiles(docs.value)
+    console.log(files)
 
     const categoryOptions = getCategories(docs.value, t);
-    const nameOptions = getNames(docs.value, '', t);
+    const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
+    const nameItemTemplate = result => {
+        return `
+          <div class="autocomplete-custom-item-content">
+            <div class="autocomplete-custom-item-title">${result.title}</div>
+            <div class="autocomplete-custom-item-category">${result.category} | v${result.version}</div>
+          </div>
+        `;
+    };
+    const nameDisplayValueTemplate = value => value.title;
+
     // console.log(names)
-
-
+    
     const active = ref(false)
     
     const openModal = () => { active.value = true }
@@ -158,15 +191,18 @@ export default {
     const formFiles = ref([])
     const formUrl = ref('')
     const formHtml = ref('')
-    const formVersionUpgrageMajor = ref(false)
+    const formVersionUpgrageMajor = ref(true)
     const formDocumentType = ref('flush-pdf');
 
-    const changeNames = () => { formNameOptions.value = getNames(docs.value, formCategory.value, t) }
-    watch(formCategory, changeNames)
+    //const changeNames = () => { formNameOptions.value = getNames(docs.value, formCategory.value, t) }
+    //watch(formCategory, changeNames)
+
+    //const changeCategory = () => { formCategory = getNames(docs.value, formCategory.value, t) }
+    //watch(formCategory, changeNames)
 
     const filterFormName = value => {
       return formNameOptions.value.filter(item => {
-        return item.toLowerCase().startsWith(value.toLowerCase());
+        return item.title.toLowerCase().startsWith(value.toLowerCase());
       });
     };
 
@@ -196,9 +232,10 @@ export default {
     });
 
     return {
-      t, active
+      t, active, files
       , formName, formNameOptions, formNameId, formDescription, formCategory, formCategoryId, formCategoryOptions, formTagsNew, formTags, formFiles, formUrl, formHtml, formVersionUpgrageMajor
       , formDocumentType, filterFormName, filterFormCategory
+      , nameItemTemplate, nameDisplayValueTemplate
       , isValidated, errors
     };
   },
@@ -251,6 +288,26 @@ export default {
         names = _.sortedUniq(this.docs.files.map(item => item.name).sort())
       }
       return names
+    },
+    getIndexOfFile() {
+      return getIndexInFiles(this.files, this.formName, this.formCategory)
+    },
+    getVersionOfFile() {
+      return (this.getIndexOfFile >= 0) ? this.files[this.getIndexOfFile].version : undefined
+    },
+    isNewFile() {
+      return this.getIndexOfFile == -1
+    },
+    getNewVersion() {
+      let version = '1.0'
+      if (this.isNewFile === false) {
+        if (this.formVersionUpgrageMajor === true) {
+          version = majorUp(this.getVersionOfFile)
+        } else {
+          version = minorUp(this.getVersionOfFile)
+        }
+      }
+      return version
     }
   },
   mounted() {
@@ -258,6 +315,13 @@ export default {
     //this.formNameOptions.value = this.getNames
   },
   methods: {
+    handleNameChange(e) {
+      this.formName = e.title
+      this.formCategory = e.category
+      this.validateCategory()
+      this.validateName()
+      
+    },
     validateName(){
       const field = "formName"
       const requiredVal = requiredValidator(this.formName)
@@ -289,6 +353,19 @@ export default {
         this.errors[field] = null
       }
       this.isValidated.formCategory = true
+    },
+    validateDescription(){
+      const field = "formDescription"
+      const minLengthVal = minLength(this.formDescription, 0)
+      const maxLengthVal = maxLength(this.formDescription, 160)
+      if (maxLengthVal.valid === false) {
+        this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+      } else if (minLengthVal.valid === false) {
+        this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
+      } else {
+        this.errors[field] = null
+      }
+      this.isValidated.formDescription = true
     },
     validateFileUpload(){
       const field = "formFiles"
@@ -328,6 +405,7 @@ export default {
       this.formHtml = ref(this.$refs.refWysiwyg.getCode())
       this.validateName()
       this.validateCategory()
+      this.validateDescription()
       switch (this.formDocumentType) {
         case 'flush-pdf':
           this.validateFileUpload()
@@ -351,27 +429,30 @@ export default {
       if (isValid(this.errors) === true) {
 
         // IPFS
-        let ipfs_hash = null
+        let ipfs_cid = null
         try {
-          ipfs_hash = await this.ipfsService.storeFiles(this.getIpfsData(), this.formName)
+          ipfs_cid = await this.ipfsService.storeFiles(this.getIpfsData(), this.formName)
         } catch(e){
           console.log(e);
         }
 
+        console.log(ipfs_cid)
+
         // BLOCKCHAIN
-        if (ipfs_hash) {
+        if (ipfs_cid) {
           this.nearService.addDoc(
               this.contractId,
               this.formName, // name
               this.formDescription, // description
-              ipfs_hash, // ipfs_hash
-              0, // categoryId
-              this.formCategory, // category
+              ipfs_cid, // ipfs_cid
+              this.getCategoryId(), // categoryId
+              this.getCategory(), // category
               this.getExt(), // ext
               [], // tagsIds
               [], // tags
-              '1.0', // version
-              1,
+              this.getNewVersion, // version
+              null, // description_vote
+              0.5, 
               this.accountId
           ).then(r => {
               console.log(r)
@@ -409,6 +490,14 @@ export default {
           break;
       }
       return ipfsData
+    },
+    getCategoryId() {
+      let categoryId = _.indexOf(this.docs.map.categories, this.formCategory)
+      if (categoryId == -1) categoryId = 0
+      return categoryId
+    },
+    getCategory() {
+      return (_.indexOf(this.docs.map.categories, this.formCategory) == -1) ? this.formCategory : null
     }
   }
 };
@@ -423,4 +512,16 @@ export default {
   min-height: 160px;
 }
 
+.autocomplete-custom-item-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.autocomplete-custom-item-title {
+    font-weight: 500;
+}
+
+.autocomplete-custom-item-subtitle {
+    font-size: 0.8rem;
+}
 </style>

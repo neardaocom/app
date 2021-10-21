@@ -29,7 +29,6 @@
         <Treasury v-if="loaded === true && this.$route.query.page === 'treasury'" :dao="dao"/>
         <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
-        <Organization v-if="loaded === true && this.$route.query.page === 'organization'" :dao="dao"/>
         <Documents v-if="loaded === true && this.$route.query.page === 'documents'" :docs="dao.docs"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
@@ -48,7 +47,6 @@ import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
 import Dashboard from '@/components/dao/Dashboard.vue'
 import Members from '@/components/dao/Members.vue'
-import Organization from '@/components/dao/Organization.vue'
 import Overview from '@/components/dao/Overview.vue'
 import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
 import SkeletonDashboard from '@/components/dao/SkeletonDashboard.vue'
@@ -67,7 +65,7 @@ import DAOs from '@/data/DAOs'
 
 export default {
   components: {
-    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Organization, Documents
+    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
     , SkeletonDashboard, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },

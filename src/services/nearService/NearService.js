@@ -295,46 +295,47 @@ class NearService {
     contractId
     , name
     , description
-    , ipfs_hash
+    , ipfs_cid
     , categoryId
     , category
     , ext
     , tagsIds
     , tags
     , version
+    , description_vote
     , amountToTransfer
     , accountId
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_proposal(
-      {
-        proposal_input: {
-          description: description,
-          tags: tags,
-          transaction: {
-            AddDocFile: {
-              uuid: ipfs_hash,
-              metadata: {
-                name: name,
-                description: description,
-                tags: tagsIds,
-                category: categoryId,
-                ext: ext,
-                valid: true,
-                v: version
-              },
-              new_tags: tags,
-              new_category: category
-            }
+    const args = {
+      proposal_input: {
+        description: description_vote || "",
+        tags: tags,
+        transaction: {
+          AddDocFile: {
+            uuid: ipfs_cid,
+            metadata: {
+              name: name,
+              description: description || "",
+              tags: tagsIds,
+              category: categoryId,
+              ext: ext,
+              valid: true,
+              v: version
+            },
+            new_tags: tags,
+            new_category: category
           }
-        },
-        account_id: accountId
+        }
       },
-      Decimal.mul(100, TGas).toString(),
-      amountYokto.toString()
-    );
+      account_id: accountId
+    }
+
+    console.log(args)
+
+    return this.contractPool.get(contractId).add_proposal(args, Decimal.mul(100, TGas).toString(), amountYokto.toString());
   }
 
   async invalideDoc(
@@ -379,8 +380,8 @@ class NearService {
         vote_kind: vote,
         account_id: this.walletConnection.getAccountId()
       },
-      Decimal.mul(10, TGas).toString()
-      // new Decimal(1).mul(yoctoNear).toFixed()
+      Decimal.mul(10, TGas).toString(),
+      new Decimal(0.001).mul(yoctoNear).toFixed()
     );
   }
 
@@ -464,7 +465,7 @@ class NearService {
       doc.description = element[1].description
       doc.valid = element[1].valid
       doc.category = data[5].map["Doc"].categories[element[1].category]
-      doc.ipfs_hash = element[0]
+      doc.ipfs_cid = element[0]
       doc.version = element[1].v ?? '1.0'
 
       file_list.push(doc)

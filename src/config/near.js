@@ -6,7 +6,7 @@ function getConfig(env) {
     case 'production':
     case 'mainnet':
       return {
-        networkId: 'testnet',
+        networkId: 'mainnet',
         nodeUrl: 'https://rpc.mainnet.near.org',
         name: NAME,
         contractName: CONTRACT_NAME + '.near',

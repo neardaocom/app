@@ -40,7 +40,8 @@ export const majorUp = (version) => {
 export const toCompare = (version) => {
     const parsed = parse(version)
     if (parsed !== undefined) {
-        return version[0] * 1000 + version[1]
+        // console.log(version, parsed[0], parsed[1])
+        return (parsed[0] * 1000) + parsed[1]
     }
     return undefined
 }
