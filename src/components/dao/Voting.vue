@@ -25,7 +25,7 @@
     <!-- /Order -->
     <!-- Proposal in progress -->
     <div class="row">
-      <div v-for="(proposal, index) in dao.proposals" :key="index" class="col-md-6 mb-4 mb-md-0">
+      <div v-for="(proposal, index) in dao.proposals" :key="index" class="col-md-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
           <Proposal :proposal="proposal[1]" :proposalId="proposal[0]" :contractId="dao.wallet" :token_holders="dao.token_holders" :token_blocked="dao.token_released - dao.token_free" :docs="dao.docs"/>
         </section>

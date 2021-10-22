@@ -2,10 +2,35 @@
   <div class="card">
     <div class="card-body">
       <!-- header -->
-      <h6 class="card-title mt-1 mb-1">
-        <small class="me-2 text-muted">#{{ proposal.uuid }}</small
-        >{{ t("default." + type) }}
+      <h6 class="card-title mt-1 mb-1 text-dark">
+        <small class="me-2 text-muted">#{{ proposal.uuid }}</small>
+        {{ t("default." + type) }}
+        <span
+          v-if="proposal.status === 'Accepted'"
+          class="badge bg-success mb-2"
+          >{{ t("default.vote_status_accepted") }}</span
+        >
+        <span
+          v-else-if="proposal.status === 'Rejected'"
+          class="badge bg-danger mb-2"
+          >{{ t("default.vote_status_rejected") }}</span
+        >
+        <span v-else-if="proposal.status === 'Spam'"
+          class="badge bg-dark mb-2">{{
+          t("default.vote_status_spam")
+        }}</span>
+        <span
+          v-else-if="proposal.status === 'Invalid'"
+          class="badge bg-info mb-2"
+          >{{ t("default.vote_status_invalid") }}</span
+        >
+        <span
+          v-else
+          class="badge bg-danger mb-2"
+          >{{ t("default.vote_status_executing") }}</span
+        >
       </h6>
+      
       <!-- progress or status -->
       <MDBProgress
         v-if="proposal.status === 'InProgress' && isOver() === false"
@@ -13,84 +38,37 @@
       >
         <MDBProgressBar :value="progress" bg="primary" />
       </MDBProgress>
-      <span
-        v-else-if="proposal.status === 'Accepted'"
-        class="badge bg-success mb-2"
-        >{{ t("default.vote_status_accepted") }}</span
-      >
-      <span
-        v-else-if="proposal.status === 'Rejected'"
-        class="badge bg-danger mb-2"
-        >{{ t("default.vote_status_rejected") }}</span
-      >
-      <span v-else-if="proposal.status === 'Spam'" class="badge bg-dark mb-2">{{
-        t("default.vote_status_spam")
-      }}</span>
-      <span
-        v-else-if="proposal.status === 'Invalid'"
-        class="badge bg-info mb-2"
-        >{{ t("default.vote_status_invalid") }}</span
-      >
-      <span
-        v-else
-        class="badge bg-danger mb-2"
-        >{{ t("default.vote_status_executing") }}</span
-      >
       <!-- body -->
       <p
-        class="mt-2 mb-0"
+        class="mt-2 mb-0 fs-5"
         v-html="t('default.' + type + '_message', typeArgs)"
       />
+      <hr class="my-1">
       <!-- Desctiption -->
-      <section v-if="descriptionWords.length > 0" aria-expanded="true">
-        <MDBBtn color="link" size="sm"
-          @click="collapseDescription = !collapseDescription"
-          :aria-controls="'collapsibleDescription' + proposal.uuid"
-          :aria-expanded="collapseDescription"
-        >
-          <MDBIcon icon="align-left" class="me-2"></MDBIcon>{{ t('default.description') }}
-        </MDBBtn>
-        <MDBCollapse
-          :id="'collapsibleDescription' + proposal.uuid"
-          v-model="collapseDescription"
-        >
-          <div class="my-2 mx-2" v-html="proposal.description">
-          </div>
-        </MDBCollapse>
-      </section>
-      <section v-if="false" class="d-flex justify-content-center w-100" style="height: 50px">
-        <div class="overflow-hidden">
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus et lorem id felis nonummy placerat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer in sapien. Mauris dictum facilisis augue. Vivamus luctus egestas leo. Nam sed tellus id magna elementum tincidunt. Nulla non arcu lacinia neque faucibus fringilla. Maecenas libero. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci.
-        </div>
-        <a href="#" @click="toggleDescription()"><MDBIcon icon="angle-down" iconStyle="fas" /> </a>
-      </section>
+      <TextCollapse :content="proposal.description"/>
       <!-- about -->
-      <ul class="mt-2 list-unstyled text-muted">
-        <li>
-          <i class="far fa-calendar fa-fw me-3 mb-3"></i> {{ toDateString }}
+      <ul class="mt-2 list-unstyled text-muted list-inline">
+        <li class="list-inline-item me-4">
+          <i class="far fa-calendar fa-fw me-2 mb-3"></i> {{ toDateString }}
           <span class="font-weight-bold">{{ toTimeString }}</span>
         </li>
-        <li>
-          <i class="far fa-handshake fa-fw me-3 mb-3"></i>
+        <li class="list-inline-item me-4">
+          <i class="far fa-handshake fa-fw me-2 mb-3"></i>
           <span class="font-weight-bold"
             >{{ proposal.vote_config.quorum }}%</span
           >
         </li>
-        <li v-if="choice !== ''">
-          <i class="fas fa-vote-yea fa-fw me-3 mb-3"></i>
+        <li v-if="choice !== ''" class="list-inline-item me-4">
+          <i class="fas fa-vote-yea fa-fw me-2 mb-3"></i>
           <span class="font-weight-bold text-black">{{
             t("default.vote_type_" + choice)
           }}</span>
         </li>
-        <li v-for="(choice, index) in results" :key="index">
-          <strong>{{ t("default.vote_type_" + choice.choice) }}</strong>
-          <MDBProgress :height="18">
-            <MDBProgressBar :value="choice.percent" :bg="choice.bg"
-              >{{ choice.percent }}%</MDBProgressBar
-            >
-          </MDBProgress>
+        <li v-for="(choice, index) in results" :key="index" class="list-inline-item me-4">
+          <i class="fas fa-users fa-fw me-2 mb-3"></i>
+          <strong class="me-2">{{ t("default.vote_type_" + choice.choice) }}</strong>
+          <span class="font-weight-bold text-black">{{ choice.percent }}%</span>
         </li>
-        <li>&nbsp;</li>
       </ul>
       <div
         v-if="
@@ -127,7 +105,10 @@
 
 <script>
 //import { toRefs } from "vue";
-import { MDBProgress, MDBProgressBar, MDBCollapse, MDBBtn, MDBIcon } from "mdb-vue-ui-kit";
+import {
+  MDBProgress, MDBProgressBar
+  // , MDBCollapse, MDBBtn, MDBIcon
+} from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { ref } from "vue";
 import Decimal from "decimal.js";
@@ -139,12 +120,14 @@ import {
 } from "@/services/nearService/utils";
 import { parseFromNanoseconds, toDateString, toTimeString } from "@/utils/date";
 import { getWords } from "@/utils/string";
+import TextCollapse from '@/components/TextCollapse.vue';
 
 export default {
   components: {
     MDBProgress,
     MDBProgressBar,
-    MDBCollapse, MDBBtn, MDBIcon
+    // MDBCollapse, MDBBtn, MDBIcon,
+    TextCollapse
   },
   props: {
     proposal: {
@@ -360,6 +343,9 @@ export default {
     }
   },
   methods: {
+    loremIpsum() {
+      return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus et lorem id felis nonummy placerat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer in sapien. Mauris dictum facilisis augue. Vivamus luctus egestas leo. Nam sed tellus id magna elementum tincidunt. Nulla non arcu lacinia neque faucibus fringilla. Maecenas libero. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci.';
+    },
     isOver() {
       if (this.proposal.status === "InProgress") {
         const end = this.durationTo.valueOf();
