@@ -25,6 +25,9 @@
               <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
               <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>
             </div>
+            <div class="col-12 col-md-6 col-lg-9 text-end pt-1 ps-4">
+              
+            </div>
           </div>
           <MDBProgress class="my-1">
             <MDBProgressBar :value="100" />

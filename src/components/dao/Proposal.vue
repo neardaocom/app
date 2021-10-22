@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-body">
       <!-- header -->
-      <h6 class="card-title mt-1 mb-1 text-dark">
+      <h6 class="card-title mt-1 mb-1">
         <small class="me-2 text-muted">#{{ proposal.uuid }}</small>
         {{ t("default." + type) }}
         <span
@@ -40,12 +40,12 @@
       </MDBProgress>
       <!-- body -->
       <p
-        class="mt-2 mb-0 fs-5"
+        class="mt-2 mb-0 fs-5 text-dark"
         v-html="t('default.' + type + '_message', typeArgs)"
       />
       <hr class="my-1">
       <!-- Desctiption -->
-      <TextCollapse :content="proposal.description"/>
+      <TextCollapse :content="loremIpsum()" :limit="1"/> <!-- proposal.description -->
       <!-- about -->
       <ul class="mt-2 list-unstyled text-muted list-inline">
         <li class="list-inline-item me-4">
