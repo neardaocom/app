@@ -177,7 +177,7 @@ export default {
                     account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
                 }
             }
-            , 1
+            , 0.5
             , this.accountId
         ).then(r => {
             console.log(r)

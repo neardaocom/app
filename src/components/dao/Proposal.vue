@@ -96,10 +96,10 @@
         class="btn-group"
         role="group"
       >
-        <button @click="vote(1)" type="button" class="btn btn-primary">
+        <button @click="vote(1)" type="button" class="btn btn-success">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
-        <button @click="vote(2)" type="button" class="btn btn-primary">
+        <button @click="vote(2)" type="button" class="btn btn-danger">
           <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->

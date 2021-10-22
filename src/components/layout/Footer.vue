@@ -1,5 +1,6 @@
 <template>
-    <footer class="text-center text-lg-start text-muted" style="background-color: hsl(213, 44%, 97%)">
+    <!-- <footer class="text-center text-lg-start text-muted" >-->
+    <MDBFooter :text="['center', 'lg-start']" style="background-color: hsl(213, 44%, 97%)">
         <!-- Section: Social media -->
         <section class="
                         d-flex
@@ -87,14 +88,15 @@
             © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a> {{ t('default.all_rights_reserved') }}
         </div>
     <!-- Copyright -->
-    </footer>
+    </MDBFooter>
 </template>
 
 <script>
 import { useI18n } from 'vue-i18n';
+import { MDBFooter } from "mdb-vue-ui-kit"
 export default {
     components: {
-        
+        MDBFooter
     },
     setup() {
         const app_brand_name = process.env.VUE_APP_BRAND_NAME;

@@ -13,8 +13,8 @@
                   <th scope="col">{{ t("default.category")}}</th>
                   <th scope="col" style="min-width:200px">{{ t("default.description")}}</th>
                   <!-- <th scope="col" style="min-width:200px">{{ t("default.tags")}}</th>-->
-                  <th scope="col">{{ t("default.version")}}</th>
                   <th scope="col">{{ t("default.valid")}}</th>
+                  <th scope="col">{{ t("default.version")}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -25,6 +25,7 @@
                   <td class="text-start">{{ doc.category }}</td>
                   <td>{{ doc.description }}</td>
                   <!-- <td class="text-start">{{ doc.tags.join(', ') }}</td>-->
+                  <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                   <td>
                       <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                       <MDBBtnGroup size="sm" role="toolbar">
@@ -32,7 +33,6 @@
                         <MDBBtn v-for="item in doc.versions.slice(0, 3)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
                       </MDBBtnGroup>
                   </td>
-                  <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                   </tr>
               </tbody>
             </MDBTable>

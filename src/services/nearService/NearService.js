@@ -380,8 +380,8 @@ class NearService {
         vote_kind: vote,
         account_id: this.walletConnection.getAccountId()
       },
-      Decimal.mul(10, TGas).toString(),
-      new Decimal(0.001).mul(yoctoNear).toFixed()
+      Decimal.mul(10, TGas).toString()
+      //, new Decimal(0.001).mul(yoctoNear).toFixed()
     );
   }
 
@@ -496,7 +496,7 @@ class NearService {
         token_holders: token_account,
         groups: {
           council: {
-            amount: data[2].council_share_percent,
+            amount: data[2].council_share_percent, // TODO: council_share_percent not found
             wallets: data[2].council
           },
           community: {
