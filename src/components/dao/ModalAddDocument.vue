@@ -118,7 +118,7 @@ import {
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService"
-import { getCategories, getFiles, getIndexInFiles } from "@/models/document"
+import { getCategories, transform, getIndexInFiles } from "@/models/document"
 
 export default {
   components: {
@@ -156,7 +156,7 @@ export default {
     const { show, docs } = toRefs(props)
     const { t } = useI18n();
   
-    const files = getFiles(docs.value)
+    const files = transform(docs.value)
     console.log(files)
 
     const categoryOptions = getCategories(docs.value, t);
@@ -259,7 +259,7 @@ export default {
       return {
         pdf: this.t('default.pdf'),
         link: this.t('default.link'),
-        editor: this.t('default.editor'),
+        editor: this.t('default.document'),
       }
     },
     fileUploadMsg() {

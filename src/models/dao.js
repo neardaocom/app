@@ -3,7 +3,7 @@ import { toSearch } from '@/utils/string'
 export const transform = (list, tags, t, n) => list.map((item, index) => {
     let trans = {
         id: item[0],
-        index: index + 1,
+        index: index,
         name: item[1].name,
         description: item[1].description,
         location: item[1].lang,

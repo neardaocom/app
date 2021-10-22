@@ -32,6 +32,7 @@ export const majorUp = (version) => {
     let parsed = parse(version)
     if (parsed !== undefined) {
         parsed[0] = parsed[0] + 1
+        parsed[1] = 0
         return toString(parsed)
     }
     return undefined

@@ -47,7 +47,7 @@ const getIndexInFiles = (files, name, category) => {
     return _.findIndex(files, {'key': file_key})
 }
 
-const getFiles = (docs) => {
+const transform = (docs) => {
     // console.log(category)
     //const initCategories = getCategoriesInit(t)
     //const initNames = getNamesInit(t)
@@ -79,6 +79,7 @@ const getFiles = (docs) => {
                 files[file_index].ext = element.ext
                 files[file_index].valid = element.valid
                 files[file_index].ipfs_cid = element.ipfs_cid
+                files[file_index].search = [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map(tag => toSearch(tag))).join('-')
             } else {
                 files[file_index].versions.push({
                     index: index,
@@ -101,6 +102,7 @@ const getFiles = (docs) => {
                 ipfs_cid: element.ipfs_cid,
                 description: element.description,
                 versions: [],
+                search: [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map(tag => toSearch(tag))).join('-')
             })
         }
     });
@@ -108,4 +110,4 @@ const getFiles = (docs) => {
     return files
 }
 
-export {getCategories, getNames, getFiles, getIndexInFiles}
+export {getCategories, getNames, transform, getIndexInFiles}

@@ -10,10 +10,7 @@
           <MDBCardBody>
             <MDBCardTitle>{{ t('default.organizations')}}</MDBCardTitle>
             <MDBCardText>
-              <MDBProgress class="my-4">
-                <MDBProgressBar :value="loadingProgress" />
-              </MDBProgress>
-              <div class="row">
+              <div class="row mt-3">
                 <div class="col-6 col-md-4 col-lg-3">
                   <MDBInput
                     inputGroup
@@ -37,6 +34,9 @@
                   <MDBCheckbox :label="filterTag.club.name" inline v-model="filterTag.club.active"/>
                 </div>
               </div>
+              <MDBProgress class="my-1">
+                <MDBProgressBar :value="loadingProgress" />
+              </MDBProgress>
               <MDBTable responsive striped>
                 <thead>
                   <tr>
@@ -55,7 +55,7 @@
                         <i v-else class="far fa-star fa-xs pe-1" ></i>
                       </a>
                     </td>-->
-                    <td>{{ dao.index }}</td>
+                    <td>{{ dao.index + 1 }}</td>
                     <td class="text-start">
                       <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
                       <br>
@@ -171,6 +171,7 @@ export default {
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }
+      // order
       return results
     },
   },

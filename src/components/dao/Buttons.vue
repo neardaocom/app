@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     isActive(button_page) {
-      return button_page === (this.$route.query.page || 'overview')
+      return button_page === (this.$route.query.page || 'voting')
     },
     modalPayoutOpen() {
       this.modalPayout += 1
