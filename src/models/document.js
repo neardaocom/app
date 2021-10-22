@@ -1,6 +1,6 @@
 import _ from "lodash";
-// import { toCompare } from "@/utils/version";
-// import { toSearch } from "@/utils/string";
+import { toCompare } from "@/utils/version";
+import { toSearch } from "@/utils/string";
 
 const getCategoriesInit = (t) => {
   return [t('default.fundamental')]
@@ -38,39 +38,74 @@ const getNames = (docs, category, t) => {
   return names
 }
 
-/*
-const getFiles = (docs, t) => {
-    console.log(category)
-    const initCategories = getCategoriesInit(t)
-    const initNames = getNamesInit(t)
+const getKey = (name, category) => {
+    return toSearch(name) + '_' + toSearch(category)
+}
+
+const getIndexInFiles = (files, name, category) => {
+    const file_key = getKey(name, category)
+    return _.findIndex(files, {'key': file_key})
+}
+
+const getFiles = (docs) => {
+    // console.log(category)
+    //const initCategories = getCategoriesInit(t)
+    //const initNames = getNamesInit(t)
     
     let files = []
-    let version_last = null
     let key = null
-    let version_step = null
-    docs.files.forEach(element => {
-
+    let file_index = null
+    let file_version = null
+    let version = null
+    docs.files.forEach((element, index) => {
+        version = toCompare(element.version)
+        key = getKey(element.name, element.category)
         // exists
-        files.filter(item => _.isEqual(element.category, item.category)).length
-        if ( > 0) {
-            version_step = toCompare(element.version)
-            
+        file_index = getIndexInFiles(files, element.name, element.category)
+        if (file_index >= 0) {
+            file_version = toCompare(files[file_index].version)
+            // new/old version
+            if (version > file_version) {
+                files[file_index].versions.push({
+                    index: files[file_index].index,
+                    version: files[file_index].version,
+                    ext: files[file_index].ext,
+                    valid: files[file_index].valid,
+                    ipfs_cid: files[file_index].ipfs_cid,
+                })
+                files[file_index].index = index,
+                files[file_index].tags = element.tags
+                files[file_index].version = element.version
+                files[file_index].ext = element.ext
+                files[file_index].valid = element.valid
+                files[file_index].ipfs_cid = element.ipfs_cid
+            } else {
+                files[file_index].versions.push({
+                    index: index,
+                    version: element.version,
+                    ext: element.ext,
+                    valid: element.valid,
+                    ipfs_cid: element.ipfs_cid,
+                })
+            }
         } else {
             files.push({
+                index: index,
+                key: key,
                 name: element.name,
                 category: element.category,
+                tags: element.tags,
                 ext: element.ext,
                 version: element.version,
                 valid: element.valid,
-                ipfs_hash: element.ipfs_hash,
+                ipfs_cid: element.ipfs_cid,
                 description: element.description,
                 versions: [],
             })
         }
     });
-    console.log(files)
-    return names
-  }
-*/
+    // console.log(files)
+    return files
+}
 
-export {getCategories, getNames}
+export {getCategories, getNames, getFiles, getIndexInFiles}

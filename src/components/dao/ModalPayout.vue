@@ -13,7 +13,7 @@
         <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
             @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
         >
-            <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
+            <span class="input-group-text" id="account-addon">.{{ getNearAccountPostfix() }}</span>
         </MDBInput>
         <br/>
         <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
@@ -53,6 +53,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { yoctoNear } from "@/services/nearService/constants"
 import Decimal from 'decimal.js';
+import _ from "lodash"
 
 export default {
   components: {
@@ -111,6 +112,9 @@ export default {
     },
   },
   methods: {
+    getNearAccountPostfix() {
+      return _.last(this.factoryAccount.split('.'))
+    },
     validateAccount(){
       const field = "formAccount"
       const requiredVal = requiredValidator(this.formAccount)
@@ -173,7 +177,7 @@ export default {
                     account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
                 }
             }
-            , 1
+            , 0.5
             , this.accountId
         ).then(r => {
             console.log(r)

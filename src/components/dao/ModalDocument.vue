@@ -11,7 +11,8 @@
     </MDBModalHeader>
     <MDBModalBody class="text-start">
       <pdf class="m-3" v-if="doc.ext == 'pdf'" :src="content" :page="1"></pdf>
-      <section class="m-3" v-if="doc.ext == 'html'" v-html="content"></section>
+      <section class="m-3" v-else-if="doc.ext == 'html'" v-html="content"></section>
+      <p class="m-3 text-center" v-else-if="doc.ext == 'url'"><a :href="content" target="_blank"> <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />{{ content }}</a></p>
     </MDBModalBody>
   </MDBModal>
 </template>
@@ -24,12 +25,13 @@ import {
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
+  MDBIcon
 } from "mdb-vue-ui-kit";
 import pdf from 'pdfvuer'
 
 export default {
   components: {
-    MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody
+    MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBIcon
     , pdf
   },
   props: {
@@ -61,6 +63,9 @@ export default {
             break;
           case 'pdf':
             content.value = URL.createObjectURL(props.doc.data)
+            break;
+          case 'link':
+            content.value = await props.doc.data.text()
             break;
           default:
             break;

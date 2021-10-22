@@ -146,7 +146,7 @@ export default {
                     title: this.formTitle,
                 }
             }
-            , 1
+            , 0.5
             , this.accountId
         ).then(r => {
             console.log(r)

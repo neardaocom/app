@@ -24,6 +24,7 @@
     "mdb-vue-wysiwyg-editor": "./mdb/mdb-vue-wysiwyg-editor-1.0.0.tgz",
     "near-api-js": "^0.41.0",
     "pdfvuer": "^2.0.1",
+    "sanitize-html": "^2.5.2",
     "valid-url": "^1.0.9",
     "vue": "^3.2.10",
     "vue-i18n": "^9.1.7",

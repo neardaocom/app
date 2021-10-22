@@ -1,13 +1,12 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <h5 class="card-title mt-1 mb-1">
+      <!-- header -->
+      <h6 class="card-title mt-1 mb-1">
         <small class="me-2 text-muted">#{{ proposal.uuid }}</small
-        >{{
-          t("default." + type) +
-          (type == "general_proposal" ? ": " + proposalTitle : "")
-        }}
-      </h5>
+        >{{ t("default." + type) }}
+      </h6>
+      <!-- progress or status -->
       <MDBProgress
         v-if="proposal.status === 'InProgress' && isOver() === false"
         :height="4"
@@ -32,17 +31,35 @@
         class="badge bg-info mb-2"
         >{{ t("default.vote_status_invalid") }}</span
       >
+      <span
+        v-else
+        class="badge bg-danger mb-2"
+        >{{ t("default.vote_status_executing") }}</span
+      >
+      <!-- body -->
       <p
-        class="mt-2"
-        v-if="type !== 'general_proposal'"
+        class="mt-2 mb-0"
         v-html="t('default.' + type + '_message', typeArgs)"
       />
-      <p
-        class="mt-2"
-        v-if="type == 'general_proposal'"
-        v-html="proposal.description"
-      />
-      <ul class="list-unstyled text-muted">
+      <!-- Desctiption -->
+      <section v-if="descriptionWords.length > 0" aria-expanded="true">
+        <MDBBtn color="link" size="sm"
+          @click="collapseDescription = !collapseDescription"
+          :aria-controls="'collapsibleDescription' + proposal.uuid"
+          :aria-expanded="collapseDescription"
+        >
+          <MDBIcon icon="align-left" class="me-2"></MDBIcon>{{ t('default.description') }}
+        </MDBBtn>
+        <MDBCollapse
+          :id="'collapsibleDescription' + proposal.uuid"
+          v-model="collapseDescription"
+        >
+          <div class="my-2 mx-2" v-html="proposal.description">
+          </div>
+        </MDBCollapse>
+      </section>
+      <!-- about -->
+      <ul class="mt-2 list-unstyled text-muted">
         <li>
           <i class="far fa-calendar fa-fw me-3 mb-3"></i> {{ toDateString }}
           <span class="font-weight-bold">{{ toTimeString }}</span>
@@ -79,10 +96,10 @@
         class="btn-group"
         role="group"
       >
-        <button @click="vote(1)" type="button" class="btn btn-primary">
+        <button @click="vote(1)" type="button" class="btn btn-success">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
-        <button @click="vote(2)" type="button" class="btn btn-primary">
+        <button @click="vote(2)" type="button" class="btn btn-danger">
           <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->
@@ -104,8 +121,9 @@
 
 <script>
 //import { toRefs } from "vue";
-import { MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
+import { MDBProgress, MDBProgressBar, MDBCollapse, MDBBtn, MDBIcon } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
+import { ref } from "vue";
 import Decimal from "decimal.js";
 
 import { yoctoNear } from "@/services/nearService/constants";
@@ -114,11 +132,13 @@ import {
   getProposalTitle,
 } from "@/services/nearService/utils";
 import { parseFromNanoseconds, toDateString, toTimeString } from "@/utils/date";
+import { getWords } from "@/utils/string";
 
 export default {
   components: {
     MDBProgress,
     MDBProgressBar,
+    MDBCollapse, MDBBtn, MDBIcon
   },
   props: {
     proposal: {
@@ -148,8 +168,9 @@ export default {
   },
   setup() {
     // const { proposal } = toRefs(props)
+    const collapseDescription = ref(false);
     const { t } = useI18n();
-    return { t };
+    return { t, collapseDescription };
   },
   computed: {
     durationTo() {
@@ -287,9 +308,15 @@ export default {
             group: this.groupTranslate(actions.RemoveMember.group),
           };
           break;
+        case "GeneralProposal":
+          args = {
+            title: actions.GeneralProposal.title
+          };
+          break;
         case "AddFile":
           args = {
-            name: actions.AddFile.metadata.name + actions.AddFile.metadata.ext,
+            name: actions.AddFile.metadata.name,
+            ipfs_cid: actions.AddFile.uuid,
             category:
               actions.AddFile.new_category ??
               this.docs.map.categories[actions.AddFile.metadata.category],
@@ -322,6 +349,9 @@ export default {
     accountId() {
       return this.$store.getters["near/getAccountId"];
     },
+    descriptionWords() {
+      return getWords(this.proposal.description)
+    }
   },
   methods: {
     isOver() {

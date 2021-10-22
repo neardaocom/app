@@ -18,15 +18,21 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(doc, index) in docs.files" :key="index">
+                <tr v-for="(doc, index) in files" :key="index">
                   <td>{{ index + 1 }}</td>
                   <td><MDBIcon :icon="getIcon(doc.ext)" iconStyle="fas" /></td>
-                  <td class="fw-bold text-start"><a href="#" @click="openDoc(index)">{{ doc.name }} <MDBIcon v-if="doc.ext.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
+                  <td class="fw-bold text-start"><a href="#" @click="openDoc(doc.index)">{{ doc.name }} <MDBIcon v-if="doc.ext.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
                   <td class="text-start">{{ doc.category }}</td>
                   <td>{{ doc.description }}</td>
                   <!-- <td class="text-start">{{ doc.tags.join(', ') }}</td>-->
                   <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
-                  <td class="text-start">{{ doc.version }}</td>
+                  <td>
+                      <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
+                      <MDBBtnGroup size="sm" role="toolbar">
+                        <MDBBtn color="primary" @click="openDoc(doc.index)">{{ doc.version }}</MDBBtn>
+                        <MDBBtn v-for="item in doc.versions.slice(0, 3)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
+                      </MDBBtnGroup>
+                  </td>
                   </tr>
               </tbody>
             </MDBTable>
@@ -39,15 +45,25 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import { MDBCard, MDBCardBody, MDBCardTitle, MDBIcon, MDBTable } from 'mdb-vue-ui-kit'
+import { ref, toRefs } from "vue";
+import {
+  MDBCard, MDBCardBody, MDBCardTitle, MDBIcon, MDBTable
+  // , MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
+  , MDBBtn, MDBBtnGroup
+} from 'mdb-vue-ui-kit'
 import { useI18n } from "vue-i18n";
+// import DocumentVersion from '@/components/dao/DocumentVersion'
 import ModalDocument from '@/components/dao/ModalDocument'
+import { getFiles } from "@/models/document"
 import _ from 'lodash'
 
 export default {
   components: {
     MDBCard, MDBCardBody, MDBCardTitle, MDBIcon, MDBTable, ModalDocument
+    , MDBBtn
+    , MDBBtnGroup
+    // , MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
+    // , DocumentVersion
   },
   props: {
     docs: {
@@ -55,12 +71,15 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const { docs } = toRefs(props)
+    const files = _.sortBy(getFiles(docs.value), ['category', 'name'])
     const { t } = useI18n();
     const modalDocument = ref(0)
+    const openOldVersion = ref(0)
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
-    return { t, modalDocument, fetchedDocs, selectedDoc};
+    return { t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion};
   },
   computed: {
     ipfsService() {
@@ -88,13 +107,13 @@ export default {
     async openDoc(index) {
       let doc = this.docs.files[index]
 
-      if (_.indexOf(this.fetchedDocs, doc.ipfs_hash) == -1) {
-        this.fetchedDocs[doc.ipfs_hash] = await this.ipfsService.retrieveFiles(doc.ipfs_hash)
+      if (_.indexOf(this.fetchedDocs, doc.ipfs_cid) == -1) {
+        this.fetchedDocs[doc.ipfs_cid] = await this.ipfsService.retrieveFiles(doc.ipfs_cid)
       } else {
         null
       }
 
-      doc.data = this.fetchedDocs[doc.ipfs_hash][0]
+      doc.data = this.fetchedDocs[doc.ipfs_cid][0]
 
       switch (doc.ext) {
         case 'url': {
