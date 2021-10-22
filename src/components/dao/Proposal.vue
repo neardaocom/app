@@ -58,6 +58,12 @@
           </div>
         </MDBCollapse>
       </section>
+      <section v-if="false" class="d-flex justify-content-center w-100" style="height: 50px">
+        <div class="overflow-hidden">
+          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus et lorem id felis nonummy placerat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer in sapien. Mauris dictum facilisis augue. Vivamus luctus egestas leo. Nam sed tellus id magna elementum tincidunt. Nulla non arcu lacinia neque faucibus fringilla. Maecenas libero. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci.
+        </div>
+        <a href="#" @click="toggleDescription()"><MDBIcon icon="angle-down" iconStyle="fas" /> </a>
+      </section>
       <!-- about -->
       <ul class="mt-2 list-unstyled text-muted">
         <li>
