@@ -13,47 +13,71 @@
               <MDBProgress class="my-4">
                 <MDBProgressBar :value="loadingProgress" />
               </MDBProgress>
+              <div class="row">
+                <div class="col-6 col-md-4 col-lg-3">
+                  <MDBInput
+                    inputGroup
+                    :formOutline="false"
+                    wrapperClass="mb-3"
+                    class="rounded"
+                    v-model="searchQuery"
+                    aria-describedby="search-addon"
+                    :aria-label="t('default.search')"
+                    :placeholder="t('default.search')"
+                  >
+                    <template #prepend>
+                      <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
+                    </template>
+                  </MDBInput>
+                </div>
+                <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
+                  <MDBCheckbox :label="filterTag.agency.name" inline v-model="filterTag.agency.active"/>
+                  <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active"/>
+                  <MDBCheckbox :label="filterTag.project.name" inline v-model="filterTag.project.active"/>
+                  <MDBCheckbox :label="filterTag.club.name" inline v-model="filterTag.club.active"/>
+                </div>
+              </div>
               <MDBTable responsive striped>
                 <thead>
                   <tr>
                     <!-- <th scope="col"></th>-->
                     <th scope="col">#</th>
                     <th scope="col" class="text-start">{{ t('default.organization') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.marks') }}</th>
+                    <th scope="col" class="text-start"></th>
                     <th scope="col" class="text-start">{{ t('default.wallet') }}</th>
                     <th scope="col" class="text-end">{{ t('default.tokens') }}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(dao, index) in list" :key="index">
+                  <tr v-for="(dao, index) in results" :key="index">
                     <!-- <td><a @click="favorite_switch(dao.id)" class="">
                         <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
                         <i v-else class="far fa-star fa-xs pe-1" ></i>
                       </a>
                     </td>-->
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ dao.index }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao[0] + '.' + this.factoryAccount}}">{{ dao[1].name }} <MDBIcon v-if="dao[1].lang != null" :flag="dao[1].state"/></router-link>
+                      <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
                       <br>
-                      <span class="fw-light">{{dao[1].description}}</span>
+                      <span class="fw-light">{{dao.description}}</span>
                     </td>
                     <td class="text-start">
                       <span
                         class="badge bg-info"
-                        v-for="(tag, index) in dao[1].tags"
+                        v-for="(tag, index) in dao.tags"
                         :key="index"
-                        >{{ t('default.' + this.tags[tag]) }}</span
+                        >{{ tag }}</span
                       >
                     </td>
                     <td class="text-start">
-                      <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao[0] + '.' + this.factoryAccount">
-                        {{ dao[0] + '.' + this.factoryAccount }} <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />
+                      <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
+                        {{ dao.id + '.' + this.factoryAccount }} <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />
                       </a>
                     </td>
                     <td class="text-end">
-                      <span class="fw-bold">{{ dao[1].ft_name }}</span>
+                      <span class="fw-bold">{{ dao.ft_name }}</span>
                       <br>
-                      <span class="fw-light">{{ n(dao[1].ft_amount) }}</span>
+                      <span class="fw-light">{{ dao.ft_amount }}</span>
                     </td>
                   </tr>
                 </tbody>
@@ -76,10 +100,16 @@ import DAOs from '@/data/DAOs'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
   , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBIcon
+  , MDBInput
+  , MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+import { reactive } from "@vue/reactivity";
+import { transform } from '@/models/dao'
 import { getRandom } from '@/utils/integer'
+import { toSearch } from '@/utils/string'
+import _ from "lodash"
 
 export default {
   components: {
@@ -87,14 +117,37 @@ export default {
     , MDBProgress, MDBProgressBar
     , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText
     , MDBIcon
+    , MDBInput
+    , MDBCheckbox
   },
   setup() {
     const { t, n } = useI18n()
     const daos = ref(DAOs.data().daos)
     const list = ref([])
     const tags = ref([])
+    const searchQuery = ref('')
+    const filterTag = reactive({
+      agency: {
+        name: t('default.agency'),
+        active: false,
+      },
+      startup: {
+        name: t('default.startup'),
+        active: false,
+      },
+      project: {
+        name: t('default.project'),
+        active: false,
+      },
+      club: {
+        name: t('default.club'),
+        active: false,
+      },
+    })
     const loadingProgress = ref(0)
-    return { t, n, daos, list, tags, loadingProgress}
+    return {
+      t, n, daos, list, tags, loadingProgress, searchQuery, filterTag
+    }
   },
   computed: {
     nearService() {
@@ -105,6 +158,20 @@ export default {
     },
     walletUrl() {
         return this.$store.getters['near/getWalletUrl']
+    },
+    results() {
+      let results = this.list
+      // filter
+      const filterTags = Object.values(this.filterTag).filter(item => item.active).map(item => item.name)
+      if (filterTags.length > 0) {
+        results = results.filter(item => _.intersection(item.tags, filterTags).length > 0)
+      }
+      // searching
+      const searchText = toSearch(this.searchQuery)
+      if (searchText.length > 2) {
+        results = results.filter(item => item.search.includes(searchText))
+      }
+      return results
     },
   },
   mounted() {
@@ -117,8 +184,7 @@ export default {
         this.nearService.getDaoList(),
         this.nearService.getTags(),
       ]).then(r => {
-        console.log(r)
-        this.list = r[0]
+        this.list = transform(r[0], r[1], this.t, this.n)
         this.tags = r[1]
         this.loadingProgress = 100
       }).catch((e) => {

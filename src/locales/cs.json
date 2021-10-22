@@ -69,6 +69,7 @@
   "payout_message": "Vyplacení účtu ID <strong>{account}</strong> v částce <strong>{amount}</strong> Ⓝ",
   "location": "Umístění",
   "released": "Uvolněné",
+  "search": "Vyhledat",
   "contacts": "Kontakty",
   "log_in": "Přihlásit",
   "log_out": "Odhlásit",
