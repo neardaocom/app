@@ -5,10 +5,15 @@
       <Breadcrumb :list-name="'organizations'" />
     </MDBContainer>
     <MDBContainer>
-      <div class="row mt-4 mb-4">
+      <div class="row">
+        <div class="col-12 text-center">
+          <h2>{{ t('default.organizations')}}</h2>
+          <p>{{ headerText }}</p>
+        </div>
+      </div>
+      <div class="row mt-2 mb-4">
         <MDBCard>
           <MDBCardBody>
-            <MDBCardTitle>{{ t('default.organizations')}}</MDBCardTitle>
             <MDBCardText>
               <div class="row mt-3">
                 <div class="col-6 col-md-4 col-lg-3">
@@ -99,14 +104,14 @@ import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/data/DAOs'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
-  , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText, MDBIcon
+  , MDBCard, MDBCardBody, MDBCardText, MDBIcon
   , MDBInput
   , MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { reactive } from "@vue/reactivity";
-import { transform } from '@/models/dao'
+import { transform, transTags } from '@/models/dao'
 import { getRandom } from '@/utils/integer'
 import { toSearch } from '@/utils/string'
 import _ from "lodash"
@@ -115,7 +120,7 @@ export default {
   components: {
     Header, Breadcrumb, Footer, MDBContainer, MDBTable
     , MDBProgress, MDBProgressBar
-    , MDBCard, MDBCardBody, MDBCardTitle, MDBCardText
+    , MDBCard, MDBCardBody, MDBCardText
     , MDBIcon
     , MDBInput
     , MDBCheckbox
@@ -174,6 +179,9 @@ export default {
       // order
       return results
     },
+    headerText() {
+      return _.join(this.tags, ' | ')
+    }
   },
   mounted() {
     this.loadingProgress = getRandom(5, 15)
@@ -186,7 +194,7 @@ export default {
         this.nearService.getTags(),
       ]).then(r => {
         this.list = transform(r[0], r[1], this.t, this.n)
-        this.tags = r[1]
+        this.tags = transTags(r[1], this.t)
         this.loadingProgress = 100
       }).catch((e) => {
         console.log(e)

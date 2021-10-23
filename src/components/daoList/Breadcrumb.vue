@@ -5,9 +5,7 @@
         <nav aria-label="breadcrumb navbar-light bg-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'landing-page' }">{{
-                t("default.landing_page")
-              }}</router-link>
+              <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
             <li class="breadcrumb-item active">
               {{ t("default." + listName) }}
@@ -33,5 +31,10 @@ export default {
     const { t } = useI18n();
     return { t };
   },
+  computed: {
+    appName() {
+      return process.env.VUE_APP_BRAND_NAME
+    }
+  }
 };
 </script>

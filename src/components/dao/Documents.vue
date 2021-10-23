@@ -51,7 +51,7 @@
                 <td><MDBIcon :icon="getIcon(doc.ext)" iconStyle="fas" /></td>
                 <td class="fw-bold text-start"><a href="#" @click="openDoc(doc.index)">{{ doc.name }} <MDBIcon v-if="doc.ext.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
                 <td class="text-start">{{ doc.category }}</td>
-                <td>{{ doc.description }}</td>
+                <td class="text-truncate">{{ doc.description }}</td>
                 <!-- <td class="text-start">{{ doc.tags.join(', ') }}</td>-->
                 <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                 <td>

@@ -82,7 +82,7 @@
         </MDBAccordionItem>
         <MDBAccordionItem :headerTitle="documentTypeDropdown.editor" collapseId="flush-html">
           <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-            <p v-html="formHtml"></p>
+            <section v-html="formHtml"></section>
           </MDBWysiwyg>
         </MDBAccordionItem>
       </MDBAccordion>

@@ -5,14 +5,17 @@
         <nav aria-label="breadcrumb navbar-light bg-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'landing-page' }">{{
-                t("default.landing_page")
-              }}</router-link>
+              <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
             <li class="breadcrumb-item">
               <router-link :to="{ name: listRouter, query: {} }">
                 {{ t("default." + listName) }}
               </router-link>
+            </li>
+            <li class="breadcrumb-item active"
+              v-for="(tag, index) in tags"
+              :key="index"
+              >{{ t('default.' + tag) }}
             </li>
             <li class="breadcrumb-item active" aria-current="page">
               {{ account }}
@@ -41,10 +44,19 @@ export default {
       type: String,
       required: true,
     },
+    tags: {
+      type: Array,
+      required: true,
+    },
   },
   setup() {
     const { t } = useI18n();
     return { t };
   },
+  computed: {
+    appName() {
+      return process.env.VUE_APP_BRAND_NAME
+    }
+  }
 };
 </script>

@@ -9,7 +9,7 @@
       ></MDBNavbarToggler>
       <MDBCollapse v-model="collapse" id="sidenav">
         <MDBNavbarNav center class="ms-auto align-items-center">
-          <MDBNavbarItem class="mx-2" :to="{name: 'landing-page', query: {}}" :title="t('default.landing_page')"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.landing_page') }}</span></MDBNavbarItem>
+          <MDBNavbarItem class="mx-2" :to="{name: 'landing-page', query: {}}" :title="appName"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ appName }}</span></MDBNavbarItem>
           <MDBNavbarItem class="mx-2" :to="{name: 'dao-list', query: {}}" :title="t('default.organizations')"><MDBIcon class="pe-2" icon="building" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
           <li v-if="isAccountSigned" class="nav-item">
             <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="walletUrl"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
@@ -57,6 +57,9 @@
       accountId() {
         console.log(this.$store.getters['near/getAccountId'])
         return this.$store.getters['near/getAccountId']
+      },
+      appName() {
+        return process.env.VUE_APP_BRAND_NAME
       },
       walletUrl() {
         return this.$store.getters['near/getWalletUrl']

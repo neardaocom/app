@@ -493,6 +493,7 @@ class NearService {
         },
         token_released: ft_total_released.toNumber(),
         token_free: ft_free_released.toNumber(),
+        token_holded: ft_total_released.minus(ft_free_released).toNumber(),
         token_holders: token_account,
         groups: {
           council: {
