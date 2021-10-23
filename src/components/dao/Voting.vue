@@ -53,9 +53,9 @@
       </div>
     </div>
     <div class="row">
-      <div v-for="(proposal, index) in dao.proposals" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
+      <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal[1]" :proposalId="proposal[0]" :contractId="dao.wallet" :token_holders="dao.token_holders" :token_blocked="dao.token_released - dao.token_free" :docs="dao.docs"/>
+          <Proposal :proposal="proposal" :contractId="dao.wallet"/>
         </section>
       </div>
     </div>
@@ -64,10 +64,13 @@
 
 <script>
 import { MDBInput, MDBCheckbox, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
-import { ref, toRefs, watch } from "vue"
+import { ref, toRefs } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Proposal from "@/components/dao/Proposal.vue"
+import { transform } from '@/models/proposal';
+import _ from "lodash"
+import { toSearch } from '@/utils/string'
 
 export default {
   components: {
@@ -79,15 +82,16 @@ export default {
       type: Object,
       required: true,
     },
+    accountId: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
-    const { dao } = toRefs(props)
+    const { dao, accountId } = toRefs(props)
     const { t } = useI18n();
-    let orderedProposals = ref({})
 
-    const orderProposal = () => { orderedProposals = dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid) }
-
-    watch(orderedProposals, orderProposal)
+    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t))
 
     const searchQuery = ref('')
     const filterState = reactive({
@@ -109,12 +113,34 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { t, orderedProposals, searchQuery, filterState, order };
+    return { t, proposals, searchQuery, filterState, order };
   },
   computed: {
-    //listOrderDesc() {
-    //  return this.dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid)
-    //},
+    results() {
+      let results = this.proposals
+      // filter
+      const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
+      if (filterStates.length > 0) {
+        results = results.filter(item => _.intersection([item.stateIndex], filterStates).length > 0)
+      }
+      // searching
+      const searchText = toSearch(this.searchQuery)
+      if (searchText.length > 2) {
+        results = results.filter(item => item.search.includes(searchText))
+      }
+      // order
+      switch (this.order.selected) {
+        case 'created_desc':
+          results = _.orderBy(results, ['id'], ['desc'])
+          break;
+        case 'created_asc':
+          results = _.orderBy(results, ['id'], ['asc'])
+          break;
+        default:
+          break;
+      }
+      return results
+    },
   },
   methods: {
   }

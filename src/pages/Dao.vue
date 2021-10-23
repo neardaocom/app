@@ -24,8 +24,8 @@
     <section>
       <div class="container">
         <Overview v-if="loaded === true && this.$route.query.page === 'overview' && this.$route.query.page === undefined" :dao="dao"/>
-        <Voting v-if="loaded === true && (this.$route.query.page === 'overview' || this.$route.query.page === undefined)" :dao="dao"/>
-        <Voting v-if="loaded === true && this.$route.query.page === 'voting'" :dao="dao"/>
+        <Voting v-if="loaded === true && (this.$route.query.page === 'overview' || this.$route.query.page === undefined)" :dao="dao" :accountId="accountId"/>
+        <Voting v-if="loaded === true && this.$route.query.page === 'voting'" :dao="dao" :accountId="accountId"/>
         <Treasury v-if="loaded === true && this.$route.query.page === 'treasury'" :dao="dao"/>
         <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
@@ -86,7 +86,6 @@ export default {
     return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
   },
   created() {
-    console.log(process.env.VUE_APP_DAO_DEFAULT)
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id
@@ -97,7 +96,7 @@ export default {
 
     // page
     if (this.$route.query.page !== undefined) {
-      this.q_page = this.$route.query.page
+      this.q_page = _.toString(this.$route.query.page)
     } else {
       this.q_page = 'voting'
     }
@@ -109,6 +108,9 @@ export default {
   computed: {
     wallet() {
       return this.$store.getters['near/getWallet']
+    },
+    accountId() {
+      return this.$store.getters["near/getAccountId"];
     },
     nearService() {
       return this.$store.getters['near/getService']

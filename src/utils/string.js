@@ -2,7 +2,7 @@ import _ from "lodash"
 import sanitizeHtml from 'sanitize-html';
 
 export const toSearch = (string) => {
-    return _.toLower(_.deburr(_.uniq(_.words(_.toString(string))).join('-')))
+    return _.toLower(_.deburr(_.uniq(_.words(sanitizeHtml(_.toString(string)))).join('-')))
 };
 
 export const sanitize = (string) => {
