@@ -22,7 +22,7 @@
       />
       <hr class="my-1">
       <!-- Desctiption -->
-      <TextCollapse :content="loremIpsum()" :limit="1"/> <!-- proposal.description -->
+      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription"/>
       <!-- about -->
       <ul class="my-2 list-unstyled text-muted list-inline">
         <li class="list-inline-item me-4">
@@ -68,7 +68,7 @@
         <!--</button> -->
       </div>
       <div
-        v-else-if="proposal.stateIndex === 'execute'"
+        v-else-if="proposal.stateIndex === 'executing'"
         class="btn-group"
         role="group"
       >
@@ -87,6 +87,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { ref } from "vue";
+import _ from "lodash";
 
 import TextCollapse from '@/components/TextCollapse.vue';
 import { statusBgMapper } from '@/models/proposal';
@@ -109,19 +110,22 @@ export default {
   },
   setup() {
     const { t } = useI18n();
+    const proposalDescription = ref('')
+    const proposalDescriptionLoaded = ref(false)
+
     const collapseDescription = ref(false)
     const statusMapper = ref(statusBgMapper);
-    return { t, collapseDescription, statusMapper };
+    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded };
   },
   computed: {
     nearService() {
       return this.$store.getters["near/getService"];
     },
+    ipfsService() {
+      return this.$store.getters['ipfs/getService']
+    },
   },
   methods: {
-    loremIpsum() {
-      return 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus et lorem id felis nonummy placerat. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer in sapien. Mauris dictum facilisis augue. Vivamus luctus egestas leo. Nam sed tellus id magna elementum tincidunt. Nulla non arcu lacinia neque faucibus fringilla. Maecenas libero. Fusce dui leo, imperdiet in, aliquam sit amet, feugiat eu, orci.';
-    },
     vote(choice) {
       // console.log(choice);
       this.nearService
@@ -135,7 +139,7 @@ export default {
     },
     finalize() {
       this.nearService
-        .finalize(this.contractId, this.proposalId)
+        .finalize(this.contractId, this.proposal.id)
         .then((r) => {
           console.log(r);
         })
@@ -144,5 +148,24 @@ export default {
         });
     },
   },
+  mounted() {
+    //console.log(this.proposal.description)
+    // load description from ipfs
+    if (_.toString(this.proposal.description).length == 59) {
+      //console.log('loading proposal description')
+      this.ipfsService.retrieveFiles(this.proposal.description)
+      .then(r => {
+        //console.log(r)
+        r[0].text().then(text => {
+          this.proposalDescription = text
+          this.proposalDescriptionLoaded = true
+        })
+      })
+      .catch(e => console.error(e))
+    } else {
+      this.proposalDescription = this.proposal.description
+      this.proposalDescriptionLoaded = true
+    }
+  }
 };
 </script>

@@ -23,6 +23,7 @@ export default {
     setup() {
         const isClose = ref(true)
         const contentHeight = ref(0)
+
         return { isClose, contentHeight }
     },
     methods: {

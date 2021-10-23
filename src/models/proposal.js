@@ -213,7 +213,7 @@ const transform = (proposal, docs, token_holders, token_blocked, accountId, t) =
         key: getActionKey(action),
         index: proposal[1].uuid,
         title: t('default.' + actionType + '_message', args),
-        description: null,
+        description: proposal[1].description,
         typeIndex: actionType,
         type: t("default." + getActionType(action)),
         stateIndex: stateIndex,

@@ -69,7 +69,7 @@
   "proposals_active": "Active proposals",
   "organizations": "Organizations",
   "payout": "Payout",
-  "payout_message": "Payout of account ID <strong>{account}</strong> with amount <strong>{amount}</strong> Ⓝ",
+  "payout_message": "<strong>{amount}</strong> Ⓝ to <strong>{account}</strong>",
   "location": "Location",
   "percent": "Percent",
   "released": "Released",
