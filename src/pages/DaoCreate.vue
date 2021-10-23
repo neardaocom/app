@@ -1,8 +1,18 @@
 <template>
     <Header></Header>
     <main>
-        <section class="bg-white shadow-2 mb-3">
+        <MDBContainer>
+            <Breadcrumb :list-name="'create_dao'" />
+        </MDBContainer>
+        <section class="mb-3">
             <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                    <h2>{{ t('default.create_dao')}} {{ t('default.form')}}</h2>
+                    </div>
+                </div>
+                <div class="card text-start w-auto p-2 mt-4">
+                    <div class="card-body">
                 <MDBStepper vertical class="text-start pb-4">
                     <MDBStepperStep active>
                         <MDBStepperHead icon="1">
@@ -46,26 +56,23 @@
                         </MDBStepperHead>
                         <MDBStepperContent>
                             <div class="row" >
-
                                  <!-- Councils -->
-                                <div class="col-12 col-md-6 mb-5">
+                                <div class="col-12 col-md-6 mb-3">
                                     <div>
                                         <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
                                     </div>
-                                    <div class="mb-1">
-                                        Added: 
-                                        <MDBBadge v-for="(c, i) in council" :key="i" color="dark">
-                                            {{c}}
-                                            <a v-if="i !== 0" class="m-1" @click="removeCouncil(c)" href="#!" role="button" style="color:#fff">
-                                                <MDBIcon icon="times" iconStyle="fas" size="sm" />
-                                            </a>
-                                        </MDBBadge>
-                                    </div>
+                                    
                                     <MDBInput inputGroup  @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-1" aria-describedby="dao-council">
-                                        <MDBBtn @click="addCouncil" id="dao-council" color="primary">{{t('default.add_member')}}</MDBBtn>
+                                        <MDBBtn @click="addCouncil" id="dao-council" color="primary">{{ t('default.add_member') }}</MDBBtn>
                                     </MDBInput>
                                 </div>
-
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-7 mb-4">
+                                    <MDBBtn v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
+                                        {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
+                                    </MDBBtn>
+                                </div>
                                 <!-- Founding document -->
                                 <div class="col-12 mb-4">
                                     <label for="dao-purpose" class="form-label">{{ t('default.founding_document') }}</label>
@@ -109,38 +116,43 @@
                             <!-- error message for shares -->
                             <div ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
 
+                            <h6>{{ t('default.allocation')}}</h6>
                             <!-- ftCouncilShare -->
                             <div class="row mb-4">
-                                <div class="col-md-6 col-8">
-                                    <MDBProgress :height="20">
-                                            <MDBProgressBar :value="ftCouncilShare" > {{t('default.founding')}} </MDBProgressBar>
-                                            <MDBProgressBar :value="ftFundationShare" bg="success" >{{t('default.fundation')}} </MDBProgressBar>
-                                            <MDBProgressBar :value="ftCommunityShare" bg="info" >{{t('default.community')}} </MDBProgressBar>
-                                            <MDBProgressBar :value="ftPublicShare" bg="warning" >{{t('default.public')}} </MDBProgressBar>
+                                <div class="col-md-7 col-8">
+                                    <MDBProgress :height="20" class="rounded">
+                                        <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftFundationShare" bg="success" >{{ ftFundationShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ ftCommunityShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ ftPublicShare }}%</MDBProgressBar>
                                     </MDBProgress>
+                                    <hr>
+                                    <MDBBadge color="primary">{{t('default.council')}}</MDBBadge>
+                                    <MDBBadge color="success">{{t('default.fundation')}}</MDBBadge>
+                                    <MDBBadge color="info">{{t('default.community')}}</MDBBadge>
+                                    <MDBBadge color="warning">{{t('default.public')}}</MDBBadge>
                                 </div>
-                                <label class="form-label col-md-6 col-3">{{ ftCouncilShare }}%</label>
                             </div>
                            
 
                             <!-- ftFundationShare -->
                             <MDBSwitch :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
-                            <div  ref="refFtFundationShare" class="row mb-1 invisible">
-                                <MDBRange wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
+                            <div ref="refFtFundationShare" class="row mt-3 mb-4 ms-4">
+                                <MDBRange :disabled="!addFtFundationShare" wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
                                 <label class="form-label col-md-6 col-3">{{ ftFundationShare }}%</label>
                             </div>
 
                             <!-- ftCommunityShare -->
                             <MDBSwitch :label="t('default.add_ft_community_share')" v-model="addFtCommunityShare"/>
-                            <div  ref="refFtCommunityShare" class="row mb-1 invisible">
-                                <MDBRange wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
+                            <div  ref="refFtCommunityShare" class="row mt-3 mb-4 ms-4">
+                                <MDBRange :disabled="!addFtCommunityShare" wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
                                 <label class="form-label col-md-6 col-3">{{ ftCommunityShare }}%</label>
                             </div>
 
                             <!-- ftPublicShare -->
                             <MDBSwitch :label="t('default.add_ft_public_share')" v-model="addFtPublicShare"/>
-                            <div  ref="refFtPublicShare" class="row mb-1 invisible">
-                                <MDBRange wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
+                            <div  ref="refFtPublicShare" class="row mt-3 mb-4 ms-4">
+                                <MDBRange :disabled="!addFtPublicShare" wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
                                 <label class="form-label col-md-6 col-3">{{ ftPublicShare }}%</label> 
                             </div>
 
@@ -208,7 +220,8 @@
                                 <MDBStepperContent>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.basic') }}:</h4>
+                                            <h4>{{ t('default.basic') }}</h4>
+                                            <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_name')}}:</dt>
                                                 <dd v-if="name" class="col-6 col-md-6">{{name}} </dd>
@@ -230,7 +243,8 @@
                                     
 
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.founding') }}:</h4>
+                                            <h4>{{ t('default.founding') }}</h4>
+                                            <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_council')}}:</dt>
                                                 <dd v-if="council.length !== 0" class="col-6 col-md-6">{{council.join(', ')}} </dd>
@@ -241,42 +255,42 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.tokens') }}:</h4>
+                                            <h4>{{ t('default.tokens') }}</h4>
+                                            <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_ft_name')}}:</dt>
                                                 <dd v-if="ftName" class="col-6 col-md-6">{{ftName}} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.amount')}}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftAmount}}</dd>
+                                                <dd class="col-6 col-md-6">{{ n(ftAmount) }}</dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_ft_init_distribution') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftInitDistribution}}</dd>
+                                                <dd class="col-6 col-md-6">{{ n(ftInitDistribution) }}</dd>
 
-                                                <h5 class="ps-3">{{ t('default.allocation') }}:</h5>
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_council') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftCouncilShare}}%</dd>
 
-                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.dao_council') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftCouncilShare}}</dd>
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.fundation') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftFundationShare}}%</dd>
 
-                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.fundation') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftFundationShare}}</dd>
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.community_programs') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftCommunityShare}}%</dd>
 
-                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.community_programs') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftCommunityShare}}</dd>
-
-                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.public_token') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftPublicShare}}</dd>
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.public_token') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftPublicShare}}%</dd>
                                             </dl>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.voting') }}:</h4>
+                                            <h4>{{ t('default.voting') }}</h4>
+                                            <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_vote_approve_threshold')}}:</dt>
-                                                <dd class="col-6 col-md-6">{{voteApproveThreshold}}</dd>
+                                                <dd class="col-6 col-md-6">{{voteApproveThreshold}}%</dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_vote_quorum')}}:</dt>
-                                                <dd class="col-6 col-md-6">{{voteQuorum}}</dd>
+                                                <dd class="col-6 col-md-6">{{voteQuorum}}%</dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_vote_duration_days') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{voteDurationDays}}</dd>
@@ -294,6 +308,8 @@
                                 </MDBStepperContent>
                         </MDBStepperStep>
                 </MDBStepper>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -305,10 +321,12 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
+import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
+import _ from "lodash"
 import {
     requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength, councilAccountValidator,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
@@ -316,6 +334,7 @@ import {
 import { locationList } from '@/composables/location.js'
 import { compareByText } from '@/utils/object.js'
 import {
+    MDBContainer,
     MDBInput, MDBSelect,
     MDBSwitch, MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
@@ -327,6 +346,7 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 export default({
     components: {
         Header, Footer,
+        MDBContainer, Breadcrumb,
         MDBInput, MDBSelect,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
@@ -337,7 +357,7 @@ export default({
         mask
     },
     setup() {
-        const { t } = useI18n();
+        const { t, n } = useI18n();
         const exampleModal = ref(false)
 
         const contract = ref(undefined)
@@ -412,7 +432,7 @@ export default({
         ]
         
         return{
-           t, exampleModal, account, name, slogan, type, typeOptions,
+           t, n, exampleModal, account, name, slogan, type, typeOptions,
            purpose, location, ftName, ftAmount, ftInitDistribution, 
            ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
@@ -424,21 +444,21 @@ export default({
 
     watch: {
         addFtFundationShare(newValue) {
-            this.$refs.refFtFundationShare.classList.toggle('invisible')
+            //this.$refs.refFtFundationShare.classList.toggle('invisible')
             if (newValue === false ){
                 this.ftFundationShare = 0
             }
             this.validateFtShares()
         },
         addFtCommunityShare(newValue) {
-            this.$refs.refFtCommunityShare.classList.toggle('invisible')
+            //this.$refs.refFtCommunityShare.classList.toggle('invisible')
             if (newValue === false ){
                 this.ftCommunityShare = 0
             }
             this.validateFtShares()
         },
         addFtPublicShare(newValue) {
-            this.$refs.refFtPublicShare.classList.toggle('invisible')
+            //this.$refs.refFtPublicShare.classList.toggle('invisible')
             if (newValue === false ){
                 this.ftPublicShare = 0
             }
@@ -470,7 +490,7 @@ export default({
             if (overwrite || this.account === '') {
                 console.log(this.account)
                 if (this.name.length > 0) {
-                    this.account = this.name.trim().toLowerCase()
+                    this.account = _.deburr(_.toLower(_.replace(this.name, ' ', '')))
                     this.validateAccountExists()
                 }
             }
@@ -504,7 +524,7 @@ export default({
             if (existsAccount.valid === false) {
                 this.errors[field] = this.t('default.' + existsAccount.message, existsAccount.params)
             } else {
-                this.errors[field] = null
+                this.validateAccount()
             }
             this.isValidated.account = true
         },
