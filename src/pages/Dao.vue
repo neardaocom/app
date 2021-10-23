@@ -3,19 +3,20 @@
 
   <main>
     <!-- dashboard -->
-    <section class="bg-white shadow-2 mb-3">
+    <!-- <section class="bg-white shadow-2 mb-3">-->
+    <section class="mb-3">
       <div class="container">
         <!-- Breadcrumb -->
-        <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'"/>
+        <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'" :tags="dao.tags"/>
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
-        <Dashboard v-if="loaded === true" :dao="dao"/>
-        <SkeletonDashboard v-else />
+        <Dashboard2 v-if="loaded === true" :dao="dao"/>
+        <SkeletonDashboard2 v-else />
 
         <!-- /Dashboard -->
         <!-- Buttons -->
         <Buttons v-if="loaded" :dao="dao"/>
-        <SkeletonButtons v-else />
+        <SkeletonButtons2 v-else />
         <!-- /Buttons -->
       </div>
     </section>
@@ -23,13 +24,12 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Overview v-if="loaded === true && this.$route.query.page === 'overview' && this.$route.query.page === undefined" :dao="dao"/>
-        <Voting v-if="loaded === true && (this.$route.query.page === 'overview' || this.$route.query.page === undefined)" :dao="dao" :accountId="accountId"/>
-        <Voting v-if="loaded === true && this.$route.query.page === 'voting'" :dao="dao" :accountId="accountId"/>
-        <Treasury v-if="loaded === true && this.$route.query.page === 'treasury'" :dao="dao"/>
-        <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
-        <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
-        <Documents v-if="loaded === true && this.$route.query.page === 'documents'" :docs="dao.docs"/>
+        <Overview v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
+        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId"/>
+        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
+        <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
+        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
+        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -45,11 +45,11 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/dao/Breadcrumb.vue'
 import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
-import Dashboard from '@/components/dao/Dashboard.vue'
+import Dashboard2 from '@/components/dao/Dashboard2.vue'
 import Members from '@/components/dao/Members.vue'
 import Overview from '@/components/dao/Overview.vue'
-import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
-import SkeletonDashboard from '@/components/dao/SkeletonDashboard.vue'
+import SkeletonButtons2 from '@/components/dao/SkeletonButtons2.vue'
+import SkeletonDashboard2 from '@/components/dao/SkeletonDashboard2.vue'
 import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
@@ -65,8 +65,8 @@ import DAOs from '@/data/DAOs'
 
 export default {
   components: {
-    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
-    , SkeletonDashboard, SkeletonButtons, SkeletonBody
+    Header, Footer, Breadcrumb, Dashboard2, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
+    , SkeletonDashboard2, SkeletonButtons2, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
   setup() {
@@ -76,14 +76,13 @@ export default {
     const filter = reactive({})
     const favorites = [1]
     const q_id = null
-    const q_page = null
     const dao = ref(DAO.data)
     const dao_data = ref(DAO.data)
     const proposals = null
     const statistics_ft = null
     const loaded = ref(false)
 
-    return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
+    return { t, dao, daos, q_id, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
   },
   created() {
     // dao id
@@ -93,13 +92,6 @@ export default {
       this.q_id = process.env.VUE_APP_DAO_DEFAULT
     }
     this.$store.commit('near/setContract', this.q_id)
-
-    // page
-    if (this.$route.query.page !== undefined) {
-      this.q_page = _.toString(this.$route.query.page)
-    } else {
-      this.q_page = 'voting'
-    }
 
     // dao
     this.dao.id = this.q_id
@@ -115,6 +107,9 @@ export default {
     nearService() {
       return this.$store.getters['near/getService']
     },
+    q_page() {
+      return _.toString(this.$route.query.page) || 'overview'
+    }
   },
   mounted() {
     this.$store.commit('near/setContract', this.q_id)

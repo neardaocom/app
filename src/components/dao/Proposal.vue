@@ -35,7 +35,7 @@
             >{{ proposal.quorum }}%</span
           >
         </li>
-        <li v-if="proposal.choice !== ''" class="list-inline-item me-4">
+        <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
           <i class="fas fa-vote-yea fa-fw me-2 mb-3"></i>
           <span class="font-weight-bold text-black">{{
             proposal.choice

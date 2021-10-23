@@ -21,6 +21,7 @@
   "document": "Document",
   "version": "Version",
   "no_doc_files": "Dao does not have any documents yet.",
+  "no_active_proposal": "DAO does not have any active proposals.",
   "account_id": "Account ID",
   "amount": "Amount",
   "about": "About",

@@ -12,6 +12,11 @@
                 {{ t("default." + listName) }}
               </router-link>
             </li>
+            <li class="breadcrumb-item active"
+              v-for="(tag, index) in tags"
+              :key="index"
+              >{{ t('default.' + tag) }}
+            </li>
             <li class="breadcrumb-item active" aria-current="page">
               {{ account }}
             </li>
@@ -37,6 +42,10 @@ export default {
     },
     listName: {
       type: String,
+      required: true,
+    },
+    tags: {
+      type: Array,
       required: true,
     },
   },
