@@ -6,7 +6,7 @@
                 <MDBStepper vertical class="text-start pb-4">
                     <MDBStepperStep active>
                         <MDBStepperHead icon="1">
-                            {{ t('default.basic_information') }}
+                            {{ t('default.basic') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
                             <div class="row" >
@@ -24,44 +24,62 @@
                                     </MDBInput>
                                 </div>
 
-                                <!-- Slogan -->
+                                <!-- Purpose -->
                                 <div class="col-12 col-md-8">
-                                    <label for="dao-slogan" class="form-label">{{ t('default.slogan') }}</label>
+                                    <label for="dao-slogan" class="form-label">{{ t('default.purpose') }}</label>
                                     <MDBInput wrapperClass="mb-4" id="dao-slogan" @keyup="validateSlogan" @blur="validateSlogan" v-model="slogan" :isValid="!errors.slogan" :isValidated="isValidated.slogan" :invalidFeedback="errors.slogan"/>
                                 </div>
 
                                 <!-- Type -->
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-6  mb-4">
                                     <label for="dao-type" class="form-label">{{ t('default.type') }}</label>
                                     <MDBSelect filter ref="refDaoType" :preselect="true" v-model:selected="type" v-model:options="typeOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-type" @keyup="validateType" @blur="validateType" :isValid="!errors.type" :isValidated="isValidated.type" :invalidFeedback="errors.type"/>
-                                </div>
-
-                                <!-- Location -->
-                                <div class="col-12 col-md-6 mb-4">
-                                    <label for="dao-location" class="form-label">{{ t('default.location') }}</label>
-                                    <MDBSelect filter v-model:selected="location" v-model:options="locationOptions" :no-results-text="noResults" wrapperClass="mb-4" id="dao-location" @keyup="validateLocation" @blur="validateLocation" :isValid="!errors.location" :isValidated="isValidated.location" :invalidFeedback="errors.location"/>
-                                </div>
-
-                                <!-- Purpose -->
-                                <div class="col-12 mb-4">
-                                    <label for="dao-purpose" class="form-label">{{ t('default.purpose') }}</label>
-                                    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-                                        <p v-html="purpose"></p>
-                                    </MDBWysiwyg>
-                                    <div v-if="errors.purpose" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.purpose }}</div>
-                                </div>
-
-                                <!-- Councils -->
-                                <div class="col-12">
-                                    <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
-                                    <MDBInput id="dao-council" @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-5" />
                                 </div>
                             </div>
                         
                         </MDBStepperContent>
                     </MDBStepperStep>
+
                     <MDBStepperStep>
                         <MDBStepperHead icon="2">
+                            {{ t('default.founding') }}
+                        </MDBStepperHead>
+                        <MDBStepperContent>
+                            <div class="row" >
+
+                                 <!-- Councils -->
+                                <div class="col-12 col-md-6 mb-5">
+                                    <div>
+                                        <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
+                                    </div>
+                                    <div class="mb-1">
+                                        Added: 
+                                        <MDBBadge v-for="(c, i) in council" :key="i" color="dark">
+                                            {{c}}
+                                            <a v-if="i !== 0" class="m-1" @click="removeCouncil(c)" href="#!" role="button" style="color:#fff">
+                                                <MDBIcon icon="times" iconStyle="fas" size="sm" />
+                                            </a>
+                                        </MDBBadge>
+                                    </div>
+                                    <MDBInput inputGroup  @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-1" aria-describedby="dao-council">
+                                        <MDBBtn @click="addCouncil" id="dao-council" color="primary">{{t('default.add_member')}}</MDBBtn>
+                                    </MDBInput>
+                                </div>
+
+                                <!-- Founding document -->
+                                <div class="col-12 mb-4">
+                                    <label for="dao-purpose" class="form-label">{{ t('default.founding_document') }}</label>
+                                    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+                                        <p v-html="purpose"></p>
+                                    </MDBWysiwyg>
+                                    <div v-if="errors.purpose" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.purpose }}</div>
+                                </div>
+                            </div>
+                        </MDBStepperContent>
+                    </MDBStepperStep>
+
+                    <MDBStepperStep>
+                        <MDBStepperHead icon="3">
                             {{ t('default.tokens') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
@@ -93,9 +111,17 @@
 
                             <!-- ftCouncilShare -->
                             <div class="row mb-4">
-                                <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_ft_insider_share')" v-model="ftCouncilShare" disabled :min="0" :max="100" />
+                                <div class="col-md-6 col-8">
+                                    <MDBProgress :height="20">
+                                            <MDBProgressBar :value="ftCouncilShare" > {{t('default.founding')}} </MDBProgressBar>
+                                            <MDBProgressBar :value="ftFundationShare" bg="success" >{{t('default.fundation')}} </MDBProgressBar>
+                                            <MDBProgressBar :value="ftCommunityShare" bg="info" >{{t('default.community')}} </MDBProgressBar>
+                                            <MDBProgressBar :value="ftPublicShare" bg="warning" >{{t('default.public')}} </MDBProgressBar>
+                                    </MDBProgress>
+                                </div>
                                 <label class="form-label col-md-6 col-3">{{ ftCouncilShare }}%</label>
                             </div>
+                           
 
                             <!-- ftFundationShare -->
                             <MDBSwitch :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
@@ -121,21 +147,43 @@
                         </MDBStepperContent>
                     </MDBStepperStep>
                     <MDBStepperStep>
-                        <MDBStepperHead icon="3">
+                        <MDBStepperHead icon="4">
                             {{ t('default.voting') }}
                         </MDBStepperHead>
                             <MDBStepperContent>
 
-                                <!-- voteQuorum -->
+                                <!-- voteApproveThreshold -->
+                                <label class="form-label col-md-6 col-3">
+                                    {{ t('default.dao_vote_approve_threshold') }}
+                                    <MDBTooltip v-model="tooltipApproveThreshold" >
+                                        <template #reference>
+                                            <MDBIcon icon="question-circle" iconStyle="far" />
+                                        </template>
+                                        <template #tip>
+                                            Hi! I'm tooltip
+                                        </template>
+                                    </MDBTooltip>
+                                </label>
                                 <div class="row mb-4">
-                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_quorum')" v-model="voteQuorum" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteQuorum }}%</label>
+                                    <MDBRange wrapperClass="col-md-6 col-9" v-model="voteApproveThreshold" :min="1" :max="100" />
+                                    <label class="form-label col-md-6 col-3">{{ voteApproveThreshold }}%</label>
                                 </div>
 
-                                <!-- voteApproveThreshold -->
+                                <!-- voteQuorum -->
+                                <label class="form-label col-md-6 col-3">
+                                    {{ t('default.dao_vote_quorum') }}
+                                    <MDBTooltip v-model="tooltipQuorum" >
+                                        <template #reference>
+                                            <MDBIcon icon="question-circle" iconStyle="far" />
+                                        </template>
+                                        <template #tip>
+                                            Hi! I'm tooltip
+                                        </template>
+                                    </MDBTooltip>
+                                </label>
                                 <div class="row mb-4">
-                                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_approve_threshold')" v-model="voteApproveThreshold" :min="1" :max="100" />
-                                    <label class="form-label col-md-6 col-3">{{ voteApproveThreshold }}%</label>
+                                    <MDBRange wrapperClass="col-md-6 col-9" v-model="voteQuorum" :min="1" :max="100" />
+                                    <label class="form-label col-md-6 col-3">{{ voteQuorum }}%</label>
                                 </div>
 
                                 <!-- voteDurationDays -->
@@ -150,18 +198,100 @@
                                     <label class="form-label col-md-6 col-3">{{ voteDurationHours }}h</label>
                                 </div>
 
-
-                                <!-- voteSpamThreshold -->
-                                <!-- <div class="row mb-4"> -->
-                                <!--     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_spam_threshold')" v-model="voteSpamThreshold" :min="1" :max="100" /> -->
-                                <!--     <label class="form-label col-md-6 col-3">{{ voteSpamThreshold }}%</label> -->
-                                <!-- </div> -->
-
-                                <!-- voteOnlyOnce-->
-                                <MDBSwitch wrapperClass="mb-2" :label="t('default.dao_vote_only_once')" v-model="voteOnlyOnce"/>
-
-                                <MDBBtn class="mt-3 mb-2" @click="createDao()" color="primary">{{ t('default.create_dao') }}</MDBBtn>
                             </MDBStepperContent>
+                        </MDBStepperStep>
+                        
+                        <MDBStepperStep>
+                            <MDBStepperHead icon="5">
+                                {{ t('default.summary') }}
+                            </MDBStepperHead>
+                                <MDBStepperContent>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4>{{ t('default.basic') }}:</h4>
+                                            <dl class="row">
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.dao_name')}}:</dt>
+                                                <dd v-if="name" class="col-6 col-md-6">{{name}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.account')}}:</dt>
+                                                <dd v-if="account" class="col-6 col-md-6">{{account}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.purpose') }}:</dt>
+                                                <dd v-if="slogan" class="col-6 col-md-6">{{slogan}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.type') }}:</dt>
+                                                <dd v-if="type" class="col-6 col-md-6">{{type}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+                                            </dl>
+                                        </div> 
+                                    
+
+                                        <div class="col-md-6">
+                                            <h4>{{ t('default.founding') }}:</h4>
+                                            <dl class="row">
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.dao_council')}}:</dt>
+                                                <dd v-if="council.length !== 0" class="col-6 col-md-6">{{council.join(', ')}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+                                            </dl>                                        
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4>{{ t('default.tokens') }}:</h4>
+                                            <dl class="row">
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.dao_ft_name')}}:</dt>
+                                                <dd v-if="ftName" class="col-6 col-md-6">{{ftName}} </dd>
+                                                <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.amount')}}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftAmount}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_ft_init_distribution') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftInitDistribution}}</dd>
+
+                                                <h5 class="ps-3">{{ t('default.allocation') }}:</h5>
+
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.dao_council') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftCouncilShare}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.fundation') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftFundationShare}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.community_programs') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftCommunityShare}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.public_token') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ftPublicShare}}</dd>
+                                            </dl>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <h4>{{ t('default.voting') }}:</h4>
+                                            <dl class="row">
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.dao_vote_approve_threshold')}}:</dt>
+                                                <dd class="col-6 col-md-6">{{voteApproveThreshold}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{t('default.dao_vote_quorum')}}:</dt>
+                                                <dd class="col-6 col-md-6">{{voteQuorum}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_vote_duration_days') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{voteDurationDays}}</dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_vote_duration_hours') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{voteDurationHours}}</dd>
+                                            </dl>      
+
+                                                                  
+                                        </div>
+                                    </div>
+
+                                    <MDBBtn wrapperClass="mt-10 mb-2" @click="createDao()" color="primary">{{ t('default.create_dao') }}</MDBBtn>
+
+                                </MDBStepperContent>
                         </MDBStepperStep>
                 </MDBStepper>
             </div>
@@ -189,7 +319,8 @@ import {
     MDBInput, MDBSelect,
     MDBSwitch, MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-    MDBRange, MDBAlert
+    MDBRange, MDBAlert, MDBIcon , MDBTooltip,
+    MDBProgress, MDBProgressBar, MDBBadge //MDBTable
 } from 'mdb-vue-ui-kit';
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 
@@ -199,7 +330,8 @@ export default({
         MDBInput, MDBSelect,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange, MDBAlert, MDBWysiwyg
+        MDBRange, MDBAlert, MDBWysiwyg, MDBIcon, MDBTooltip,
+        MDBProgress, MDBProgressBar, MDBBadge//MDBTable
     },
     directives: {
         mask
@@ -217,8 +349,9 @@ export default({
         const typeOptions = ref([])
         const slogan = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
         const purpose = ref('') // textare max 3000
-        const location = ref('')
-        const council = [] // at least 1 root account something.near
+        //const location = ref('')
+        const location = 'glo'
+        const council = ref([]) // at least 1 root account something.near
         const councilString = ref('')
         // tokens
         const ftName = ref('')   // governance token 
@@ -265,6 +398,18 @@ export default({
         const errors = reactive({})
         const fieldErrorAlert = ref(false);
         const createDaoErrorAlert = ref(false);
+
+        const tooltipApproveThreshold = ref(false);
+        const tooltipQuorum = ref(false);
+
+        const defaultTypeOptions = [
+            [1000000, 100000, 51, 20, 3, 0],
+            [2000000, 300000, 5, 20, 3, 0],
+            [4000000, 500000, 1, 20, 3, 0],
+            [6000000, 700000, 517, 20, 3, 0],
+            [8000000, 900000, 45, 20, 3, 0],
+            [45000000, 5600000, 46, 20, 3, 0],
+        ]
         
         return{
            t, exampleModal, account, name, slogan, type, typeOptions,
@@ -273,7 +418,7 @@ export default({
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
            voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
-           createDaoErrorAlert, contract, nearTags
+           createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions
         }
     },
 
@@ -308,6 +453,14 @@ export default({
         },
         ftPublicShare(){
             this.validateFtShares()
+        },
+
+        type(){
+            const newType = this.typeOptions.find( type => type.selected === true )
+            if(newType !== undefined){
+                [this.ftAmount, this.ftInitDistribution, this.voteApproveThreshold, this.voteQuorum, this.voteDurationDays, this.voteDurationHours] = [...this.defaultTypeOptions[newType.mdbKey]]
+            }
+            
         }
     },
     
@@ -375,7 +528,7 @@ export default({
 
         validateSlogan(){
             const field = "slogan"
-            const maxLengthVal = maxLength(this.slogan, 100)
+            const maxLengthVal = maxLength(this.slogan, 160)
             if (maxLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
             }else {
@@ -425,21 +578,23 @@ export default({
 
         validateCouncil(){
             const field = "council"
-            const councilArray = this.councilString.split(",").map(s => s.trim())
-            let councilAccountVal = true
-            councilArray.forEach(council => {
-                councilAccountVal = councilAccountValidator(council)
-            })
-            if (councilAccountVal.valid === false){
+            //const councilArray = this.councilString.split(",").map(s => s.trim())
+            //let councilAccountVal = true
+            let councilAccountVal = councilAccountValidator(this.councilString.trim()) 
+            // councilArray.forEach(council => {
+            //     councilAccountVal = councilAccountValidator(council)
+            // })
+            if (councilAccountVal.valid === false && this.councilString !==''){
                 this.errors[field] = this.t('default.' + councilAccountVal.message, councilAccountVal.params)
             }else{
                 this.errors[field] = null
             }
 
             this.isValidated.council = true
-            if(!this.errors[field]){
-                this.council = this.councilString.split(",").map(s => s.trim())
-            }
+
+            // if(!this.errors[field]){
+            //     this.council = this.councilString.split(",").map(s => s.trim())
+            // }
         },
 
         validateFtName(){ // TODO
@@ -622,23 +777,36 @@ export default({
             this.validateVoteApproveThreshold()
         },
 
+        addCouncil() {
+            if(!this.errors['council'] && this.councilString !== ''){
+                this.council.push(this.councilString.trim());
+                this.councilString = ''
+            }
+        },
+
+        removeCouncil(removedCouncil){
+            this.council = this.council.filter((el) => el !== removedCouncil )
+        },
+
         async createDao(){
             this.validate()
             if (isValid(this.errors) === false) {
+                console.log(this.errors)
                 this.fieldErrorAlert = true
             }else{
                 const accountId = this.account + '.' + this.factoryAccount
                 // set accountId to localStorage because of redirection
                 localStorage.create_dao_account = accountId
                 localStorage.purpose = this.purpose
-                // create
+
+                //create
                 let created = await this.nearService.createDao(
                     this.account
                     , null
                     , this.name
                     , this.slogan
                     , [this.nearTags.value.indexOf(this.type)] // tags
-                    , this.council // founders
+                    , [...this.council] // founders
                     , this.location // location
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
@@ -689,6 +857,11 @@ export default({
         noResults() {
             return this.t('default.no_results')
         },
+        Account(){
+            console.log(this.account)
+            return this.account
+        }
+
     },
     created() {
         
@@ -702,7 +875,6 @@ export default({
             this.$router.push({name: 'dao', params: {id: accountId}})
         }
         this.council = [this.accountId]
-        this.councilString = this.accountId
         
         // type loading
         this.nearService.getTags().then((tags) => {
@@ -717,4 +889,3 @@ export default({
 })
 
 </script>
-
