@@ -33,16 +33,6 @@
       <div class="col-6 col-md-6 col-lg-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <h5 class="text-center">{{ t("default.treasury") }}</h5>
-            <h2 class="text-center">
-              ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
-            </h2>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-6 col-lg-4">
-        <div class="card text-start w-auto p-2" style="width: 18rem">
-          <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
               <li>
                 <i class="fas fa-users fa-fw me-3 mb-3"></i
@@ -66,14 +56,13 @@
     <hr/>
     <div class="row mt-2">
       <!-- Novy clen -->
-      <div class="col-12 text-start">
-        <h5 v-if="results.length > 0" >{{ t("default.active_proposals") }}</h5>
-        <h5 v-else>{{ t("default.no_active_proposal") }}</h5>
-      </div>
       <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
           <Proposal :proposal="proposal" :contractId="dao.wallet"/>
         </section>
+      </div>
+      <div v-if="results.length == 0" class="col-12 col-md-12 mb-4 mb-md-0 text-center">
+        <h5>{{ t("default.no_active_proposal") }}</h5>
       </div>
     </div>
   </div>
@@ -81,7 +70,7 @@
 
 <script>
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
-import NumberFormatter from "@/components/NumberFormatter.vue"
+//import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
@@ -91,7 +80,7 @@ import _ from "lodash"
 export default {
   components: {
     //MDBProgress, MDBProgressBar,
-    NumberFormatter,
+    //NumberFormatter,
     Proposal
   },
   props: {

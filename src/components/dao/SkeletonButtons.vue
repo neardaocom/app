@@ -11,11 +11,14 @@
         <a v-if="false" :class="[isActive('members') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </a>
-        <a :class="[isActive('tokens') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a v-if="false" :class="[isActive('tokens') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </a>
         <a :class="[isActive('documents') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.documents') }}
+        </a>
+        <a :class="[isActive('about') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.about') }}
         </a>
       </div>
       <!-- Left -->
@@ -60,7 +63,7 @@ export default {
   },
   methods: {
     isActive(button_page) {
-      return button_page === (this.$route.query.page || 'voting')
+      return button_page === (this.$route.query.page || 'overview')
     },
   }
 };

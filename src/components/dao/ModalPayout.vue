@@ -4,35 +4,34 @@
         tabindex="-1"
         labelledby="modalPayoutLabel"
         v-model="active"
+        size="lg"
     >
         <MDBModalHeader>
-        <MDBModalTitle id="modalPayoutLabel"> {{ t('default.payout') }} </MDBModalTitle>
+          <MDBModalTitle id="modalPayoutLabel"> {{ t('default.payout') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-        <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-            @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-        >
-            <span class="input-group-text" id="account-addon">.{{ getNearAccountPostfix() }}</span>
-        </MDBInput>
-        <br/>
-        <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
-        <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
-            @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
-        >
-            <span class="input-group-text" id="amount-addon">Ⓝ</span>
-        </MDBInput>
-        <br/>
-        <label for="note-input" class="form-label">{{ t('default.note') }}</label>
-        <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
-            @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
-        >
-        </MDBInput>
-        
+          <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
+          <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
+              @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+          >
+              <span class="input-group-text" id="account-addon">.{{ getNearAccountPostfix() }}</span>
+          </MDBInput>
+          <br/>
+          <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
+          <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
+              @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
+          >
+              <span class="input-group-text" id="amount-addon">Ⓝ</span>
+          </MDBInput>
+          <br/>
+          <label for="description-id-input" class="form-label">{{ t('default.description') }}</label>
+          <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+            <section v-html="formDescription"></section>
+          </MDBWysiwyg>
         </MDBModalBody>
         <MDBModalFooter>
-        <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-        <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+          <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
+          <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -41,7 +40,10 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber, maxLength} from '@/utils/validators'
+import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber} from '@/utils/validators'
+import { getRandom } from '@/utils/integer'
+import { makeFileFromString } from "@/services/ipfsService/IpfsService"
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
   MDBBtn,
   MDBInput,
@@ -60,6 +62,7 @@ export default {
     MDBBtn
     , MDBInput
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    , MDBWysiwyg
   },
   props: {
     show: {
@@ -84,19 +87,19 @@ export default {
 
     const formAccount = ref('')
     const formAmount = ref(0)
-    const formNote = ref('')
+    const formDescription = ref('')
 
     const isValidated = ref({
         formAccount: false,
         formAmount: false,
-        formNote: false,
+        formDescription: false,
     })
 
     const errors = reactive({});
 
     return {
       t, active
-      , formAccount, formAmount, formNote
+      , formAccount, formAmount, formDescription
       , isValidated, errors
     };
   },
@@ -109,6 +112,9 @@ export default {
     },
     nearService() {
       return this.$store.getters['near/getService']
+    },
+    ipfsService() {
+      return this.$store.getters['ipfs/getService']
     },
   },
   methods: {
@@ -147,29 +153,37 @@ export default {
       }
       this.isValidated.formAmount = true
     },
-    validateNote(){
-      const field = "formNote"
-      const maxLengthVal = maxLength(this.formNote, 100)
-      if (maxLengthVal.valid === false) {
-        this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+    validateDescription(){
+      const field = "formDescription"
+      this.formDescription = ref(this.$refs.refWysiwyg.getCode())
+      const requiredVal = requiredValidator(this.formDescription)
+      if (requiredVal.valid === false) {
+        this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
         this.errors[field] = null
       }
-      this.isValidated.formNote = true
+      this.isValidated.formDescription = true
     },
     validate(){
       this.validateAccount()
       this.validateAmount()
-      this.validateNote()
+      this.validateDescription()
     },
-    vote() {
+    async vote() {
       this.validate()
       if (isValid(this.errors) === true) {
-          console.log(this.formAmount)
-          console.log(yoctoNear)
+        // IPFS
+        let ipfs_cid = null
+        try {
+          const name = this.accountId + '-payout-' + this.formTitle + '-' + getRandom(1, 999)
+          ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
+        } catch(e){
+          console.log(e);
+        }
+        // Blockchain
         this.nearService.addProposal(
             this.contractId
-            , this.formNote
+            , ipfs_cid
             , [this.t('default.payout')]
             , {
                 'Pay': {
@@ -183,6 +197,7 @@ export default {
             console.log(r)
             this.formAccount = ''
             this.formAmount = 0
+            this.formDescription = ''
             this.active = false
         }).catch((e) => {
             console.log(e)

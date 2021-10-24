@@ -30,6 +30,7 @@
         <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
         <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs"/>
+        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -40,6 +41,7 @@
 </template>
 
 <script>
+import About from '@/components/dao/About.vue'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/dao/Breadcrumb.vue'
@@ -65,7 +67,7 @@ import DAOs from '@/data/DAOs'
 
 export default {
   components: {
-    Header, Footer, Breadcrumb, Dashboard2, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
+    About, Header, Footer, Breadcrumb, Dashboard2, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
     , SkeletonDashboard2, SkeletonButtons2, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },

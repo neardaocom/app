@@ -36,7 +36,7 @@
 
                                 <!-- Purpose -->
                                 <div class="col-12 col-md-8">
-                                    <label for="dao-slogan" class="form-label">{{ t('default.purpose') }}</label>
+                                    <label for="dao-slogan" class="form-label">{{ t('default.purpose_short') }}</label>
                                     <MDBInput wrapperClass="mb-4" id="dao-slogan" @keyup="validateSlogan" @blur="validateSlogan" v-model="slogan" :isValid="!errors.slogan" :isValidated="isValidated.slogan" :invalidFeedback="errors.slogan"/>
                                 </div>
 
@@ -72,14 +72,6 @@
                                     <MDBBtn v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
                                         {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
                                     </MDBBtn>
-                                </div>
-                                <!-- Founding document -->
-                                <div class="col-12 mb-4">
-                                    <label for="dao-purpose" class="form-label">{{ t('default.founding_document') }}</label>
-                                    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-                                        <p v-html="purpose"></p>
-                                    </MDBWysiwyg>
-                                    <div v-if="errors.purpose" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ errors.purpose }}</div>
                                 </div>
                             </div>
                         </MDBStepperContent>
@@ -231,12 +223,12 @@
                                                 <dd v-if="account" class="col-6 col-md-6">{{account}} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
 
-                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.purpose') }}:</dt>
-                                                <dd v-if="slogan" class="col-6 col-md-6">{{slogan}} </dd>
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.purpose_short') }}:</dt>
+                                                <dd v-if="slogan" class="col-6 col-md-6">{{slogan}}</dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.type') }}:</dt>
-                                                <dd v-if="type" class="col-6 col-md-6">{{type}} </dd>
+                                                <dd v-if="type" class="col-6 col-md-6">{{ t('default.' + type) }} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
                                             </dl>
                                         </div> 
@@ -341,7 +333,6 @@ import {
     MDBRange, MDBAlert, MDBIcon , MDBTooltip,
     MDBProgress, MDBProgressBar, MDBBadge //MDBTable
 } from 'mdb-vue-ui-kit';
-import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 
 export default({
     components: {
@@ -350,7 +341,7 @@ export default({
         MDBInput, MDBSelect,
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
-        MDBRange, MDBAlert, MDBWysiwyg, MDBIcon, MDBTooltip,
+        MDBRange, MDBAlert, MDBIcon, MDBTooltip,
         MDBProgress, MDBProgressBar, MDBBadge//MDBTable
     },
     directives: {

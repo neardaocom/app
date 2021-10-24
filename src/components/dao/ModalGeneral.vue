@@ -125,14 +125,8 @@ export default {
       const field = "formDescription"
       this.formDescription = ref(this.$refs.refWysiwyg.getCode())
       const requiredVal = requiredValidator(this.formDescription)
-      const maxLengthVal = maxLength(this.formDescription, 300)
-      const minLengthVal = minLength(this.formDescription, 10)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
-      } else if (maxLengthVal.valid === false) {
-        this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
-      } else if (minLengthVal.valid === false) {
-        this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
       } else {
         this.errors[field] = null
       }
@@ -167,6 +161,8 @@ export default {
             , this.accountId
         ).then(r => {
             console.log(r)
+            this.formTitle = ''
+            this.formDescription = ''
             this.active = false
         }).catch((e) => {
             console.log(e)

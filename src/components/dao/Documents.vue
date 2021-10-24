@@ -58,7 +58,7 @@
                     <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                     <MDBBtnGroup size="sm" role="toolbar">
                       <MDBBtn color="primary" @click="openDoc(doc.index)">{{ doc.version }}</MDBBtn>
-                      <MDBBtn v-for="item in doc.versions.slice(0, 3)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
+                      <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
                     </MDBBtnGroup>
                 </td>
                 </tr>
@@ -159,6 +159,9 @@ export default {
     },
   },
   methods: {
+    getLastVersions(versions) {
+      return _.orderBy(versions, ['index'], ['desc']).slice(0, 3)
+    },
     getIcon(type) {
       let icon = ''
       switch (type) {

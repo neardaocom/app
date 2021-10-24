@@ -18,7 +18,7 @@ export default {
         content: {
             type: String,
             required: true,
-        }
+        },
     },
     setup() {
         const isClose = ref(true)
