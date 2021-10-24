@@ -1,10 +1,12 @@
 {
   "account": "Účet",
   "add_member": "Přidat člena",
-  "add_member_message": "Přidání nového účtu ID <strong>{account}</strong> do <strong>{group}</strong>",
+  "add_council": "Přidat člena rady",
+  "add_member_message": "Nový účtu ID <strong>{account}</strong> do <strong>{group}</strong>",
   "add_document": "Přidat dokument",
   "all_rights_reserved": "Všechna práva vyhrazena",
   "remove_document": "Odebrat dokument",
+  "remove_council": "Odebrat člena rady",
   "remove_member": "Odebrat člena",
   "remove_member_message": "Odebrání účtu ID <strong>{account}</strong> z <strong>{group}</strong>",
   "general_proposal": "Obecné hlasování",

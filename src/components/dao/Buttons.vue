@@ -37,11 +37,13 @@
           </MDBBtn>
           <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
           <MDBDropdownMenu>
-            <MDBDropdownItem href="#" @click.self.prevent="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="modalRemoveCouncilOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_council')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -49,8 +51,10 @@
     </section>
 
     <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
-    <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
     <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
@@ -62,8 +66,10 @@ import { useI18n } from "vue-i18n";
 import ModalPayout from '@/components/dao/ModalPayout'
 import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
+import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
 import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
+import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
 import ModalGeneral from '@/components/dao/ModalGeneral'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
@@ -74,7 +80,8 @@ import {
 export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral
+    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
+    ModalAddCouncil, ModalRemoveCouncil
   },
   props: {
     dao: {
@@ -87,13 +94,15 @@ export default {
     const modalPayout = ref(0)
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
+    const modalAddCouncil = ref(0)
     const modalRemoveDocument = ref(0)
     const modalRemoveMember = ref(0)
+    const modalRemoveCouncil = ref(0)
     const modalGeneral = ref(0)
     const dropdownAction = ref(false);
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, dropdownAction, modalAddDocument, modalRemoveDocument, modalGeneral
+      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral
     };
   },
   computed: {
@@ -110,21 +119,35 @@ export default {
     },
     modalPayoutOpen() {
       this.modalPayout += 1
+      this.dropdownAction = false
     },
     modalAddMemberOpen() {
       this.modalAddMember += 1
+      this.dropdownAction = false
+    },
+    modalAddCouncilOpen() {
+      this.modalAddCouncil += 1
+      this.dropdownAction = false
     },
     modalRemoveMemberOpen() {
       this.modalRemoveMember += 1
+      this.dropdownAction = false
+    },
+    modalRemoveCouncilOpen() {
+      this.modalRemoveCouncil += 1
+      this.dropdownAction = false
     },
     modalAddDocumentOpen() {
       this.modalAddDocument += 1
+      this.dropdownAction = false
     },
     modalRemoveDocumentOpen() {
       this.modalRemoveDocument += 1
+      this.dropdownAction = false
     },
     modalGeneralOpen() {
       this.modalGeneral += 1
+      this.dropdownAction = false
     },
   }
 };

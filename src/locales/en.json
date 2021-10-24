@@ -1,10 +1,12 @@
 {
   "account": "Account",
+  "add_council": "Add council",
   "add_member": "Add member",
-  "add_member_message": "Add new account ID <strong>{account}</strong> into <strong>{group}</strong>",
+  "add_member_message": "New account ID <strong>{account}</strong> into <strong>{group}</strong>",
   "add_document": "Add document",
   "all_rights_reserved": "All rights reserved",
   "remove_document": "Remove document",
+  "remove_council": "Remove council",
   "remove_member": "Remove member",
   "remove_member_message": "Remove account ID <strong>{account}</strong> from <strong>{group}</strong>",
   "general_proposal": "General",

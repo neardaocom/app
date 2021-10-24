@@ -20,7 +20,7 @@
                 </template>
               </MDBInput>
             </div>
-            <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
+            <div v-if="false" class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
               <MDBCheckbox :label="filterType.pdf.name" inline v-model="filterType.pdf.active"/>
               <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
               <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>

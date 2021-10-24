@@ -1,7 +1,7 @@
 export const trans = (value, t) => {
     let trans = "";
     switch (value) {
-        case "Insiders":
+        case "Council":
             trans = t("default.council");
             break;
         case "Community":

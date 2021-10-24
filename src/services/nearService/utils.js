@@ -1,3 +1,5 @@
+import _ from "lodash"
+
 export const getPublicSalePercent = (council, community, investor) => {
   return 100 - (council ?? 0) - (community ?? 0) - (investor ?? 0)
 }
@@ -18,6 +20,8 @@ export const getProposalTitle = (proposal) => {
   }
   return title;
 }
+
+export const getAccountIdPostfix = (accountId) => _.last(_.split(_.toString(accountId), '.'));
 
 
 

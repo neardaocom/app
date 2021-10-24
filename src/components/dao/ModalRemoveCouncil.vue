@@ -1,38 +1,30 @@
 <template>
-  <MDBModal
-    id="modalAddMember"
-    tabindex="-1"
-    labelledby="modalAddMemberLabel"
-    v-model="active"
-  >
-    <MDBModalHeader>
-      <MDBModalTitle id="modalAddMemberLabel"> {{ t('default.add_member') }} </MDBModalTitle>
-    </MDBModalHeader>
-    <MDBModalBody class="text-start">
-      <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-      <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-          @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-      >
-          <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
-      </MDBInput>
-      <br/>
-      <label for="group-input" class="form-label">{{ t('default.group') }}</label>
-      <MDBSelect class="text-left" id="group-input" inputGroup :formOutline="false" aria-describedby="group-addon" v-model:options="groupsDropdown" v-model:selected="formGroup"
-          @keyup="validateGroup()" @blur="validateGroup()" :isValid="!errors.formGroup" :isValidated="isValidated.formGroup" :invalidFeedback="errors.formGroup"
-      />
-      <br/>
-      <label for="note-input" class="form-label">{{ t('default.note') }}</label>
-      <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
-          @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
-      >
-      </MDBInput>
-      
-    </MDBModalBody>
-    <MDBModalFooter>
-      <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-      <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
-      </MDBModalFooter>
-  </MDBModal>
+    <MDBModal
+        id="modalRemoveCouncil"
+        tabindex="-1"
+        labelledby="modalRemoveCouncilLabel"
+        v-model="active"
+        size="lg"
+    >
+        <MDBModalHeader>
+          <MDBModalTitle id="modalRemoveCouncilLabel"> {{ t('default.remove_council') }} </MDBModalTitle>
+        </MDBModalHeader>
+        <MDBModalBody class="text-start">
+          <label for="account-input" class="form-label">{{ t('default.account') }}</label>
+          <MDBSelect class="text-left" id="account-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model:options="accountsDropdown" v-model:selected="formAccount"
+              @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+          />
+          <br/>
+          <label for="description-input" class="form-label">{{ t('default.description') }}</label>
+          <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+            <section v-html="formDescription"></section>
+          </MDBWysiwyg>
+        </MDBModalBody>
+        <MDBModalFooter>
+          <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
+          <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+        </MDBModalFooter>
+    </MDBModal>
 </template>
 
 <script>
@@ -40,9 +32,10 @@ import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import {requiredValidator, nearAccountValidator, isValid, maxLength} from '@/utils/validators'
+import { getRandom } from '@/utils/integer'
+import { makeFileFromString } from "@/services/ipfsService/IpfsService"
 import {
   MDBBtn,
-  MDBInput,
   MDBSelect,
   MDBModal,
   MDBModalHeader,
@@ -50,12 +43,14 @@ import {
   MDBModalBody,
   MDBModalFooter
 } from "mdb-vue-ui-kit";
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 
 export default {
   components: {
     MDBBtn
-    , MDBInput, MDBSelect
+    , MDBSelect
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    , MDBWysiwyg
   },
   props: {
     show: {
@@ -87,20 +82,20 @@ export default {
     watch(show, openModal)
 
     const formAccount = ref('')
-    const formGroup = ref('Community')
-    const formNote = ref('')
+    const formGroup = ref('Council')
+    const formDescription = ref('')
 
     const isValidated = ref({
         formAccount: false,
         formGroup: false,
-        formNote: false,
+        formDescription: false,
     })
 
     const errors = reactive({});
 
     return {
       t, active
-      , formAccount, formGroup, formNote
+      , formAccount, formGroup, formDescription
       , isValidated, errors
     };
   },
@@ -114,12 +109,11 @@ export default {
     nearService() {
       return this.$store.getters['near/getService']
     },
-    groupsDropdown() {
-      return [
-        {value: 'Council', text: this.t('default.council')},
-        {value: 'Community', text: this.t('default.community')},
-        {value: 'Foundation', text: this.t('default.investor')},
-      ]
+    accountsDropdown() {
+      return Object.keys(this.tokenHolders).map(accountId => {return {value: accountId, text: accountId}})
+    },
+    ipfsService() {
+      return this.$store.getters['ipfs/getService']
     },
   },
   methods: {
@@ -146,43 +140,53 @@ export default {
       }
       this.isValidated.formGroup = true
     },
-    validateNote(){
-      const field = "formNote"
-      const maxLengthVal = maxLength(this.formNote, 100)
+    validateDescription(){
+      const field = "formDescription"
+      this.formDescription = ref(this.$refs.refWysiwyg.getCode())
+      const maxLengthVal = maxLength(this.formDescription, 100)
       if (maxLengthVal.valid === false) {
         this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
       } else {
         this.errors[field] = null
       }
-      this.isValidated.formNote = true
+      this.isValidated.formDescription = true
     },
     validate(){
       this.validateAccount()
       this.validateGroup()
-      this.validateNote()
+      this.validateDescription()
     },
-    vote() {
+    async vote() {
       this.validate()
       if (isValid(this.errors) === true) {
-        console.log(this.formGroup)
-        console.log(this.formAccount)
+        // console.log(this.formGroup)
+        // console.log(this.formAccount)
+        // IPFS
+        let ipfs_cid = null
+        try {
+          const name = this.accountId + '-removeCouncil-' + getRandom(1, 999)
+          ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
+        } catch(e){
+          console.log(e);
+        }
+
+        // BLOCKCHAIN
         this.nearService.addProposal(
             this.contractId
-            , this.formNote
-            , [this.t('default.add_member')]
+            , ipfs_cid
+            , [this.t('default.remove_member')]
             , {
-                'AddMember': {
+                'RemoveMember': {
                     group: this.formGroup,
-                    account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
+                    account_id: (this.formAccount)
                 }
             }
-            , 1
+            , 0.5
             , this.accountId
         ).then(r => {
             console.log(r)
             this.formAccount = ''
-            this.formGroup = 0
-            this.formNote = ''
+            this.formDescription = ''
             this.active = false
         }).catch((e) => {
             console.log(e)
