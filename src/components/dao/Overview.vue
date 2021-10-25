@@ -66,7 +66,7 @@
     <hr/>
     <div class="row mt-2">
       <!-- Novy clen -->
-      <div class="col-12 text-start">
+      <div class="col-12 col-md-6 text-start">
         <h5 v-if="results.length > 0" >{{ t("default.active_proposals") }}</h5>
         <h5 v-else>{{ t("default.no_active_proposal") }}</h5>
       </div>

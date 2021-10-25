@@ -60,10 +60,11 @@
                                 <div class="col-12 col-md-6 mb-3">
                                     <div>
                                         <label for="dao-council" class="form-label">{{ t('default.dao_council') }}</label>
+                                        <FromErrorMessage :show="errors.council !== null" :message="errors.council"/>
                                     </div>
                                     
-                                    <MDBInput inputGroup  @keyup="validateCouncil" @blur="validateCouncil" v-model="councilString" :isValid="!errors.council" :isValidated="isValidated.council" :invalidFeedback="errors.council"  rows="2" wrapperClass="mb-1" aria-describedby="dao-council">
-                                        <MDBBtn @click="addCouncil" id="dao-council" color="primary">{{ t('default.add_member') }}</MDBBtn>
+                                    <MDBInput inputGroup v-model="councilAdd" :isValid="!errors.councilAdd" :isValidated="isValidated.councilAdd" :invalidFeedback="errors.councilAdd" wrapperClass="mb-1">
+                                        <MDBBtn @click="addCouncil()" id="dao-council-add" color="primary">{{ t('default.add_council') }}</MDBBtn>
                                     </MDBInput>
                                 </div>
                             </div>
@@ -314,14 +315,15 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
+import FromErrorMessage from '@/components/FormErrorMessage.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import _ from "lodash"
 import {
-    requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength, councilAccountValidator,
-    isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid
+    requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength,
+    isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid, requiredArrayValidator
 } from '@/utils/validators'
 import { locationList } from '@/composables/location.js'
 import { compareByText } from '@/utils/object.js'
@@ -342,7 +344,8 @@ export default({
         MDBSwitch, MDBBtn,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert, MDBIcon, MDBTooltip,
-        MDBProgress, MDBProgressBar, MDBBadge//MDBTable
+        MDBProgress, MDBProgressBar, MDBBadge, //MDBTable
+        FromErrorMessage
     },
     directives: {
         mask
@@ -361,9 +364,9 @@ export default({
         const slogan = ref('') // nazev dao 3 .. 64,  TODO: unique dao name   ??? also root ???
         const purpose = ref('') // textare max 3000
         //const location = ref('')
-        const location = 'glo'
+        const location = ref('glo')
         const council = ref([]) // at least 1 root account something.near
-        const councilString = ref('')
+        const councilAdd = ref('')
         // tokens
         const ftName = ref('')   // governance token 
         const ftAmount = ref(1_000_000) 
@@ -394,6 +397,7 @@ export default({
             purpose: false,
             location: false,
             council: false,
+            councilAdd: false,
             ftName: false,
             ftAmount: false,
             ftInitDistribution: false,
@@ -406,7 +410,9 @@ export default({
             voteOnlyOnce: false
         })
 
-        const errors = reactive({})
+        const errors = reactive({
+            council: null
+        })
         const fieldErrorAlert = ref(false);
         const createDaoErrorAlert = ref(false);
 
@@ -427,7 +433,7 @@ export default({
            purpose, location, ftName, ftAmount, ftInitDistribution, 
            ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
-           voteApproveThreshold, voteOnlyOnce, council, councilString, addFtFundationShare,
+           voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
            createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions
         }
@@ -589,23 +595,15 @@ export default({
 
         validateCouncil(){
             const field = "council"
-            //const councilArray = this.councilString.split(",").map(s => s.trim())
-            //let councilAccountVal = true
-            let councilAccountVal = councilAccountValidator(this.councilString.trim()) 
-            // councilArray.forEach(council => {
-            //     councilAccountVal = councilAccountValidator(council)
-            // })
-            if (councilAccountVal.valid === false && this.councilString !==''){
-                this.errors[field] = this.t('default.' + councilAccountVal.message, councilAccountVal.params)
-            }else{
+            const requiredVal = requiredArrayValidator(this.council)
+
+            if (requiredVal.valid === false){
+                this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            } else{
                 this.errors[field] = null
             }
 
             this.isValidated.council = true
-
-            // if(!this.errors[field]){
-            //     this.council = this.councilString.split(",").map(s => s.trim())
-            // }
         },
 
         validateFtName(){ // TODO
@@ -789,14 +787,26 @@ export default({
         },
 
         addCouncil() {
-            if(!this.errors['council'] && this.councilString !== ''){
-                this.council.push(this.councilString.trim());
-                this.councilString = ''
-            }
+            const field = "councilAdd"
+            this.councilAdd = this.councilAdd.trim()
+            
+            this.errors[field] = this.t('default.validating')
+            this.nearService.getAccountState(this.councilAdd)
+                .then(() => {
+                    this.council.push(this.councilAdd);
+                    this.councilAdd = ''
+                    this.errors[field] = null
+                    this.validateCouncil()
+                })
+                .catch(() => {
+                    this.errors[field] = this.t('default.validator_near_account_not_found')
+                })
+            this.isValidated.councilAdd = true
         },
 
         removeCouncil(removedCouncil){
             this.council = this.council.filter((el) => el !== removedCouncil )
+            this.validateCouncil()
         },
 
         async createDao(){
