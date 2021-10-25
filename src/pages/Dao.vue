@@ -10,13 +10,13 @@
         <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'" :tags="dao.tags"/>
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
-        <Dashboard2 v-if="loaded === true" :dao="dao"/>
-        <SkeletonDashboard2 v-else />
+        <Title v-if="loaded === true" :dao="dao"/>
+        <SkeletonTitle v-else />
 
         <!-- /Dashboard -->
         <!-- Buttons -->
         <Buttons v-if="loaded" :dao="dao"/>
-        <SkeletonButtons2 v-else />
+        <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
     </section>
@@ -24,7 +24,7 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Overview v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
+        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
         <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId"/>
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
         <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
@@ -47,11 +47,11 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/dao/Breadcrumb.vue'
 import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
-import Dashboard2 from '@/components/dao/Dashboard2.vue'
+import Title from '@/components/dao/Title.vue'
 import Members from '@/components/dao/Members.vue'
-import Overview from '@/components/dao/Overview.vue'
-import SkeletonButtons2 from '@/components/dao/SkeletonButtons2.vue'
-import SkeletonDashboard2 from '@/components/dao/SkeletonDashboard2.vue'
+import Dashboard from '@/components/dao/Dashboard.vue'
+import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
+import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
 import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
@@ -67,8 +67,8 @@ import DAOs from '@/data/DAOs'
 
 export default {
   components: {
-    About, Header, Footer, Breadcrumb, Dashboard2, Buttons, Overview, Voting, Treasury, Members, Tokens, Documents
-    , SkeletonDashboard2, SkeletonButtons2, SkeletonBody
+    About, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Members, Tokens, Documents
+    , SkeletonTitle, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
   setup() {

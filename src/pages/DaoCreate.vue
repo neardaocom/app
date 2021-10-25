@@ -52,7 +52,7 @@
 
                     <MDBStepperStep>
                         <MDBStepperHead icon="2">
-                            {{ t('default.founding') }}
+                            {{ t('default.founders') }}
                         </MDBStepperHead>
                         <MDBStepperContent>
                             <div class="row" >
@@ -64,7 +64,7 @@
                                     </div>
                                     
                                     <MDBInput inputGroup v-model="councilAdd" :isValid="!errors.councilAdd" :isValidated="isValidated.councilAdd" :invalidFeedback="errors.councilAdd" wrapperClass="mb-1">
-                                        <MDBBtn @click="addCouncil()" id="dao-council-add" color="primary">{{ t('default.add_council') }}</MDBBtn>
+                                        <MDBBtn @click="addCouncil()" id="dao-council-add" color="primary">{{ t('default.add') }}</MDBBtn>
                                     </MDBInput>
                                 </div>
                             </div>
@@ -115,37 +115,36 @@
                                 <div class="col-md-7 col-8">
                                     <MDBProgress :height="20" class="rounded">
                                         <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftFundationShare" bg="success" >{{ ftFundationShare }}%</MDBProgressBar>
                                         <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ ftCommunityShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftFundationShare" bg="success" >{{ ftFundationShare }}%</MDBProgressBar>
                                         <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ ftPublicShare }}%</MDBProgressBar>
                                     </MDBProgress>
-                                    <hr>
-                                    <MDBBadge color="primary">{{t('default.council')}}</MDBBadge>
-                                    <MDBBadge color="success">{{t('default.fundation')}}</MDBBadge>
-                                    <MDBBadge color="info">{{t('default.community')}}</MDBBadge>
-                                    <MDBBadge color="warning">{{t('default.public')}}</MDBBadge>
                                 </div>
                             </div>
-                           
 
+                            <label for="dao-ft-council-share" class="form-label"><MDBBadge color="primary" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_council_share') }}</label>
+                            <br>
+                            <!-- ftCommunityShare -->
+                            <MDBSwitch v-if="false" :label="t('default.add_ft_community_share')" v-model="addFtCommunityShare"/>
+                            <label for="dao-ft-community-share" class="form-label"><MDBBadge color="info" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_community_share') }}</label>
+                            <div ref="refFtCommunityShare" class="row mt-1 mb-4">
+                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
+                                <label class="form-label col-md-6 col-3">{{ ftCommunityShare }}%</label>
+                            </div>
+                        
                             <!-- ftFundationShare -->
-                            <MDBSwitch :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
-                            <div ref="refFtFundationShare" class="row mt-3 mb-4 ms-4">
-                                <MDBRange :disabled="!addFtFundationShare" wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
+                            <MDBSwitch v-if="false" :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
+                            <label for="dao-ft-fundation-share" class="form-label"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_fundation_share') }}</label>
+                            <div ref="refFtFundationShare" class="row mt-1 mb-4">
+                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
                                 <label class="form-label col-md-6 col-3">{{ ftFundationShare }}%</label>
                             </div>
 
-                            <!-- ftCommunityShare -->
-                            <MDBSwitch :label="t('default.add_ft_community_share')" v-model="addFtCommunityShare"/>
-                            <div  ref="refFtCommunityShare" class="row mt-3 mb-4 ms-4">
-                                <MDBRange :disabled="!addFtCommunityShare" wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
-                                <label class="form-label col-md-6 col-3">{{ ftCommunityShare }}%</label>
-                            </div>
-
                             <!-- ftPublicShare -->
-                            <MDBSwitch :label="t('default.add_ft_public_share')" v-model="addFtPublicShare"/>
-                            <div  ref="refFtPublicShare" class="row mt-3 mb-4 ms-4">
-                                <MDBRange :disabled="!addFtPublicShare" wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
+                            <MDBSwitch v-if="false" :label="t('default.add_ft_public_share')" v-model="addFtPublicShare"/>
+                            <label for="dao-ft-public-share" class="form-label"><MDBBadge color="warning" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_public_share') }}</label>
+                            <div ref="refFtPublicShare" class="row mt-1 mb-4">
+                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
                                 <label class="form-label col-md-6 col-3">{{ ftPublicShare }}%</label> 
                             </div>
 
@@ -509,20 +508,20 @@ export default({
     
         async validateAccountExists(){
             const field = "account"
-            let accountState = false
-            try {
-                accountState = await this.nearService.getAccountState(this.account + '.' + this.factoryAccount);
-                console.log(accountState)
-            } catch (error) {
-                null
-            }
-
-            const existsAccount = nearAccountExistsValidator(accountState)
-            if (existsAccount.valid === false) {
-                this.errors[field] = this.t('default.' + existsAccount.message, existsAccount.params)
-            } else {
-                this.validateAccount()
-            }
+            this.account = this.account.trim()
+            this.errors[field] = this.t('default.validating')
+            this.nearService.getAccountState(this.account)
+                .then(accountState => {
+                    const existsAccount = nearAccountExistsValidator(accountState)
+                    if (existsAccount.valid === false) {
+                        this.errors[field] = this.t('default.' + existsAccount.message, existsAccount.params)
+                    } else {
+                        this.validateAccount()
+                    }
+                })
+                .catch(() => {
+                    this.validateAccount()
+                })
             this.isValidated.account = true
         },
 
