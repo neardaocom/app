@@ -94,7 +94,7 @@
                                 <!-- ftAmount -->
                                 <div class="col-md-6">
                                     <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @keyup="validateFtAmount" @blur="validateFtAmount"  v-model.number="ftAmount" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @input="changeFtAmount" @keyup="validateFtAmount" @blur="validateFtAmount"  :model-value="ftAmountInit" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
                                 </div>
                              </div>
 
@@ -102,7 +102,7 @@
                             <div class = "row">
                                 <div class="col-md-6">
                                     <label for="dao-ft-init-distribution" class="form-label">{{ t('default.dao_ft_init_distribution') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-init-distribution" @keyup="validateFtInitDistribution" @blur="validateFtInitDistribution"  v-model.number="ftInitDistribution" :isValid="!errors.ftInitDistribution" :isValidated="isValidated.ftInitDistribution" :invalidFeedback="errors.ftInitDistribution" type="number"/>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-init-distribution" @input="changeftInitDistribution" @keyup="validateFtInitDistribution" @blur="validateFtInitDistribution"  :model-value="ftInitDistributionInit" :isValid="!errors.ftInitDistribution" :isValidated="isValidated.ftInitDistribution" :invalidFeedback="errors.ftInitDistribution"/>
                                 </div>
                             </div>
 
@@ -367,9 +367,11 @@ export default({
         const council = ref([]) // at least 1 root account something.near
         const councilAdd = ref('')
         // tokens
-        const ftName = ref('')   // governance token 
+        const ftName = ref('')   // governance token
         const ftAmount = ref(1_000_000) 
+        const ftAmountInit = ref(n(1_000_000)) 
         const ftInitDistribution = ref(100_000) // 0 ... ftAmount 10%
+        const ftInitDistributionInit = ref(n(100_000))
         const ftCouncilShare = ref(100) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
@@ -419,17 +421,17 @@ export default({
         const tooltipQuorum = ref(false);
 
         const defaultTypeOptions = [
-            [1000000, 100000, 51, 20, 3, 0],
-            [2000000, 300000, 5, 20, 3, 0],
-            [4000000, 500000, 1, 20, 3, 0],
-            [6000000, 700000, 517, 20, 3, 0],
-            [8000000, 900000, 45, 20, 3, 0],
-            [45000000, 5600000, 46, 20, 3, 0],
+            [n(1_000_000), 1_000_000,  n(100_000), 100_000, 51, 20, 3, 0],
+            [n(2_000_000), 2_000_000, n(300_000), 300_000, 5, 20, 3, 0],
+            [n(4_000_000), 4_000_000, n(500_000), 500_000, 1, 20, 3, 0],
+            [n(6_000_000), 6_000_000, n(700_000), 700_000, 517, 20, 3, 0],
+            [n(8_000_000), 8_000_000, n(900_000), 900_000, 45, 20, 3, 0],
+            [n(45_000_000), 45_000_000, n(5_600_000), 5_600_000, 46, 20, 3, 0],
         ]
         
         return{
            t, n, exampleModal, account, name, slogan, type, typeOptions,
-           purpose, location, ftName, ftAmount, ftInitDistribution, 
+           purpose, location, ftName, ftAmount, ftAmountInit, ftInitDistribution, ftInitDistributionInit,
            ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
            voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFundationShare,
@@ -474,7 +476,7 @@ export default({
         type(){
             const newType = this.typeOptions.find( type => type.selected === true )
             if(newType !== undefined){
-                [this.ftAmount, this.ftInitDistribution, this.voteApproveThreshold, this.voteQuorum, this.voteDurationDays, this.voteDurationHours] = [...this.defaultTypeOptions[newType.mdbKey]]
+                [this.ftAmountInit, this.ftAmount, this.ftInitDistributionInit, this.ftInitDistribution, this.voteApproveThreshold, this.voteQuorum, this.voteDurationDays, this.voteDurationHours] = [...this.defaultTypeOptions[newType.mdbKey]]
             }
             
         }
@@ -646,6 +648,11 @@ export default({
             this.isValidated.ftAmount = true
         },
 
+        changeFtAmount(event){
+            event.target.value = this.n(+event.target.value.replace(/[^0-9]/g,''))
+            this.ftAmount = +event.target.value.replace(/[^0-9]/g,'')
+        },
+
         validateFtInitDistribution(isValidated = true){
             const field = "ftInitDistribution"
             const requiredVal = requiredValidator(this.ftInitDistribution)
@@ -666,6 +673,11 @@ export default({
             if(isValidated){
                 this.isValidated.ftInitDistribution = true
             }
+        },
+
+        changeftInitDistribution(event){
+            event.target.value = this.n(+event.target.value.replace(/[^0-9]/g,''))
+            this.ftInitDistribution = +event.target.value.replace(/[^0-9]/g,'')
         },
 
         validateFtShares(){
