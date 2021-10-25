@@ -4,60 +4,31 @@
       <div class="col-6 col-md-6 col-lg-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <ul class="list-unstyled text-muted mb-1">
-              <li v-if="dao.address">
-                <i class="fas fa-home fa-fw me-3 mb-3"></i>
-                <a class="text-reset font-weight-bold" href="">{{ dao.address }}</a>
-              </li>
-              <li>
-                <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
-                <a
-                  class="text-reset font-weight-bold"
-                  :href="nearWalletUrl + '/accounts/' + dao.wallet"
-                  target="_blank"
-                  >{{ t("default.wallet") }}</a
-                >
-              </li>
-              <li v-if="dao.web">
-                <i class="fas fa-globe fa-fw me-3 mb-3"></i
-                ><a class="text-reset font-weight-bold" :href="dao.web">{{ dao.domain }}</a>
-              </li>
-              <li>
-                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-                <span class="text-reset font-weight-bold">{{ n(dao.token) }}</span> {{ dao.token_name }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-6 col-lg-4">
-        <div class="card text-start w-auto p-2" style="width: 18rem">
-          <div class="card-body">
-            <h5 class="text-center">{{ t("default.treasury") }}</h5>
+            <h5 class="text-center text-muted mb-0">{{ t("default.treasury") }}</h5>
             <h2 class="text-center">
-              ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
+              ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ</span>
             </h2>
           </div>
         </div>
       </div>
       <div class="col-6 col-md-6 col-lg-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
-          <div class="card-body">
-            <ul class="list-unstyled text-muted mb-1">
-              <li>
-                <i class="fas fa-users fa-fw me-3 mb-3"></i
-                ><strong>{{ t("default.council") }}</strong>
-                {{ dao.groups.council.amount || "0" }}% |
-                <strong>{{ t("default.community") }}</strong>
-                {{ dao.groups.community.amount || "0" }}%
-              </li>
-              <li>
-                <i class="fas fa-chart-line fa-fw me-3 mb-3"></i
-                ><strong>{{ t("default.investor") }}</strong>
-                {{ dao.groups.investor.amount || "0" }}% |
-                <strong>{{ t("default.public_sale") }}</strong>
-                {{ dao.groups.public_sale.amount || "0" }}%
-              </li>
+          <div class="card-body text-center">
+            <h5 class="text-muted mb-0">{{ t("default.my_share") }}</h5>
+            <h2 class="mb-0">
+              <NumberFormatter :amount="myTokensAmount"/>
+            </h2>
+            <h5 v-if="myTokensAmount" class="text-muted">≈ <NumberFormatter :amount="myTokensShare"/>%</h5>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 col-md-6 col-lg-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body text-center">
+            <h5 class="text-muted">{{ t("default.activity") }}</h5>
+            <ul class="list-inline list-unstyled mb-0">
+              <li class="list-inline-item me-3"><MDBIcon icon="vote-yea" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.proposals.length }}</MDBBadge></li>
+              <li class="list-inline-item ms-3"><MDBIcon icon="file-alt" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge></li>
             </ul>
           </div>
         </div>
@@ -67,10 +38,10 @@
     <div class="row mt-2">
       <!-- Novy clen -->
       <div class="col-12 col-md-6 text-start">
-        <h5 v-if="results.length > 0" >{{ t("default.active_proposals") }}</h5>
+        <h5 v-if="activeProposals.length > 0" >{{ t("default.active_proposals") }}</h5>
         <h5 v-else>{{ t("default.no_active_proposal") }}</h5>
       </div>
-      <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
+      <div v-for="(proposal, index) in activeProposals" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
           <Proposal :proposal="proposal" :contractId="dao.wallet"/>
         </section>
@@ -80,17 +51,18 @@
 </template>
 
 <script>
-// import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
+import { MDBIcon, MDBBadge } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import { toRefs } from "vue"
 import _ from "lodash"
+import Decimal from 'decimal.js'
 
 export default {
   components: {
-    //MDBProgress, MDBProgressBar,
+    MDBIcon, MDBBadge,
     NumberFormatter,
     Proposal
   },
@@ -101,7 +73,7 @@ export default {
     },
     accountId: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   setup(props) {
@@ -111,7 +83,13 @@ export default {
     return { t, n, proposals };
   },
   computed: {
-    results() {
+    myTokensAmount() {
+      return this.dao.token_holders[this.accountId]
+    },
+    myTokensShare() {
+      return (this.dao.token_holded > 0) ? new Decimal(this.dao.token_holders[this.accountId] || 0).dividedBy(this.dao.token_holded).times(100).round().toNumber() : null
+    },
+    activeProposals() {
       let results = this.proposals
       // filter
       results = results.filter(item => _.intersection([item.stateIndex], ['in_progress']).length > 0)

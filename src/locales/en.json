@@ -1,5 +1,6 @@
 {
   "account": "Account",
+  "activity": "Activity",
   "add_council": "Add council",
   "add_member": "Add member",
   "add_member_message": "New account ID <strong>{account}</strong> into <strong>{group}</strong>",
@@ -109,6 +110,7 @@
   "upgrade_version": "Upgrade version to {version}",
   "update_version": "Update version to {version}",
   "members": "Members",
+  "my_share": "My share",
   "name": "Name",
   "none": "None",
   "no_results": "No results",

@@ -52,6 +52,16 @@
           </div>
         </div>
       </div>
+      <div class="col-6 col-md-6 col-lg-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body">
+            <h5 class="text-muted text-center">{{ t("default.council") }}</h5>
+            <ul class="mb-0">
+              <li v-for="(council, index) in dao.groups.council.wallets" :key="index">{{ council }}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
     <hr/>
     <div class="row mt-2">
@@ -69,7 +79,6 @@
 </template>
 
 <script>
-// import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 //import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"

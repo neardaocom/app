@@ -1,26 +1,12 @@
 <template>
-  <Header></Header>
-
   <main>
-    <Services></Services>
-    <Statistics></Statistics>
-    <Price></Price>
   </main>
-
-  <Footer></Footer>
 </template>
 
 <script>
-import Header from '@/components/layout/Header.vue'
-import Footer from '@/components/layout/Footer.vue'
-import Services from '@/components/landingPage/Services.vue'
-import Statistics from '@/components/landingPage/Statistics.vue'
-import Price from '@/components/landingPage/Price.vue'
-
 export default {
   name: 'Home',
   components: {
-    Services, Statistics, Price, Footer, Header
   },
   setup() {
     const daoDefault = process.env.VUE_APP_DAO_DEFAULT

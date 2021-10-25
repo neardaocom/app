@@ -230,7 +230,7 @@ const transform = (proposal, docs, token_holders, token_blocked, accountId, t) =
             time: toTimeString(durationTo),
         },
         choiceIndex: choiceIndex,
-        choice: t("default.vote_type_" + choiceIndex),
+        choice: (choiceIndex) ? t("default.vote_type_" + choiceIndex) : null,
         progress: getProgress(proposal[1], durationTo),
         quorum: proposal[1].vote_config.quorum,
     }

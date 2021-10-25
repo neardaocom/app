@@ -55,7 +55,6 @@
     },
     computed: {
       accountId() {
-        console.log(this.$store.getters['near/getAccountId'])
         return this.$store.getters['near/getAccountId']
       },
       appName() {

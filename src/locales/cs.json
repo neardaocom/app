@@ -1,5 +1,6 @@
 {
   "account": "Účet",
+  "activity": "Aktivita",
   "add_member": "Přidat člena",
   "add_council": "Přidat člena rady",
   "add_member_message": "Nový účtu ID <strong>{account}</strong> do <strong>{group}</strong>",
@@ -111,6 +112,7 @@
   "upgrade_version": "Povýšit verzi na {version}",
   "update_version": "Upravit verzi na {version}",
   "members": "Členové",
+  "my_share": "Můj podíl",
   "none": "Žádný",
   "tokens": "Governance Tokeny",
   "organization": "Organizace",
