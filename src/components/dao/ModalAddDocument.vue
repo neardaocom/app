@@ -437,7 +437,6 @@ export default {
         }
 
         console.log(ipfs_cid)
-
         // BLOCKCHAIN
         if (ipfs_cid) {
           this.nearService.addDoc(

@@ -102,7 +102,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoList() {
-    return this.factoryContract.get_dao_list();
+    return this.factoryContract.get_dao_list({from_index: 0, limit: 100});
   }
 
   /**
@@ -139,7 +139,7 @@ class NearService {
     , ftAmount
     , ftInitDistribution
     , ftCouncilShare
-    , ftFundationShare
+    , ftFoundationShare
     , ftCommunityShare
     , voteSpamThreshold
     , voteDurationDays
@@ -152,6 +152,7 @@ class NearService {
     const info = {
       name: name,
       tags: tags,
+      founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
       description: slogan,
       ft_name: ftName,
       ft_amount: ftAmount
@@ -159,7 +160,6 @@ class NearService {
     console.log(info)
 
     const args = {
-      name: name,
       total_supply: ftAmount,
       init_distribution: ftInitDistribution,
       ft_metadata: {
@@ -172,11 +172,12 @@ class NearService {
         decimals: 0
       },
       config: {
+        name: name,
         lang: location,
         slogan: slogan,
         description: slogan,
         council_share: ftCouncilShare,
-        fundation_share: ftFundationShare,
+        foundation_share: ftFoundationShare,
         community_share: ftCommunityShare,
         vote_spam_threshold: voteSpamThreshold
       },
@@ -282,8 +283,8 @@ class NearService {
         proposal_input: {
           description: description,
           tags: tags,
-          transaction: transactions
         },
+        tx_input: transactions,
         account_id: accountId
       },
       Decimal.mul(100, TGas).toString(),
@@ -311,12 +312,15 @@ class NearService {
 
     const args = {
       proposal_input: {
-        description: description_vote || "",
+        description: null,
+        description_cid: null,
         tags: tags,
-        transaction: {
-          AddDocFile: {
-            uuid: ipfs_cid,
-            metadata: {
+      },
+      tx_input: {
+        AddDocFile: {
+          cid: ipfs_cid,
+          metadata: {
+            Curr: {
               name: name,
               description: description || "",
               tags: tagsIds,
@@ -325,9 +329,9 @@ class NearService {
               valid: true,
               v: version
             },
-            new_tags: tags,
-            new_category: category
-          }
+          },
+          new_tags: tags,
+          new_category: category
         }
       },
       account_id: accountId
@@ -381,7 +385,7 @@ class NearService {
         account_id: this.walletConnection.getAccountId()
       },
       Decimal.mul(10, TGas).toString()
-      //, new Decimal(0.001).mul(yoctoNear).toFixed()
+      , new Decimal(0.00125).mul(yoctoNear).toFixed()
     );
   }
 
@@ -456,17 +460,18 @@ class NearService {
     // Mapping Doc files tags and categories
     let file_list = [];
     data[5].files.forEach(element => {
+      const elementData = element[1].Curr
       let doc = { tags: [] }
-      for (let [i, val] of element[1].tags.entries()) {
+      for (let [i, val] of elementData.tags.entries()) {
         doc.tags[i] = data[5].map["Doc"].tags[val]
       }
-      doc.name = element[1].name
-      doc.ext = element[1].ext
-      doc.description = element[1].description
-      doc.valid = element[1].valid
-      doc.category = data[5].map["Doc"].categories[element[1].category]
+      doc.name = elementData.name
+      doc.ext = elementData.ext
+      doc.description = elementData.description
+      doc.valid = elementData.valid
+      doc.category = data[5].map["Doc"].categories[elementData.category]
       doc.ipfs_cid = element[0]
-      doc.version = element[1].v ?? '1.0'
+      doc.version = elementData.v ?? '1.0'
 
       file_list.push(doc)
     });

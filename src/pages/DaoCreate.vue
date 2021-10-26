@@ -510,7 +510,7 @@ export default({
             const field = "account"
             this.account = this.account.trim()
             this.errors[field] = this.t('default.validating')
-            this.nearService.getAccountState(this.account)
+            this.nearService.getAccountState(this.account + '.' + this.factoryAccount)
                 .then(accountState => {
                     const existsAccount = nearAccountExistsValidator(accountState)
                     if (existsAccount.valid === false) {
@@ -767,7 +767,7 @@ export default({
 
         validate(){
             this.validateAccount()
-            this.validateAccountExists()
+            //this.validateAccountExists()
             this.validateName()
             this.validateSlogan()
             // this.validatePurpose()

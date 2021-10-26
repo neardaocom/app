@@ -1,8 +1,8 @@
 <template>
-  <div class="container mb-2">
-    <MDBCard>
-      <MDBCardBody class="text-start">
-        <div v-if="docs.files.length > 0">
+  <div class="container mb-2 text-start">
+    <MDBCard v-if="docs.files.length > 0">
+      <MDBCardBody>
+        <div>
           <div class="row mt-1">
             <div class="col-6 col-md-4 col-lg-3">
               <MDBInput
@@ -65,9 +65,9 @@
             </tbody>
           </MDBTable>
         </div>
-        <p v-if="docs.files.length == 0">{{ t("default.no_doc_files") }}</p>
       </MDBCardBody>
     </MDBCard>
+    <h5 class="mt-4" v-if="docs.files.length == 0">{{ t("default.no_doc_files") }}</h5>
   </div>
   <ModalDocument :show="modalDocument" :doc="selectedDoc"/>
 </template>

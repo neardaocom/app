@@ -1,7 +1,7 @@
 <template>
   <div class="container mb-2">
     <div class="row">
-      <div class="col-6 col-md-6 col-lg-4">
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
@@ -30,7 +30,7 @@
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-6 col-lg-4">
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
@@ -52,27 +52,15 @@
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-6 col-lg-4">
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <h5 class="text-muted text-center">{{ t("default.council") }}</h5>
+            <h6 class="text-muted text-center">{{ t("default.council") }}</h6>
             <ul class="mb-0">
               <li v-for="(council, index) in dao.groups.council.wallets" :key="index">{{ council }}</li>
             </ul>
           </div>
         </div>
-      </div>
-    </div>
-    <hr/>
-    <div class="row mt-2">
-      <!-- Novy clen -->
-      <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
-          <Proposal :proposal="proposal" :contractId="dao.wallet"/>
-        </section>
-      </div>
-      <div v-if="results.length == 0" class="col-12 col-md-12 mb-4 mb-md-0 text-center">
-        <h5>{{ t("default.no_active_proposal") }}</h5>
       </div>
     </div>
   </div>
@@ -81,16 +69,16 @@
 <script>
 //import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
-import Proposal from "@/components/dao/Proposal.vue"
-import { transform } from '@/models/proposal';
-import { toRefs } from "vue"
-import _ from "lodash"
+//import Proposal from "@/components/dao/Proposal.vue"
+//import { transform } from '@/models/proposal';
+//import { toRefs } from "vue"
+//import _ from "lodash"
 
 export default {
   components: {
     //MDBProgress, MDBProgressBar,
     //NumberFormatter,
-    Proposal
+    //Proposal
   },
   props: {
     dao: {
@@ -102,22 +90,11 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const { t, n } = useI18n();
-    const { dao, accountId } = toRefs(props)
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t))
-    return { t, n, proposals };
+    return { t, n};
   },
   computed: {
-    results() {
-      let results = this.proposals
-      // filter
-      results = results.filter(item => _.intersection([item.stateIndex], ['in_progress']).length > 0)
-      // order
-      results = _.orderBy(results, ['id'], ['asc'])
-
-      return results
-    },
   },
 };
 </script>
