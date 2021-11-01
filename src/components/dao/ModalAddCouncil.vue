@@ -7,12 +7,12 @@
     size="lg"
   >
     <MDBModalHeader>
-      <MDBModalTitle id="modalAddCouncilLabel"> {{ t('default.add_member') }} </MDBModalTitle>
+      <MDBModalTitle id="modalAddCouncilLabel"> {{ t('default.add_council') }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
       <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
       <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-          @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+          @keyup="validateAccount()" @blur="validateAccountExists()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
       >
           <span class="input-group-text" id="account-addon">.{{ getAccountPostfix() }}</span>
       </MDBInput>
@@ -131,6 +131,19 @@ export default {
       } else {
         this.errors[field] = null
       }
+      this.isValidated.formAccount = true
+    },
+    validateAccountExists() {
+      const field = "formAccount"
+      const accountId = this.formAccount.trim() + '.' + this.getAccountPostfix()
+      this.errors[field] = this.t('default.validating')
+      this.nearService.getAccountState(accountId)
+          .then(() => {
+              this.errors[field] = null
+          })
+          .catch(() => {
+              this.errors[field] = this.t('default.validator_near_account_not_found')
+          })
       this.isValidated.formAccount = true
     },
     validateGroup(){

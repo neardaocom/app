@@ -95,8 +95,8 @@ const getArgsFromAction = (action, docs, t) => {
         break;
       case "AddFile":
         args = {
-          name: action.AddFile.metadata.name,
-          ipfs_cid: action.AddFile.uuid,
+          name: action.AddFile.metadata.Curr.name,
+          ipfs_cid: action.AddFile.cid,
           category:
             action.AddFile.new_category || docs.map.categories[action.AddFile.metadata.category],
         };
@@ -145,7 +145,7 @@ const getVotingStats = (proposal, token_holders, token_blocked) => {
     ];
 }
 
-const getDurationTo = (proposal) => parseFromNanoseconds(proposal.vote_config.duration_to);
+const getDurationTo = (proposal) => parseFromNanoseconds(proposal.duration_to);
 
 const getOver = (proposal) => {
     if (proposal.status === "InProgress") {
@@ -201,29 +201,29 @@ const getProgress = (proposal, durationTo) => {
 const isVoted = (proposal, accountId) => Object.keys(proposal.votes).includes(accountId);
 
 const transform = (proposal, docs, token_holders, token_blocked, accountId, t) => {
-    const action = getAction(proposal[1])
+    const action = getAction(proposal[1].Curr)
     const actionType = getActionType(action)
-    const durationTo = getDurationTo(proposal[1])
-    const isOver = getOver(proposal[1])
-    const stateIndex = getState(proposal[1], isOver)
+    const durationTo = getDurationTo(proposal[1].Curr)
+    const isOver = getOver(proposal[1].Curr)
+    const stateIndex = getState(proposal[1].Curr, isOver)
     const args = getArgsFromAction(action, docs, t)
-    const choiceIndex = getChoice(proposal[1], accountId)
+    const choiceIndex = getChoice(proposal[1].Curr, accountId)
     let trans = {
         id: proposal[0],
         key: getActionKey(action),
-        index: proposal[1].uuid,
+        index: proposal[1].Curr.uuid,
         title: t('default.' + actionType + '_message', args),
-        description: proposal[1].description,
+        description: proposal[1].Curr.description,
         typeIndex: actionType,
         type: t("default." + getActionType(action)),
         stateIndex: stateIndex,
         state: t("default.vote_status_" + stateIndex),
-        status: proposal[1].status,
+        status: proposal[1].Curr.status,
         canVote: Object.keys(token_holders).includes(accountId),
         isOver: isOver,
-        isVoted: isVoted(proposal[1], accountId),
+        isVoted: isVoted(proposal[1].Curr, accountId),
         args: args,
-        votingStats: getVotingStats(proposal[1], token_holders, token_blocked),
+        votingStats: getVotingStats(proposal[1].Curr, token_holders, token_blocked),
         duration: {
             value: durationTo,
             date: toDateString(durationTo),
@@ -231,8 +231,8 @@ const transform = (proposal, docs, token_holders, token_blocked, accountId, t) =
         },
         choiceIndex: choiceIndex,
         choice: (choiceIndex) ? t("default.vote_type_" + choiceIndex) : null,
-        progress: getProgress(proposal[1], durationTo),
-        quorum: proposal[1].vote_config.quorum,
+        progress: getProgress(proposal[1].Curr, durationTo),
+        quorum: proposal[1].Curr.quorum,
     }
     trans.search = [toSearch(trans.title), toSearch(trans.description), toSearch(trans.duration.date), toSearch(trans.duration.time), toSearch(trans.type), toSearch(trans.state)].join('-')
     // console.log(trans)
