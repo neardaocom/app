@@ -449,9 +449,9 @@ class NearService {
     const balances = await Promise.all(member_promises).catch((e) => {
       console.log(e)
     });
-    const token_account = {}
+    const token_account: {[index: string]: any} = {}
     members.forEach((accountId: string, index: number) => {
-      _.set(token_account, accountId, new Decimal((balances) ? balances[index] : 0).toNumber())
+      token_account[accountId] = new Decimal((balances) ? balances[index] : 0).toNumber()
     });
     //console.log(token_account)
 
