@@ -67,7 +67,10 @@
         </div>
       </MDBCardBody>
     </MDBCard>
-    <h5 class="mt-4" v-if="docs.files.length == 0">{{ t("default.no_doc_files") }}</h5>
+    <section v-if="docs.files.length == 0">
+      <hr>
+      <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
+    </section>
   </div>
   <ModalDocument :show="modalDocument" :doc="selectedDoc"/>
 </template>

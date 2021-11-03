@@ -1,7 +1,7 @@
-const CONTRACT_NAME = process.env.VUE_APP_NEAR_CONTRACT_NAME
-const NAME = process.env.VUE_APP_NEAR_NAME
+const CONTRACT_NAME: string | undefined = process.env.VUE_APP_NEAR_CONTRACT_NAME
+const NAME: string | undefined = process.env.VUE_APP_NEAR_NAME
 
-function getConfig(env) {
+const getConfig = (env: string): any => {
   switch (env) {
     case 'production':
     case 'mainnet':
@@ -63,4 +63,4 @@ function getConfig(env) {
   }
 }
 
-module.exports = getConfig
+export {getConfig}

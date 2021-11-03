@@ -8,11 +8,11 @@ const state = () => ({
   
 // getters
 const getters = {
-    getService: (state) => {
+    getService: (state: any) => {
         return state.service
     },
     
-    getFirestore(state){
+    getFirestore(state: any){
         return state.service.getFirestore()
     }
 }
@@ -23,7 +23,7 @@ const actions = {
   
 // mutations
 const mutations = {
-    setState(state, payload) {
+    setState(state:any, payload: any) {
         state.service = payload.service
     }
 }

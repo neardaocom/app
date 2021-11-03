@@ -1,13 +1,14 @@
-import { useI18n } from 'vue-i18n'
-import { states } from '@/data/states.js'
-import { compareByText } from '@/utils/object.js'
+import { states } from '@/data/states'
+import { compareByText } from '@/utils/object'
+import { SelectOption } from '@/utils/formSelectOption'
+import _ from "lodash"
 
-export const locationList = () => {
-    const { t } = useI18n();
+export const locationList = (t: any): SelectOption[] => {
     const listWorld = [
         {text: t('default.global'), value: 'glo'},
     ]
-    let listContinents = [
+    // continents
+    const listContinents = [
         {text: t('default.asia'), value: 'asi'},
         {text: t('default.africa'), value: 'afr'},
         {text: t('default.europe'), value: 'eur'},
@@ -16,6 +17,8 @@ export const locationList = () => {
         {text: t('default.australia'), value: 'aus'},
     ]
     listContinents.sort(compareByText)
-    const listStates = Object.keys(states).map(x => { return { text: states[x] + ' (' + x.toUpperCase() + ')', value: x}})
+    // states
+    const listStates = Object.keys(states).map((x, index) => { return { text: _.get(states, index) + ' (' + x.toUpperCase() + ')', value: x}})
+
     return listWorld.concat(listContinents, listStates)
 }

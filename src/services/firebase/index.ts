@@ -3,7 +3,7 @@ import { getFirestore } from "@firebase/firestore"
 
 class Firebase {
 
-    constructor(config) {
+    constructor(config: any) {
         initializeApp(config)
       }
 

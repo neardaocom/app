@@ -1,14 +1,15 @@
-import { Contract} from 'near-api-js';
+import { Account, Contract} from 'near-api-js';
+import _ from "lodash"
 
 export class ContractPool {
-  account;
-  pool = {};
+  private account: Account;
+  private pool: { [key: string]: Contract } = {};
 
-  constructor(account) {
+  constructor(account: Account) {
     this.account = account;
   }
 
-  get(contractId) {
+  get(contractId: string): Contract & any {
     if (this.pool[contractId]) {
       return this.pool[contractId];
     }

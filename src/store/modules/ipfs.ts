@@ -1,4 +1,5 @@
-import { IpfsService } from "@/services/ipfsService/IpfsService"
+import { IpfsService } from "@/services/ipfsService/IpfsService.js"
+import { Commit } from "vuex"
 
 
 // initial state
@@ -8,15 +9,15 @@ const state = () => ({
   
   // getters
   const getters = {
-      getService: (state) => {
+      getService: (state: any) => {
         return state.service
       }
   }
   
   // actions
   const actions = {
-      async init ({ commit }) {
-          let service = new IpfsService(process.env.VUE_APP_WEB3STORAGE_TOKEN)
+      async init ({ commit }: { commit: Commit }) {
+          const service = new IpfsService(process.env.VUE_APP_WEB3STORAGE_TOKEN)
           //console.log(service)
           commit('setState', {service: service})
       }
@@ -24,7 +25,7 @@ const state = () => ({
   
   // mutations
   const mutations = {
-    setState(state, payload) {
+    setState(state: any, payload: any) {
       state.service = payload.service
     }
   }

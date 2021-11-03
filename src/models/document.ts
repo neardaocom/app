@@ -1,29 +1,29 @@
-import _ from "lodash";
 import { toCompare } from "@/utils/version";
 import { toSearch } from "@/utils/string";
+import _ from "lodash"
 
-const getCategoriesInit = (t) => {
+const getCategoriesInit = (t: any): string[] => {
   return [t('default.fundamental')]
 }
 
-const getNamesInit = (t) => {
+const getNamesInit = (t: any): string[] => {
   return [t('default.founding_document'), t('default.discord'), t('default.web'), t('default.twitter')]
 }
 
-const getCategories = (docs, t) => {
+const getCategories = (docs: any, t: any) => {
   const initCategory = getCategoriesInit(t)
-  const others = docs.map.categories.filter(item => _.indexOf(initCategory.concat(['basic']), item) == -1).sort()
+  const others = docs.map.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item) == -1).sort()
   return initCategory.concat(others)
 }
 
-const getNames = (docs, category, t) => {
+const getNames = (docs: any, category: any, t: any) => {
   console.log(category)
   const initCategories = getCategoriesInit(t)
   const initNames = getNamesInit(t)
   let doc_names = []
-  let names = []
+  let names: string[] = []
   if (category.length > 0) {
-    doc_names = docs.files.filter(item => _.isEqual(category, item.category)).map(item => item.name)
+    doc_names = docs.files.filter((item: any) => _.isEqual(category, item.category)).map((item: any) => item.name)
     if (_.indexOf(initCategories, category) >= 0) { // category in init
         names = _.sortedUniq(initNames.concat(doc_names).sort())
     } else {
@@ -31,33 +31,33 @@ const getNames = (docs, category, t) => {
         console.log('not in init category')
     }
   } else {
-    doc_names = docs.files.map(item => item.name)
+    doc_names = docs.files.map((item: any) => item.name)
     names = _.sortedUniq(initNames.concat(doc_names).sort())
   }
   console.log(names)
   return names
 }
 
-const getKey = (name, category) => {
+const getKey = (name: string, category: string): string => {
     return toSearch(name) + '_' + toSearch(category)
 }
 
-const getIndexInFiles = (files, name, category) => {
+const getIndexInFiles = (files: any, name: string, category: string) => {
     const file_key = getKey(name, category)
     return _.findIndex(files, {'key': file_key})
 }
 
-const transform = (docs) => {
+const transform = (docs: any) => {
     // console.log(category)
     //const initCategories = getCategoriesInit(t)
     //const initNames = getNamesInit(t)
     
-    let files = []
-    let key = null
-    let file_index = null
-    let file_version = null
-    let version = null
-    docs.files.forEach((element, index) => {
+    const files: any[] = []
+    let key: string
+    let file_index: number
+    let file_version: number
+    let version: number
+    docs.files.forEach((element: any, index: number) => {
         version = toCompare(element.version)
         key = getKey(element.name, element.category)
         // exists
@@ -79,7 +79,7 @@ const transform = (docs) => {
                 files[file_index].ext = element.ext
                 files[file_index].valid = element.valid
                 files[file_index].ipfs_cid = element.ipfs_cid
-                files[file_index].search = [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map(tag => toSearch(tag))).join('-')
+                files[file_index].search = [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map((tag: any) => toSearch(tag))).join('-')
             } else {
                 files[file_index].versions.push({
                     index: index,
@@ -102,7 +102,7 @@ const transform = (docs) => {
                 ipfs_cid: element.ipfs_cid,
                 description: element.description,
                 versions: [],
-                search: [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map(tag => toSearch(tag))).join('-')
+                search: [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map((tag: any) => toSearch(tag))).join('-')
             })
         }
     });

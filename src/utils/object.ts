@@ -1,4 +1,4 @@
-export const compareByText = (a, b) => {
+export const compareByText = (a: any, b: any) => {
     const nameA = a.text.toUpperCase();
     const nameB = b.text.toUpperCase();
     if (nameA < nameB) {

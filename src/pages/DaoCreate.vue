@@ -324,8 +324,8 @@ import {
     requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid, requiredArrayValidator
 } from '@/utils/validators'
-import { locationList } from '@/composables/location.js'
-import { compareByText } from '@/utils/object.js'
+import { locationList } from '@/composables/location'
+import { compareByText } from '@/utils/object'
 import {
     MDBContainer,
     MDBInput, MDBSelect,

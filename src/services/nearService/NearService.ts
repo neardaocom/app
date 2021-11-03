@@ -12,26 +12,25 @@ import Decimal from 'decimal.js';
 import { yoctoNear, TGas } from './constants';
 import { ContractPool } from './ContractPool';
 import { getPublicSalePercent } from './utils';
-
-
+import _ from "lodash"
 
 class NearService {
   // config of near
-  config;
+  config: any;
 
   // factory contract
-  factoryContract;
+  factoryContract!: Contract & any;
 
   // wallet
-  walletConnection;
+  walletConnection!: WalletConnection;
 
   // near API
-  near;
+  near!: any;
 
   // contracts
-  contractPool;
+  contractPool!: ContractPool;
 
-  constructor(config) {
+  constructor(config: any) {
     this.config = config;
   }
 
@@ -42,7 +41,7 @@ class NearService {
       }
     }, this.config));
 
-    this.walletConnection = new WalletConnection(this.near, process.env.VUE_APP_NEAR_CONTRACT_NAME);
+    this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
 
     const account = this.walletConnection.account();
 
@@ -70,10 +69,7 @@ class NearService {
   }
 
   signIn() {
-    return this.walletConnection.requestSignIn(
-      this.config.contractName,
-      this.config.name,
-    );
+    return this.walletConnection.requestSignIn(this.config.contractName, this.config.name);
   }
 
   async signOut() {
@@ -90,7 +86,7 @@ class NearService {
    * @throws Error if account not exists
    * @returns state
    */
-  async getAccountState(accountId) {
+  async getAccountState(accountId: string) {
     const account = await this.near.account(accountId);
     const state = await account.state();
     return state;
@@ -118,36 +114,34 @@ class NearService {
    * 
    * @returns Promise
    */
-  async getDaoInfo(daoId) {
-    return this.factoryContract.get_dao_info({
-      account: daoId
-    });
+  async getDaoInfo(daoId: string) {
+    return this.factoryContract.get_dao_info({account: daoId});
   }
 
   /**
    * Create DAO
    */
   async createDao(
-    accountId
-    , publicKey
-    , name
-    , slogan
-    , tags
-    , founders
-    , location
-    , ftName
-    , ftAmount
-    , ftInitDistribution
-    , ftCouncilShare
-    , ftFoundationShare
-    , ftCommunityShare
-    , voteSpamThreshold
-    , voteDurationDays
-    , voteDurationHours
-    , voteQuorum
-    , voteApproveThreshold
-    , voteOnlyOnce
-    , amountToTransfer
+    accountId: string
+    , publicKey: string
+    , name: string
+    , slogan: string
+    , tags: number[]
+    , founders: string[]
+    , location: string
+    , ftName: string
+    , ftAmount: number
+    , ftInitDistribution: number
+    , ftCouncilShare: number
+    , ftFoundationShare: number
+    , ftCommunityShare: number
+    , voteSpamThreshold: number
+    , voteDurationDays: number
+    , voteDurationHours: number
+    , voteQuorum: number
+    , voteApproveThreshold: number
+    , voteOnlyOnce: boolean
+    , amountToTransfer: number
   ) {
     const info = {
       name: name,
@@ -157,7 +151,7 @@ class NearService {
       ft_name: ftName,
       ft_amount: ftAmount
     };
-    console.log(info)
+    // console.log(info)
 
     const args = {
       total_supply: ftAmount,
@@ -242,7 +236,7 @@ class NearService {
       ],
       founders: founders
     }
-    console.log(args)
+    // console.log(args)
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
@@ -268,12 +262,12 @@ class NearService {
    * Add proposal to DAO
    */
   async addProposal(
-    contractId
-    , description
-    , tags
-    , transactions
-    , amountToTransfer
-    , accountId
+    contractId: string
+    , description: string
+    , tags: any
+    , transactions: any
+    , amountToTransfer: number
+    , accountId: string
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
@@ -293,19 +287,19 @@ class NearService {
   }
 
   async addDoc(
-    contractId
-    , name
-    , description
-    , ipfs_cid
-    , categoryId
-    , category
-    , ext
-    , tagsIds
-    , tags
-    , version
-    , description_vote
-    , amountToTransfer
-    , accountId
+    contractId: string
+    , name: string
+    , description: string
+    , ipfs_cid: string
+    , categoryId: number
+    , category: string
+    , ext: string
+    , tagsIds: number[]
+    , tags: string[]
+    , version: string
+    , description_vote: string
+    , amountToTransfer: number
+    , accountId: string
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
@@ -337,17 +331,17 @@ class NearService {
       account_id: accountId
     }
 
-    console.log(args)
+    //console.log(args)
 
     return this.contractPool.get(contractId).add_proposal(args, Decimal.mul(100, TGas).toString(), amountYokto.toString());
   }
 
   async invalideDoc(
-    contractId
-    , ipfs_hash
-    , description
-    , amountToTransfer
-    , accountId
+    contractId: string
+    , ipfs_hash: string
+    , description: string
+    , amountToTransfer: number
+    , accountId: string
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
@@ -374,15 +368,15 @@ class NearService {
    * Voting in proposal
    */
   async vote(
-    contractId,
-    proposalId,
-    vote
+    contractId: string,
+    proposalId: number,
+    vote: number
   ) {
     return this.contractPool.get(contractId).vote(
       {
         proposal_id: proposalId,
         vote_kind: vote,
-        account_id: this.walletConnection.getAccountId()
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
       },
       Decimal.mul(10, TGas).toString()
       , new Decimal(0.00125).mul(yoctoNear).toFixed()
@@ -393,13 +387,13 @@ class NearService {
    * Finalize proposal
    */
   async finalize(
-    contractId,
-    proposalId
+    contractId: string,
+    proposalId: number
   ) {
     return this.contractPool.get(contractId).finish_proposal(
       {
         proposal_id: proposalId,
-        account_id: this.walletConnection.getAccountId()
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
       },
       Decimal.mul(100, TGas).toString()
     );
@@ -408,15 +402,16 @@ class NearService {
   ///////////////
   // DAO VIEWs //
   ///////////////
-  async getDaoState(contractId) {
+  async getDaoState(contractId: string) {
     const account = await this.near.account(contractId);
 
     return account.state();
   }
 
-  async getDaoById(daoAccount) {
+  async getDaoById(daoAccount: string) {
     const daoId = daoAccount.split('.')[0]
-    console.log(daoId)
+
+    // console.log(daoId)
     const data = await Promise.all([
       this.getDaoAmount(daoAccount),
       this.getDaoInfo(daoId),
@@ -431,6 +426,9 @@ class NearService {
     });
 
     console.log(data)
+    if (!data) {
+      return null;
+    }
 
     const amount = new Decimal(data[0]).toNumber()
     const ft_total_released = new Decimal(data[3].total_released);
@@ -443,36 +441,39 @@ class NearService {
 
     // token state
     const members = data[2].council.concat(data[2].community, data[2].foundation)
-    let member_promises = []
-    members.forEach(accountId => {
+    const member_promises: any[] = []
+    members.forEach((accountId: string) => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
     });
     console.log(member_promises)
     const balances = await Promise.all(member_promises).catch((e) => {
       console.log(e)
     });
-    let token_account = {}
-    members.forEach((accountId, index) => {
-      token_account[accountId] = new Decimal(balances[index]).toNumber()
+    const token_account = {}
+    members.forEach((accountId: string, index: number) => {
+      _.set(token_account, accountId, new Decimal((balances) ? balances[index] : 0).toNumber())
     });
     //console.log(token_account)
 
     // Mapping Doc files tags and categories
-    let file_list = [];
-    data[5].files.forEach(element => {
+    const file_list: any[] = [];
+    let doc: any = {}
+    data[5].files.forEach((element: any[]) => {
       const elementData = element[1].Curr
-      let doc = { tags: [] }
-      for (let [i, val] of elementData.tags.entries()) {
-        doc.tags[i] = data[5].map["Doc"].tags[val]
+      doc = {
+        name: elementData.name,
+        ext: elementData.ext,
+        description: elementData.description,
+        valid: elementData.valid,
+        category: data[5].map["Doc"].categories[elementData.category],
+        ipfs_cid: element[0],
+        version: elementData.v ?? '1.0',
+        tags: new Array(),
       }
-      doc.name = elementData.name
-      doc.ext = elementData.ext
-      doc.description = elementData.description
-      doc.valid = elementData.valid
-      doc.category = data[5].map["Doc"].categories[elementData.category]
-      doc.ipfs_cid = element[0]
-      doc.version = elementData.v ?? '1.0'
-
+      for (const [i, val] of elementData.tags.entries()) {
+        //doc.tags[i] = data[5].map["Doc"].tags[val]
+        doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
+      }
       file_list.push(doc)
     });
 
@@ -518,7 +519,7 @@ class NearService {
             wallets: []
           },
         },
-        tags: data[1].tags.map(tag => data[7][tag]), // system tag
+        tags: data[1].tags.map((tag: number) => data[7][tag]), // system tag
         treasury: {
           near: amount,
           w_delta: null,
@@ -544,39 +545,37 @@ class NearService {
     return null
   }
 
-  async getDaoAmount(contractId) {
+  async getDaoAmount(contractId: string) {
     const state = await this.getDaoState(contractId);
     const amountYokto = new Decimal(state.amount);
 
     return amountYokto.div(yoctoNear).toFixed(2);
   }
 
-  async getStatisticsMembers(contractId) {
+  async getStatisticsMembers(contractId: string) {
     return this.contractPool.get(contractId).statistics_members();
   }
 
-  async getStatisticsFt(contractId) {
+  async getStatisticsFt(contractId: string) {
     return this.contractPool.get(contractId).statistics_ft();
   }
 
-  async getProposals(contractId, fromIndex, limit) {
+  async getProposals(contractId: string, fromIndex: number, limit: number) {
     return this.contractPool.get(contractId).proposals({
       from_index: fromIndex ?? 0,
       limit: limit ?? 1000
     });
   }
 
-  async getDocFiles(contractId) {
+  async getDocFiles(contractId: string) {
     return this.contractPool.get(contractId).doc_files();
   }
 
-  async getFtBalanceOf(contractId, accountId) {
-    return this.contractPool.get(contractId).ft_balance_of({
-      account_id: accountId
-    });
+  async getFtBalanceOf(contractId: string, accountId: string) {
+    return this.contractPool.get(contractId).ft_balance_of({account_id: accountId});
   }
 
-  async getDaoConfig(contractId) {
+  async getDaoConfig(contractId: string) {
     return this.contractPool.get(contractId).dao_config();
   }
 

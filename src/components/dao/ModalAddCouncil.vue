@@ -36,7 +36,7 @@ import { useI18n } from "vue-i18n";
 import { requiredValidator, nearAccountValidator, isValid } from '@/utils/validators'
 import { getAccountIdPostfix } from "@/services/nearService/utils"
 import { getRandom } from '@/utils/integer'
-import { makeFileFromString } from "@/services/ipfsService/IpfsService"
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import {
   MDBBtn,
   MDBInput,

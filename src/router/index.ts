@@ -22,7 +22,7 @@ const routes = [
     path: '/create',
     name: 'dao-create',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreate.vue'),
-    beforeEnter: (to, from, next) => {
+    beforeEnter: (to: any, from: any, next: any) => {
       if (store.getters['near/isSignedIn']) {
         next()
       } else {

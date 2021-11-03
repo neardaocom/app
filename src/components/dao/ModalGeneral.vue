@@ -34,7 +34,7 @@ import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import { requiredValidator, isValid, minLength, maxLength } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
-import { makeFileFromString } from "@/services/ipfsService/IpfsService"
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
   MDBBtn,

@@ -1,15 +1,16 @@
 import { collection, addDoc } from "firebase/firestore"
 import store from '@/store'
+import _ from "lodash"
 
 export default {
 
-    install: (app) =>  {
+    install: (app: any) =>  {
 
         const db = store.getters['firebase/getFirestore']
 
-        const firestoreLog = async (lvl, target, action, level, message) => {
+        const firestoreLog = async (lvl: string, target: string, action: string, level: string, message: string) => {
             //const walletHash = store.getters['near/isSignedIn'] ? sha256(store.getters['near/getAccountId']).toString() : sha256(process.env.VUE_APP_DAO_DEFAULT).toString()
-            const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : process.env.VUE_APP_DAO_DEFAULT.split('.').slice(-2).join('.')
+            const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
             //const correlationId = walletHash.substr(0, walletHash.length / 2);
             const correlationId = walletHash;
             return await addDoc(collection(db, "logs"), {
@@ -27,7 +28,7 @@ export default {
             /**
              * System is unusable.
              */
-            emergency(lvl, target, action, message) {
+            emergency(lvl: string, target: string, action: string, message: string) {
                 firestoreLog(lvl, target, action, 'emergency', message)
             },
 
@@ -37,7 +38,7 @@ export default {
              * Example: Entire website down, database unavailable, etc. This should
              * trigger the SMS alerts and wake you up.
              */            
-            alert(lvl, target, action, message){
+            alert(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'alert', message)
             },
 
@@ -46,7 +47,7 @@ export default {
              *
              * Example: Application component unavailable, unexpected exception.
              */
-            critical(lvl, target, action, message){
+            critical(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'critical', message)
             },
 
@@ -54,7 +55,7 @@ export default {
              * Runtime errors that do not require immediate action but should typically
              * be logged and monitored.
              */
-            error(lvl, target, action, message){
+            error(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'error', message)
             },
 
@@ -64,14 +65,14 @@ export default {
              * Example: Use of deprecated APIs, poor use of an API, undesirable things
              * that are not necessarily wrong.
              */
-            warning(lvl, target, action, message){
+            warning(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'warning', message)
             },
 
             /**
              * Normal but significant events.
              */
-            notice(lvl, target, action, message){
+            notice(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'notice', message)
             },
 
@@ -80,14 +81,14 @@ export default {
              *
              * Example: User logs in, SQL logs.
              */
-            info(lvl, target, action, message){
+            info(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'info', message)
             },
 
             /**
              * Detailed debug information.
              */
-            debug(lvl, target, action, message){
+            debug(lvl: string, target: string, action: string, message: string){
                 firestoreLog(lvl, target, action, 'debug', message)
             }
         }

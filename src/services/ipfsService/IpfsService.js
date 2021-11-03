@@ -32,15 +32,15 @@ export class IpfsService {
 
   async storeWithProgress(files) {
     // show the root cid as soon as it's ready
-    const onRootCidReady = cid => {
+    const onRootCidReady = (cid) => {
       console.log('uploading files with cid:', cid)
     }
 
     // when each chunk is stored, update the percentage complete and display
-    const totalSize = files.map(f => f.size).reduce((a, b) => a + b, 0)
+    const totalSize = files.map((f) => f.size).reduce((a, b) => a + b, 0)
     let uploaded = 0
 
-    const onStoredChunk = size => {
+    const onStoredChunk = (size) => {
       uploaded += size
       const pct = totalSize / uploaded
       console.log(`Uploading... ${pct.toFixed(2)}% complete`)

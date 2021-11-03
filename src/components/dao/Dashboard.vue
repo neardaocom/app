@@ -39,7 +39,7 @@
       <!-- Novy clen -->
       <div class="col-12 col-md-6 text-start">
         <h5 v-if="activeProposals.length > 0" >{{ t("default.active_proposals") }}</h5>
-        <h5 v-else>{{ t("default.no_active_proposal") }}</h5>
+        <h6 v-else>{{ t("default.no_active_proposal") }}</h6>
       </div>
       <div v-for="(proposal, index) in activeProposals" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">

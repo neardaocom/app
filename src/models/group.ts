@@ -1,4 +1,4 @@
-export const trans = (value, t) => {
+export const trans = (value: string, t: any): string => {
     let trans = "";
     switch (value) {
         case "Council":

@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n'
+import _ from "lodash"
 
 /**
  * Supported locales
@@ -6,7 +7,7 @@ import { createI18n } from 'vue-i18n'
  * @returns array
  */
 function getSupportedLocales() {
-  return process.env.VUE_APP_I18N_SUPPORTED.split(',')
+  return _.toString(process.env.VUE_APP_I18N_SUPPORTED).split(',')
 }
 
 /**
@@ -19,7 +20,7 @@ function getSupportedLocales() {
 function getInitLocale() {
   let locale_browser = navigator.language.split('-').shift()
   const supported_locales = getSupportedLocales()
-  if (supported_locales.includes(locale_browser)) {
+  if (supported_locales.includes(_.toString(locale_browser))) {
     null
   } else {
     locale_browser = process.env.VUE_APP_I18N_LOCALE || 'en'
@@ -41,7 +42,7 @@ function loadLocaleMessages() {
     const matched = key.match(/([A-Za-z0-9-_]+)\./i)
     if (matched && matched.length > 1) {
       const locale = matched[1]
-      messages[locale] = locales(key)
+      _.set(messages, locale, locales(key))
     }
   })
   return messages

@@ -117,7 +117,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
-import { makeFileFromString } from "@/services/ipfsService/IpfsService"
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { getCategories, transform, getIndexInFiles } from "@/models/document"
 
 export default {
