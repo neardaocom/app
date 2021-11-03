@@ -119,10 +119,10 @@ export default {
   },
   methods: {
     getState() {
-      console.log('getState')
+      //console.log('getState')
       this.nearService.getDaoById(this.q_id)
         .then(r => {
-          console.log(r)
+          //console.log(r)
           //this.dao_state = r
           this.dao = r
           this.loaded = true

@@ -445,7 +445,7 @@ class NearService {
     members.forEach((accountId: string) => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
     });
-    console.log(member_promises)
+    //console.log(member_promises)
     const balances = await Promise.all(member_promises).catch((e) => {
       console.log(e)
     });

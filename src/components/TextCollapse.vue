@@ -1,5 +1,5 @@
 <template>
-    <section class="d-flex flex-column justify-content-center w-100">
+    <section v-if="content.length > 0" class="d-flex flex-column justify-content-center w-100">
         <div ref="refContent" class="p-1" :class="(collapse && isClose) ? 'overflow-hidden collapsed-height' : ''" v-html="content"></div>
         <div v-if="collapse" class="p-0 pt-0" >
             <hr v-if="isClose" class="mt-0 mb-1">
@@ -40,7 +40,8 @@ export default {
         }
     },
     mounted() {
-        this.contentHeight = this.$refs.refContent.clientHeight
+        if (this.content.length > 0)
+            this.contentHeight = this.$refs.refContent.clientHeight
     }
 }
 </script>

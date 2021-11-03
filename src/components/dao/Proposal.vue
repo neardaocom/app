@@ -22,7 +22,7 @@
       />
       <hr class="my-1">
       <!-- Desctiption -->
-      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription"/>
+      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription || ''"/>
       <!-- about -->
       <ul class="my-2 list-unstyled text-muted list-inline">
         <li class="list-inline-item me-4">

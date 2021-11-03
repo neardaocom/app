@@ -157,7 +157,7 @@ export default {
     const { t } = useI18n();
   
     const files = transform(docs.value)
-    console.log(files)
+    // console.log(files)
 
     const categoryOptions = getCategories(docs.value, t);
     const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))

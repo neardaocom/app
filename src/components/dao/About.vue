@@ -85,16 +85,15 @@ export default {
       type: Object,
       required: true,
     },
-    accountId: {
-      type: String,
-      required: true,
+  },
+  computed: {
+    nearWalletUrl() {
+      return this.$store.getters['near/getWalletUrl']
     },
   },
   setup() {
     const { t, n } = useI18n();
     return { t, n};
-  },
-  computed: {
   },
 };
 </script>
