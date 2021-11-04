@@ -18,7 +18,7 @@ export type ValidationParamsMax = {
 };
 
 const successValidation = (): Validation => { return { valid: true } }
-const errorValidation = (message: string, params: any = {}): Validation => { return { valid: false, message: message, params: params } }
+const errorValidation = (message: string, params: any = {}): Validation => { return { valid: false, message: 'validator_' + message, params: params } }
 
 export const isValid = (errors: any): boolean => {
     // console.log(Object.values(errors))
