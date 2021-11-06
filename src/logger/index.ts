@@ -1,4 +1,6 @@
 import { collection, addDoc } from "firebase/firestore"
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
 import store from '@/store'
 import _ from "lodash"
 
@@ -13,12 +15,12 @@ export default {
             const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
             //const correlationId = walletHash.substr(0, walletHash.length / 2);
             const correlationId = walletHash;
-            return await addDoc(collection(db, "logs"), {
+            return await addDoc(collection(db, "zk"), {
                 x_correlation_id: correlationId,
                 x_lvl: lvl,
                 x_target: target,
                 x_action: action,
-                timestamp: Date.now(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 level: level,
                 message: message
             });
