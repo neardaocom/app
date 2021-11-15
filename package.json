@@ -22,6 +22,7 @@
     "mdb-vue-file-upload": "./mdb/mdb-vue-file-upload-1.0.0.tgz",
     "mdb-vue-ui-kit": "./mdb/mdb-vue-ui-kit-1.5.0.tgz",
     "mdb-vue-wysiwyg-editor": "./mdb/mdb-vue-wysiwyg-editor-1.0.0.tgz",
+    "mitt": "^3.0.0",
     "near-api-js": "^0.41.0",
     "pdfvuer": "^2.0.1",
     "sanitize-html": "^2.5.3",

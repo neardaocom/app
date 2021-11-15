@@ -1,11 +1,10 @@
 <template>
   <router-view/>
+  <notification-toast/>
 </template>
 
 <script>
   export default {
-    components: {
-    },
     created() {
       this.$store.dispatch('near/init')
       this.$store.dispatch('ipfs/init')

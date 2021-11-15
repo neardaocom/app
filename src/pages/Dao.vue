@@ -128,6 +128,9 @@ export default {
           this.loaded = true
         })
         .catch((e) => {
+          this.$logger.info('D', 'app@pages/Dao', 'GetDao', `Dao with id ${this.q_id} failed to load`)
+          this.$notify.addWarning('Loading Dao', `Dao with id ${this.q_id} failed to load`)
+          this.$notify.show()
           console.log(e)
         })
     },
