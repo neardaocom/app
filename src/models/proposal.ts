@@ -1,5 +1,5 @@
 import { toSearch } from '@/utils/string'
-import { parseFromNanoseconds, toDateString, toTimeString } from "@/utils/date";
+import { parseFromNanoseconds, toTimeString } from "@/utils/date";
 import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
@@ -211,7 +211,7 @@ const getProgress = (proposal: any, durationTo: any): number => {
 
 const isVoted = (proposal: any, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
 
-const transform = (proposal: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any) => {
+const transform = (proposal: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any, d: any) => {
     const action = getAction(proposal[1].Curr)
     const actionType = getActionType(action)
     const durationTo = getDurationTo(proposal[1].Curr)
@@ -237,7 +237,7 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
         votingStats: getVotingStats(proposal[1].Curr, token_holders, token_blocked),
         duration: {
             value: durationTo,
-            date: toDateString(durationTo),
+            date: d(durationTo),
             time: toTimeString(durationTo),
         },
         choiceIndex: choiceIndex,

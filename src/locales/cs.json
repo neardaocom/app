@@ -1,4 +1,6 @@
 {
+  "_datepicker_format": "DD.MM.YYYY",
+  "_datepicker_placeholder": "DD.MM.YYYY",
   "account": "Účet",
   "activity": "Aktivita",
   "add_member": "Přidat člena",
@@ -152,6 +154,7 @@
   "add_ft_community_share": "Přidat komunitní podíl",
   "add_ft_public_share": "Přidat podíl pro volný prodej",
   "url_format": "Správný formát začíná http://... nebo https://...",
+  "unlocking_to": "Odemikání DO",
   "validator_required": "Povinné pole",
   "validator_at_least_characters": "Alepoň {min} znaky",
   "validator_maximum_characters": "Maximálně {max} znaků",
@@ -175,6 +178,7 @@
   "file_upload_remove_btn": "Odstranit",
   "agency": "Agentura",
   "corporation": "Společnost",
+  "company": "Společnost",
   "startup": "Startup",
   "project": "Projekt",
   "club": "Klub"

@@ -56,19 +56,23 @@ export default {
     const changeDoc = async () => { 
       console.log('Change doc')
       if (props.doc.name) {
-        // console.log(props.doc.ext)
-        switch (props.doc.ext) {
-          case 'html':
-            content.value = await props.doc.data.text()
-            break;
-          case 'pdf':
-            content.value = URL.createObjectURL(props.doc.data)
-            break;
-          case 'link':
-            content.value = await props.doc.data.text()
-            break;
-          default:
-            break;
+        try {
+          // console.log(props.doc.ext)
+          switch (props.doc.ext) {
+            case 'html':
+              content.value = await props.doc.data.text()
+              break;
+            case 'pdf':
+              content.value = URL.createObjectURL(props.doc.data)
+              break;
+            case 'link':
+              content.value = await props.doc.data.text()
+              break;
+            default:
+              break;
+          }
+        } catch (error) {
+          alert("Storage doesn't work")
         }
         // console.log(content.value)
       }

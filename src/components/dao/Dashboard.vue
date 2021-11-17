@@ -77,9 +77,9 @@ export default {
     },
   },
   setup(props) {
-    const { t, n } = useI18n();
+    const { t, n, d} = useI18n();
     const { dao, accountId } = toRefs(props)
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t))
+    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
     return { t, n, proposals };
   },
   computed: {

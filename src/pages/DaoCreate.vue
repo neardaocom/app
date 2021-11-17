@@ -82,8 +82,7 @@
                         <MDBStepperHead icon="3">
                             {{ t('default.tokens') }}
                         </MDBStepperHead>
-                        <MDBStepperContent>
-                            
+                        <MDBStepperContent class="pb-4 mb-2">
                              <div class = "row">
                                 <!-- ftName -->
                                 <div class="col-md-6">
@@ -112,7 +111,7 @@
                             <h6>{{ t('default.allocation')}}</h6>
                             <!-- ftCouncilShare -->
                             <div class="row mb-4">
-                                <div class="col-md-7 col-8">
+                                <div class="col-12 col-md-7">
                                     <MDBProgress :height="20" class="rounded">
                                         <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
                                         <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ ftCommunityShare }}%</MDBProgressBar>
@@ -122,30 +121,241 @@
                                 </div>
                             </div>
 
-                            <label for="dao-ft-council-share" class="form-label"><MDBBadge color="primary" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_council_share') }}</label>
-                            <br>
-                            <!-- ftCommunityShare -->
-                            <MDBSwitch v-if="false" :label="t('default.add_ft_community_share')" v-model="addFtCommunityShare"/>
-                            <label for="dao-ft-community-share" class="form-label"><MDBBadge color="info" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_community_share') }}</label>
-                            <div ref="refFtCommunityShare" class="row mt-1 mb-4">
-                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9"  v-model="ftCommunityShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftCommunityShare -->
-                                <label class="form-label col-md-6 col-3">{{ ftCommunityShare }}%</label>
+                            <!-- ftCouncilShare -->
+                            <p><MDBBadge color="primary" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.council') }}</span></p>
+                            <div class="row">
+                                <div class="col-12 col-md-7">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <MDBDatepicker
+                                                v-model="ftCouncilUnlockingFrom"
+                                                :disabled="ftCouncilShare == 0"
+                                                :label="t('default.unlocking_from')"
+                                                :format="t('default._datepicker_format')"
+                                            />
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                inputGroup
+                                                :formOutline="false"
+                                                :disabled="ftCouncilShare == 0"
+                                                v-model="ftCouncilUnlockingYear"
+                                                step="1" min="0" max="20"
+                                                type="number"
+                                                @blur="validateFtCouncilUnlocking()"
+                                                :isValid="!errors.ftCouncilUnlockingYear"
+                                                :isValidated="isValidated.ftCouncilUnlockingYear"
+                                            >
+                                                <template v-slot>
+                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                v-model="ftCouncilUnlockingMonth"
+                                                :disabled="ftCouncilShare == 0"
+                                                step="1" min="0" max="11"
+                                                type="number"
+                                                @blur="validateFtCouncilUnlocking()"
+                                                :isValid="!errors.ftCouncilUnlockingMonth"
+                                                :isValidated="isValidated.ftCouncilUnlockingMonth"
+                                                inputGroup
+                                                :formOutline="false"
+                                            >
+                                                <template v-slot>
+                                                    <span class="input-group-text">{{ t('default.year') }}</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        
+
+                            <!-- ftCommunityShare -->
+                            <p class="mt-4"><MDBBadge color="info" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.community') }}</span></p>
+                            <div class="row">
+                                <div class="col-11 col-md-6">
+                                    <MDBRange :disabled="false" v-model="ftCommunityShare" :min="0" :max="100" />
+                                </div>
+                                <div class="col-1">
+                                    <label class="form-label">{{ ftCommunityShare }}%</label>
+                                </div>
+                                <div class="col-12 col-md-7">
+                                    <div class="row mt-2">
+                                      <div class="col-12">
+                                        <label v-if="false" class="form-label">{{ t('default.unlocking') }}</label>
+                                      </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <MDBDatepicker
+                                              v-model="ftCommunityUnlockingFrom"
+                                              :disabled="ftCommunityShare == 0"
+                                              :label="t('default.unlocking_from')"
+                                              :format="t('default._datepicker_format')"
+                                            />
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                inputGroup
+                                                :formOutline="false"
+                                                :disabled="ftCommunityShare == 0"
+                                                v-model="ftCommunityUnlockingYear"
+                                                step="1" min="0" max="20"
+                                                type="number"
+                                                @blur="validateFtCommunityUnlocking()"
+                                                :isValid="!errors.ftCommunityUnlockingYear"
+                                                :isValidated="isValidated.ftCommunityUnlockingYear"
+                                            >
+                                              <template v-slot>
+                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                v-model="ftCommunityUnlockingMonth"
+                                                :disabled="ftCommunityShare == 0"
+                                                step="1" min="0" max="11"
+                                                type="number"
+                                                @blur="validateFtCommunityUnlocking()"
+                                                :isValid="!errors.ftCommunityUnlockingMonth"
+                                                :isValidated="isValidated.ftCommunityUnlockingMonth"
+                                                inputGroup
+                                                :formOutline="false"
+                                            >
+                                              <template v-slot>
+                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                              </template>
+                                            </MDBInput>
+                                        </div>
+                                  </div>
+                                </div>
+                            </div>
+
                             <!-- ftFundationShare -->
-                            <MDBSwitch v-if="false" :label="t('default.add_ft_fundation_share')" v-model="addFtFundationShare"/>
-                            <label for="dao-ft-fundation-share" class="form-label"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_fundation_share') }}</label>
-                            <div ref="refFtFundationShare" class="row mt-1 mb-4">
-                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9" v-model="ftFundationShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftFundationShare -->
-                                <label class="form-label col-md-6 col-3">{{ ftFundationShare }}%</label>
+                            <p class="mt-4"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.fundation') }}</span></p>
+                            <div class="row">
+                                <div class="col-11 col-md-6">
+                                    <MDBRange :disabled="false" v-model="ftFundationShare" :min="0" :max="100" />
+                                </div>
+                                <div class="col-1">
+                                    <label class="form-label">{{ ftFundationShare }}%</label>
+                                </div>
+                                <div class="col-12 col-md-7">
+                                    <div class="row mt-2">
+                                      <div class="col-12">
+                                        <label v-if="false" class="form-label">{{ t('default.unlocking') }}</label>
+                                      </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <MDBDatepicker
+                                              v-model="ftFundationUnlockingFrom"
+                                              :disabled="ftFundationShare == 0"
+                                              :label="t('default.unlocking_from')"
+                                              :format="t('default._datepicker_format')"
+                                            />
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                inputGroup
+                                                :formOutline="false"
+                                                :disabled="ftFundationShare == 0"
+                                                v-model="ftFundationUnlockingYear"
+                                                step="1" min="0" max="20"
+                                                type="number"
+                                                @blur="validateFtFundationUnlocking()"
+                                                :isValid="!errors.ftFundationUnlockingYear"
+                                                :isValidated="isValidated.ftFundationUnlockingYear"
+                                            >
+                                              <template v-slot>
+                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                v-model="ftFundationUnlockingMonth"
+                                                :disabled="ftFundationShare == 0"
+                                                step="1" min="0" max="11"
+                                                type="number"
+                                                @blur="validateFtFundationUnlocking()"
+                                                :isValid="!errors.ftFundationUnlockingMonth"
+                                                :isValidated="isValidated.ftFundationUnlockingMonth"
+                                                inputGroup
+                                                :formOutline="false"
+                                            >
+                                              <template v-slot>
+                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                              </template>
+                                            </MDBInput>
+                                        </div>
+                                  </div>
+                                </div>
                             </div>
 
                             <!-- ftPublicShare -->
-                            <MDBSwitch v-if="false" :label="t('default.add_ft_public_share')" v-model="addFtPublicShare"/>
-                            <label for="dao-ft-public-share" class="form-label"><MDBBadge color="warning" class="me-2">&nbsp;</MDBBadge>{{ t('default.add_ft_public_share') }}</label>
-                            <div ref="refFtPublicShare" class="row mt-1 mb-4">
-                                <MDBRange :disabled="false" wrapperClass="col-md-6 col-9" v-model="ftPublicShare" :min="0" :max="100" /> <!-- not @onChange, but watcher is set to ftPublicShare -->
-                                <label class="form-label col-md-6 col-3">{{ ftPublicShare }}%</label> 
+                            <p class="mt-4"><MDBBadge color="warning" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.public_sale') }}</span></p>
+                            <div class="row mb-4">
+                                <div class="col-11 col-md-6">
+                                    <MDBRange :disabled="false" v-model="ftPublicShare" :min="0" :max="100" />
+                                </div>
+                                <div class="col-1">
+                                    <label class="form-label">{{ ftPublicShare }}%</label>
+                                </div>
+                                <div class="col-12 col-md-7">
+                                    <div class="row mt-2">
+                                      <div class="col-12">
+                                        <label v-if="false" class="form-label">{{ t('default.unlocking') }}</label>
+                                      </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-4">
+                                            <MDBDatepicker
+                                              v-model="ftPublicUnlockingFrom"
+                                              :disabled="ftPublicShare == 0"
+                                              :label="t('default.unlocking_from')"
+                                              :format="t('default._datepicker_format')"
+                                            />
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                inputGroup
+                                                :formOutline="false"
+                                                :disabled="ftPublicShare == 0"
+                                                v-model="ftPublicUnlockingYear"
+                                                step="1" min="0" max="20"
+                                                type="number"
+                                                @blur="validateFtPublicUnlocking()"
+                                                :isValid="!errors.ftPublicUnlockingYear"
+                                                :isValidated="isValidated.ftPublicUnlockingYear"
+                                            >
+                                              <template v-slot>
+                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                        <div class="col-4">
+                                            <MDBInput
+                                                v-model="ftPublicUnlockingMonth"
+                                                :disabled="ftPublicShare == 0"
+                                                step="1" min="0" max="11"
+                                                type="number"
+                                                @blur="validateFtPublicUnlocking()"
+                                                :isValid="!errors.ftPublicUnlockingMonth"
+                                                :isValidated="isValidated.ftPublicUnlockingMonth"
+                                                inputGroup
+                                                :formOutline="false"
+                                            >
+                                              <template v-slot>
+                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                              </template>
+                                            </MDBInput>
+                                        </div>
+                                  </div>
+                                </div>
                             </div>
 
                         </MDBStepperContent>
@@ -329,10 +539,10 @@ import { compareByText } from '@/utils/object'
 import {
     MDBContainer,
     MDBInput, MDBSelect,
-    MDBSwitch, MDBBtn,
+    MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
     MDBRange, MDBAlert, MDBIcon , MDBTooltip,
-    MDBProgress, MDBProgressBar, MDBBadge //MDBTable
+    MDBProgress, MDBProgressBar, MDBBadge, MDBDatepicker
 } from 'mdb-vue-ui-kit';
 
 export default({
@@ -340,7 +550,7 @@ export default({
         Header, Footer,
         MDBContainer, Breadcrumb,
         MDBInput, MDBSelect,
-        MDBSwitch, MDBBtn,
+        MDBBtn, MDBDatepicker,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert, MDBIcon, MDBTooltip,
         MDBProgress, MDBProgressBar, MDBBadge, //MDBTable
@@ -350,8 +560,14 @@ export default({
         mask
     },
     setup() {
-        const { t, n } = useI18n();
+        const { t, n, d, locale } = useI18n();
         const exampleModal = ref(false)
+
+        const unlockingInit = new Date();
+        const unlockingInitFormated = d(unlockingInit) // unlockingInit.toLocaleDateString(locale.value).replace(' ', '')
+        
+        console.log(locale.value)
+        console.log()
 
         const contract = ref(undefined)
         // form feilds
@@ -373,9 +589,23 @@ export default({
         const ftInitDistribution = ref(100_000) // 0 ... ftAmount 10%
         const ftInitDistributionInit = ref(n(100_000))
         const ftCouncilShare = ref(100) // 0 ... 100 all shareing 
-        const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
+        const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftPublicShare = ref(0) // 0 ... 100 all shareing
+        // unlocking
+        const ftCouncilUnlockingFrom = ref(unlockingInitFormated)
+        const ftCouncilUnlockingYear = ref(4)
+        const ftCouncilUnlockingMonth = ref(0)
+        const ftCommunityUnlockingFrom = ref('')
+        const ftCommunityUnlockingYear = ref(0)
+        const ftCommunityUnlockingMonth = ref(0)
+        const ftFundationUnlockingFrom = ref('')
+        const ftFundationUnlockingYear = ref(0)
+        const ftFundationUnlockingMonth = ref(0)
+        const ftPublicUnlockingFrom = ref('')
+        const ftPublicUnlockingYear = ref(0)
+        const ftPublicUnlockingMonth = ref(0)
+        
         // voting 
         const voteSpamThreshold = ref(80) // 0 .. 100 
         const voteDurationDays = ref(3)
@@ -408,7 +638,19 @@ export default({
             voteDurationHours: false,
             voteQuorum: false,
             voteApproveThreshold: false,
-            voteOnlyOnce: false
+            voteOnlyOnce: false,
+            ftCouncilUnlockingFrom: false,
+            ftCouncilUnlockingYear: false,
+            ftCouncilUnlockingMonth: false,
+            ftCommunityUnlockingFrom: false,
+            ftCommunityUnlockingYear: false,
+            ftCommunityUnlockingMonth: false,
+            ftFundationUnlockingFrom: false,
+            ftFundationUnlockingYear: false,
+            ftFundationUnlockingMonth: false,
+            ftPublicUnlockingFrom: false,
+            ftPublicUnlockingYear: false,
+            ftPublicUnlockingMonth: false,
         })
 
         const errors = reactive({
@@ -430,10 +672,13 @@ export default({
         ]
         
         return{
-           t, n, exampleModal, account, name, slogan, type, typeOptions,
+           t, n, d, exampleModal, account, name, slogan, type, typeOptions,
            purpose, location, ftName, ftAmount, ftAmountInit, ftInitDistribution, ftInitDistributionInit,
-           ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare, 
-           voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum, 
+           ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare,
+           ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFundationUnlockingFrom, ftPublicUnlockingFrom,
+           unlockingInitFormated,
+           ftCouncilUnlockingYear, ftCouncilUnlockingMonth, ftCommunityUnlockingYear, ftCommunityUnlockingMonth, ftFundationUnlockingYear, ftFundationUnlockingMonth, ftPublicUnlockingYear, ftPublicUnlockingMonth,
+           voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum,
            voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
            createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions
@@ -462,15 +707,38 @@ export default({
             }
             this.validateFtShares()
         },
-
-        ftFundationShare(){
+        ftFundationShare(newValue){
+            console.log(this.ftFundationUnlockingFrom.length)
+            if (newValue > 0 && this.ftFundationUnlockingFrom.length == 0) {
+                this.ftFundationUnlockingFrom = this.ftCouncilUnlockingFrom
+                this.ftFundationUnlockingYear = this.ftCouncilUnlockingYear
+                this.ftFundationUnlockingMonth = this.ftCouncilUnlockingMonth
+            } else if (newValue == 0) {
+                //this.ftFundationUnlockingFrom = ''
+            }
             this.validateFtShares()
+            if (newValue == 0) this.validateFtFundationUnlockingFrom()
         },
-        ftCommunityShare(){
+        ftCommunityShare(newValue){
+            if (newValue > 0 && this.ftCommunityUnlockingFrom.length == 0) {
+                this.ftCommunityUnlockingFrom = this.ftCouncilUnlockingFrom  
+                this.ftCommunityUnlockingYear = this.ftCouncilUnlockingYear
+                this.ftCommunityUnlockingMonth = this.ftCouncilUnlockingMonth
+            } else if (newValue == 0) {
+                //this.ftCommunityUnlockingFrom = ''
+            }
             this.validateFtShares()
+            if (newValue == 0) this.validateFtCommunityUnlockingFrom()
         },
-        ftPublicShare(){
-            this.validateFtShares()
+        ftPublicShare(newValue){
+            if (newValue > 0 && this.ftPublicUnlockingFrom.length == 0) {
+                this.ftPublicUnlockingFrom = this.ftCouncilUnlockingFrom
+                this.ftPublicUnlockingYear = this.ftCouncilUnlockingYear
+                this.ftPublicUnlockingMonth = this.ftCouncilUnlockingMonth
+            } else if (newValue == 0) {
+                //this.ftPublicUnlockingFrom = ''
+            }
+            if (newValue == 0) this.validateFtPublicUnlockingFrom()
         },
 
         type(){
@@ -673,6 +941,70 @@ export default({
             if(isValidated){
                 this.isValidated.ftInitDistribution = true
             }
+        },
+
+        validateFtCouncilUnlockingFrom() {
+            const field = "ftCouncilUnlockingFrom"
+            const requiredVal = requiredValidator(this.ftCouncilUnlockingFrom)
+            // const isDateVal = true // TODO: add date validator
+            if (this.ftCouncilShare > 0) {
+                if (requiredVal.valid === false) {
+                    this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+                } else {
+                    this.errors[field] = null
+                }
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.ftCouncilUnlockingFrom = true
+        },
+
+        validateFtCommunityUnlockingFrom() {
+            const field = "ftCommunityUnlockingFrom"
+            const requiredVal = requiredValidator(this.ftCommunityUnlockingFrom)
+            // const isDateVal = true // TODO: add date validator
+            if (this.ftCommunityShare > 0) {
+                if (requiredVal.valid === false) {
+                    this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+                } else {
+                    this.errors[field] = null
+                }
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.ftCommunityUnlockingFrom = true
+        },
+
+        validateFtFundationUnlockingFrom() {
+            const field = "ftFundationUnlockingFrom"
+            const requiredVal = requiredValidator(this.ftFundationUnlockingFrom)
+            // const isDateVal = true // TODO: add date validator
+            if (this.ftFundationShare > 0) {
+                if (requiredVal.valid === false) {
+                    this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+                } else {
+                    this.errors[field] = null
+                }
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.ftFundationUnlockingFrom = true
+        },
+
+        validateFtPublicUnlockingFrom() {
+            const field = "ftPublicUnlockingFrom"
+            const requiredVal = requiredValidator(this.ftPublicUnlockingFrom)
+            // const isDateVal = true // TODO: add date validator
+            if (this.ftPublicShare > 0) {
+                if (requiredVal.valid === false) {
+                    this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+                } else {
+                    this.errors[field] = null
+                }
+            } else {
+                this.errors[field] = null
+            }
+            this.isValidated.ftPublicUnlockingFrom = true
         },
 
         changeftInitDistribution(event){
@@ -899,6 +1231,7 @@ export default({
         
     },
     mounted() {
+        
         // redirect after dao created
         if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
             const accountId = localStorage.create_dao_account

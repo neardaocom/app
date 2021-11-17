@@ -155,7 +155,7 @@ class NearService {
 
     const args = {
       total_supply: ftAmount,
-      init_distribution: ftInitDistribution,
+      founders_init_distribution: ftInitDistribution,
       ft_metadata: {
         spec: "ft-1.0.0",
         name: ftName,
@@ -175,7 +175,11 @@ class NearService {
         community_share: ftCommunityShare,
         vote_spam_threshold: voteSpamThreshold
       },
-      release_config: 'Voting',
+      release_config: [
+        ["Council", {"Linear": {"from":null, "duration":3600}}],
+        ["Community", {"Linear": {"from":null, "duration":3600}}],
+        ["Foundation", "None"]
+      ],
       vote_policy_configs: [
         {
           proposal_kind: 'Pay',
@@ -227,6 +231,14 @@ class NearService {
         },
         {
           proposal_kind: 'InvalidateFile',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'DistributeFT',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -431,7 +443,7 @@ class NearService {
     }
 
     const amount = new Decimal(data[0]).toNumber()
-    const ft_total_released = new Decimal(data[3].total_released);
+    const ft_total_released = new Decimal(data[3].total_distributed);
     const ft_free_released = new Decimal(data[3].free);
     const ft_shared = ft_total_released.minus(data[3].free);
     const ft_council_shared = new Decimal(data[3].council_ft_shared)
