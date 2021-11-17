@@ -85,32 +85,31 @@
                         <MDBStepperContent class="pb-4 mb-2">
                              <div class = "row">
                                 <!-- ftName -->
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="dao-ft-name" class="form-label">{{ t('default.dao_ft_name') }}</label>
                                     <MDBInput wrapperClass="mb-4"  id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
                                 </div>
 
                                 <!-- ftAmount -->
-                                <div class="col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @input="changeFtAmount" @keyup="validateFtAmount" @blur="validateFtAmount"  :model-value="ftAmountInit" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
+                                    <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @input="changeFtAmount" @keyup="validateFtAmount" @blur="validateFtAmount"  :model-value="ftAmountFormated" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
                                 </div>
                              </div>
 
-                            <!-- ftInitDistribution -->
-                            <div class = "row">
+                            <!-- ftCouncilInitDistribution -->
+                            <div v-if="false" class="row">
                                 <div class="col-md-6">
-                                    <label for="dao-ft-init-distribution" class="form-label">{{ t('default.dao_ft_init_distribution') }}</label>
-                                    <MDBInput wrapperClass="mb-4" id="dao-ft-init-distribution" @input="changeftInitDistribution" @keyup="validateFtInitDistribution" @blur="validateFtInitDistribution"  :model-value="ftInitDistributionInit" :isValid="!errors.ftInitDistribution" :isValidated="isValidated.ftInitDistribution" :invalidFeedback="errors.ftInitDistribution"/>
+                                    
                                 </div>
                             </div>
 
                             <!-- error message for shares -->
-                            <div ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
+                            <div v-show="false" ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
 
-                            <h6>{{ t('default.allocation')}}</h6>
+                            <h6 v-if="false">{{ t('default.allocation')}}</h6>
                             <!-- ftCouncilShare -->
-                            <div class="row mb-4">
+                            <div v-if="false" class="row mb-4">
                                 <div class="col-12 col-md-7">
                                     <MDBProgress :height="20" class="rounded">
                                         <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
@@ -122,11 +121,40 @@
                             </div>
 
                             <!-- ftCouncilShare -->
-                            <p><MDBBadge color="primary" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.council') }}</span></p>
                             <div class="row">
+                                <div class="col-12">
+                                    <h5>{{ t('default.dao_council') }}</h5>
+                                </div>
                                 <div class="col-12 col-md-7">
                                     <div class="row">
                                         <div class="col-4">
+                                            <label class="form-label">{{ t('default.dao_ft_init_distribution') }}</label>
+                                            <MDBInput
+                                              v-if="false"
+                                              @input="changeftCouncilInitDistribution"
+                                              @keyup="validateFtCouncilInitDistribution"
+                                              @blur="validateFtCouncilInitDistribution"
+                                              :model-value="ftCouncilInitDistributionFormated"
+                                              :isValid="!errors.ftCouncilInitDistribution"
+                                              :isValidated="isValidated.ftCouncilInitDistribution"
+                                              :invalidFeedback="errors.ftCouncilInitDistribution"
+                                            />
+                                            <MDBInput
+                                                inputGroup
+                                                :formOutline="false"
+                                                :disabled="ftCouncilShare == 0"
+                                                v-model="ftCouncilInitDistributionPercent"
+                                                step="1" min="0" max="100"
+                                                type="number"
+                                                :isValid="!errors.ftCouncilInitDistributionPercent"
+                                                :isValidated="isValidated.ftCouncilInitDistributionPercent"
+                                            >
+                                                <template v-slot>
+                                                <span class="input-group-text">%</span>
+                                                </template>
+                                            </MDBInput>
+                                        </div>
+                                        <div v-if="false" class="col-4">
                                             <MDBDatepicker
                                                 v-model="ftCouncilUnlockingFrom"
                                                 :disabled="ftCouncilShare == 0"
@@ -135,6 +163,7 @@
                                             />
                                         </div>
                                         <div class="col-4">
+                                            <label class="form-label">{{ t('default.unlocking') }}</label>
                                             <MDBInput
                                                 inputGroup
                                                 :formOutline="false"
@@ -147,11 +176,12 @@
                                                 :isValidated="isValidated.ftCouncilUnlockingYear"
                                             >
                                                 <template v-slot>
-                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                <span class="input-group-text">{{ t('default.year') }}</span>
                                                 </template>
                                             </MDBInput>
                                         </div>
                                         <div class="col-4">
+                                            <label class="form-label">&nbsp;</label>
                                             <MDBInput
                                                 v-model="ftCouncilUnlockingMonth"
                                                 :disabled="ftCouncilShare == 0"
@@ -164,7 +194,7 @@
                                                 :formOutline="false"
                                             >
                                                 <template v-slot>
-                                                    <span class="input-group-text">{{ t('default.year') }}</span>
+                                                    <span class="input-group-text">{{ t('default.month') }}</span>
                                                 </template>
                                             </MDBInput>
                                         </div>
@@ -173,15 +203,18 @@
                             </div>
 
                             <!-- ftCommunityShare -->
-                            <p class="mt-4"><MDBBadge color="info" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.community') }}</span></p>
                             <div class="row">
-                                <div class="col-11 col-md-6">
-                                    <MDBRange :disabled="false" v-model="ftCommunityShare" :min="0" :max="100" />
+                                <div class="mt-4 col-12">
+                                    <h5>{{ t('default.community_fund') }}</h5>
                                 </div>
-                                <div class="col-1">
-                                    <label class="form-label">{{ ftCommunityShare }}%</label>
+                                <div class="col-10 col-md-6">
+                                    <label class="form-label">{{ t('default.allocation') }}</label>
+                                    <MDBRange :disabled="false" v-model="ftCommunityShare" :min="0" :max="100"/>
                                 </div>
-                                <div class="col-12 col-md-7">
+                                <div class="col-2 pt-4">
+                                    <label class="form-label pt-2">{{ n(ftCommunityShare * ftAmount / 100.0) }}</label>
+                                </div>
+                                <div v-if="false" class="col-12 col-md-7">
                                     <div class="row mt-2">
                                       <div class="col-12">
                                         <label v-if="false" class="form-label">{{ t('default.unlocking') }}</label>
@@ -209,7 +242,7 @@
                                                 :isValidated="isValidated.ftCommunityUnlockingYear"
                                             >
                                               <template v-slot>
-                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                <span class="input-group-text">{{ t('default.year') }}</span>
                                                 </template>
                                             </MDBInput>
                                         </div>
@@ -226,7 +259,7 @@
                                                 :formOutline="false"
                                             >
                                               <template v-slot>
-                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                                 <span class="input-group-text">{{ t('default.month') }}</span>
                                               </template>
                                             </MDBInput>
                                         </div>
@@ -235,8 +268,10 @@
                             </div>
 
                             <!-- ftFundationShare -->
-                            <p class="mt-4"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.fundation') }}</span></p>
-                            <div class="row">
+                            <div v-if="false" class="row">
+                                <div class="col-12">
+                                    <p class="mt-4"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.fundation') }}</span></p>
+                                </div>
                                 <div class="col-11 col-md-6">
                                     <MDBRange :disabled="false" v-model="ftFundationShare" :min="0" :max="100" />
                                 </div>
@@ -271,7 +306,7 @@
                                                 :isValidated="isValidated.ftFundationUnlockingYear"
                                             >
                                               <template v-slot>
-                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                <span class="input-group-text">{{ t('default.year') }}</span>
                                                 </template>
                                             </MDBInput>
                                         </div>
@@ -288,7 +323,7 @@
                                                 :formOutline="false"
                                             >
                                               <template v-slot>
-                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                                 <span class="input-group-text">{{ t('default.month') }}</span>
                                               </template>
                                             </MDBInput>
                                         </div>
@@ -297,8 +332,10 @@
                             </div>
 
                             <!-- ftPublicShare -->
-                            <p class="mt-4"><MDBBadge color="warning" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.public_sale') }}</span></p>
-                            <div class="row mb-4">
+                            <div v-if="false" class="row mb-4">
+                                <div class="col-12">
+                                    <p class="mt-4"><MDBBadge color="warning" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.public_sale') }}</span></p>
+                                </div>
                                 <div class="col-11 col-md-6">
                                     <MDBRange :disabled="false" v-model="ftPublicShare" :min="0" :max="100" />
                                 </div>
@@ -333,7 +370,7 @@
                                                 :isValidated="isValidated.ftPublicUnlockingYear"
                                             >
                                               <template v-slot>
-                                                <span class="input-group-text">{{ t('default.month') }}</span>
+                                                <span class="input-group-text">{{ t('default.year') }}</span>
                                                 </template>
                                             </MDBInput>
                                         </div>
@@ -350,7 +387,7 @@
                                                 :formOutline="false"
                                             >
                                               <template v-slot>
-                                                 <span class="input-group-text">{{ t('default.year') }}</span>
+                                                 <span class="input-group-text">{{ t('default.month') }}</span>
                                               </template>
                                             </MDBInput>
                                         </div>
@@ -467,20 +504,23 @@
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.amount')}}:</dt>
                                                 <dd class="col-6 col-md-6">{{ n(ftAmount) }}</dd>
 
-                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_ft_init_distribution') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ n(ftInitDistribution) }}</dd>
-
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_council') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{ftCouncilShare}}%</dd>
+                                                
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.dao_ft_init_distribution') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ n(ftCouncilInitDistributionPercent) }}%</dd>
 
-                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.fundation') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftFundationShare}}%</dd>
+                                                <dt class="col-6 col-md-6 ps-4">{{ t('default.unlocking') }}:</dt>
+                                                <dd class="col-6 col-md-6">{{ ftCouncilUnlockingYear }} {{ t('default.year')}} <span v-if="ftCouncilUnlockingMonth > 0">{{ ftCouncilUnlockingMonth }} {{ t('default.month')}}</span></dd>
 
-                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.community_programs') }}:</dt>
+                                                <dt v-if="false" class="col-6 col-md-6 ps-3">{{ t('default.fundation') }}:</dt>
+                                                <dd v-if="false" class="col-6 col-md-6">{{ftFundationShare}}%</dd>
+
+                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.community_fund') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{ftCommunityShare}}%</dd>
 
-                                                <dt class="col-6 col-md-6 ps-3">{{ t('default.public_token') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ftPublicShare}}%</dd>
+                                                <dt v-if="false" class="col-6 col-md-6 ps-3">{{ t('default.public_token') }}:</dt>
+                                                <dd v-if="false" class="col-6 col-md-6">{{ftPublicShare}}%</dd>
                                             </dl>
                                         </div>
 
@@ -585,11 +625,12 @@ export default({
         // tokens
         const ftName = ref('')   // governance token
         const ftAmount = ref(1_000_000) 
-        const ftAmountInit = ref(n(1_000_000)) 
-        const ftInitDistribution = ref(100_000) // 0 ... ftAmount 10%
-        const ftInitDistributionInit = ref(n(100_000))
-        const ftCouncilShare = ref(100) // 0 ... 100 all shareing 
-        const ftCommunityShare = ref(0) // 0 ... 100 all shareing 
+        const ftAmountFormated = ref(n(1_000_000)) 
+        const ftCouncilInitDistribution = ref(100_000) // 0 ... ftAmount 10%
+        const ftCouncilInitDistributionFormated = ref(n(100_000))
+        const ftCouncilInitDistributionPercent = ref(10)
+        const ftCouncilShare = ref(20) // 0 ... 100 all shareing 
+        const ftCommunityShare = ref(80) // 0 ... 100 all shareing 
         const ftFundationShare = ref(0) // 0 ... 100 all shareing 
         const ftPublicShare = ref(0) // 0 ... 100 all shareing
         // unlocking
@@ -631,7 +672,8 @@ export default({
             councilAdd: false,
             ftName: false,
             ftAmount: false,
-            ftInitDistribution: false,
+            ftCouncilInitDistribution: false,
+            ftCouncilInitDistributionPercent: false,
             ftShares: false,
             voteSpamThreshold: false,
             voteDurationDays: false,
@@ -673,7 +715,7 @@ export default({
         
         return{
            t, n, d, exampleModal, account, name, slogan, type, typeOptions,
-           purpose, location, ftName, ftAmount, ftAmountInit, ftInitDistribution, ftInitDistributionInit,
+           purpose, location, ftName, ftAmount, ftAmountFormated, ftCouncilInitDistribution, ftCouncilInitDistributionFormated, ftCouncilInitDistributionPercent,
            ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare,
            ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFundationUnlockingFrom, ftPublicUnlockingFrom,
            unlockingInitFormated,
@@ -744,7 +786,7 @@ export default({
         type(){
             const newType = this.typeOptions.find( type => type.selected === true )
             if(newType !== undefined){
-                [this.ftAmountInit, this.ftAmount, this.ftInitDistributionInit, this.ftInitDistribution, this.voteApproveThreshold, this.voteQuorum, this.voteDurationDays, this.voteDurationHours] = [...this.defaultTypeOptions[newType.mdbKey]]
+                [this.ftAmountFormated, this.ftAmount, this.ftCouncilInitDistributionFormated, this.ftCouncilInitDistribution, this.voteApproveThreshold, this.voteQuorum, this.voteDurationDays, this.voteDurationHours] = [...this.defaultTypeOptions[newType.mdbKey]]
             }
             
         }
@@ -912,7 +954,7 @@ export default({
             } else {
                 this.errors[field] = null
             }
-            this.validateFtInitDistribution(false)
+            this.validateFtCouncilInitDistribution(false)
             this.isValidated.ftAmount = true
         },
 
@@ -921,12 +963,12 @@ export default({
             this.ftAmount = +event.target.value.replace(/[^0-9]/g,'')
         },
 
-        validateFtInitDistribution(isValidated = true){
-            const field = "ftInitDistribution"
-            const requiredVal = requiredValidator(this.ftInitDistribution)
-            const isNumberVal = isNumber(this.ftInitDistribution)
-            const minNumberVal = minNumber(this.ftInitDistribution, 1)
-            const maxNumberVal = maxNumber(this.ftInitDistribution, this.ftAmount)
+        validateFtCouncilInitDistribution(isValidated = true){
+            const field = "ftCouncilInitDistribution"
+            const requiredVal = requiredValidator(this.ftCouncilInitDistribution)
+            const isNumberVal = isNumber(this.ftCouncilInitDistribution)
+            const minNumberVal = minNumber(this.ftCouncilInitDistribution, 1)
+            const maxNumberVal = maxNumber(this.ftCouncilInitDistribution, this.ftAmount)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -939,7 +981,7 @@ export default({
                 this.errors[field] = null
             }
             if(isValidated){
-                this.isValidated.ftInitDistribution = true
+                this.isValidated.ftCouncilInitDistribution = true
             }
         },
 
@@ -1007,9 +1049,9 @@ export default({
             this.isValidated.ftPublicUnlockingFrom = true
         },
 
-        changeftInitDistribution(event){
+        changeftCouncilInitDistribution(event){
             event.target.value = this.n(+event.target.value.replace(/[^0-9]/g,''))
-            this.ftInitDistribution = +event.target.value.replace(/[^0-9]/g,'')
+            this.ftCouncilInitDistribution = +event.target.value.replace(/[^0-9]/g,'')
         },
 
         validateFtShares(){
@@ -1120,7 +1162,7 @@ export default({
             this.validateCouncil()
             this.validateFtName()
             this.validateFtAmount()
-            this.validateFtInitDistribution()
+            this.validateFtCouncilInitDistribution()
             this.validateFtShares()
             this.validateVoteSpamThreshold()
             this.validateVoteDurationDays()
@@ -1174,7 +1216,7 @@ export default({
                     , this.location // location
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
-                    , this.ftInitDistribution // ftInitDistribution
+                    , this.ftCouncilInitDistribution // ftCouncilInitDistribution
                     , this.ftCouncilShare // ftCouncilShare
                     , this.ftFundationShare // ftFundationShare
                     , this.ftCommunityShare // ftCommunityShare

@@ -443,13 +443,13 @@ class NearService {
     }
 
     const amount = new Decimal(data[0]).toNumber()
-    const ft_total_released = new Decimal(data[3].total_distributed);
-    const ft_free_released = new Decimal(data[3].free);
-    const ft_shared = ft_total_released.minus(data[3].free);
-    const ft_council_shared = new Decimal(data[3].council_ft_shared)
-    const ft_community_shared = new Decimal(data[3].community_ft_shared)
-    const ft_foundation_shared = new Decimal(data[3].foundation_ft_shared)
-    const ft_public_sale_shared = ft_shared.minus(ft_council_shared).minus(ft_community_shared).minus(ft_foundation_shared)
+    const ft_total_released = 1 //new Decimal(data[3].total_distributed);
+    const ft_free_released = 0 // new Decimal(data[3].free);
+    const ft_shared = 1 // ft_total_released.minus(data[3].free);
+    const ft_council_shared = 1 // new Decimal(data[3].council_ft_shared)
+    const ft_community_shared = 1 // new Decimal(data[3].community_ft_shared)
+    const ft_foundation_shared = 1 // new Decimal(data[3].foundation_ft_shared)
+    const ft_public_sale_shared = 0 // ft_shared.minus(ft_council_shared).minus(ft_community_shared).minus(ft_foundation_shared)
 
     // token state
     const members = data[2].council.concat(data[2].community, data[2].foundation)
@@ -504,14 +504,14 @@ class NearService {
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
         token_unlocked: {
-          council: ft_council_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          community: ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          investor: ft_foundation_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          public_sale: ft_public_sale_shared.dividedBy(ft_shared).times(100).round().toNumber()
+          council: 0, // ft_council_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          community: 0, // ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          investor: 0, // ft_foundation_shared.dividedBy(ft_shared).times(100).round().toNumber(),
+          public_sale: 0 // TODO: ft_public_sale_shared.dividedBy(ft_shared).times(100).round().toNumber()
         },
-        token_released: ft_total_released.toNumber(),
-        token_free: ft_free_released.toNumber(),
-        token_holded: ft_total_released.minus(ft_free_released).toNumber(),
+        token_released: 1, // ft_total_released.toNumber(),
+        token_free: 0, //ft_free_released.toNumber(),
+        token_holded: 1, //ft_total_released.minus(ft_free_released).toNumber(),
         token_holders: token_account,
         groups: {
           council: {
