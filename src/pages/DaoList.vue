@@ -197,6 +197,10 @@ export default {
         this.tags = transTags(r[1], this.t)
         this.loadingProgress = 100
       }).catch((e) => {
+        this.$logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
+        this.$logger.error('B', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
+        this.$notify.warning(this.t('default.notify_dao_list_fetching_fail_title'), this.t('default.notify_dao_list_fetching_fail_message'))
+        this.$notify.flush()
         console.log(e)
       })
       this.loadingProgress = getRandom(25, 75)

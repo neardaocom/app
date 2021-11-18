@@ -3,6 +3,7 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import store from '@/store'
 import _ from "lodash"
+import sha256 from 'crypto-js/sha256'
 
 export default {
 
@@ -11,11 +12,11 @@ export default {
         const db = store.getters['firebase/getFirestore']
 
         const firestoreLog = async (lvl: string, target: string, action: string, level: string, message: string) => {
-            //const walletHash = store.getters['near/isSignedIn'] ? sha256(store.getters['near/getAccountId']).toString() : sha256(process.env.VUE_APP_DAO_DEFAULT).toString()
-            const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
-            //const correlationId = walletHash.substr(0, walletHash.length / 2);
-            const correlationId = walletHash;
-            return await addDoc(collection(db, "zk"), {
+            const walletHash = store.getters['near/isSignedIn'] ? sha256(store.getters['near/getAccountId']).toString() : sha256( _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')).toString()
+            const correlationId = walletHash.substr(0, walletHash.length / 2);
+            //const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
+            //const correlationId = walletHash;
+            return await addDoc(collection(db, "logs"), {
                 x_correlation_id: correlationId,
                 x_lvl: lvl,
                 x_target: target,

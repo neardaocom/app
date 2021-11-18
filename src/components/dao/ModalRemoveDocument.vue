@@ -199,6 +199,10 @@ export default {
             this.formCategory = ''
             this.active = false
         }).catch((e) => {
+            this.$logger.error('D', 'app@components/dao/ModalRemoveDocument', 'InvalideDocument-blockchain', `Failed to remove document [${this.formName}]`)
+            this.$logger.error('B', 'app@components/dao/ModalRemoveDocument', 'InvalideDocument-blockchain', `Failed to remove document [${this.formName}]`)
+            this.$notify.danger(this.t('default.notify_remove_document_fail_title'), this.t('default.notify_remove_document_fail_message', {document: this.formName}))
+            this.$notify.flush()
             console.log(e)
         })
       }

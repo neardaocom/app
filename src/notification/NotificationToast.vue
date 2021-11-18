@@ -23,7 +23,7 @@
 
 <script>
 import { MDBToast } from 'mdb-vue-ui-kit'
-import { reactive, watch } from 'vue'
+import { reactive, watch, toRaw } from 'vue'
 import { emitter } from './events';
 import _ from "lodash";
 
@@ -40,7 +40,6 @@ export default {
         
 
         watch(() => _.cloneDeep(notifications.list), () => {
-            console.log( notifications.list.filter(el => !(el.visible === false && el.shown === true)))
             notifications.list.forEach( (el, i ,a) => {
                 if(el.visible === false && el.shown === true){
                     a.splice(i, 1)
@@ -55,29 +54,39 @@ export default {
     methods: {
         addNotification(args){
             this.notifications.list.push({visible: false, shown: false, ...args})
+            this.setLocalStorage(false)
         },
 
         showNotifications(){
             this.$nextTick(function(){            
-                console.log(this.notifications.list)
                 this.notifications.list.forEach( (el, i ,a) => {
                     a[i].visible = true;
                     a[i].shown = true;
                 })
             })
+            this.setLocalStorage(true)
+            
+        },
 
+        setLocalStorage(setEmpty){
+            if(!setEmpty){
+                const data = JSON.stringify(toRaw(this.notifications.list))
+                localStorage.setItem('notifications', data);
+            }else{
+                localStorage.setItem('notifications', JSON.stringify([]))
+            }
+            
         }
     },
 
-    // watch: {
-    //     notifications(n) {
-    //         console.log(n);
-    //         //this.notifications = this.notifications.filter(el => !(el.visible === false && el.shown === true))
-    //         console.log(this.notifications);
-    //     },
-    // },   
-
     mounted() {
+        const ls = localStorage.getItem('notifications')
+        if( ls !== ''){
+            const parseLs = JSON.parse(ls)
+            if(typeof parseLs === 'object' && parseLs !== null){
+                this.notifications.list = reactive(parseLs)
+            }
+        }
         emitter.on('addNotification', this.addNotification);
         emitter.on('showNotifications', this.showNotifications);
     },

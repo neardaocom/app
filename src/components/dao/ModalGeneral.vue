@@ -145,7 +145,12 @@ export default {
           const name = this.accountId + '-general-' + this.formTitle + '-' + getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
+          this.$logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.flush()
           console.log(e);
+          return
         }
         // Blockchain
         this.nearService.addProposal(
@@ -165,6 +170,10 @@ export default {
             this.formDescription = ''
             this.active = false
         }).catch((e) => {
+            this.$logger.error('D', 'app@components/dao/ModalGeneral', 'AddProposal-blockchain', `Failed to add proposal [${this.formTitle}]`)
+            this.$logger.error('B', 'app@components/dao/ModalGeneral', 'AddProposal-blockchain', `Failed to add proposal [${this.formTitle}]`)
+            this.$notify.danger(this.t('default.notify_add_proposal_fail_title'), this.t('default.notify_add_proposal_fail_message', {proposal: this.formTitle}))
+            this.$notify.flush()
             console.log(e)
         })
       }
