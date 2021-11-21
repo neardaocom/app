@@ -47,6 +47,7 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="possibleUpgrade" tag="button" @click="upgrade()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -103,11 +104,17 @@ export default {
     const modalRemoveCouncil = ref(0)
     const modalGeneral = ref(0)
     const dropdownAction = ref(false);
+    const latestDaoVersion = ref(0)
 
     return {
-      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral
+      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral, latestDaoVersion
     };
   },
+
+  mounted() {
+    this.getLatestDaoVersion()    
+  },
+
   computed: {
     accountId() {
       return this.$store.getters['near/getAccountId']
@@ -115,7 +122,15 @@ export default {
     canVote() {
       return Object.keys(this.dao.token_holders).includes(this.accountId)
     },
+    nearService() {
+      return this.$store.getters['near/getService']
+    },
+    possibleUpgrade(){
+      return 0 < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
+      //return this.dao.version < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
+    }
   },
+
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
@@ -151,6 +166,18 @@ export default {
     modalGeneralOpen() {
       this.modalGeneral += 1
       this.dropdownAction = false
+    },
+    getLatestDaoVersion(){
+      this.nearService.getDaoStats()
+       .then(r => {
+          this.latestDaoVersion = r.latest_dao_version
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    },
+    upgrade() {
+      
     },
   }
 };

@@ -43,13 +43,14 @@ class NearService {
 
     this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
 
-    const account = this.walletConnection.account();
+    const account = this.walletConnection.account(); 
 
     this.factoryContract = new Contract(account, this.config.contractName, {
       viewMethods: [
         'get_dao_list',
         'get_dao_info',
         'get_tags',
+        'get_stats',
       ],
       changeMethods: [
         'create',
@@ -117,6 +118,16 @@ class NearService {
   async getDaoInfo(daoId: string) {
     return this.factoryContract.get_dao_info({account: daoId});
   }
+
+    /**
+   * Get dao list
+   * 
+   * @returns Promise
+   */
+     async getDaoStats() {
+      return this.factoryContract.get_stats();
+    }
+  
 
   /**
    * Create DAO
@@ -437,7 +448,6 @@ class NearService {
       console.log(e)
     });
 
-    console.log(data)
     if (!data) {
       return null;
     }
@@ -487,7 +497,7 @@ class NearService {
         doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
       }
       file_list.push(doc)
-    });
+    });    
 
     if (data !== null) {
       return {
@@ -503,6 +513,7 @@ class NearService {
         location: data[6].lang, // TODO: renameing at SC
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
+        version: data[6].version,
         token_unlocked: {
           council: 0, // ft_council_shared.dividedBy(ft_shared).times(100).round().toNumber(),
           community: 0, // ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),

@@ -14,6 +14,7 @@
   "remove_member_message": "Odebrání účtu ID <strong>{account}</strong> z <strong>{group}</strong>",
   "general_proposal": "Obecné hlasování",
   "general_proposal_message": "<h4>{title}</h4>",
+  "upgrade_contract": "Povýšit kontrakt",
   "invalidate_file": "Zneplatnění dokumentu",
   "invalidate_file_message": "Zneplatnění dokumentu <strong>{name}</strong> z kategorie <strong>{category}</strong>",
   "add": "Přidat",
