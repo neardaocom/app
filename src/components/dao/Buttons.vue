@@ -47,7 +47,7 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="possibleUpgrade" tag="button" @click="upgrade()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -62,6 +62,7 @@
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
     <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
 </template>
 
 <script>
@@ -75,6 +76,7 @@ import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
 import ModalGeneral from '@/components/dao/ModalGeneral'
+import ModalUpgrade from '@/components/dao/ModalUpgrade';
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,
@@ -85,7 +87,7 @@ export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
     MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    ModalAddCouncil, ModalRemoveCouncil
+    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade
   },
   props: {
     dao: {
@@ -103,11 +105,13 @@ export default {
     const modalRemoveMember = ref(0)
     const modalRemoveCouncil = ref(0)
     const modalGeneral = ref(0)
+    const modalUpgrade = ref(0)
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
 
     return {
-      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral, latestDaoVersion
+      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
+      latestDaoVersion, modalUpgrade
     };
   },
 
@@ -167,6 +171,10 @@ export default {
       this.modalGeneral += 1
       this.dropdownAction = false
     },
+    modalUpgradeOpen() {
+      this.modalUpgrade += 1
+      this.dropdownAction = false
+    },
     getLatestDaoVersion(){
       this.nearService.getDaoStats()
        .then(r => {
@@ -175,9 +183,6 @@ export default {
         .catch((e) => {
           console.log(e)
         })
-    },
-    upgrade() {
-      
     },
   }
 };

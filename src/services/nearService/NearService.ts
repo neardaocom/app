@@ -422,6 +422,24 @@ class NearService {
     );
   }
 
+  async downloadNewVersion(contractId: string){
+    return this.contractPool.get(contractId).download_new_version(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
+  async upgrade(contractId: string){
+    return this.contractPool.get(contractId).upgrade_self(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
   ///////////////
   // DAO VIEWs //
   ///////////////
