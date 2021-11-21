@@ -131,7 +131,7 @@ export default {
         .catch((e) => {
           this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)
           this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)
-          this.$notify.warning(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_dao_load_fail_message', {id: this.q_id}))
+          this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.q_id}))
           this.$notify.flush()
           console.log(e)
         })

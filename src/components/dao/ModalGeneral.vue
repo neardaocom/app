@@ -147,7 +147,7 @@ export default {
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
           this.$logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
           this.$notify.flush()
           console.log(e);
           return
@@ -172,7 +172,7 @@ export default {
         }).catch((e) => {
             this.$logger.error('D', 'app@components/dao/ModalGeneral', 'AddProposal-blockchain', `Failed to add proposal [${this.formTitle}]`)
             this.$logger.error('B', 'app@components/dao/ModalGeneral', 'AddProposal-blockchain', `Failed to add proposal [${this.formTitle}]`)
-            this.$notify.danger(this.t('default.notify_add_proposal_fail_title'), this.t('default.notify_add_proposal_fail_message', {proposal: this.formTitle}))
+            this.$notify.danger(this.t('default.notify_add_proposal_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_add_proposal_fail_message', {proposal: this.formTitle}))
             this.$notify.flush()
             console.log(e)
         })

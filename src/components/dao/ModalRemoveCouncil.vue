@@ -169,7 +169,7 @@ export default {
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalRemoveCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
           this.$logger.error('B', 'app@components/dao/ModalRemoveCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
-          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'),this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
           this.$notify.flush()
           console.log(e);
           return
@@ -197,7 +197,7 @@ export default {
           const council = this.formAccount + '.' + this.factoryAccount.split('.')[1]
             this.$logger.error('D', 'app@components/dao/ModalRemoveCouncil', 'AddProposal-blockchain', `Failed to add proposal to remove council [${council}]`)
             this.$logger.error('B', 'app@components/dao/ModalRemoveCouncil', 'AddProposal-blockchain', `Failed to add proposal to remove council [${council}]`)
-            this.$notify.danger(this.t('default.notify_remove_council_fail_title'), this.t('default.notify_remove_council_fail_message', {council: council}))
+            this.$notify.danger(this.t('default.notify_remove_council_fail_title'),this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_remove_council_fail_message', {council: council}))
             this.$notify.flush()
             console.log(e)
         })

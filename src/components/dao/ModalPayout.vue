@@ -193,7 +193,7 @@ export default {
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalPayout', 'StoreFile-ipfs', 'File saving to ipfs failed')
           this.$logger.error('B', 'app@components/dao/ModalPayout', 'StoreFile-ipfs', 'File saving to ipfs failed')
-          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
           this.$notify.flush()
           console.log(e);
           return
@@ -221,7 +221,7 @@ export default {
             const account =  this.formAccount + '.' + this.factoryAccount.split('.')[1]
             this.$logger.error('D', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
             this.$logger.error('B', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
-            this.$notify.danger(this.t('default.notify_payout_fail_title'), this.t('default.notify_payout_fail_message', {account : account}))
+            this.$notify.danger(this.t('default.notify_payout_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_payout_fail_message', {account : account}))
             this.$notify.flush()
             console.log(e)
         })

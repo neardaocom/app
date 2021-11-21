@@ -199,7 +199,7 @@ export default {
       }).catch((e) => {
         this.$logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
         this.$logger.error('B', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
-        this.$notify.warning(this.t('default.notify_dao_list_fetching_fail_title'), this.t('default.notify_dao_list_fetching_fail_message'))
+        this.$notify.warning(this.t('default.notify_dao_list_fetching_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_list_fetching_fail_message'))
         this.$notify.flush()
         console.log(e)
       })
