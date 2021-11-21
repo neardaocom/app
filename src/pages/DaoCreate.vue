@@ -488,7 +488,7 @@
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_council')}}:</dt>
                                                 <dd v-if="council.length !== 0" class="col-6 col-md-6">{{council.join(', ')}} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
-                                            </dl>                                        
+                                            </dl>
                                         </div>
                                     </div>
 
@@ -511,7 +511,7 @@
                                                 <dd class="col-6 col-md-6">{{ n(ftCouncilInitDistributionPercent) }}%</dd>
 
                                                 <dt class="col-6 col-md-6 ps-4">{{ t('default.unlocking') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ ftCouncilUnlockingYear }} {{ t('default.year')}} <span v-if="ftCouncilUnlockingMonth > 0">{{ ftCouncilUnlockingMonth }} {{ t('default.month')}}</span></dd>
+                                                <dd class="col-6 col-md-6">{{ ftCouncilUnlockingYear }} {{ t('default.year') }} <span v-if="ftCouncilUnlockingMonth > 0">{{ ftCouncilUnlockingMonth }} {{ t('default.month') }}</span></dd>
 
                                                 <dt v-if="false" class="col-6 col-md-6 ps-3">{{ t('default.fundation') }}:</dt>
                                                 <dd v-if="false" class="col-6 col-md-6">{{ftFundationShare}}%</dd>
@@ -600,7 +600,7 @@ export default({
         mask
     },
     setup() {
-        const { t, n, d, locale } = useI18n();
+        const { t, tc, n, d, locale } = useI18n();
         const exampleModal = ref(false)
 
         const unlockingInit = new Date();
@@ -714,7 +714,7 @@ export default({
         ]
         
         return{
-           t, n, d, exampleModal, account, name, slogan, type, typeOptions,
+           t, tc, n, d, exampleModal, account, name, slogan, type, typeOptions,
            purpose, location, ftName, ftAmount, ftAmountFormated, ftCouncilInitDistribution, ftCouncilInitDistributionFormated, ftCouncilInitDistributionPercent,
            ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare,
            ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFundationUnlockingFrom, ftPublicUnlockingFrom,
