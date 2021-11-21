@@ -6,7 +6,10 @@
           <div class="card-body">
             <h5 class="text-center text-muted mb-0">{{ t("default.treasury") }}</h5>
             <h2 class="text-center">
-              ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ</span>
+              ≈ <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
+            </h2>
+            <h2 class="text-center">
+              <NumberFormatter :amount="dao.token_free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h2>
           </div>
         </div>

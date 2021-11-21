@@ -114,7 +114,7 @@
                                     <MDBProgress :height="20" class="rounded">
                                         <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
                                         <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ ftCommunityShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftFundationShare" bg="success" >{{ ftFundationShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftFoundationShare" bg="success" >{{ ftFoundationShare }}%</MDBProgressBar>
                                         <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ ftPublicShare }}%</MDBProgressBar>
                                     </MDBProgress>
                                 </div>
@@ -267,16 +267,16 @@
                                 </div>
                             </div>
 
-                            <!-- ftFundationShare -->
+                            <!-- ftFoundationShare -->
                             <div v-if="false" class="row">
                                 <div class="col-12">
                                     <p class="mt-4"><MDBBadge color="success" class="me-2">&nbsp;</MDBBadge><span class="fs-5">{{ t('default.fundation') }}</span></p>
                                 </div>
                                 <div class="col-11 col-md-6">
-                                    <MDBRange :disabled="false" v-model="ftFundationShare" :min="0" :max="100" />
+                                    <MDBRange :disabled="false" v-model="ftFoundationShare" :min="0" :max="100" />
                                 </div>
                                 <div class="col-1">
-                                    <label class="form-label">{{ ftFundationShare }}%</label>
+                                    <label class="form-label">{{ ftFoundationShare }}%</label>
                                 </div>
                                 <div class="col-12 col-md-7">
                                     <div class="row mt-2">
@@ -287,8 +287,8 @@
                                     <div class="row mb-2">
                                         <div class="col-4">
                                             <MDBDatepicker
-                                              v-model="ftFundationUnlockingFrom"
-                                              :disabled="ftFundationShare == 0"
+                                              v-model="ftFoundationUnlockingFrom"
+                                              :disabled="ftFoundationShare == 0"
                                               :label="t('default.unlocking_from')"
                                               :format="t('default._datepicker_format')"
                                             />
@@ -297,13 +297,13 @@
                                             <MDBInput
                                                 inputGroup
                                                 :formOutline="false"
-                                                :disabled="ftFundationShare == 0"
-                                                v-model="ftFundationUnlockingYear"
+                                                :disabled="ftFoundationShare == 0"
+                                                v-model="ftFoundationUnlockingYear"
                                                 step="1" min="0" max="20"
                                                 type="number"
-                                                @blur="validateFtFundationUnlocking()"
-                                                :isValid="!errors.ftFundationUnlockingYear"
-                                                :isValidated="isValidated.ftFundationUnlockingYear"
+                                                @blur="validateFtFoundationUnlocking()"
+                                                :isValid="!errors.ftFoundationUnlockingYear"
+                                                :isValidated="isValidated.ftFoundationUnlockingYear"
                                             >
                                               <template v-slot>
                                                 <span class="input-group-text">{{ t('default.year') }}</span>
@@ -312,13 +312,13 @@
                                         </div>
                                         <div class="col-4">
                                             <MDBInput
-                                                v-model="ftFundationUnlockingMonth"
-                                                :disabled="ftFundationShare == 0"
+                                                v-model="ftFoundationUnlockingMonth"
+                                                :disabled="ftFoundationShare == 0"
                                                 step="1" min="0" max="11"
                                                 type="number"
-                                                @blur="validateFtFundationUnlocking()"
-                                                :isValid="!errors.ftFundationUnlockingMonth"
-                                                :isValidated="isValidated.ftFundationUnlockingMonth"
+                                                @blur="validateFtFoundationUnlocking()"
+                                                :isValid="!errors.ftFoundationUnlockingMonth"
+                                                :isValidated="isValidated.ftFoundationUnlockingMonth"
                                                 inputGroup
                                                 :formOutline="false"
                                             >
@@ -508,13 +508,13 @@
                                                 <dd class="col-6 col-md-6">{{ftCouncilShare}}%</dd>
                                                 
                                                 <dt class="col-6 col-md-6 ps-4">{{ t('default.dao_ft_init_distribution') }}:</dt>
-                                                <dd class="col-6 col-md-6">{{ n(ftCouncilInitDistributionPercent) }}%</dd>
+                                                <dd class="col-6 col-md-6">{{ ftCouncilInitDistributionPercent }}%</dd>
 
                                                 <dt class="col-6 col-md-6 ps-4">{{ t('default.unlocking') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{ ftCouncilUnlockingYear }} {{ t('default.year') }} <span v-if="ftCouncilUnlockingMonth > 0">{{ ftCouncilUnlockingMonth }} {{ t('default.month') }}</span></dd>
 
                                                 <dt v-if="false" class="col-6 col-md-6 ps-3">{{ t('default.fundation') }}:</dt>
-                                                <dd v-if="false" class="col-6 col-md-6">{{ftFundationShare}}%</dd>
+                                                <dd v-if="false" class="col-6 col-md-6">{{ftFoundationShare}}%</dd>
 
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.community_fund') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{ftCommunityShare}}%</dd>
@@ -570,12 +570,14 @@ import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import _ from "lodash"
+import Decimal from 'decimal.js';
 import {
     requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid, requiredArrayValidator
 } from '@/utils/validators'
 import { locationList } from '@/composables/location'
 import { compareByText } from '@/utils/object'
+import moment from 'moment'
 import {
     MDBContainer,
     MDBInput, MDBSelect,
@@ -631,7 +633,7 @@ export default({
         const ftCouncilInitDistributionPercent = ref(10)
         const ftCouncilShare = ref(20) // 0 ... 100 all shareing 
         const ftCommunityShare = ref(80) // 0 ... 100 all shareing 
-        const ftFundationShare = ref(0) // 0 ... 100 all shareing 
+        const ftFoundationShare = ref(0) // 0 ... 100 all shareing 
         const ftPublicShare = ref(0) // 0 ... 100 all shareing
         // unlocking
         const ftCouncilUnlockingFrom = ref(unlockingInitFormated)
@@ -640,9 +642,9 @@ export default({
         const ftCommunityUnlockingFrom = ref('')
         const ftCommunityUnlockingYear = ref(0)
         const ftCommunityUnlockingMonth = ref(0)
-        const ftFundationUnlockingFrom = ref('')
-        const ftFundationUnlockingYear = ref(0)
-        const ftFundationUnlockingMonth = ref(0)
+        const ftFoundationUnlockingFrom = ref('')
+        const ftFoundationUnlockingYear = ref(0)
+        const ftFoundationUnlockingMonth = ref(0)
         const ftPublicUnlockingFrom = ref('')
         const ftPublicUnlockingYear = ref(0)
         const ftPublicUnlockingMonth = ref(0)
@@ -657,7 +659,7 @@ export default({
 
         const nearTags = reactive([])
 
-        const addFtFundationShare = ref(false)
+        const addFtFoundationShare = ref(false)
         const addFtCommunityShare = ref(false)
         const addFtPublicShare = ref(false)
 
@@ -687,9 +689,9 @@ export default({
             ftCommunityUnlockingFrom: false,
             ftCommunityUnlockingYear: false,
             ftCommunityUnlockingMonth: false,
-            ftFundationUnlockingFrom: false,
-            ftFundationUnlockingYear: false,
-            ftFundationUnlockingMonth: false,
+            ftFoundationUnlockingFrom: false,
+            ftFoundationUnlockingYear: false,
+            ftFoundationUnlockingMonth: false,
             ftPublicUnlockingFrom: false,
             ftPublicUnlockingYear: false,
             ftPublicUnlockingMonth: false,
@@ -716,22 +718,22 @@ export default({
         return{
            t, tc, n, d, exampleModal, account, name, slogan, type, typeOptions,
            purpose, location, ftName, ftAmount, ftAmountFormated, ftCouncilInitDistribution, ftCouncilInitDistributionFormated, ftCouncilInitDistributionPercent,
-           ftCouncilShare, ftFundationShare, ftCommunityShare,ftPublicShare,
-           ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFundationUnlockingFrom, ftPublicUnlockingFrom,
+           ftCouncilShare, ftFoundationShare, ftCommunityShare,ftPublicShare,
+           ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFoundationUnlockingFrom, ftPublicUnlockingFrom,
            unlockingInitFormated,
-           ftCouncilUnlockingYear, ftCouncilUnlockingMonth, ftCommunityUnlockingYear, ftCommunityUnlockingMonth, ftFundationUnlockingYear, ftFundationUnlockingMonth, ftPublicUnlockingYear, ftPublicUnlockingMonth,
+           ftCouncilUnlockingYear, ftCouncilUnlockingMonth, ftCommunityUnlockingYear, ftCommunityUnlockingMonth, ftFoundationUnlockingYear, ftFoundationUnlockingMonth, ftPublicUnlockingYear, ftPublicUnlockingMonth,
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum,
-           voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFundationShare,
+           voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFoundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
            createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions
         }
     },
 
     watch: {
-        addFtFundationShare(newValue) {
-            //this.$refs.refFtFundationShare.classList.toggle('invisible')
+        addFtFoundationShare(newValue) {
+            //this.$refs.refFtFoundationShare.classList.toggle('invisible')
             if (newValue === false ){
-                this.ftFundationShare = 0
+                this.ftFoundationShare = 0
             }
             this.validateFtShares()
         },
@@ -749,17 +751,17 @@ export default({
             }
             this.validateFtShares()
         },
-        ftFundationShare(newValue){
-            console.log(this.ftFundationUnlockingFrom.length)
-            if (newValue > 0 && this.ftFundationUnlockingFrom.length == 0) {
-                this.ftFundationUnlockingFrom = this.ftCouncilUnlockingFrom
-                this.ftFundationUnlockingYear = this.ftCouncilUnlockingYear
-                this.ftFundationUnlockingMonth = this.ftCouncilUnlockingMonth
+        ftFoundationShare(newValue){
+            console.log(this.ftFoundationUnlockingFrom.length)
+            if (newValue > 0 && this.ftFoundationUnlockingFrom.length == 0) {
+                this.ftFoundationUnlockingFrom = this.ftCouncilUnlockingFrom
+                this.ftFoundationUnlockingYear = this.ftCouncilUnlockingYear
+                this.ftFoundationUnlockingMonth = this.ftCouncilUnlockingMonth
             } else if (newValue == 0) {
-                //this.ftFundationUnlockingFrom = ''
+                //this.ftFoundationUnlockingFrom = ''
             }
             this.validateFtShares()
-            if (newValue == 0) this.validateFtFundationUnlockingFrom()
+            if (newValue == 0) this.validateFtFoundationUnlockingFrom()
         },
         ftCommunityShare(newValue){
             if (newValue > 0 && this.ftCommunityUnlockingFrom.length == 0) {
@@ -1017,11 +1019,11 @@ export default({
             this.isValidated.ftCommunityUnlockingFrom = true
         },
 
-        validateFtFundationUnlockingFrom() {
-            const field = "ftFundationUnlockingFrom"
-            const requiredVal = requiredValidator(this.ftFundationUnlockingFrom)
+        validateFtFoundationUnlockingFrom() {
+            const field = "ftFoundationUnlockingFrom"
+            const requiredVal = requiredValidator(this.ftFoundationUnlockingFrom)
             // const isDateVal = true // TODO: add date validator
-            if (this.ftFundationShare > 0) {
+            if (this.ftFoundationShare > 0) {
                 if (requiredVal.valid === false) {
                     this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
                 } else {
@@ -1030,7 +1032,7 @@ export default({
             } else {
                 this.errors[field] = null
             }
-            this.isValidated.ftFundationUnlockingFrom = true
+            this.isValidated.ftFoundationUnlockingFrom = true
         },
 
         validateFtPublicUnlockingFrom() {
@@ -1056,7 +1058,7 @@ export default({
 
         validateFtShares(){
             const field = "ftShares"
-            const maxNumberVal = sharesValidator(this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare)
+            const maxNumberVal = sharesValidator(this.ftPublicShare + this.ftFoundationShare + this.ftCommunityShare)
             if (maxNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
                 this.$refs.refFtShares.classList.remove('invisible')
@@ -1064,7 +1066,7 @@ export default({
                 this.errors[field] = null
                 this.$refs.refFtShares.classList.add('invisible')
             }
-            const sum = this.ftPublicShare + this.ftFundationShare + this.ftCommunityShare
+            const sum = this.ftPublicShare + this.ftFoundationShare + this.ftCommunityShare
             if (sum > 100){
                 this.ftCouncilShare = 0
             }else{
@@ -1216,10 +1218,18 @@ export default({
                     , this.location // location
                     , this.ftName // ftName
                     , this.ftAmount // ftAmount
-                    , this.ftCouncilInitDistribution // ftCouncilInitDistribution
                     , this.ftCouncilShare // ftCouncilShare
-                    , this.ftFundationShare // ftFundationShare
+                    , new Decimal(this.ftCouncilInitDistributionPercent).div(100).mul(this.ftCouncilShare).div(100).mul(this.ftAmount).toNumber()  // ftCouncilInitDistribution
+                    , null // ftCouncilUnlockingFrom
+                    , moment.duration().add(Number.parseFloat(this.ftCouncilUnlockingYear), 'y').add(Number.parseFloat(this.ftCouncilUnlockingMonth), 'M').asSeconds() // ftCouncilUnlockingDuration
                     , this.ftCommunityShare // ftCommunityShare
+                    , null // ftCommunityUnlockingFrom
+                    , null // ftCommunityUnlockingDuration
+                    , this.ftFoundationShare // ftFoundationShare
+                    , null // ftFoundationUnlockingFrom
+                    , null // ftFoundationUnlockingDuration
+                    , null // ftPublicSaleUnlockingFrom
+                    , null // ftPublicSaleUnlockingDuration
                     , this.voteSpamThreshold // voteSpamThreshold
                     , this.voteDurationDays // voteDurationDays
                     , this.voteDurationHours // voteDurationHours

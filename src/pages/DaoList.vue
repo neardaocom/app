@@ -34,9 +34,9 @@
                 </div>
                 <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
                   <MDBCheckbox :label="filterTag.agency.name" inline v-model="filterTag.agency.active"/>
-                  <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active"/>
-                  <MDBCheckbox :label="filterTag.project.name" inline v-model="filterTag.project.active"/>
                   <MDBCheckbox :label="filterTag.club.name" inline v-model="filterTag.club.active"/>
+                  <MDBCheckbox :label="filterTag.project.name" inline v-model="filterTag.project.active"/>
+                  <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active"/>
                 </div>
               </div>
               <MDBProgress class="my-1">
@@ -180,7 +180,7 @@ export default {
       return results
     },
     headerText() {
-      return _.join(this.tags, ' | ')
+      return _.join(_.orderBy(this.tags), ' | ')
     }
   },
   mounted() {

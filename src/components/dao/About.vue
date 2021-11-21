@@ -41,10 +41,10 @@
                 <strong>{{ t("default.community") }}</strong>
                 {{ dao.groups.community.amount || "0" }}%
               </li>
-              <li>
+              <li v-if="false">
                 <i class="fas fa-chart-line fa-fw me-3 mb-3"></i
                 ><strong>{{ t("default.investor") }}</strong>
-                {{ dao.groups.investor.amount || "0" }}% |
+                {{ dao.groups.foundation.amount || "0" }}% |
                 <strong>{{ t("default.public_sale") }}</strong>
                 {{ dao.groups.public_sale.amount || "0" }}%
               </li>
