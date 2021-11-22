@@ -51,6 +51,7 @@ class NearService {
         'get_dao_info',
         'get_tags',
         'get_stats',
+        'version_hash'
       ],
       changeMethods: [
         'create',
@@ -119,15 +120,24 @@ class NearService {
     return this.factoryContract.get_dao_info({account: daoId});
   }
 
-    /**
-   * Get dao list
+  /**
+   * Get dao stats
    * 
    * @returns Promise
    */
-     async getDaoStats() {
-      return this.factoryContract.get_stats();
-    }
-  
+  async getDaoStats() {
+    return this.factoryContract.get_stats();
+  }
+
+  /**
+   * Get newest version hash of contract
+   * 
+   * @returns Promise
+   */
+  async getNewestVersionHash() {
+    return this.factoryContract.version_hash({version:0});
+  }
+
 
   /**
    * Create DAO
@@ -618,6 +628,10 @@ class NearService {
 
   async getDaoConfig(contractId: string) {
     return this.contractPool.get(contractId).dao_config();
+  }
+
+  async getDaoVersionHash(contractId: string) {
+    return this.contractPool.get(contractId).version_hash();
   }
 
 }

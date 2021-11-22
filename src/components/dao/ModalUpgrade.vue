@@ -79,9 +79,16 @@ export default {
         ).then(r => {
             console.log(r)
             this.active = false
+            localStorage.my_upgradee = 'yes'
         }).catch((e) => {
             console.log(e)
         })
+
+        // if(result === true){
+        //   localStorage.my_upgrade = 'yes'
+        // }else{
+        //    localStorage.my_upgrade = result
+        // }
     },
 
     close() {

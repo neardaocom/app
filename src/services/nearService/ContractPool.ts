@@ -28,6 +28,7 @@ export class ContractPool {
         'payments',
         'doc_files',
         'dao_config',
+        'version_hash'
       ],
       changeMethods: [
         'add_proposal',
