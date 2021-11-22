@@ -1,10 +1,8 @@
 import mitt from 'mitt';
 
-// type EventType = {
-//   add: NotificationOptions;
-//   close: unknown;
-// }
+type EventType = {
+    addNotification: {title: string, message: string, color: string};
+    showNotifications: unknown;
+}
 
-// export const emitter = mitt<EventType>();
-
-export const emitter = mitt();
+export const emitter = mitt<EventType>();
