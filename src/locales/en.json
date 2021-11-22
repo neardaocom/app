@@ -205,7 +205,7 @@
   "notify_remove_member_fail_title": "Remove member",
   "notify_remove_member_fail_message": "Failed to remove member {member}",
   "notify_proposal_voting_fail_title": "Vote",
-  "notify_proposal_voting_fail_message": "Vote on the proposal {proposal} failed.",
+  "notify_proposal_voting_fail_message": "Proposal vote {proposal} failed.",
   "notify_proposal_finalize_fail_title": "Finalize voting",
   "notify_proposal_finalize_fail_message": "Finalize {proposal} failed",
   "notify_save_file_ipfs_fail_title": "Save a file",
