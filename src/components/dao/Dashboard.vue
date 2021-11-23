@@ -11,6 +11,9 @@
             <h2 class="text-center">
               <NumberFormatter :amount="dao.token_free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h2>
+            <h5 class="text-center text-muted">
+              + <NumberFormatter :amount="token_for_free"/> <small class="text-muted">{{ dao.token_name }}</small>
+            </h5>
           </div>
         </div>
       </div>
@@ -22,6 +25,7 @@
               <NumberFormatter :amount="myTokensAmount"/>
             </h2>
             <h5 v-if="myTokensAmount" class="text-muted">≈ <NumberFormatter :amount="myTokensShare"/>%</h5>
+            <h5 v-if="myTokensAmount" class="text-muted">+ <NumberFormatter :amount="token_my_for_free"/> <small class="text-muted">{{ dao.token_name }}</small></h5>
           </div>
         </div>
       </div>
@@ -59,7 +63,7 @@ import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
-import { toRefs } from "vue"
+import { ref, toRefs } from "vue"
 import _ from "lodash"
 import Decimal from 'decimal.js'
 
@@ -83,7 +87,15 @@ export default {
     const { t, n, d} = useI18n();
     const { dao, accountId } = toRefs(props)
     const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
-    return { t, n, proposals };
+
+    const token_for_free = ref(new Decimal(0).plus(1100).toNumber())
+    const token_my_for_free = ref(new Decimal(0).plus(500).toNumber())
+    const token_interval = null;
+    const token_my_interval = null;
+
+    const counter = function() { token_for_free.value += 1; }
+    const counter_my = function() { token_my_for_free.value += 1; }
+    return { t, n, proposals, token_for_free, token_interval, token_my_interval, counter, token_my_for_free, counter_my };
   },
   computed: {
     myTokensAmount() {
@@ -102,5 +114,9 @@ export default {
       return results
     },
   },
+  mounted() {
+    this.token_interval = setInterval(this.counter, 100)
+    this.token_my_interval = setInterval(this.counter_my, 500)
+  }
 };
 </script>

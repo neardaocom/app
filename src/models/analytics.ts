@@ -1,3 +1,6 @@
+export const getTest = (value: string): string => { return value; }
+
+/*
 enum Period {
     Week,
     Month,
@@ -39,8 +42,9 @@ export const getPeriodStep = (date: Date, period: Period): Date => {
     }
     return date;
 }
-
-export const getCashflow = (from: Date, duration: number, amount: number, amountInit: number, algorithm: Algorithm, period: Period): DataItem[] | undefined => {
+*/
+/*
+export const getCashflow = (from: Date, duration: number, amount: number, amountInit: number): DataItem[] | undefined => {
   let dataset: DataItem[] = []
   if (!from) return undefined;
   if (duration < 0) return undefined;
@@ -53,3 +57,4 @@ export const getCashflow = (from: Date, duration: number, amount: number, amount
 
   return dataset
 }
+*/

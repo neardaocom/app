@@ -158,8 +158,8 @@ export default {
     },
     unlockTokens(group) {
       console.log(group)
-      // this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
       this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
+      // this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
         console.log(r)
       }).catch((e) => {
         console.log(e)
