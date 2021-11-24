@@ -75,8 +75,8 @@
             this.$store.commit('near/signIn')                    
         },
         logout() {
-          this.$store.commit('near/signOut')
           this.$logger.info('B', 'User', 'Logout', `Wallet ${this.accountId} is logged out`)
+          this.$store.commit('near/signOut')
           if (this.$route.name === "dao-create"){
             this.$router.push({name: 'landing-page'})
           }

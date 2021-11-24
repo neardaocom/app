@@ -433,7 +433,12 @@ export default {
         try {
           ipfs_cid = await this.ipfsService.storeFiles(this.getIpfsData(), this.formName)
         } catch(e){
+          this.$logger.error('D', 'app@components/dao/ModalAddDocument', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$logger.error('B', 'app@components/dao/ModalAddDocument', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.flush()
           console.log(e);
+          return
         }
 
         console.log(ipfs_cid)
@@ -459,6 +464,10 @@ export default {
               this.formCategory = ''
               this.active = false
           }).catch((e) => {
+              this.$logger.error('D', 'app@components/dao/ModalAddDocument', 'AddDocument-blockchain', `Failed to add document [${this.formName}] with IPFS cid [${this.ipfs_cid}]`)
+              this.$logger.error('B', 'app@components/dao/ModalAddDocument', 'AddDocument-blockchain', `Failed to add document [${this.formName}] with IPFS cid [${this.ipfs_cid}]`)
+              this.$notify.danger(this.t('default.notify_add_document_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_add_document_fail_message', {document: this.formName}))
+              this.$notify.flush()
               console.log(e)
           })
         }

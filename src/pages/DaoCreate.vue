@@ -913,7 +913,14 @@ export default({
             this.nearTags.value = tags
             this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(compareByText)
             // this.$refs.refDaoType.setValue('corporation')
-        })
+        }).catch((e) => {
+            this.$logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            this.$logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+
+            this.$notify.flush()
+            console.log(e);
+        } )
         // type select
         //this.$refs.refDaoType.setValue('')
         //console.log(this.type)
