@@ -182,5 +182,13 @@
   "company": "Společnost",
   "startup": "Startup",
   "project": "Projekt",
-  "club": "Klub"
+  "club": "Klub",
+  "download": "Stáhnout",
+  "upgrade": "Povýšit",
+  "download_new_version": "Stažení nové verze kontraktu",
+  "done": "Hotovo",
+  "click_to_download" : "Klikněte na stáhnout",
+  "upgrade_new_version": "Povýšit na novou verzi",
+  "click_to_upgrade": "Klikněte na povýšit",
+  "first_download_new_version": "Prvně musíte stáhnout novou verzi"
 }

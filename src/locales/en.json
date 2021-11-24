@@ -192,6 +192,14 @@
   "company": "Company",
   "startup": "Startup",
   "project": "Project",
-  "club": "Club"
+  "club": "Club",
+  "download": "Download",
+  "upgrade": "Upgrade",
+  "download_new_version": "Download new contract version",
+  "done": "Done",
+  "click_to_download" : "Click to download",
+  "upgrade_new_version": "Upgrade to new version",
+  "click_to_upgrade": "Click to upgrade",
+  "first_download_new_version": "First need to download new version"
   
 }

@@ -10,11 +10,40 @@
             <MDBModalTitle id="modalUpgradeLabel"> {{ t('default.upgrade_contract') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-            {{t('default.')}}
+          <MDBListGroup>
+            <MDBListGroupItem color="success" :active="!downloaded">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{t('default.download_new_version')}}</h5>
+                  {{downloaded ? t('default.done') : t('default.click_to_download')  }}
+              </div>
+              <p class="mb-1">
+                {{t('default.')}}
+              </p>
+              <div class="d-flex w-100 flex-row-reverse">
+                <MDBBtn v-if="!downloaded" @click="downloadNewVersion" color="primary" >
+                  {{t('default.download')}} <MDBIcon icon="download"></MDBIcon>
+                </MDBBtn>
+              </div>
+            </MDBListGroupItem>
+            <MDBListGroupItem :disabled="!downloaded" :active="downloaded">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{t('default.upgrade_new_version')}}</h5>
+                  {{downloaded ? t('default.click_to_upgrade') : t('default.first_download_new_version')  }}
+                  
+              </div>
+              <p class="mb-1">
+                {{t('default.')}}
+              </p>
+              <div class="d-flex w-100 flex-row-reverse">
+                <MDBBtn v-if="downloaded" @click="upgrade" color="primary" >
+                  {{t('default.upgrade')}} <MDBIcon icon="arrow-circle-up"></MDBIcon>
+                </MDBBtn>
+              </div>
+            </MDBListGroupItem>
+          </MDBListGroup>
         </MDBModalBody>
         <MDBModalFooter>
             <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-            <MDBBtn color="primary" @click="upgrade()">{{ t('default.upgrade_contract') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -24,16 +53,19 @@ import { ref, toRefs, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   MDBBtn,
+  MDBIcon,
   MDBModal,
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter
+  MDBModalFooter,
+  MDBListGroup,
+  MDBListGroupItem
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    MDBBtn, MDBIcon, MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter, MDBListGroup, MDBListGroupItem
   },
   props: {
     show: {
@@ -56,9 +88,22 @@ export default {
 
     watch(show, openModal)
 
+    const downloaded = ref(true)
+
     return {
-      t, active
+      t, active, downloaded
     };
+  },
+  async mounted() {
+    // Todo: maybe control if (localStorage.download_new_version === true)
+    if (await this.compareDaoNewestHash()){
+      this.downloaded = true
+    }
+
+    if(localStorage.download_new_version === 'true'){
+      this.active = true
+    } 
+    localStorage.download_new_version = 'false'
   },
   computed: {
     factoryAccount() {
@@ -72,28 +117,44 @@ export default {
     },
   },
   methods: {
-    async upgrade() {
-        // Blockchain
-        this.nearService.downloadNewVersion(
-            this.contractId
-        ).then(r => {
-            console.log(r)
-            this.active = false
-            localStorage.my_upgradee = 'yes'
-        }).catch((e) => {
-            console.log(e)
-        })
-
-        // if(result === true){
-        //   localStorage.my_upgrade = 'yes'
-        // }else{
-        //    localStorage.my_upgrade = result
-        // }
+    downloadNewVersion() {
+      localStorage.download_new_version = 'true'
+      // Blockchain
+      this.nearService.downloadNewVersion(
+          this.contractId
+      ).then(r => {
+          console.log(r)
+          this.active = false
+      }).catch((e) => {
+          console.log(e)
+      })
     },
 
+    upgrade(){
+      // Blockchain
+      this.nearService.upgrade(
+          this.contractId
+      ).then(r => {
+          console.log(r)
+          this.active = false
+      }).catch((e) => {
+          console.log(e)
+      })
+
+    },
     close() {
       this.active = false
     },
+      async compareDaoNewestHash(){
+      try{
+        const daoHash = await this.nearService.getDaoVersionHash(this.contractId)
+        const newestHash = await this.nearService.getNewestVersionHash()
+        return daoHash === newestHash
+      }catch(e){
+        console.log(e);
+      }
+    }
+
   }
 };
 </script>

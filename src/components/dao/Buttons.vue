@@ -116,10 +116,10 @@ export default {
   },
 
   mounted() {
-    this.getLatestDaoVersion()    
-    this.nearService.getNewestVersionHash().then(r => console.log(r))
-    console.log(this.dao.wallet);
-    this.nearService.getDaoVersionHash(this.dao.wallet).then(r => console.log(r))
+    this.getLatestDaoVersion()   
+    // if(localStorage.download_new_version === 'true'){
+    //   this.modalUpgrade += 1
+    // } 
   },
 
   computed: {
