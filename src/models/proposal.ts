@@ -1,5 +1,5 @@
 import { toSearch } from '@/utils/string'
-import { parseFromNanoseconds, toTimeString } from "@/utils/date";
+import { parseNanoseconds, toTimeString } from "@/utils/date";
 import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
@@ -156,7 +156,7 @@ const getVotingStats = (proposal: any, token_holders: any, token_blocked: any) =
     ];
 }
 
-const getDurationTo = (proposal: any) => parseFromNanoseconds(proposal.duration_to);
+const getDurationTo = (proposal: any) => parseNanoseconds(proposal.duration_to);
 
 const getOver = (proposal: any): boolean => {
     if (proposal.status === "InProgress") {

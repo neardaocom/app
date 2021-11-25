@@ -9,10 +9,10 @@
               ≈ <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
             </h2>
             <h2 class="text-center">
-              <NumberFormatter :amount="dao.token_free"/> <small class="text-muted">{{ dao.token_name }}</small>
+              <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h2>
             <h5 class="text-center text-muted">
-              + <NumberFormatter :amount="token_for_free"/> <small class="text-muted">{{ dao.token_name }}</small>
+              + <NumberFormatter :amount="token_community_unlocked"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h5>
           </div>
         </div>
@@ -25,7 +25,6 @@
               <NumberFormatter :amount="myTokensAmount"/>
             </h2>
             <h5 v-if="myTokensAmount" class="text-muted">≈ <NumberFormatter :amount="myTokensShare"/>%</h5>
-            <h5 v-if="myTokensAmount" class="text-muted">+ <NumberFormatter :amount="token_my_for_free"/> <small class="text-muted">{{ dao.token_name }}</small></h5>
           </div>
         </div>
       </div>
@@ -88,14 +87,11 @@ export default {
     const { dao, accountId } = toRefs(props)
     const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
 
-    const token_for_free = ref(new Decimal(0).plus(1100).toNumber())
-    const token_my_for_free = ref(new Decimal(0).plus(500).toNumber())
+    const token_community_unlocked = ref(new Decimal(dao.value.token_stats.community.free).plus(1100).toNumber())
     const token_interval = null;
-    const token_my_interval = null;
 
-    const counter = function() { token_for_free.value += 1; }
-    const counter_my = function() { token_my_for_free.value += 1; }
-    return { t, n, proposals, token_for_free, token_interval, token_my_interval, counter, token_my_for_free, counter_my };
+    const counter = function() { token_community_unlocked.value += 1; }
+    return { t, n, proposals, token_community_unlocked, token_interval, counter};
   },
   computed: {
     myTokensAmount() {
@@ -116,7 +112,6 @@ export default {
   },
   mounted() {
     this.token_interval = setInterval(this.counter, 100)
-    this.token_my_interval = setInterval(this.counter_my, 500)
   }
 };
 </script>

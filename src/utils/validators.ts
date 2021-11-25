@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { AppError } from "./appError";
+import { AppError } from "./error";
 
 export class ValidationError extends AppError {}
 

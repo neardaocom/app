@@ -469,7 +469,8 @@ class NearService {
   }
 
   async unlockAllTokens(contractId: string) {
-    const account = await this.near.account(contractId);
+    // const account = this.walletConnection._connectedAccount;
+    const account = await this.near.account('neardao.testnet')
     console.log(account)
     return account.signAndSendTransaction({
         receiverId: contractId,
