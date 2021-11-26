@@ -109,13 +109,13 @@
 
                             <h6 v-if="false">{{ t('default.allocation')}}</h6>
                             <!-- ftCouncilShare -->
-                            <div v-if="false" class="row mb-4">
+                            <div class="row mb-4">
                                 <div class="col-12 col-md-7">
                                     <MDBProgress :height="20" class="rounded">
-                                        <MDBProgressBar :value="ftCouncilShare" >{{ ftCouncilShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ ftCommunityShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftFoundationShare" bg="success" >{{ ftFoundationShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ ftPublicShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftCouncilShare" >{{ t('default.council') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftFoundationShare" bg="success" >{{ t('default.foundation') }} {{ ftFoundationShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ t('default.public_sale') }} {{ ftPublicShare }}%</MDBProgressBar>
                                     </MDBProgress>
                                 </div>
                             </div>
@@ -539,9 +539,7 @@
 
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.dao_vote_duration_hours') }}:</dt>
                                                 <dd class="col-6 col-md-6">{{voteDurationHours}}</dd>
-                                            </dl>      
-
-                                                                  
+                                            </dl>            
                                         </div>
                                     </div>
 
@@ -584,7 +582,7 @@ import {
     MDBBtn,
     MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
     MDBRange, MDBAlert, MDBIcon , MDBTooltip,
-    MDBProgress, MDBProgressBar, MDBBadge, MDBDatepicker
+    MDBProgress, MDBProgressBar, MDBBadge, MDBDatepicker,
 } from 'mdb-vue-ui-kit';
 
 export default({
@@ -595,8 +593,8 @@ export default({
         MDBBtn, MDBDatepicker,
         MDBStepper, MDBStepperStep, MDBStepperHead, MDBStepperContent,
         MDBRange, MDBAlert, MDBIcon, MDBTooltip,
-        MDBProgress, MDBProgressBar, MDBBadge, //MDBTable
-        FromErrorMessage
+        MDBProgress, MDBProgressBar, MDBBadge,
+        FromErrorMessage,
     },
     directives: {
         mask
@@ -725,7 +723,7 @@ export default({
            voteSpamThreshold, voteDurationDays, voteDurationHours, voteQuorum,
            voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFoundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
-           createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions
+           createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions,
         }
     },
 
@@ -1273,10 +1271,31 @@ export default({
         noResults() {
             return this.t('default.no_results')
         },
-        Account(){
+        Account() {
             console.log(this.account)
             return this.account
-        }
+        },
+        ftSharePieData() {
+            return {
+                type: "pie",
+                data: {
+                    labels: [
+                    this.t('default.council'), this.t('default.community'),
+                    // t('default.foundation'), t('default.public_sale'),
+                    ], 
+                    datasets: [{
+                    data: [
+                        this.ftCouncilShare, this.ftCommunityShare,
+                        // this.ftFoundationShare, this.ftPublicShare,
+                    ],
+                    backgroundColor: [
+                        "rgba(253,125,126,0.6)", "rgba(204,229,187,0.6)",
+                        // "rgba(139,139,139,0.6)", "rgba(69,129,183,0.6)"
+                    ],
+                    }],
+                },
+            };
+        },
 
     },
     created() {

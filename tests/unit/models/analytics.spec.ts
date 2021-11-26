@@ -12,6 +12,18 @@ test('Get interval', () => {
     expect(Analytics.getInterval(Analytics.Algorithm.Linear)).toBe(1000);
 });
 
+test('Get Period from duration', () => {
+    expect(Analytics.getPeriodFromDuration(60*60*24)).toBe(Analytics.Period.Day);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30)).toBe(Analytics.Period.Day);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30 + 1)).toBe(Analytics.Period.Week);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*3)).toBe(Analytics.Period.Week);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*3 + 1)).toBe(Analytics.Period.Month);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*12)).toBe(Analytics.Period.Month);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*12 + 1)).toBe(Analytics.Period.Quarter);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*36)).toBe(Analytics.Period.Quarter);
+    expect(Analytics.getPeriodFromDuration(60*60*24*30*36 + 1)).toBe(Analytics.Period.Year);
+});
+
 test('Compute actual value for "Linear"', () => {
     const duration: number = 60 * 60 * 24 // 1 day
     let target: number = nowToSeconds() // now in seconds
@@ -71,7 +83,7 @@ test('Unlocking cashflow for "None"', () => {
     analytics.forEach((element) => {
         expect(element.value).toBe(1000)
     })
-    expect(analytics.length).toBe(367);
+    expect(analytics.length).toBe(366);
 });
 
 test('Unlocking cashflow for "Linear"', () => {

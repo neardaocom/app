@@ -50,6 +50,29 @@ const getInterval = (algorithm: Algorithm): Number => {
 }
 
 /**
+ * Get Period from duration
+ * 
+ * @param duration Amount of seconds
+ * @returns Period
+ */
+const getPeriodFromDuration = (duration: number): Period => {
+    let period: Period = Period.Day
+    const monthInSeconds: number = 60*60*24*30 // one month
+
+    if (duration > monthInSeconds * 36) {
+        period = Period.Year
+    } else if (duration > monthInSeconds * 12) {
+        period = Period.Quarter
+    } else if (duration > monthInSeconds * 3) {
+        period = Period.Month
+    } else if (duration > monthInSeconds) {
+        period = Period.Week
+    }
+
+    return period
+}
+
+/**
  * Get amount of unlocing tokens for target time
  *
  * @param algorithm Target algoritm
@@ -57,8 +80,8 @@ const getInterval = (algorithm: Algorithm): Number => {
  * @param settings algoritm settings
  * @returns amount of unlocking tokens for target time
  */
-const computeUnlocking = (algorithm: Algorithm, target: number, settings: any): number | undefined => {
-    let computed = undefined
+const computeUnlocking = (algorithm: Algorithm, target: number, settings: any): number => {
+    let computed = 0
     switch (algorithm) {
         case Algorithm.Linear:
             // check
@@ -87,7 +110,7 @@ const computeUnlocking = (algorithm: Algorithm, target: number, settings: any): 
 
 type Cashflow = {
     date: Date;
-    value: number | undefined;
+    value: number;
 }
 
 const getPeriodStep = (date: Date, period: Period): Date => {
@@ -108,8 +131,8 @@ const getPeriodStep = (date: Date, period: Period): Date => {
 }
 
 const computeUnlockingCashflow = (algorithm: Algorithm, settings: any, period: Period, begin: Date): Cashflow[] => {
-    let list: Cashflow[] = []
-    let computed: number | undefined = 0
+    const list: Cashflow[] = []
+    let computed: number = 0
     let increment: Date = _.clone(begin)
     const limit: Date = parseSeconds(settings.release_end)
     let check_loop: number = 0
@@ -120,12 +143,15 @@ const computeUnlockingCashflow = (algorithm: Algorithm, settings: any, period: P
         check_loop += 1
     }
     // add last
+    const lastComputed = computed
     computed = computeUnlocking(algorithm, toSeconds(increment), settings)
-    list.push({date: _.clone(increment), value: computed})
+    if (lastComputed < computed) {
+        list.push({date: _.clone(increment), value: computed})
+    }
     return list
 }
 
 export default {
     Period, Algorithm, parseAlgorithm, getInterval, computeUnlocking,
-    computeUnlockingCashflow, getPeriodStep
+    computeUnlockingCashflow, getPeriodStep, getPeriodFromDuration
 }

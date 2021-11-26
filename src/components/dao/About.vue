@@ -62,6 +62,16 @@
           </div>
         </div>
       </div>
+      <!-- BEGIN: council unlocking cashflow -->
+      <div class="col-12 col-md-6 mb-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body">
+            <h6 class="text-muted text-center">{{ t("default.council_unlocking_token") }}</h6>
+            <chart-council-unlocking :dao="dao"/>
+          </div>
+        </div>
+      </div>
+      <!-- END: council unlocking cashflow -->
     </div>
   </div>
 </template>
@@ -69,6 +79,7 @@
 <script>
 //import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
+import ChartCouncilUnlocking from '@/components/dao/ChartCouncilUnlocking.vue';
 //import Proposal from "@/components/dao/Proposal.vue"
 //import { transform } from '@/models/proposal';
 //import { toRefs } from "vue"
@@ -76,6 +87,7 @@ import { useI18n } from "vue-i18n";
 
 export default {
   components: {
+    ChartCouncilUnlocking
     //MDBProgress, MDBProgressBar,
     //NumberFormatter,
     //Proposal
