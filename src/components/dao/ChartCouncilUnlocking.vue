@@ -38,7 +38,7 @@
         
         const labels = cashflow.map(obj => d(obj.date))
         const dataset = cashflow.map(obj => obj.value)
-        console.log(dataset)
+        
         analytics.value = {
             labels,
             datasets: [

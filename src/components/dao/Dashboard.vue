@@ -12,7 +12,7 @@
               <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h2>
             <h5 class="text-center text-muted">
-              + <NumberFormatter :amount="token_community_unlocked"/> <small class="text-muted">{{ dao.token_name }}</small>
+              + <NumberFormatter :amount="token_community_unlocked"/>
             </h5>
           </div>
         </div>
@@ -87,11 +87,11 @@ export default {
     const { dao, accountId } = toRefs(props)
     const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
 
-    const token_community_unlocked = ref(new Decimal(dao.value.token_stats.community.free).plus(1100).toNumber())
-    const token_interval = null;
+    const token_community_unlocked = ref(new Decimal(1100).toNumber())
+    const token_community_interval = null;
 
     const counter = function() { token_community_unlocked.value += 1; }
-    return { t, n, proposals, token_community_unlocked, token_interval, counter};
+    return { t, n, proposals, token_community_unlocked, token_community_interval, counter};
   },
   computed: {
     myTokensAmount() {
@@ -111,7 +111,7 @@ export default {
     },
   },
   mounted() {
-    this.token_interval = setInterval(this.counter, 100)
+    this.token_community_interval = setInterval(this.counter, 100)
   }
 };
 </script>

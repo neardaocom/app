@@ -54,7 +54,7 @@
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
+    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
     <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />

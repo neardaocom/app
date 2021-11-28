@@ -4,6 +4,7 @@ import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
+import { UnsupportedError } from '@/utils/error'
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -40,7 +41,11 @@ const getActionType = (action: any) => {
       case "InvalidateFile":
         type = "invalidate_file";
         break;
+      case "DistributeFT":
+        type = "distribute_ft";
+        break;
       default:
+        throw new UnsupportedError('Undefined action type: ' + getActionKey(action))
         break;
     }
     return type;
@@ -112,8 +117,15 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           };
         }
         break;
-      default:
+      case 'DistributeFT':
+        args = {
+          amount: new Decimal(action.DistributeFT.amount),
+          group: t('default.' + action.DistributeFT.from_group.toLowerCase()),
+          accounts: action.DistributeFT.accounts.join(', '),
+        };
         break;
+      default:
+        throw new UnsupportedError('Undefined action type: ' + action_key)
     }
     return args;
 };
@@ -130,10 +142,11 @@ const getVotingStats = (proposal: any, token_holders: any, token_blocked: any) =
         case 1:
           results[1] += token_holders[voter] ?? 0;
           break;
-          case 2:
+        case 2:
           results[2] += token_holders[voter] ?? 0;
           break;
         default:
+          throw new UnsupportedError('Undefined voting stat: ' + _.toInteger(proposal.votes[voter]))
           break;
       }
     });
