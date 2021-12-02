@@ -224,7 +224,7 @@ export default {
                 , ipfs_cid
                 , [this.t('default.payout')]
                 , {
-                    'Pay': {
+                    'SendNear': {
                         amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
                         account_id: (this.formAccount + '.' +  this.getAccountPostfix())
                     }

@@ -18,7 +18,12 @@ const statusBgMapper = {
 
 const getAction = (proposal: any) => proposal.transactions.actions[0];
 
-const getActionKey = (action: any) => Object.keys(action)[0];
+const getActionKey = (action: any): string => {
+  let key: string = Object.keys(action)[0]
+  if (key === 'Pay') key = 'SendNear'
+  return key
+}
+
 
 const getActionType = (action: any) => {
     let type = "";
@@ -198,25 +203,18 @@ const getChoice = (proposal: any, accountId: string): string => {
     return kind_to_choice;
 };
 
-const getProgress = (proposal: any, durationTo: any): number => {
+const getProgress = (status: string, config: any, durationTo: Date): number => {
     let progress: number = 0;
-    if (proposal.status === "InProgress") {
+    if (status === "InProgress") {
       const end = durationTo.valueOf();
       const now = new Date().valueOf();
-      // TODO: get from config of dao
-      // let beginDate = this.durationTo
-      // beginDate.setMonth(this.durationTo.getMonth() - 1)
-      // const begin = beginDate.valueOf()
-      const begin = durationTo.valueOf() - 7 * 86400000;
+      const duration = new Decimal(_.get(config, ['duration'])).div(1_000_000).toNumber()
+      const begin = new Decimal(durationTo.valueOf()).minus(duration).toNumber()
       const nowFromBegin = now - begin;
       const endFromBegin = end - begin;
       // console.log('Progress values: ', begin, now, end);
       if (endFromBegin >= 0) {
-        progress = new Decimal(nowFromBegin)
-          .div(endFromBegin)
-          .times(100)
-          .round()
-          .toNumber();
+        progress = new Decimal(nowFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
       }
     }
     return progress
@@ -224,17 +222,20 @@ const getProgress = (proposal: any, durationTo: any): number => {
 
 const isVoted = (proposal: any, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
 
-const transform = (proposal: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any, d: any) => {
+const transform = (proposal: any, vote_policies: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any, d: any) => {
     const action = getAction(proposal[1].Curr)
     const actionType = getActionType(action)
+    const actionKey = getActionKey(action)
     const durationTo = getDurationTo(proposal[1].Curr)
+    const status = proposal[1].Curr.status
     const isOver = getOver(proposal[1].Curr)
     const stateIndex = getState(proposal[1].Curr, isOver)
     const args = getArgsFromAction(action, docs, t)
     const choiceIndex = getChoice(proposal[1].Curr, accountId)
+    const config = _.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: Hack Pay => SendNear
     const trans = {
         id: proposal[0],
-        key: getActionKey(action),
+        key: actionKey,
         index: proposal[1].Curr.uuid,
         title: t('default.' + actionType + '_message', args),
         description: proposal[1].Curr.description,
@@ -242,7 +243,7 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
         type: t("default." + getActionType(action)),
         stateIndex: stateIndex,
         state: t("default.vote_status_" + stateIndex),
-        status: proposal[1].Curr.status,
+        status: status,
         canVote: Object.keys(token_holders).includes(accountId),
         isOver: isOver,
         isVoted: isVoted(proposal[1].Curr, accountId),
@@ -253,9 +254,10 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
             date: d(durationTo),
             time: toTimeString(durationTo),
         },
+        config: config,
         choiceIndex: choiceIndex,
         choice: (choiceIndex) ? t("default.vote_type_" + choiceIndex) : null,
-        progress: getProgress(proposal[1].Curr, durationTo),
+        progress: getProgress(status, config, durationTo),
         quorum: proposal[1].Curr.quorum,
         search: '',
     }
@@ -265,5 +267,5 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
 };
 
 export {
-    transform, voteMapper, statusBgMapper
+    transform, voteMapper, statusBgMapper, getProgress
 }

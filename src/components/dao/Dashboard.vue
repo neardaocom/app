@@ -11,8 +11,8 @@
             <h2 class="text-center">
               <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h2>
-            <h5 class="text-center text-muted">
-              + <NumberFormatter :amount="token_community_unlocked"/>
+            <h5 v-if="token_community_to_unlock" class="text-center text-muted">
+              <NumberFormatter :amount="token_community_to_unlock"/>
             </h5>
           </div>
         </div>
@@ -25,6 +25,9 @@
               <NumberFormatter :amount="myTokensAmount"/>
             </h2>
             <h5 v-if="myTokensAmount" class="text-muted">≈ <NumberFormatter :amount="myTokensShare"/>%</h5>
+            <h5 v-if="token_council_to_unlock != null && isCouncil === true" class="text-center text-muted">
+              +<NumberFormatter :amount="token_council_to_unlock"/>
+            </h5>
           </div>
         </div>
       </div>
@@ -62,9 +65,11 @@ import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
-import { ref, toRefs } from "vue"
+import Analytics from "@/models/analytics"
+import { ref, toRefs, onMounted, onUnmounted } from "vue"
 import _ from "lodash"
 import Decimal from 'decimal.js'
+import { nowToSeconds } from '@/utils/date';
 
 export default {
   components: {
@@ -85,13 +90,67 @@ export default {
   setup(props) {
     const { t, n, d} = useI18n();
     const { dao, accountId } = toRefs(props)
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
+    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
 
-    const token_community_unlocked = ref(new Decimal(1100).toNumber())
-    const token_community_interval = null;
+    // council
+    const token_council_interval = ref(null);
+    const token_council_to_unlock = ref(null)
+    const token_council_step = ref(Analytics.getInterval(Analytics.parseAlgorithm(dao.value.token_stats.council.algorithm)))
+    const token_council_counter = () => {
+      const unlocking = Analytics.computeUnlocking(
+          Analytics.parseAlgorithm(dao.value.token_stats.council.algorithm),
+          nowToSeconds(),
+          dao.value.token_stats.council
+      )
+      console.log(unlocking)
+      token_council_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.council.distributed).div(dao.value.groups.council.wallets.length).round().toNumber()
+    }
+    if (dao.value.token_stats.council.algorithm !== "None") {
+      token_council_to_unlock.value = new Decimal(Analytics.computeUnlocking(
+        Analytics.parseAlgorithm(dao.value.token_stats.council.algorithm),
+        nowToSeconds(),
+        dao.value.token_stats.council
+      )).minus(dao.value.token_stats.council.distributed).div(dao.value.groups.council.wallets.length).round().toNumber()
+    }
 
-    const counter = function() { token_community_unlocked.value += 1; }
-    return { t, n, proposals, token_community_unlocked, token_community_interval, counter};
+    // community
+    const token_community_interval = ref(null);
+    const token_community_to_unlock = ref(null)
+    const token_community_step = ref(Analytics.getInterval(Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm)))
+    const token_community_counter = () => {
+      const unlocking = Analytics.computeUnlocking(
+          Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm),
+          nowToSeconds(),
+          dao.value.token_stats.community
+      )
+      console.log(unlocking)
+      token_community_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.community.unlocked).toNumber()
+    }
+    if (dao.value.token_stats.community.algorithm !== "None") {
+      token_community_to_unlock.value = new Decimal(Analytics.computeUnlocking(
+        Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm),
+        nowToSeconds(),
+        dao.value.token_stats.community
+      )).minus(dao.value.token_stats.community.unlocked).toNumber()
+    }
+
+    onMounted(() => {
+      //console.log(token_council_step.value, token_community_step.value)
+      token_council_interval.value = setInterval(token_council_counter, token_council_step.value)
+      token_community_interval.value = setInterval(token_community_counter, token_community_step.value)
+      //console.log('mounted')
+    })
+
+    onUnmounted(() => {
+      clearInterval(token_council_interval.value)
+      clearInterval(token_community_interval.value)
+      //console.log('unmounted')
+    })
+
+    return { t, n, proposals
+      , token_council_interval, token_council_to_unlock, token_council_step, token_council_counter
+      , token_community_interval, token_community_to_unlock, token_community_step, token_community_counter
+    };
   },
   computed: {
     myTokensAmount() {
@@ -109,9 +168,9 @@ export default {
 
       return results
     },
+    isCouncil() {
+      return this.dao.groups.council.wallets.includes(this.accountId)
+    }
   },
-  mounted() {
-    this.token_community_interval = setInterval(this.counter, 100)
-  }
 };
 </script>

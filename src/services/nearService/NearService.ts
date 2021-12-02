@@ -202,7 +202,7 @@ class NearService {
       ],
       vote_policy_configs: [
         {
-          proposal_kind: 'Pay',
+          proposal_kind: 'SendNear',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -505,6 +505,7 @@ class NearService {
       this.getDocFiles(daoAccount),
       this.getDaoConfig(daoAccount),
       this.getTags(),
+      this.getVotePolicies(daoAccount),
     ]).catch((e) => {
       console.log(e)
     });
@@ -556,6 +557,12 @@ class NearService {
         doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
       }
       file_list.push(doc)
+    });
+
+    // vote policies
+    const vote_policies: any = {}
+    data[8].forEach(element => {
+      _.set(vote_policies, element[0], element[1])
     });
 
     if (data !== null) {
@@ -653,7 +660,8 @@ class NearService {
         docs: {
           files: file_list,
           map: data[5].map.Doc || {categories: []}
-        }
+        },
+        vote_policies: vote_policies,
       };
     }
 
@@ -692,6 +700,10 @@ class NearService {
 
   async getDaoConfig(contractId: string) {
     return this.contractPool.get(contractId).dao_config();
+  }
+
+  async getVotePolicies(contractId: string) {
+    return this.contractPool.get(contractId).vote_policies();
   }
 
 }

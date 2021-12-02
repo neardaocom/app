@@ -13,7 +13,7 @@
         v-if="proposal.stateIndex === 'in_progress'"
         :height="4"
       >
-        <MDBProgressBar :value="proposal.progress" bg="primary" />
+        <MDBProgressBar :value="progress" bg="primary" />
       </MDBProgress>
       <!-- body -->
       <p
@@ -73,7 +73,7 @@
         role="group"
       >
         <button @click="finalize()" type="button" class="btn btn-primary">
-          <i class="fas fa-certificate me-2"></i> {{ t("default.finalize") }}
+          <i class="fas fa-certificate me-2"></i> {{ t("default.sign_and_execute") }}
         </button>
       </div>
     </div>
@@ -86,11 +86,11 @@ import {
   // , MDBCollapse, MDBBtn, MDBIcon
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { ref, toRefs, onMounted, onUnmounted } from "vue";
 import _ from "lodash";
 
 import TextCollapse from '@/components/TextCollapse.vue';
-import { statusBgMapper } from '@/models/proposal';
+import { statusBgMapper, getProgress } from '@/models/proposal';
 
 export default {
   components: {
@@ -108,14 +108,32 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props) {
+    const { proposal } = toRefs(props)
     const { t } = useI18n();
     const proposalDescription = ref('')
     const proposalDescriptionLoaded = ref(false)
-
     const collapseDescription = ref(false)
     const statusMapper = ref(statusBgMapper);
-    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded };
+
+    const progress = ref(proposal.value.progress)
+    const progressCounter = () => {
+      progress.value = getProgress(proposal.value.status, proposal.value.config, proposal.value.duration.value) // TODO: Change
+      console.log('Progress: ' + progress.value)
+    }
+    const progressInterval = ref(null);
+
+    onMounted(() => {
+      progressInterval.value = setInterval(progressCounter, 5_000)
+      //console.log('mounted')
+    })
+
+    onUnmounted(() => {
+      clearInterval(progressInterval.value)
+      //console.log('unmounted')
+    })
+
+    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
   },
   computed: {
     nearService() {

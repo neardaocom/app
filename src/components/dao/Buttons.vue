@@ -48,6 +48,7 @@
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -160,6 +161,21 @@ export default {
       console.log(group)
       // this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
       this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
+        console.log(r)
+      }).catch((e) => {
+        console.log(e)
+      });
+      this.dropdownAction = false
+    },
+    distributeToCouncilTokens() {
+      this.nearService.distributeFt(
+        this.dao.wallet,
+        this.dao.token_stats.council.free,
+        'Council',
+        this.dao.groups.council.wallets,
+        null,
+        0.5
+      ).then((r) => {
         console.log(r)
       }).catch((e) => {
         console.log(e)

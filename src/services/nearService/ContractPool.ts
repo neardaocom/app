@@ -28,6 +28,7 @@ export class ContractPool {
         'payments',
         'doc_files',
         'dao_config',
+        'vote_policies',
       ],
       changeMethods: [
         'add_proposal',
