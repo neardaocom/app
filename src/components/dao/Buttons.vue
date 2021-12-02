@@ -47,7 +47,8 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="possibleUpgrade" divider />
+            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>

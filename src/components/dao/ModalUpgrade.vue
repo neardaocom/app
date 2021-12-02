@@ -11,7 +11,7 @@
         </MDBModalHeader>
         <MDBModalBody class="text-start">
           <MDBListGroup>
-            <MDBListGroupItem color="success" :active="!downloaded">
+            <MDBListGroupItem :color="downloaded ? 'success' :  'dark'" >
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{t('default.download_new_version')}}</h5>
                   {{downloaded ? t('default.done') : t('default.click_to_download')  }}
@@ -25,7 +25,7 @@
                 </MDBBtn>
               </div>
             </MDBListGroupItem>
-            <MDBListGroupItem :disabled="!downloaded" :active="downloaded">
+            <MDBListGroupItem :disabled="!downloaded" :color="downloaded ? 'dark' :  'light'">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{t('default.upgrade_new_version')}}</h5>
                   {{downloaded ? t('default.click_to_upgrade') : t('default.first_download_new_version')  }}
@@ -95,7 +95,6 @@ export default {
     };
   },
   async mounted() {
-    // Todo: maybe control if (localStorage.download_new_version === true)
     if (await this.compareDaoNewestHash()){
       this.downloaded = true
     }
