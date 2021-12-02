@@ -47,6 +47,7 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
@@ -55,7 +56,7 @@
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
+    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
     <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
@@ -187,6 +188,16 @@ export default {
         .catch((e) => {
           console.log(e)
         })
+    },
+    unlockTokens(group) {
+      console.log(group)
+      // this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
+      this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
+        console.log(r)
+      }).catch((e) => {
+        console.log(e)
+      });
+      this.dropdownAction = false
     },
   }
 };

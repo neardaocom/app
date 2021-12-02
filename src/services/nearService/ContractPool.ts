@@ -36,6 +36,7 @@ export class ContractPool {
         'finish_proposal',
         'add_doc_file',
         'invalide_file',
+        'unlock_tokens',
         'download_new_version',
         'upgrade_self'
       ],

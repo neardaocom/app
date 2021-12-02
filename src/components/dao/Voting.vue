@@ -89,9 +89,9 @@ export default {
   },
   setup(props) {
     const { dao, accountId } = toRefs(props)
-    const { t } = useI18n();
+    const { t, d } = useI18n();
 
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t))
+    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
 
     const searchQuery = ref('')
     const filterState = reactive({

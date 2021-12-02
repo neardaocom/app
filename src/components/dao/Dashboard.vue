@@ -6,8 +6,14 @@
           <div class="card-body">
             <h5 class="text-center text-muted mb-0">{{ t("default.treasury") }}</h5>
             <h2 class="text-center">
-              ≈ <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ</span>
+              ≈ <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
             </h2>
+            <h2 class="text-center">
+              <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
+            </h2>
+            <h5 class="text-center text-muted">
+              + <NumberFormatter :amount="token_community_unlocked"/>
+            </h5>
           </div>
         </div>
       </div>
@@ -56,7 +62,7 @@ import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
-import { toRefs } from "vue"
+import { ref, toRefs } from "vue"
 import _ from "lodash"
 import Decimal from 'decimal.js'
 
@@ -80,7 +86,12 @@ export default {
     const { t, n, d} = useI18n();
     const { dao, accountId } = toRefs(props)
     const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
-    return { t, n, proposals };
+
+    const token_community_unlocked = ref(new Decimal(1100).toNumber())
+    const token_community_interval = null;
+
+    const counter = function() { token_community_unlocked.value += 1; }
+    return { t, n, proposals, token_community_unlocked, token_community_interval, counter};
   },
   computed: {
     myTokensAmount() {
@@ -99,5 +110,8 @@ export default {
       return results
     },
   },
+  mounted() {
+    this.token_community_interval = setInterval(this.counter, 100)
+  }
 };
 </script>
