@@ -17,6 +17,7 @@
   "remove_member_message": "Remove account ID <strong>{account}</strong> from <strong>{group}</strong>",
   "general_proposal": "General",
   "general_proposal_message": "<h5>{title}</h5>",
+  "upgrade_contract": "Upgrade contract",
   "invalidate_file": "Invalidate document",
   "invalidate_file_message": "Invalidate <strong>{name}</strong> from <strong>{category}</strong>",
   "add": "Add",
@@ -201,6 +202,16 @@
   "company": "Company",
   "startup": "Startup",
   "project": "Project",
-  "club": "Club"
+  "club": "Club",
+  "download": "Download",
+  "upgrade": "Upgrade",
+  "download_new_version": "Download new contract version",
+  "done": "Done",
+  "click_to_download" : "Click to download",
+  "upgrade_new_version": "Upgrade to new version",
+  "click_to_upgrade": "Click to upgrade",
+  "first_download_new_version": "First need to download new version",
+  "download_text": "A new version of the DAO contract is available. This will prepare a new version for you, which you can then upgrade in the second step.",
+  "upgrade_text": "You have already the new version of the contract ready, you can upgrade it now."
   
 }
