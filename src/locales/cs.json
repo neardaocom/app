@@ -192,5 +192,7 @@
   "click_to_download" : "Klikněte na stáhnout",
   "upgrade_new_version": "Povýšit na novou verzi",
   "click_to_upgrade": "Klikněte na povýšit",
-  "first_download_new_version": "Prvně musíte stáhnout novou verzi"
+  "first_download_new_version": "Prvně musíte stáhnout novou verzi",
+  "download_text": "Je k dispozici nová verze DAO kontraktu, tímto se vám připravý nová verze, kterou poté v druhém kroku můžete povýšit.",
+  "upgrade_text": "Novou verzi kontraktu již máte připravenou, teď ji můžete povýšit."
 }

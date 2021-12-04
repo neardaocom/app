@@ -208,6 +208,8 @@
   "click_to_download" : "Click to download",
   "upgrade_new_version": "Upgrade to new version",
   "click_to_upgrade": "Click to upgrade",
-  "first_download_new_version": "First need to download new version"
+  "first_download_new_version": "First need to download new version",
+  "download_text": "A new version of the DAO contract is available. This will prepare a new version for you, which you can then upgrade in the second step.",
+  "upgrade_text": "You have already the new version of the contract ready, you can upgrade it now."
   
 }

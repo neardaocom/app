@@ -17,7 +17,7 @@
                   {{downloaded ? t('default.done') : t('default.click_to_download')  }}
               </div>
               <p class="mb-1">
-                {{t('default.')}}
+                {{t('default.download_text')}}
               </p>
               <div class="d-flex w-100 flex-row-reverse">
                 <MDBBtn v-if="!downloaded" @click="downloadNewVersion" color="primary" >
@@ -32,7 +32,7 @@
                   
               </div>
               <p class="mb-1">
-                {{t('default.')}}
+                {{downloaded ? t('default.upgrade_text') : ''}}
               </p>
               <div class="d-flex w-100 flex-row-reverse">
                 <MDBBtn v-if="downloaded" @click="upgrade" color="primary" >
@@ -88,7 +88,7 @@ export default {
 
     watch(show, openModal)
 
-    const downloaded = ref(true)
+    const downloaded = ref(false)
 
     return {
       t, active, downloaded

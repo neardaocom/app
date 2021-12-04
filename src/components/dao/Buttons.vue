@@ -118,10 +118,7 @@ export default {
   },
 
   mounted() {
-    this.getLatestDaoVersion()   
-    // if(localStorage.download_new_version === 'true'){
-    //   this.modalUpgrade += 1
-    // } 
+    this.getLatestDaoVersion()
   },
 
   computed: {
@@ -135,8 +132,7 @@ export default {
       return this.$store.getters['near/getService']
     },
     possibleUpgrade(){
-      return 0 < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
-      //return this.dao.version < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
+      return this.dao.version < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
     }
   },
 
