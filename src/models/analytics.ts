@@ -41,9 +41,9 @@ const parseAlgorithm = (algorithm: string): Algorithm => {
 const getInterval = (algorithm: Algorithm): Number => {
     switch (algorithm) {
         case Algorithm.None:
-            return Number.MAX_SAFE_INTEGER
+            return 10_000
         case Algorithm.Linear:
-            return 1000
+            return 2_000
         default:
             throw new UnsupportedError(`Algoritm: ${algorithm} is not supported`)
     }

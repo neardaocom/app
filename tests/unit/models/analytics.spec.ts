@@ -8,8 +8,8 @@ test('Parsing Algorithm', () => {
 });
 
 test('Get interval', () => {
-    expect(Analytics.getInterval(Analytics.Algorithm.None)).toBe(Number.MAX_SAFE_INTEGER);
-    expect(Analytics.getInterval(Analytics.Algorithm.Linear)).toBe(1000);
+    expect(Analytics.getInterval(Analytics.Algorithm.None)).toBe(10_000);
+    expect(Analytics.getInterval(Analytics.Algorithm.Linear)).toBe(2_000);
 });
 
 test('Get Period from duration', () => {
