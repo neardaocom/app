@@ -45,13 +45,15 @@ class NearService {
 
     this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
 
-    const account = this.walletConnection.account();
+    const account = this.walletConnection.account(); 
 
     this.factoryContract = new Contract(account, this.config.contractName, {
       viewMethods: [
         'get_dao_list',
         'get_dao_info',
         'get_tags',
+        'get_stats',
+        'version_hash'
       ],
       changeMethods: [
         'create',
@@ -119,6 +121,25 @@ class NearService {
   async getDaoInfo(daoId: string) {
     return this.factoryContract.get_dao_info({account: daoId});
   }
+
+  /**
+   * Get dao stats
+   * 
+   * @returns Promise
+   */
+  async getDaoStats() {
+    return this.factoryContract.get_stats();
+  }
+
+  /**
+   * Get newest version hash of contract
+   * 
+   * @returns Promise
+   */
+  async getNewestVersionHash() {
+    return this.factoryContract.version_hash({version:0});
+  }
+
 
   /**
    * Create DAO
@@ -483,6 +504,24 @@ class NearService {
     });
   }
 
+  async downloadNewVersion(contractId: string){
+    return this.contractPool.get(contractId).download_new_version(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
+  async upgrade(contractId: string){
+    return this.contractPool.get(contractId).upgrade_self(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
   ///////////////
   // DAO VIEWs //
   ///////////////
@@ -510,7 +549,6 @@ class NearService {
       console.log(e)
     });
 
-    console.log(data)
     if (!data) {
       return null;
     }
@@ -557,7 +595,7 @@ class NearService {
         doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
       }
       file_list.push(doc)
-    });
+    });    
 
     // vote policies
     const vote_policies: any = {}
@@ -580,6 +618,7 @@ class NearService {
         location: data[6].lang, // TODO: renameing at SC
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
+        version: data[6].version,
         token_stats: {
           council: {
             total: data[3].council_ft_stats.total,
@@ -704,6 +743,10 @@ class NearService {
 
   async getVotePolicies(contractId: string) {
     return this.contractPool.get(contractId).vote_policies();
+  }
+
+  async getDaoVersionHash(contractId: string) {
+    return this.contractPool.get(contractId).version_hash();
   }
 
 }

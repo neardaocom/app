@@ -9,6 +9,7 @@ const data = {
   web: '',
   token: null,
   token_name: '',
+  version: 0,
   token_unlocked: {
     council: 0,
     community: 0,
