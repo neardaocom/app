@@ -14,6 +14,7 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
         ft_amount: n(item[1].ft_amount),
         tags: item[1].tags.map((tag: any) => t('default.' + _.nth(tags, _.toInteger(tag)))),
         search: '',
+        amount: null,
     }
     trans.search = [toSearch(trans.id), toSearch(trans.name), toSearch(trans.description), toSearch(trans.ft_name)].concat(trans.tags.map((tag: any) => toSearch(tag))).join('-')
     return trans

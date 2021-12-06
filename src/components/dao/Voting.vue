@@ -55,7 +55,7 @@
     <div class="row">
       <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal" :contractId="dao.wallet"/>
+          <Proposal :proposal="proposal" :contractId="dao.wallet" :accountRole="accountRole"/>
         </section>
       </div>
     </div>
@@ -83,6 +83,10 @@ export default {
       required: true,
     },
     accountId: {
+      type: String,
+      required: true,
+    },
+    accountRole: {
       type: String,
       required: true,
     },

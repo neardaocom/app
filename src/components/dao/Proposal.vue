@@ -41,12 +41,40 @@
             proposal.choice
           }}</span>
         </li>
-        <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
+        <!-- <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
           <i class="fas fa-users fa-fw me-2 mb-3"></i>
           <strong class="me-2">{{ t("default.vote_type_" + choice.choice) }}</strong>
           <span class="font-weight-bold text-black">{{ choice.percent }}%</span>
         </li>
+        -->
       </ul>
+
+      <!-- Voting stats. -->
+      <MDBProgress :height="20" class="rounded" style="max-width: 400px;">
+          <MDBProgressBar
+            v-if="proposal.votingStats[0]"
+            :value="proposal.votingStats[0].percent"
+            :bg="proposal.votingStats[0].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[0].choice) }}: {{ proposal.votingStats[0].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[1]"
+            :value="proposal.votingStats[1].percent"
+            :bg="proposal.votingStats[1].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[1].choice) }}: {{ proposal.votingStats[1].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[0] && proposal.votingStats[1]"
+            :value="100 - proposal.votingStats[0].percent - proposal.votingStats[1].percent"
+            :bg="'light'"
+          >
+          </MDBProgressBar>
+      </MDBProgress>
+      <br/>
+
+      <!-- Vote -->
       <div
         v-if="
           proposal.canVote === true
@@ -104,6 +132,10 @@ export default {
       required: true,
     },
     contractId: {
+      type: String,
+      required: true,
+    },
+    accountRole: {
       type: String,
       required: true,
     },

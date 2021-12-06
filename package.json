@@ -16,6 +16,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.116",
     "@tiptap/vue-3": "^2.0.0-beta.67",
     "@types/lodash": "^4.14.176",
+    "axios": "^0.24.0",
     "bn.js": "^5.2.0",
     "core-js": "^3.17.2",
     "crypto-js": "^4.1.1",

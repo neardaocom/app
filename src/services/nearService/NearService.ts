@@ -714,6 +714,27 @@ class NearService {
     return amountYokto.div(yoctoNear).toFixed(2);
   }
 
+  async getDaosAmount(contractIds: string[]) {
+    const result: {[index: string]: any} = {}
+
+    const promises: any[] = []
+    contractIds.forEach((accountId: string) => {
+      promises.push(this.getDaoState(accountId))
+    });
+    //console.log(promises)
+    const states = await Promise.all(promises).catch((e) => {
+      console.log(e)
+    });
+    // console.log(states)
+
+    contractIds.forEach((accountId: string, index: number) => {
+      const amountYokto = new Decimal(states[index].amount)
+      _.set(result, [index], amountYokto.div(yoctoNear).toFixed(2))
+    })
+
+    return result
+  }
+
   async getStatisticsMembers(contractId: string) {
     return this.contractPool.get(contractId).statistics_members();
   }

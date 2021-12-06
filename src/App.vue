@@ -3,14 +3,46 @@
 </template>
 
 <script>
-  export default {
-    components: {
-    },
-    created() {
-      this.$store.dispatch('near/init')
-      this.$store.dispatch('ipfs/init')
+import { ref, onMounted, onUnmounted } from "vue";
+import { coinGeckoExchange } from "@/services/exchangeService"
+
+export default {
+  components: {
+  },
+  setup() {
+    // near price
+    const near_price = ref(null)
+    const near_price_interval = ref(null)
+    const near_price_counter = () => {
+      coinGeckoExchange.getActualPrice('near').then(response => {
+        near_price.value = response
+        // console.log('NEAR price USD: ' + near_price.value)
+      })
     }
-  };
+    coinGeckoExchange.getActualPrice('near').then(response => {
+      near_price.value = response
+      // console.log('NEAR price USD: ' + near_price.value)
+    })
+
+    onMounted(() => {
+      near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1000) // 5 minutes
+      // console.log('App mounted')
+    })
+
+    onUnmounted(() => {
+      clearInterval(near_price_interval.value)
+      // console.log('App unmounted')
+    })
+
+    return {
+      near_price, near_price_interval, near_price_counter
+    };
+  },
+  created() {
+    this.$store.dispatch('near/init')
+    this.$store.dispatch('ipfs/init')
+  }
+};
 </script>
 
 <style>

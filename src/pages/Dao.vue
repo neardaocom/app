@@ -15,7 +15,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao"/>
+        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole"/>
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -25,7 +25,7 @@
     <section>
       <div class="container">
         <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
-        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId"/>
+        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
         <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
@@ -111,7 +111,18 @@ export default {
     },
     q_page() {
       return _.toString(this.$route.query.page) || 'overview'
-    }
+    },
+    accountRole() {
+      let role = 'guest'
+      if (this.dao.groups.council.wallets.includes(this.accountId)) {
+        role = 'council'
+      } else if (Object.keys(this.dao.token_holders).includes(this.accountId)) {
+        role = 'member'
+      } else if (this.accountId) {
+        role = 'user'
+      }
+      return role
+    },
   },
   mounted() {
     this.$store.commit('near/setContract', this.q_id)

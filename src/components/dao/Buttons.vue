@@ -27,7 +27,7 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div v-if="canVote === true" class="col-12 col-lg-3">
+      <div v-if="accountRole != 'guest'" class="col-12 col-lg-3">
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>-->
@@ -47,8 +47,8 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
@@ -96,7 +96,11 @@ export default {
     dao: {
       type: Object,
       required: true
-    }
+    },
+    accountRole: {
+      type: String,
+      required: true,
+    },
   },
   setup() {
     const { t } = useI18n();

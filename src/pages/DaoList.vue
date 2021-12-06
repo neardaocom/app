@@ -50,7 +50,7 @@
                     <th scope="col" class="text-start">{{ t('default.organization') }}</th>
                     <th scope="col" class="text-start"></th>
                     <th scope="col" class="text-start">{{ t('default.wallet') }}</th>
-                    <th scope="col" class="text-end">{{ t('default.tokens') }}</th>
+                    <th scope="col" class="text-end">{{ t('default.dao_funds') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -80,9 +80,7 @@
                       </a>
                     </td>
                     <td class="text-end">
-                      <span class="fw-bold">{{ dao.ft_name }}</span>
-                      <br>
-                      <span class="fw-light">{{ dao.ft_amount }}</span>
+                      <span class="fw-bold me-1">{{ dao.amount }}</span><span v-if="dao.amount" class="text-muted">USD</span>
                     </td>
                   </tr>
                 </tbody>
@@ -115,6 +113,7 @@ import { transform, transTags } from '@/models/dao'
 import { getRandom } from '@/utils/integer'
 import { toSearch } from '@/utils/string'
 import _ from "lodash"
+import Decimal from 'decimal.js';
 
 export default {
   components: {
@@ -164,6 +163,9 @@ export default {
     walletUrl() {
         return this.$store.getters['near/getWalletUrl']
     },
+    nearPrice() {
+      return this.$root.near_price
+    },
     results() {
       let results = this.list
       // filter
@@ -193,13 +195,24 @@ export default {
         this.nearService.getDaoList(),
         this.nearService.getTags(),
       ]).then(r => {
+        this.loadingProgress = 75
         this.list = transform(r[0], r[1], this.t, this.n)
         this.tags = transTags(r[1], this.t)
-        this.loadingProgress = 100
+
+        // load amount
+        this.nearService.getDaosAmount(this.list.map((item) => item.id + '.' + this.factoryAccount)).then(
+          wallets => {
+            // console.log(wallets)
+            this.list.forEach((element, index) => {
+              element.amount = new Decimal(wallets[index]).times(this.nearPrice).toFixed(2)
+            });
+            this.loadingProgress = 100
+          }
+        )
       }).catch((e) => {
         console.log(e)
       })
-      this.loadingProgress = getRandom(25, 75)
+      this.loadingProgress = getRandom(25, 50)
     }
   }
 }

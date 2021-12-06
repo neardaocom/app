@@ -4,14 +4,22 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <h5 class="text-center text-muted mb-0">{{ t("default.treasury") }}</h5>
-            <h2 class="text-center">
-              ≈ <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
+            <h5 class="text-center text-muted mb-0">{{ t("default.dao_funds") }}</h5>
+            <h2 v-if="nearPrice" class="text-center">
+              <NumberFormatter :amount="dao.treasury.near * nearPrice"/> <small class="text-muted">USD</small>
             </h2>
-            <h2 class="text-center">
+            <h2 v-else class="text-center">
+              <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
+            </h2>
+            <hr/>
+            <h5 v-if="false" class="text-center text-muted mb-1">{{ t("default.treasury") }}</h5>
+            <h5 v-if="nearPrice" class="text-center">
+              <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
+            </h5>
+            <h5 class="text-center">
               <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
-            </h2>
-            <h5 v-if="token_community_to_unlock" class="text-center text-muted">
+            </h5>
+            <h5 v-if="false && token_community_to_unlock" class="text-center text-muted">
               <NumberFormatter :amount="token_community_to_unlock"/>
             </h5>
           </div>
@@ -22,10 +30,12 @@
           <div class="card-body text-center">
             <h5 class="text-muted mb-0">{{ t("default.my_share") }}</h5>
             <h2 class="mb-0">
-              <NumberFormatter :amount="myTokensAmount"/>
+              <NumberFormatter :amount="myTokensShare"/><small class="text-muted">%</small>
             </h2>
-            <h5 v-if="myTokensAmount" class="text-muted">≈ <NumberFormatter :amount="myTokensShare"/>%</h5>
-            <h5 v-if="token_council_to_unlock != null && isCouncil === true" class="text-center text-muted">
+            <h5 v-if="false && myTokensAmount" class="text-muted">
+              <NumberFormatter :amount="myTokensAmount"/> <small class="text-muted">{{ dao.token_name }}</small>
+            </h5>
+            <h5 v-if="false && token_council_to_unlock != null && isCouncil === true" class="text-center text-muted">
               +<NumberFormatter :amount="token_council_to_unlock"/>
             </h5>
           </div>
@@ -36,8 +46,16 @@
           <div class="card-body text-center">
             <h5 class="text-muted">{{ t("default.activity") }}</h5>
             <ul class="list-inline list-unstyled mb-0">
-              <li class="list-inline-item me-3"><MDBIcon icon="vote-yea" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.proposals.length }}</MDBBadge></li>
-              <li class="list-inline-item ms-3"><MDBIcon icon="file-alt" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge></li>
+              <li class="list-inline-item me-3">
+                <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" class="text-reset">
+                  <MDBIcon icon="vote-yea" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.proposals.length }}</MDBBadge>
+                </router-link>
+              </li>
+              <li class="list-inline-item ms-3">
+                <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" class="text-reset">
+                  <MDBIcon icon="file-alt" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge>
+                </router-link>
+              </li>
             </ul>
           </div>
         </div>
@@ -102,7 +120,7 @@ export default {
           nowToSeconds(),
           dao.value.token_stats.council
       )
-      console.log(unlocking)
+      //console.log(unlocking)
       token_council_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.council.distributed).div(dao.value.groups.council.wallets.length).round().toNumber()
     }
     if (dao.value.token_stats.council.algorithm !== "None") {
@@ -123,7 +141,7 @@ export default {
           nowToSeconds(),
           dao.value.token_stats.community
       )
-      console.log(unlocking)
+      // console.log(unlocking)
       token_community_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.community.unlocked).toNumber()
     }
     if (dao.value.token_stats.community.algorithm !== "None") {
@@ -170,6 +188,9 @@ export default {
     },
     isCouncil() {
       return this.dao.groups.council.wallets.includes(this.accountId)
+    },
+    nearPrice() {
+      return this.$root.near_price
     }
   },
 };
