@@ -2,6 +2,24 @@ export const getPublicSalePercent = (council, community, investor) => {
   return 100 - (council ?? 0) - (community ?? 0) - (investor ?? 0)
 }
 
+export const getProposalKind = (proposal) => {
+  return Object.keys(proposal.transactions.actions[0])[0] ?? null
+}
+
+export const getProposalTitle = (proposal) => {
+  let title = null;
+  switch (getProposalKind(proposal)) {
+    case 'GeneralProposal': {
+      title = proposal.transactions.actions[0].GeneralProposal.title
+      break;
+    }
+    default:
+      break;
+  }
+  return title;
+}
+
+
 
 //import Decimal from 'decimal.js';
 //import { Proposal, ProposalRaw, ProposalType } from 'types/proposal';

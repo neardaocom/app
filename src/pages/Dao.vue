@@ -30,6 +30,7 @@
         <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
         <Organization v-if="loaded === true && this.$route.query.page === 'organization'" :dao="dao"/>
+        <Documents v-if="loaded === true && this.$route.query.page === 'documents'" :docs="dao.docs"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -54,6 +55,7 @@ import SkeletonDashboard from '@/components/dao/SkeletonDashboard.vue'
 import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
+import Documents from '@/components/dao/Documents.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
@@ -65,7 +67,7 @@ import DAOs from '@/types/DAOs'
 
 export default {
   components: {
-    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Organization
+    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Organization, Documents
     , SkeletonDashboard, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
@@ -86,6 +88,7 @@ export default {
     return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
   },
   created() {
+    console.log(process.env.VUE_APP_DAO_DEFAULT)
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id
