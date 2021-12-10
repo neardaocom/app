@@ -55,7 +55,7 @@
     <div class="row">
       <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal" :contractId="dao.wallet"/>
+          <Proposal :proposal="proposal" :contractId="dao.wallet" :accountRole="accountRole"/>
         </section>
       </div>
     </div>
@@ -86,12 +86,16 @@ export default {
       type: String,
       required: true,
     },
+    accountRole: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const { dao, accountId } = toRefs(props)
-    const { t } = useI18n();
+    const { t, d } = useI18n();
 
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t))
+    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
 
     const searchQuery = ref('')
     const filterState = reactive({

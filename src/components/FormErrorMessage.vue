@@ -1,5 +1,7 @@
 <template>
-  <div v-if="show" style="width: auto; margin-top: .25rem; font-size: .875rem; color: #f93154; margin-top: -1.0rem;">{{ getMessage }}</div>
+  <div class="position-relative" v-show="show">
+    <div class="position-absolute top-0 start-0" style="width: auto; margin-top: -.75rem; font-size: .875rem; color: #f93154;">{{ getMessage }}</div>
+  </div>
 </template>
 
 <script>

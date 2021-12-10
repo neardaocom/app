@@ -21,8 +21,16 @@
           <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
               @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
           >
-              <span class="input-group-text" id="amount-addon">Ⓝ</span>
+              <span class="input-group-text" id="amount-addon">{{ amountPostfix }}</span>
           </MDBInput>
+          <div class="text-center mt-2">
+            <MDBBtnGroup>
+              <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" label="NEAR" name="options" value="near"
+                v-model="formAsset" />
+              <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" :label="tokenName" name="options" value="token"
+                v-model="formAsset" />
+            </MDBBtnGroup>
+          </div>
           <br/>
           <label for="description-id-input" class="form-label">{{ t('default.description') }}</label>
           <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
@@ -51,7 +59,9 @@ import {
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter
+  MDBModalFooter,
+  MDBRadio,
+  MDBBtnGroup,
 } from "mdb-vue-ui-kit";
 import { yoctoNear } from "@/services/nearService/constants"
 import Decimal from 'decimal.js';
@@ -62,7 +72,8 @@ export default {
     MDBBtn
     , MDBInput
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
-    , MDBWysiwyg
+    , MDBRadio, MDBBtnGroup
+    , MDBWysiwyg,
   },
   props: {
     show: {
@@ -70,6 +81,10 @@ export default {
       required: true
     },
     contractId: {
+      type: String,
+      required: true
+    },
+    tokenName: {
       type: String,
       required: true
     }
@@ -87,6 +102,7 @@ export default {
 
     const formAccount = ref('')
     const formAmount = ref(0)
+    const formAsset = ref('near')
     const formDescription = ref('')
 
     const isValidated = ref({
@@ -99,7 +115,7 @@ export default {
 
     return {
       t, active
-      , formAccount, formAmount, formDescription
+      , formAccount, formAmount, formAsset, formDescription
       , isValidated, errors
     };
   },
@@ -116,6 +132,13 @@ export default {
     ipfsService() {
       return this.$store.getters['ipfs/getService']
     },
+    amountPostfix() {
+      let postfix = 'Ⓝ'
+      if (this.formAsset == 'token') {
+        postfix = this.tokenName
+      }
+      return postfix
+    }
   },
   methods: {
     getAccountPostfix() {
@@ -199,32 +222,56 @@ export default {
           return
         }
         // Blockchain
-        this.nearService.addProposal(
-            this.contractId
-            , ipfs_cid
-            , [this.t('default.payout')]
-            , {
-                'Pay': {
-                    amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
-                    account_id: (this.formAccount + '.' +  this.getAccountPostfix())
+        switch (this.formAsset) {
+          case 'near':
+            this.nearService.addProposal(
+                this.contractId
+                , ipfs_cid
+                , [this.t('default.payout')]
+                , {
+                    'SendNear': {
+                        amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
+                        account_id: (this.formAccount + '.' +  this.getAccountPostfix())
+                    }
                 }
-            }
-            , 0.5
-            , this.accountId
-        ).then(r => {
-            console.log(r)
-            this.formAccount = ''
-            this.formAmount = 0
-            this.formDescription = ''
-            this.active = false
-        }).catch((e) => {
+                , 0.5
+                , this.accountId
+            ).then(r => {
+                console.log(r)
+                this.formAccount = ''
+                this.formAmount = 0
+                this.formDescription = ''
+                this.active = false
+            }).catch((e) => {
             const account =  this.formAccount + '.' + this.factoryAccount.split('.')[1]
             this.$logger.error('D', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
             this.$logger.error('B', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
             this.$notify.danger(this.t('default.notify_payout_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_payout_fail_message', {account : account}))
             this.$notify.flush()
             console.log(e)
-        })
+            })
+            break;
+          case 'token':
+            this.nearService.distributeFt(
+                this.contractId
+                , this.formAmount
+                , 'Community'
+                , [(this.formAccount + '.' +  this.getAccountPostfix())]
+                , ipfs_cid
+                , 0.5
+            ).then(r => {
+                console.log(r)
+                this.formAccount = ''
+                this.formAmount = 0
+                this.formDescription = ''
+                this.active = false
+            }).catch((e) => {
+                console.log(e)
+            })
+            break;
+          default:
+            throw new Error('Unsupported asset: ' + this.formAsset)
+        }
       }
     },
     close() {

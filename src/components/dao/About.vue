@@ -41,10 +41,10 @@
                 <strong>{{ t("default.community") }}</strong>
                 {{ dao.groups.community.amount || "0" }}%
               </li>
-              <li>
+              <li v-if="false">
                 <i class="fas fa-chart-line fa-fw me-3 mb-3"></i
                 ><strong>{{ t("default.investor") }}</strong>
-                {{ dao.groups.investor.amount || "0" }}% |
+                {{ dao.groups.foundation.amount || "0" }}% |
                 <strong>{{ t("default.public_sale") }}</strong>
                 {{ dao.groups.public_sale.amount || "0" }}%
               </li>
@@ -62,6 +62,16 @@
           </div>
         </div>
       </div>
+      <!-- BEGIN: council unlocking cashflow -->
+      <div class="col-12 col-md-6 mb-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body">
+            <h6 class="text-muted text-center">{{ t("default.council_unlocking_token") }}</h6>
+            <chart-council-unlocking :dao="dao"/>
+          </div>
+        </div>
+      </div>
+      <!-- END: council unlocking cashflow -->
     </div>
   </div>
 </template>
@@ -69,6 +79,7 @@
 <script>
 //import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
+import ChartCouncilUnlocking from '@/components/dao/ChartCouncilUnlocking.vue';
 //import Proposal from "@/components/dao/Proposal.vue"
 //import { transform } from '@/models/proposal';
 //import { toRefs } from "vue"
@@ -76,6 +87,7 @@ import { useI18n } from "vue-i18n";
 
 export default {
   components: {
+    ChartCouncilUnlocking
     //MDBProgress, MDBProgressBar,
     //NumberFormatter,
     //Proposal

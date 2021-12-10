@@ -13,7 +13,7 @@
         v-if="proposal.stateIndex === 'in_progress'"
         :height="4"
       >
-        <MDBProgressBar :value="proposal.progress" bg="primary" />
+        <MDBProgressBar :value="progress" bg="primary" />
       </MDBProgress>
       <!-- body -->
       <p
@@ -41,12 +41,40 @@
             proposal.choice
           }}</span>
         </li>
-        <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
+        <!-- <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
           <i class="fas fa-users fa-fw me-2 mb-3"></i>
           <strong class="me-2">{{ t("default.vote_type_" + choice.choice) }}</strong>
           <span class="font-weight-bold text-black">{{ choice.percent }}%</span>
         </li>
+        -->
       </ul>
+
+      <!-- Voting stats. -->
+      <MDBProgress :height="20" class="rounded" style="max-width: 400px;">
+          <MDBProgressBar
+            v-if="proposal.votingStats[0]"
+            :value="proposal.votingStats[0].percent"
+            :bg="proposal.votingStats[0].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[0].choice) }}: {{ proposal.votingStats[0].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[1]"
+            :value="proposal.votingStats[1].percent"
+            :bg="proposal.votingStats[1].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[1].choice) }}: {{ proposal.votingStats[1].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[0] && proposal.votingStats[1]"
+            :value="100 - proposal.votingStats[0].percent - proposal.votingStats[1].percent"
+            :bg="'light'"
+          >
+          </MDBProgressBar>
+      </MDBProgress>
+      <br/>
+
+      <!-- Vote -->
       <div
         v-if="
           proposal.canVote === true
@@ -73,7 +101,7 @@
         role="group"
       >
         <button @click="finalize()" type="button" class="btn btn-primary">
-          <i class="fas fa-certificate me-2"></i> {{ t("default.finalize") }}
+          <i class="fas fa-certificate me-2"></i> {{ t("default.sign_and_execute") }}
         </button>
       </div>
     </div>
@@ -86,11 +114,11 @@ import {
   // , MDBCollapse, MDBBtn, MDBIcon
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { ref } from "vue";
+import { ref, toRefs, onMounted, onUnmounted } from "vue";
 import _ from "lodash";
 
 import TextCollapse from '@/components/TextCollapse.vue';
-import { statusBgMapper } from '@/models/proposal';
+import { statusBgMapper, getProgress } from '@/models/proposal';
 
 export default {
   components: {
@@ -107,15 +135,37 @@ export default {
       type: String,
       required: true,
     },
+    accountRole: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
+    const { proposal } = toRefs(props)
     const { t } = useI18n();
     const proposalDescription = ref('')
     const proposalDescriptionLoaded = ref(false)
-
     const collapseDescription = ref(false)
     const statusMapper = ref(statusBgMapper);
-    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded };
+
+    const progress = ref(proposal.value.progress)
+    const progressCounter = () => {
+      progress.value = getProgress(proposal.value.status, proposal.value.config, proposal.value.duration.value) // TODO: Change
+      console.log('Progress: ' + progress.value)
+    }
+    const progressInterval = ref(null);
+
+    onMounted(() => {
+      progressInterval.value = setInterval(progressCounter, 5_000)
+      //console.log('mounted')
+    })
+
+    onUnmounted(() => {
+      clearInterval(progressInterval.value)
+      //console.log('unmounted')
+    })
+
+    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
   },
   computed: {
     accountId(){

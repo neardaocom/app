@@ -1,9 +1,10 @@
 import { toSearch } from '@/utils/string'
-import { parseFromNanoseconds, toDateString, toTimeString } from "@/utils/date";
+import { parseNanoseconds, toTimeString } from "@/utils/date";
 import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
+import { UnsupportedError } from '@/utils/error'
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -17,7 +18,12 @@ const statusBgMapper = {
 
 const getAction = (proposal: any) => proposal.transactions.actions[0];
 
-const getActionKey = (action: any) => Object.keys(action)[0];
+const getActionKey = (action: any): string => {
+  let key: string = Object.keys(action)[0]
+  if (key === 'Pay') key = 'SendNear'
+  return key
+}
+
 
 const getActionType = (action: any) => {
     let type = "";
@@ -40,7 +46,11 @@ const getActionType = (action: any) => {
       case "InvalidateFile":
         type = "invalidate_file";
         break;
+      case "DistributeFT":
+        type = "distribute_ft";
+        break;
       default:
+        throw new UnsupportedError('Undefined action type: ' + getActionKey(action))
         break;
     }
     return type;
@@ -112,8 +122,15 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           };
         }
         break;
-      default:
+      case 'DistributeFT':
+        args = {
+          amount: new Decimal(action.DistributeFT.amount),
+          group: t('default.' + action.DistributeFT.from_group.toLowerCase()),
+          accounts: action.DistributeFT.accounts.join(', '),
+        };
         break;
+      default:
+        throw new UnsupportedError('Undefined action type: ' + action_key)
     }
     return args;
 };
@@ -130,10 +147,11 @@ const getVotingStats = (proposal: any, token_holders: any, token_blocked: any) =
         case 1:
           results[1] += token_holders[voter] ?? 0;
           break;
-          case 2:
+        case 2:
           results[2] += token_holders[voter] ?? 0;
           break;
         default:
+          throw new UnsupportedError('Undefined voting stat: ' + _.toInteger(proposal.votes[voter]))
           break;
       }
     });
@@ -156,7 +174,7 @@ const getVotingStats = (proposal: any, token_holders: any, token_blocked: any) =
     ];
 }
 
-const getDurationTo = (proposal: any) => parseFromNanoseconds(proposal.duration_to);
+const getDurationTo = (proposal: any) => parseNanoseconds(proposal.duration_to);
 
 const getOver = (proposal: any): boolean => {
     if (proposal.status === "InProgress") {
@@ -185,25 +203,18 @@ const getChoice = (proposal: any, accountId: string): string => {
     return kind_to_choice;
 };
 
-const getProgress = (proposal: any, durationTo: any): number => {
+const getProgress = (status: string, config: any, durationTo: Date): number => {
     let progress: number = 0;
-    if (proposal.status === "InProgress") {
+    if (status === "InProgress") {
       const end = durationTo.valueOf();
       const now = new Date().valueOf();
-      // TODO: get from config of dao
-      // let beginDate = this.durationTo
-      // beginDate.setMonth(this.durationTo.getMonth() - 1)
-      // const begin = beginDate.valueOf()
-      const begin = durationTo.valueOf() - 7 * 86400000;
+      const duration = new Decimal(_.get(config, ['duration'])).div(1_000_000).toNumber()
+      const begin = new Decimal(durationTo.valueOf()).minus(duration).toNumber()
       const nowFromBegin = now - begin;
       const endFromBegin = end - begin;
       // console.log('Progress values: ', begin, now, end);
       if (endFromBegin >= 0) {
-        progress = new Decimal(nowFromBegin)
-          .div(endFromBegin)
-          .times(100)
-          .round()
-          .toNumber();
+        progress = new Decimal(nowFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
       }
     }
     return progress
@@ -211,17 +222,20 @@ const getProgress = (proposal: any, durationTo: any): number => {
 
 const isVoted = (proposal: any, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
 
-const transform = (proposal: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any) => {
+const transform = (proposal: any, vote_policies: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any, d: any) => {
     const action = getAction(proposal[1].Curr)
     const actionType = getActionType(action)
+    const actionKey = getActionKey(action)
     const durationTo = getDurationTo(proposal[1].Curr)
+    const status = proposal[1].Curr.status
     const isOver = getOver(proposal[1].Curr)
     const stateIndex = getState(proposal[1].Curr, isOver)
     const args = getArgsFromAction(action, docs, t)
     const choiceIndex = getChoice(proposal[1].Curr, accountId)
+    const config = _.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: Hack Pay => SendNear
     const trans = {
         id: proposal[0],
-        key: getActionKey(action),
+        key: actionKey,
         index: proposal[1].Curr.uuid,
         title: t('default.' + actionType + '_message', args),
         description: proposal[1].Curr.description,
@@ -229,7 +243,7 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
         type: t("default." + getActionType(action)),
         stateIndex: stateIndex,
         state: t("default.vote_status_" + stateIndex),
-        status: proposal[1].Curr.status,
+        status: status,
         canVote: Object.keys(token_holders).includes(accountId),
         isOver: isOver,
         isVoted: isVoted(proposal[1].Curr, accountId),
@@ -237,12 +251,13 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
         votingStats: getVotingStats(proposal[1].Curr, token_holders, token_blocked),
         duration: {
             value: durationTo,
-            date: toDateString(durationTo),
+            date: d(durationTo),
             time: toTimeString(durationTo),
         },
+        config: config,
         choiceIndex: choiceIndex,
         choice: (choiceIndex) ? t("default.vote_type_" + choiceIndex) : null,
-        progress: getProgress(proposal[1].Curr, durationTo),
+        progress: getProgress(status, config, durationTo),
         quorum: proposal[1].Curr.quorum,
         search: '',
     }
@@ -252,5 +267,5 @@ const transform = (proposal: any, docs: any, token_holders: any, token_blocked: 
 };
 
 export {
-    transform, voteMapper, statusBgMapper
+    transform, voteMapper, statusBgMapper, getProgress
 }

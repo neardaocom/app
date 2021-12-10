@@ -1,6 +1,7 @@
 import {
   connect,
   Contract,
+  transactions,
   keyStores,
   WalletConnection,
 } from 'near-api-js';
@@ -8,6 +9,7 @@ import { toNanoseconds } from '@/utils/date';
 
 
 import Decimal from 'decimal.js';
+import BN from 'bn.js';
 
 import { yoctoNear, TGas } from './constants';
 import { ContractPool } from './ContractPool';
@@ -43,13 +45,15 @@ class NearService {
 
     this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
 
-    const account = this.walletConnection.account();
+    const account = this.walletConnection.account(); 
 
     this.factoryContract = new Contract(account, this.config.contractName, {
       viewMethods: [
         'get_dao_list',
         'get_dao_info',
         'get_tags',
+        'get_stats',
+        'version_hash'
       ],
       changeMethods: [
         'create',
@@ -119,6 +123,25 @@ class NearService {
   }
 
   /**
+   * Get dao stats
+   * 
+   * @returns Promise
+   */
+  async getDaoStats() {
+    return this.factoryContract.get_stats();
+  }
+
+  /**
+   * Get newest version hash of contract
+   * 
+   * @returns Promise
+   */
+  async getNewestVersionHash() {
+    return this.factoryContract.version_hash({version:0});
+  }
+
+
+  /**
    * Create DAO
    */
   async createDao(
@@ -131,10 +154,18 @@ class NearService {
     , location: string
     , ftName: string
     , ftAmount: number
-    , ftInitDistribution: number
     , ftCouncilShare: number
-    , ftFoundationShare: number
+    , ftCouncilInitDistribution: number
+    , ftCouncilUnlockingFrom: number
+    , ftCouncilUnlockingDuration: number
     , ftCommunityShare: number
+    , ftCommunityUnlockingFrom: number
+    , ftCommunityUnlockingDuration: number
+    , ftFoundationShare: number
+    , ftFoundationUnlockingFrom: number
+    , ftFoundationUnlockingDuration: number
+    , ftPublicSaleUnlockingFrom: number
+    , ftPublicSaleUnlockingDuration: number
     , voteSpamThreshold: number
     , voteDurationDays: number
     , voteDurationHours: number
@@ -153,9 +184,19 @@ class NearService {
     };
     // console.log(info)
 
+    let releaseCouncilConfig: any = "None";
+    let releaseCommunityConfig: any = "None";
+    let releaseFoundationConfig: any = "None";
+    let releasePublicSaleConfig: any = "None";
+
+    if (ftCouncilUnlockingDuration != null) releaseCouncilConfig = {"Linear": {"from": ftCouncilUnlockingFrom, "duration": ftCouncilUnlockingDuration }}
+    if (ftCommunityUnlockingDuration != null) releaseCommunityConfig = {"Linear": {"from": ftCommunityUnlockingFrom, "duration": ftCommunityUnlockingDuration }}
+    if (ftFoundationUnlockingDuration != null) releaseFoundationConfig = {"Linear": {"from": ftFoundationUnlockingFrom, "duration": ftFoundationUnlockingDuration }}
+    if (ftPublicSaleUnlockingDuration != null) releasePublicSaleConfig = {"Linear": {"from": ftPublicSaleUnlockingFrom, "duration": ftPublicSaleUnlockingDuration }}
+
     const args = {
       total_supply: ftAmount,
-      init_distribution: ftInitDistribution,
+      founders_init_distribution: ftCouncilInitDistribution,
       ft_metadata: {
         spec: "ft-1.0.0",
         name: ftName,
@@ -171,14 +212,18 @@ class NearService {
         slogan: slogan,
         description: slogan,
         council_share: ftCouncilShare,
-        foundation_share: ftFoundationShare,
         community_share: ftCommunityShare,
+        foundation_share: ftFoundationShare,
         vote_spam_threshold: voteSpamThreshold
       },
-      release_config: 'Voting',
+      release_config: [
+        ["Council", releaseCouncilConfig],
+        ["Community", releaseCommunityConfig],
+        ["Foundation", releaseFoundationConfig],
+      ],
       vote_policy_configs: [
         {
-          proposal_kind: 'Pay',
+          proposal_kind: 'SendNear',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -227,6 +272,14 @@ class NearService {
         },
         {
           proposal_kind: 'InvalidateFile',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'DistributeFT',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -349,15 +402,47 @@ class NearService {
     return this.contractPool.get(contractId).add_proposal(
       {
         proposal_input: {
-          description: description,
+          description: null,
+          description_cid: null,
           tags: [],
-          transaction: {
-            InvalidateFile: {
-              uuid: ipfs_hash
-            }
+        },
+        tx_input: {
+          InvalidateFile: {
+            uuid: ipfs_hash
           }
         },
         account_id: accountId
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  async distributeFt(
+    contractId: string
+    , amount: number
+    , group: string
+    , accounts: string[]
+    , description: string
+    , amountToTransfer: number
+  ) {
+    const amountToTransferDecimal = new Decimal(amountToTransfer);
+    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+
+    return this.contractPool.get(contractId).add_proposal(
+      {
+        proposal_input: {
+          description: description,
+          description_cid: null,
+          tags: [],
+        },
+        tx_input: {
+          DistributeFT: {
+            total_amount: amount,
+            from_group: group,
+            accounts: accounts,
+          },
+        },
       },
       Decimal.mul(100, TGas).toString(),
       amountYokto.toString()
@@ -399,6 +484,44 @@ class NearService {
     );
   }
 
+  
+  async unlockTokens(contractId: string, group: string) {
+    return this.contractPool.get(contractId).unlock_tokens({group: group}, Decimal.mul(10, TGas).toString());
+  }
+
+  async unlockAllTokens(contractId: string) {
+    // const account = this.walletConnection._connectedAccount;
+    const account = await this.near.account('neardao.testnet')
+    console.log(account)
+    return account.signAndSendTransaction({
+        receiverId: contractId,
+        actions: [
+            transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Council'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Community'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+        ],
+    });
+  }
+
+  async downloadNewVersion(contractId: string){
+    return this.contractPool.get(contractId).download_new_version(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
+  async upgrade(contractId: string){
+    return this.contractPool.get(contractId).upgrade_self(
+      {
+        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
+      },
+      Decimal.mul(300, TGas).toString()
+    );
+  }
+
   ///////////////
   // DAO VIEWs //
   ///////////////
@@ -421,23 +544,20 @@ class NearService {
       this.getDocFiles(daoAccount),
       this.getDaoConfig(daoAccount),
       this.getTags(),
+      this.getVotePolicies(daoAccount),
     ]).catch((e) => {
       console.log(e)
     });
 
-    console.log(data)
     if (!data) {
       return null;
     }
 
     const amount = new Decimal(data[0]).toNumber()
-    const ft_total_released = new Decimal(data[3].total_released);
-    const ft_free_released = new Decimal(data[3].free);
-    const ft_shared = ft_total_released.minus(data[3].free);
-    const ft_council_shared = new Decimal(data[3].council_ft_shared)
-    const ft_community_shared = new Decimal(data[3].community_ft_shared)
-    const ft_foundation_shared = new Decimal(data[3].foundation_ft_shared)
-    const ft_public_sale_shared = ft_shared.minus(ft_council_shared).minus(ft_community_shared).minus(ft_foundation_shared)
+    const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
+    const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
+    const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
+    const ft_public_sale_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
 
     // token state
     const members = data[2].council.concat(data[2].community, data[2].foundation)
@@ -475,6 +595,12 @@ class NearService {
         doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
       }
       file_list.push(doc)
+    });    
+
+    // vote policies
+    const vote_policies: any = {}
+    data[8].forEach(element => {
+      _.set(vote_policies, element[0], element[1])
     });
 
     if (data !== null) {
@@ -482,6 +608,7 @@ class NearService {
         id: daoId,
         name: data[1].name,
         state: null,
+        created: new Date(new Decimal(data[1].founded_s).mul(1000).toNumber()),
         slogan: data[1].description,
         description: data[1].description,
         wallet: daoAccount,
@@ -491,26 +618,60 @@ class NearService {
         location: data[6].lang, // TODO: renameing at SC
         token: data[1].ft_amount,
         token_name: data[1].ft_name,
-        token_unlocked: {
-          council: ft_council_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          community: ft_community_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          investor: ft_foundation_shared.dividedBy(ft_shared).times(100).round().toNumber(),
-          public_sale: ft_public_sale_shared.dividedBy(ft_shared).times(100).round().toNumber()
+        version: data[6].version,
+        token_stats: {
+          council: {
+            total: data[3].council_ft_stats.total,
+            init: data[3].council_ft_stats.init_distribution,
+            distributed: data[3].council_ft_stats.distributed,
+            unlocked: data[3].council_ft_stats.unlocked,
+            free: ft_council_free,
+            algorithm: (typeof data[3].council_release_model === 'string') ? data[3].council_release_model : Object.keys(data[3].council_release_model)[0],
+            duration: (data[3].council_release_model.Linear != undefined) ? data[3].council_release_model.Linear.duration : null,
+            release_end: (data[3].council_release_model.Linear != undefined) ? data[3].council_release_model.Linear.release_end : null,
+          },
+          community: {
+            total: data[3].community_ft_stats.total,
+            init: data[3].community_ft_stats.init_distribution,
+            distributed: data[3].community_ft_stats.distributed,
+            unlocked: data[3].community_ft_stats.unlocked,
+            free: ft_community_free,
+            algorithm: (typeof data[3].community_release_model === 'string') ? data[3].community_release_model : Object.keys(data[3].community_release_model)[0],
+            duration: (data[3].community_release_model.Linear != undefined) ? data[3].community_release_model.Linear.duration : null,
+            release_end: (data[3].community_release_model.Linear != undefined) ? data[3].community_release_model.Linear.release_end : null,
+          },
+          foundation: {
+            total: data[3].foundation_ft_stats.total,
+            init: data[3].foundation_ft_stats.init_distribution,
+            distributed: data[3].foundation_ft_stats.distributed,
+            unlocked: data[3].foundation_ft_stats.unlocked,
+            free: ft_foundation_free,
+            algorithm: (typeof data[3].foundation_release_model === 'string') ? data[3].foundation_release_model : Object.keys(data[3].foundation_release_model)[0],
+            duration: (data[3].foundation_release_model.Linear != undefined) ? data[3].foundation_release_model.Linear.duration : null,
+            release_end: (data[3].foundation_release_model.Linear != undefined) ? data[3].foundation_release_model.Linear.release_end : null,
+          },
+          public_sale: {total: data[3].public_ft_stats.total,
+            init: data[3].public_ft_stats.init_distribution,
+            distributed: data[3].public_ft_stats.distributed,
+            unlocked: data[3].public_ft_stats.unlocked,
+            free: ft_public_sale_free,
+            algorithm: (typeof data[3].public_release_model === 'string') ? data[3].public_release_model : Object.keys(data[3].public_release_model)[0],
+            duration: (data[3].public_release_model.Linear != undefined) ? data[3].public_release_model.Linear.duration : null,
+            release_end: (data[3].public_release_model.Linear != undefined) ? data[3].public_release_model.Linear.release_end : null,},
         },
-        token_released: ft_total_released.toNumber(),
-        token_free: ft_free_released.toNumber(),
-        token_holded: ft_total_released.minus(ft_free_released).toNumber(),
+        token_free: new Decimal(ft_council_free).plus(ft_community_free).plus(ft_foundation_free).plus(ft_public_sale_free).toNumber(),
+        token_holded: data[3].total_distributed,
         token_holders: token_account,
         groups: {
           council: {
-            amount: data[2].council_share_percent, // TODO: council_share_percent not found
+            amount: data[2].council_share_percent,
             wallets: data[2].council
           },
           community: {
             amount: data[2].community_share_percent,
             wallets: data[2].community
           },
-          investor: {
+          foundation: {
             amount: data[2].foundation_share_percent,
             wallets: data[2].foundation
           },
@@ -538,7 +699,8 @@ class NearService {
         docs: {
           files: file_list,
           map: data[5].map.Doc || {categories: []}
-        }
+        },
+        vote_policies: vote_policies,
       };
     }
 
@@ -550,6 +712,27 @@ class NearService {
     const amountYokto = new Decimal(state.amount);
 
     return amountYokto.div(yoctoNear).toFixed(2);
+  }
+
+  async getDaosAmount(contractIds: string[]) {
+    const result: {[index: string]: any} = {}
+
+    const promises: any[] = []
+    contractIds.forEach((accountId: string) => {
+      promises.push(this.getDaoState(accountId))
+    });
+    //console.log(promises)
+    const states = await Promise.all(promises).catch((e) => {
+      console.log(e)
+    });
+    // console.log(states)
+
+    contractIds.forEach((accountId: string, index: number) => {
+      const amountYokto = new Decimal(states[index].amount)
+      _.set(result, [index], amountYokto.div(yoctoNear).toFixed(2))
+    })
+
+    return result
   }
 
   async getStatisticsMembers(contractId: string) {
@@ -577,6 +760,14 @@ class NearService {
 
   async getDaoConfig(contractId: string) {
     return this.contractPool.get(contractId).dao_config();
+  }
+
+  async getVotePolicies(contractId: string) {
+    return this.contractPool.get(contractId).vote_policies();
+  }
+
+  async getDaoVersionHash(contractId: string) {
+    return this.contractPool.get(contractId).version_hash();
   }
 
 }
