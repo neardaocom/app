@@ -200,7 +200,7 @@
   "click_to_upgrade": "Klikněte na povýšit",
   "first_download_new_version": "Prvně musíte stáhnout novou verzi",
   "download_text": "Je k dispozici nová verze DAO kontraktu, tímto se vám připravý nová verze, kterou poté v druhém kroku můžete povýšit.",
-  "upgrade_text": "Novou verzi kontraktu již máte připravenou, teď ji můžete povýšit."
+  "upgrade_text": "Novou verzi kontraktu již máte připravenou, teď ji můžete povýšit.",
   "club": "Klub",
   "notify_blockchain_fail" : "Připojení k Near blockchainu selhalo.",
   "notify_ipfs_fail" : "Připojení k Ipfs síti selhalo.",
@@ -233,5 +233,10 @@
   "notify_load_file_ipfs_fail_title": "Načítání souboru z ipfs",
   "notify_load_file_ipfs_fail_message": "Nepodařilo se načíst soubor z ipfs.",
   "notify_get_tags_fail_title": "Získání tagů",
-  "notify_get_tags_fail_message": "Tagy se nepodařilo načíst."
+  "notify_get_tags_fail_message": "Tagy se nepodařilo načíst.",
+  "notify_download_new_version_fail_title":"Stažení nové verze",
+  "notify_download_new_version_fail_message":"Nepodařilo se stáhnout novou verzi",
+  "notify_upgrade_dao_fail_title":"Povýšit verzi DAO",
+  "notify_upgrade_dao_fail_message":"Nepodařilo se povýšit na novou verzi"
+
 }

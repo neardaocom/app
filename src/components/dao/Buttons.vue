@@ -187,6 +187,7 @@ export default {
           this.latestDaoVersion = r.latest_dao_version
         })
         .catch((e) => {
+          this.$logger.error('D', 'app@components/dao/Buttons', 'getLatestDaoVersion-blockchain', `Failed to load latest DAO version`)
           console.log(e)
         })
     },

@@ -216,7 +216,7 @@
   "click_to_upgrade": "Click to upgrade",
   "first_download_new_version": "First need to download new version",
   "download_text": "A new version of the DAO contract is available. This will prepare a new version for you, which you can then upgrade in the second step.",
-  "upgrade_text": "You have already the new version of the contract ready, you can upgrade it now."
+  "upgrade_text": "You have already the new version of the contract ready, you can upgrade it now.",
   "club": "Club",
   "notify_blockchain_fail" : "Connection to Near blockchain failed.",
   "notify_ipfs_fail" : "Connection to ipfs network failed.",
@@ -249,5 +249,9 @@
   "notify_load_file_ipfs_fail_title": "Loading file from ipfs",
   "notify_load_file_ipfs_fail_message": "Loading file from ipfs failed.",
   "notify_get_tags_fail_title": "Get tags",
-  "notify_get_tags_fail_message": "Loading tags failed."
+  "notify_get_tags_fail_message": "Loading tags failed.",
+  "notify_download_new_version_fail_title":"Download new version",
+  "notify_download_new_version_fail_message":"Failed to download new version",
+  "notify_upgrade_dao_fail_title":"Ugrade DAO",
+  "notify_upgrade_dao_fail_message":"Failed to upgrade DAO"
 }
