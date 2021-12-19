@@ -1,6 +1,6 @@
 import axios from "axios"
 // import { ExchangeInterface } from "./Interface"
-import _ from "lodash"
+import get from "lodash/get"
 
 class CoinGeckoExchange {
 
@@ -15,7 +15,7 @@ class CoinGeckoExchange {
         }
       }
     ).then(response => {
-      price = parseFloat(_.get(response.data, `${id}.usd`, null))
+      price = parseFloat(get(response.data, `${id}.usd`, null))
     }).catch(error => {
       throw error
     })

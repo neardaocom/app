@@ -18,7 +18,7 @@ export const nowDate = (): Date => {
 }
 
 export const parseNanoseconds = (nanoseconds: number): Date => {
-    return new Date(new Decimal(nanoseconds).div(1000000).round().toNumber());
+    return new Date(new Decimal(nanoseconds).div(1_000_000).round().toNumber());
 }
 
 export const parseSeconds = (seconds: number): Date => {

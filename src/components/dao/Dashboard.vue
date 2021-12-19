@@ -17,10 +17,10 @@
               <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>
             </h5>
             <h5 class="text-center">
-              <NumberFormatter :amount="dao.token_stats.community.free"/> <small class="text-muted">{{ dao.token_name }}</small>
+              <NumberFormatter :amount="dao.token_stats.public.free"/> <small class="text-muted">{{ dao.token_name }}</small>
             </h5>
-            <h5 v-if="false && token_community_to_unlock" class="text-center text-muted">
-              <NumberFormatter :amount="token_community_to_unlock"/>
+            <h5 v-if="false && token_public_to_unlock" class="text-center text-muted">
+              <NumberFormatter :amount="token_public_to_unlock"/>
             </h5>
           </div>
         </div>
@@ -74,12 +74,18 @@
         </section>
       </div>
     </div>
+    <AuctionList
+      :scenario="'active'"
+      :dao="dao"
+      :nearService="nearService"
+    />
   </div>
 </template>
 
 <script>
 import { MDBIcon, MDBBadge } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/NumberFormatter.vue"
+import AuctionList from "@/components/dao/AuctionList.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
@@ -93,7 +99,7 @@ export default {
   components: {
     MDBIcon, MDBBadge,
     NumberFormatter,
-    Proposal
+    Proposal, AuctionList,
   },
   props: {
     dao: {
@@ -131,43 +137,43 @@ export default {
       )).minus(dao.value.token_stats.council.distributed).div(dao.value.groups.council.wallets.length).round().toNumber()
     }
 
-    // community
-    const token_community_interval = ref(null);
-    const token_community_to_unlock = ref(null)
-    const token_community_step = ref(Analytics.getInterval(Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm)))
-    const token_community_counter = () => {
+    // public
+    const token_public_interval = ref(null);
+    const token_public_to_unlock = ref(null)
+    const token_public_step = ref(Analytics.getInterval(Analytics.parseAlgorithm(dao.value.token_stats.public.algorithm)))
+    const token_public_counter = () => {
       const unlocking = Analytics.computeUnlocking(
-          Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm),
+          Analytics.parseAlgorithm(dao.value.token_stats.public.algorithm),
           nowToSeconds(),
-          dao.value.token_stats.community
+          dao.value.token_stats.public
       )
       // console.log(unlocking)
-      token_community_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.community.unlocked).toNumber()
+      token_public_to_unlock.value = new Decimal(unlocking).minus(dao.value.token_stats.public.unlocked).toNumber()
     }
-    if (dao.value.token_stats.community.algorithm !== "None") {
-      token_community_to_unlock.value = new Decimal(Analytics.computeUnlocking(
-        Analytics.parseAlgorithm(dao.value.token_stats.community.algorithm),
+    if (dao.value.token_stats.public.algorithm !== "None") {
+      token_public_to_unlock.value = new Decimal(Analytics.computeUnlocking(
+        Analytics.parseAlgorithm(dao.value.token_stats.public.algorithm),
         nowToSeconds(),
-        dao.value.token_stats.community
-      )).minus(dao.value.token_stats.community.unlocked).toNumber()
+        dao.value.token_stats.public
+      )).minus(dao.value.token_stats.public.unlocked).toNumber()
     }
 
     onMounted(() => {
-      //console.log(token_council_step.value, token_community_step.value)
+      //console.log(token_council_step.value, token_public_step.value)
       token_council_interval.value = setInterval(token_council_counter, token_council_step.value)
-      token_community_interval.value = setInterval(token_community_counter, token_community_step.value)
+      token_public_interval.value = setInterval(token_public_counter, token_public_step.value)
       //console.log('mounted')
     })
 
     onUnmounted(() => {
       clearInterval(token_council_interval.value)
-      clearInterval(token_community_interval.value)
+      clearInterval(token_public_interval.value)
       //console.log('unmounted')
     })
 
     return { t, n, proposals
       , token_council_interval, token_council_to_unlock, token_council_step, token_council_counter
-      , token_community_interval, token_community_to_unlock, token_community_step, token_community_counter
+      , token_public_interval, token_public_to_unlock, token_public_step, token_public_counter
     };
   },
   computed: {
@@ -191,7 +197,10 @@ export default {
     },
     nearPrice() {
       return this.$root.near_price
-    }
+    },
+    nearService() {
+      return this.$store.getters['near/getService']
+    },
   },
 };
 </script>

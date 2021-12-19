@@ -127,7 +127,7 @@ export default {
   mounted() {
     this.$store.commit('near/setContract', this.q_id)
     this.getState()
-    console.log(this);
+    // console.log(this);
   },
   methods: {
     getState() {
