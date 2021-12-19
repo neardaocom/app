@@ -151,7 +151,7 @@ export default {
     const progress = ref(proposal.value.progress)
     const progressCounter = () => {
       progress.value = getProgress(proposal.value.status, proposal.value.config, proposal.value.duration.value) // TODO: Change
-      console.log('Progress: ' + progress.value)
+      // console.log('Progress: ' + progress.value)
     }
     const progressInterval = ref(null);
 

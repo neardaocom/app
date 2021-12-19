@@ -61,6 +61,11 @@
         </div>
       </div>
     </div>
+    <AuctionList
+      :scenario="'active'"
+      :dao="dao"
+      :nearService="nearService"
+    />
     <hr/>
     <div class="row mt-2">
       <!-- Novy clen -->
@@ -74,11 +79,6 @@
         </section>
       </div>
     </div>
-    <AuctionList
-      :scenario="'active'"
-      :dao="dao"
-      :nearService="nearService"
-    />
   </div>
 </template>
 

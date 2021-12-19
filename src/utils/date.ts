@@ -30,6 +30,9 @@ export const toDateString = (date: Date): string => {
 }
 
 export const toTimeString = (date: Date): string => {
+    if (typeof date == 'number') {
+        date = new Date(date)
+    }
     return date.getHours() + ':' + date.toISOString().substring(14,16);
 }
 

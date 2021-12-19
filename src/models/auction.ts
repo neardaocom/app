@@ -4,6 +4,23 @@ import Decimal from "decimal.js"
 import { parseNanoseconds } from "@/utils/date"
 import { parseNumber } from "@/utils/number"
 
+const getProgress = (start: Date, finish: Date): number | undefined => {
+    let progress: number | undefined;
+    
+    const begin = start.valueOf()
+    const end = finish.valueOf();
+    const now = new Date().valueOf();
+    
+    const nowFromBegin = now - begin;
+    const endFromBegin = end - begin;
+    // console.log('Progress values: ', begin, now, end);
+    if (endFromBegin >= 0) {
+      progress = new Decimal(nowFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
+    }
+    
+    return progress
+}
+
 /**
  * Transform data form source to object
  * 
@@ -50,4 +67,4 @@ const transform = (source: string, sale: any): Sale | undefined => {
     return trans
 }
 
-export { transform }
+export { transform, getProgress }
