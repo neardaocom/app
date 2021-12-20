@@ -459,6 +459,84 @@ class NearService {
   }
 
   /**
+   * Rights proposal
+   * 
+   * @param contractId 
+   * @param rights 
+   * @param time_from 
+   * @param time_to 
+   * @param description_cid 
+   * @param amountToTransfer 
+   * @returns Provise
+   */
+  async rightForActionCall(
+    contractId: string,
+    group: string,
+    rights: string[],
+    time_from: Date | null,
+    time_to: Date | null,
+    tags: string[],
+    description_cid: string,
+    amountToTransfer: number
+  ) {
+    const amountToTransferDecimal = new Decimal(amountToTransfer);
+    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+
+    return this.contractPool.get(contractId).add_proposal(
+      {
+        proposal_input: {
+          description: null,
+          description_cid: description_cid,
+          tags: tags,
+        },
+        tx_input: {
+          RightForActionCall: {
+            to: {
+              Group: {
+                value: group
+              },
+            },
+            rights: rights, // ["RefFinance","SkywardFinance"]
+            time_from: time_from,
+            time_to: time_to,
+          },
+        },
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  /**
+   * Execution privileged action
+   * 
+   * @param contractId 
+   * @param action 
+   * @param params 
+   * @param amountToTransfer 
+   * @returns Promise
+   */
+  async executePrivilegedAction(
+    contractId: string,
+    action: string,
+    params: object,
+    amountToTransfer: number
+  ) {
+    const amountToTransferDecimal = new Decimal(amountToTransfer);
+    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+
+    const actionBody = _.set({}, action, params)
+
+    return this.contractPool.get(contractId).execute_privileged_action(
+      {
+        action: actionBody
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  /**
    * Voting in proposal
    */
   async vote(

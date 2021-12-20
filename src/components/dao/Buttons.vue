@@ -49,6 +49,7 @@
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
@@ -60,6 +61,7 @@
     <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
     <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
@@ -75,6 +77,7 @@ import ModalPayout from '@/components/dao/ModalPayout'
 import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
 import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
+import ModalAddRightsForAction from '@/components/dao/ModalAddRightsForAction'
 import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
@@ -90,7 +93,7 @@ export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
     MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade
+    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction
   },
   props: {
     dao: {
@@ -108,6 +111,7 @@ export default {
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
     const modalAddCouncil = ref(0)
+    const modalAddRightsForAction = ref(0)
     const modalRemoveDocument = ref(0)
     const modalRemoveMember = ref(0)
     const modalRemoveCouncil = ref(0)
@@ -118,7 +122,8 @@ export default {
 
     return {
       t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
-      latestDaoVersion, modalUpgrade
+      modalAddRightsForAction,
+      latestDaoVersion, modalUpgrade,
     };
   },
 
@@ -179,6 +184,10 @@ export default {
     },
     modalUpgradeOpen() {
       this.modalUpgrade += 1
+      this.dropdownAction = false
+    },
+    modalAddRightsForActionOpen() {
+      this.modalAddRightsForAction += 1
       this.dropdownAction = false
     },
     getLatestDaoVersion(){

@@ -21,6 +21,21 @@ const getProgress = (start: Date, finish: Date): number | undefined => {
     return progress
 }
 
+const getTranslateKey = (value: string): string | undefined => {
+    let key: string | undefined
+    switch (value) {
+        case 'RefFinance':
+            key = 'token_sale_ref_finance'
+            break;
+        case 'SkywardFinance':
+            key = 'auction_skyward_finance'
+            break;
+        default:
+            break;
+    }
+    return key
+}
+
 /**
  * Transform data form source to object
  * 
@@ -67,4 +82,4 @@ const transform = (source: string, sale: any): Sale | undefined => {
     return trans
 }
 
-export { transform, getProgress }
+export { transform, getProgress, getTranslateKey }

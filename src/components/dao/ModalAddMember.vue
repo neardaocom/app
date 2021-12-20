@@ -87,7 +87,7 @@ export default {
     watch(show, openModal)
 
     const formAccount = ref('')
-    const formGroup = ref('Community')
+    const formGroup = ref('Council')
     const formNote = ref('')
 
     const isValidated = ref({
