@@ -41,12 +41,40 @@
             proposal.choice
           }}</span>
         </li>
-        <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
+        <!-- <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
           <i class="fas fa-users fa-fw me-2 mb-3"></i>
           <strong class="me-2">{{ t("default.vote_type_" + choice.choice) }}</strong>
           <span class="font-weight-bold text-black">{{ choice.percent }}%</span>
         </li>
+        -->
       </ul>
+
+      <!-- Voting stats. -->
+      <MDBProgress :height="20" class="rounded" style="max-width: 400px;">
+          <MDBProgressBar
+            v-if="proposal.votingStats[0]"
+            :value="proposal.votingStats[0].percent"
+            :bg="proposal.votingStats[0].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[0].choice) }}: {{ proposal.votingStats[0].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[1]"
+            :value="proposal.votingStats[1].percent"
+            :bg="proposal.votingStats[1].bg"
+          >
+            {{ t("default.vote_type_" + proposal.votingStats[1].choice) }}: {{ proposal.votingStats[1].percent }}%
+          </MDBProgressBar>
+          <MDBProgressBar
+            v-if="proposal.votingStats[0] && proposal.votingStats[1]"
+            :value="100 - proposal.votingStats[0].percent - proposal.votingStats[1].percent"
+            :bg="'light'"
+          >
+          </MDBProgressBar>
+      </MDBProgress>
+      <br/>
+
+      <!-- Vote -->
       <div
         v-if="
           proposal.canVote === true
@@ -107,6 +135,10 @@ export default {
       type: String,
       required: true,
     },
+    accountRole: {
+      type: String,
+      required: true,
+    },
   },
   setup(props) {
     const { proposal } = toRefs(props)
@@ -119,7 +151,7 @@ export default {
     const progress = ref(proposal.value.progress)
     const progressCounter = () => {
       progress.value = getProgress(proposal.value.status, proposal.value.config, proposal.value.duration.value) // TODO: Change
-      console.log('Progress: ' + progress.value)
+      // console.log('Progress: ' + progress.value)
     }
     const progressInterval = ref(null);
 
@@ -136,6 +168,9 @@ export default {
     return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
   },
   computed: {
+    accountId(){
+      return this.$store.getters['near/getAccountId']
+    },
     nearService() {
       return this.$store.getters["near/getService"];
     },
@@ -152,6 +187,10 @@ export default {
           console.log(r);
         })
         .catch((e) => {
+          this.$logger.error('D', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
+          this.$logger.error('B', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
+          this.$notify.danger(this.t('default.notify_proposal_voting_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_voting_fail_message' , {proposal: this.proposal.title}))
+          this.$notify.flush()
           console.log(e);
         });
     },
@@ -162,6 +201,10 @@ export default {
           console.log(r);
         })
         .catch((e) => {
+          this.$logger.error('D', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
+          this.$logger.error('B', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
+          this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+          this.$notify.flush()
           console.log(e);
         });
     },
@@ -179,7 +222,12 @@ export default {
           this.proposalDescriptionLoaded = true
         })
       })
-      .catch(e => console.error(e))
+      .catch((e) => {
+        this.$logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+        this.$logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+        this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+        this.$notify.flush()
+        console.error(e)})
     } else {
       this.proposalDescription = this.proposal.description
       this.proposalDescriptionLoaded = true

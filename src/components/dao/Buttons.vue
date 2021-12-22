@@ -27,7 +27,7 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div v-if="canVote === true" class="col-12 col-lg-3">
+      <div v-if="accountRole != 'guest'" class="col-12 col-lg-3">
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>-->
@@ -47,11 +47,12 @@
             <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.add_to_defi')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
-            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
+            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
@@ -61,6 +62,7 @@
     <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
     <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
@@ -77,6 +79,7 @@ import ModalPayout from '@/components/dao/ModalPayout'
 import ModalAddDocument from '@/components/dao/ModalAddDocument'
 import ModalAddMember from '@/components/dao/ModalAddMember'
 import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
+import ModalAddRightsForAction from '@/components/dao/ModalAddRightsForAction'
 import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
@@ -93,13 +96,17 @@ export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
     MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddToDefi
+    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction, ModalAddToDefi
   },
   props: {
     dao: {
       type: Object,
       required: true
-    }
+    },
+    accountRole: {
+      type: String,
+      required: true,
+    },
   },
   setup() {
     const { t } = useI18n();
@@ -107,6 +114,7 @@ export default {
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
     const modalAddCouncil = ref(0)
+    const modalAddRightsForAction = ref(0)
     const modalRemoveDocument = ref(0)
     const modalRemoveMember = ref(0)
     const modalRemoveCouncil = ref(0)
@@ -118,7 +126,8 @@ export default {
 
     return {
       t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
-      latestDaoVersion, modalUpgrade, modalAddToDefi
+      modalAddRightsForAction,
+      latestDaoVersion, modalUpgrade, modalAddToDefi,
     };
   },
 
@@ -181,6 +190,10 @@ export default {
       this.modalUpgrade += 1
       this.dropdownAction = false
     },
+    modalAddRightsForActionOpen() {
+      this.modalAddRightsForAction += 1
+      this.dropdownAction = false
+    },
     modalAddToDefiOpen() {
       this.modalAddToDefi += 1
       this.dropdownAction = false
@@ -191,6 +204,7 @@ export default {
           this.latestDaoVersion = r.latest_dao_version
         })
         .catch((e) => {
+          this.$logger.error('D', 'app@components/dao/Buttons', 'getLatestDaoVersion-blockchain', `Failed to load latest DAO version`)
           console.log(e)
         })
     },

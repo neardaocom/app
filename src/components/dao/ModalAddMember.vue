@@ -87,7 +87,7 @@ export default {
     watch(show, openModal)
 
     const formAccount = ref('')
-    const formGroup = ref('Community')
+    const formGroup = ref('Council')
     const formNote = ref('')
 
     const isValidated = ref({
@@ -185,6 +185,11 @@ export default {
             this.formNote = ''
             this.active = false
         }).catch((e) => {
+            const member = this.formAccount + '.' + this.factoryAccount.split('.')[1]
+            this.$logger.error('D', 'app@components/dao/ModalAddMember', 'AddProposal-blockchain', `Failed to add member [${member}]`)
+            this.$logger.error('B', 'app@components/dao/ModalAddMember', 'AddProposal-blockchain', `Failed to add member [${member}]`)
+            this.$notify.danger(this.t('default.notify_add_member_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_add_member_fail_message', {member: member}))
+            this.$notify.flush()
             console.log(e)
         })
       }

@@ -186,7 +186,16 @@ export default {
       let doc = this.docs.files[index]
 
       if (_.indexOf(this.fetchedDocs, doc.ipfs_cid) == -1) {
-        this.fetchedDocs[doc.ipfs_cid] = await this.ipfsService.retrieveFiles(doc.ipfs_cid)
+        try{
+          this.fetchedDocs[doc.ipfs_cid] = await this.ipfsService.retrieveFiles(doc.ipfs_cid)
+        }catch(e){
+          this.$logger.error('D', 'app@components/dao/Document', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          this.$logger.error('B', 'app@components/dao/Document', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+          this.$notify.flush()
+          console.error(e)
+        }
+        
       } else {
         null
       }

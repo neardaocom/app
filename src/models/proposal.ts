@@ -5,6 +5,7 @@ import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
 import { UnsupportedError } from '@/utils/error'
+import { getTranslateKey as auctionGetTranslateKey } from "@/models/auction"
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -19,16 +20,14 @@ const statusBgMapper = {
 const getAction = (proposal: any) => proposal.transactions.actions[0];
 
 const getActionKey = (action: any): string => {
-  let key: string = Object.keys(action)[0]
-  if (key === 'Pay') key = 'SendNear'
-  return key
+  return Object.keys(action)[0]
 }
 
 
 const getActionType = (action: any) => {
     let type = "";
     switch (getActionKey(action)) {
-      case "SendNear":
+      case "Pay":
         type = "payout";
         break;
       case "AddMember":
@@ -49,9 +48,11 @@ const getActionType = (action: any) => {
       case "DistributeFT":
         type = "distribute_ft";
         break;
+      case "AddRightsForActionGroup":
+        type = 'add_rights_for_action';
+        break;
       default:
         throw new UnsupportedError('Undefined action type: ' + getActionKey(action))
-        break;
     }
     return type;
 };
@@ -78,7 +79,7 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
     let args = {};
     const action_key = getActionKey(action);
     switch (action_key) {
-      case "SendNear":
+      case "Pay":
         args = {
           account: action.SendNear.account_id,
           amount: new Decimal(action.SendNear.amount_near)
@@ -127,6 +128,15 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           amount: new Decimal(action.DistributeFT.amount),
           group: t('default.' + action.DistributeFT.from_group.toLowerCase()),
           accounts: action.DistributeFT.accounts.join(', '),
+        };
+        break;
+      case 'AddRightsForActionGroup':
+        // console.log(action)
+        args = {
+          group: t('default.' + action.AddRightsForActionGroup.to.Group.value.toLowerCase()),
+          time_from: action.AddRightsForActionGroup.time_from,
+          time_to: action.AddRightsForActionGroup.time_to,
+          rights: action.AddRightsForActionGroup.rights.map( value => t('default.' + auctionGetTranslateKey(value))).join(', '),
         };
         break;
       default:

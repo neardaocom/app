@@ -29,7 +29,7 @@ export class ContractPool {
         'doc_files',
         'dao_config',
         'vote_policies',
-        'version_hash'
+        'version_hash',
       ],
       changeMethods: [
         'add_proposal',
@@ -39,7 +39,8 @@ export class ContractPool {
         'invalide_file',
         'unlock_tokens',
         'download_new_version',
-        'upgrade_self'
+        'upgrade_self',
+        'execute_privileged_action',
       ],
     });
 

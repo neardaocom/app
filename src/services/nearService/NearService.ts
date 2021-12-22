@@ -45,7 +45,7 @@ class NearService {
 
     this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
 
-    const account = this.walletConnection.account(); 
+    const account = this.walletConnection.account();
 
     this.factoryContract = new Contract(account, this.config.contractName, {
       viewMethods: [
@@ -74,6 +74,15 @@ class NearService {
 
   signIn() {
     return this.walletConnection.requestSignIn(this.config.contractName, this.config.name);
+  }
+
+  /**
+   * Get NEAR instance
+   * 
+   * @returns Get instance of Near
+   */
+  getNear() {
+    return this.near;
   }
 
   async signOut() {
@@ -212,18 +221,18 @@ class NearService {
         slogan: slogan,
         description: slogan,
         council_share: ftCouncilShare,
-        community_share: ftCommunityShare,
-        foundation_share: ftFoundationShare,
+        //community_share: ftCommunityShare,
+        //foundation_share: ftFoundationShare,
         vote_spam_threshold: voteSpamThreshold
       },
       release_config: [
         ["Council", releaseCouncilConfig],
-        ["Community", releaseCommunityConfig],
-        ["Foundation", releaseFoundationConfig],
+        //["Community", releaseCommunityConfig],
+        //["Foundation", releaseFoundationConfig],
       ],
       vote_policy_configs: [
         {
-          proposal_kind: 'SendNear',
+          proposal_kind: 'Pay',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -240,14 +249,6 @@ class NearService {
         },
         {
           proposal_kind: 'RemoveMember',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'RegularPayment',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -280,6 +281,14 @@ class NearService {
         },
         {
           proposal_kind: 'DistributeFT',
+          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+          quorum: voteQuorum,
+          approve_threshold: voteApproveThreshold,
+          vote_only_once: voteOnlyOnce,
+          waiting_open_duration: 0
+        },
+        {
+          proposal_kind: 'RightForActionCall',
           duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
           quorum: voteQuorum,
           approve_threshold: voteApproveThreshold,
@@ -450,6 +459,84 @@ class NearService {
   }
 
   /**
+   * Rights proposal
+   * 
+   * @param contractId 
+   * @param rights 
+   * @param time_from 
+   * @param time_to 
+   * @param description_cid 
+   * @param amountToTransfer 
+   * @returns Provise
+   */
+  async rightForActionCall(
+    contractId: string,
+    group: string,
+    rights: string[],
+    time_from: Date | null,
+    time_to: Date | null,
+    tags: string[],
+    description_cid: string,
+    amountToTransfer: number
+  ) {
+    const amountToTransferDecimal = new Decimal(amountToTransfer);
+    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+
+    return this.contractPool.get(contractId).add_proposal(
+      {
+        proposal_input: {
+          description: null,
+          description_cid: description_cid,
+          tags: tags,
+        },
+        tx_input: {
+          RightForActionCall: {
+            to: {
+              Group: {
+                value: group
+              },
+            },
+            rights: rights, // ["RefFinance","SkywardFinance"]
+            time_from: time_from,
+            time_to: time_to,
+          },
+        },
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  /**
+   * Execution privileged action
+   * 
+   * @param contractId 
+   * @param action 
+   * @param params 
+   * @param amountToTransfer 
+   * @returns Promise
+   */
+  async executePrivilegedAction(
+    contractId: string,
+    action: string,
+    params: object,
+    amountToTransfer: number
+  ) {
+    const amountToTransferDecimal = new Decimal(amountToTransfer);
+    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+
+    const actionBody = _.set({}, action, params)
+
+    return this.contractPool.get(contractId).execute_privileged_action(
+      {
+        action: actionBody
+      },
+      Decimal.mul(100, TGas).toString(),
+      amountYokto.toString()
+    );
+  }
+
+  /**
    * Voting in proposal
    */
   async vote(
@@ -552,15 +639,16 @@ class NearService {
     if (!data) {
       return null;
     }
+    console.log(data)
 
     const amount = new Decimal(data[0]).toNumber()
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
-    const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
-    const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
-    const ft_public_sale_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
+    //const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
+    //const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
+    const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
 
     // token state
-    const members = data[2].council.concat(data[2].community, data[2].foundation)
+    const members = data[2].council
     const member_promises: any[] = []
     members.forEach((accountId: string) => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
@@ -630,36 +718,16 @@ class NearService {
             duration: (data[3].council_release_model.Linear != undefined) ? data[3].council_release_model.Linear.duration : null,
             release_end: (data[3].council_release_model.Linear != undefined) ? data[3].council_release_model.Linear.release_end : null,
           },
-          community: {
-            total: data[3].community_ft_stats.total,
-            init: data[3].community_ft_stats.init_distribution,
-            distributed: data[3].community_ft_stats.distributed,
-            unlocked: data[3].community_ft_stats.unlocked,
-            free: ft_community_free,
-            algorithm: (typeof data[3].community_release_model === 'string') ? data[3].community_release_model : Object.keys(data[3].community_release_model)[0],
-            duration: (data[3].community_release_model.Linear != undefined) ? data[3].community_release_model.Linear.duration : null,
-            release_end: (data[3].community_release_model.Linear != undefined) ? data[3].community_release_model.Linear.release_end : null,
-          },
-          foundation: {
-            total: data[3].foundation_ft_stats.total,
-            init: data[3].foundation_ft_stats.init_distribution,
-            distributed: data[3].foundation_ft_stats.distributed,
-            unlocked: data[3].foundation_ft_stats.unlocked,
-            free: ft_foundation_free,
-            algorithm: (typeof data[3].foundation_release_model === 'string') ? data[3].foundation_release_model : Object.keys(data[3].foundation_release_model)[0],
-            duration: (data[3].foundation_release_model.Linear != undefined) ? data[3].foundation_release_model.Linear.duration : null,
-            release_end: (data[3].foundation_release_model.Linear != undefined) ? data[3].foundation_release_model.Linear.release_end : null,
-          },
-          public_sale: {total: data[3].public_ft_stats.total,
+          public: {total: data[3].public_ft_stats.total,
             init: data[3].public_ft_stats.init_distribution,
             distributed: data[3].public_ft_stats.distributed,
             unlocked: data[3].public_ft_stats.unlocked,
-            free: ft_public_sale_free,
+            free: ft_public_free,
             algorithm: (typeof data[3].public_release_model === 'string') ? data[3].public_release_model : Object.keys(data[3].public_release_model)[0],
             duration: (data[3].public_release_model.Linear != undefined) ? data[3].public_release_model.Linear.duration : null,
             release_end: (data[3].public_release_model.Linear != undefined) ? data[3].public_release_model.Linear.release_end : null,},
         },
-        token_free: new Decimal(ft_council_free).plus(ft_community_free).plus(ft_foundation_free).plus(ft_public_sale_free).toNumber(),
+        token_free: new Decimal(ft_council_free).plus(ft_public_free).toNumber(),
         token_holded: data[3].total_distributed,
         token_holders: token_account,
         groups: {
@@ -667,16 +735,8 @@ class NearService {
             amount: data[2].council_share_percent,
             wallets: data[2].council
           },
-          community: {
-            amount: data[2].community_share_percent,
-            wallets: data[2].community
-          },
-          foundation: {
-            amount: data[2].foundation_share_percent,
-            wallets: data[2].foundation
-          },
-          public_sale: {
-            amount: getPublicSalePercent(data[2].council_share_percent, data[2].community_share_percent, data[2].foundation_share_percent),
+          public: {
+            amount: getPublicSalePercent(data[2].council_share_percent, 0, 0),
             wallets: []
           },
         },
@@ -712,6 +772,27 @@ class NearService {
     const amountYokto = new Decimal(state.amount);
 
     return amountYokto.div(yoctoNear).toFixed(2);
+  }
+
+  async getDaosAmount(contractIds: string[]) {
+    const result: {[index: string]: any} = {}
+
+    const promises: any[] = []
+    contractIds.forEach((accountId: string) => {
+      promises.push(this.getDaoState(accountId))
+    });
+    //console.log(promises)
+    const states = await Promise.all(promises).catch((e) => {
+      console.log(e)
+    });
+    // console.log(states)
+
+    contractIds.forEach((accountId: string, index: number) => {
+      const amountYokto = new Decimal(states[index].amount)
+      _.set(result, [index], amountYokto.div(yoctoNear).toFixed(2))
+    })
+
+    return result
   }
 
   async getStatisticsMembers(contractId: string) {

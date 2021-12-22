@@ -1,21 +1,28 @@
 <template>
   <MDBModal
-    id="modalAddCouncil"
+    id="modalAddRightsForAction"
     tabindex="-1"
-    labelledby="modalAddCouncilLabel"
+    labelledby="modalAddRightsForActionLabel"
     v-model="active"
     size="lg"
   >
     <MDBModalHeader>
-      <MDBModalTitle id="modalAddCouncilLabel"> {{ t('default.add_council') }} </MDBModalTitle>
+      <MDBModalTitle id="modalAddRightsForActionLabel"> {{ t('default.add_rights') }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-      <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-      <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-          @keyup="validateAccount()" @blur="validateAccountExists()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-      >
-          <span class="input-group-text" id="account-addon">.{{ getAccountPostfix() }}</span>
-      </MDBInput>
+      <label for="group-input" class="form-label">{{ t('default.group') }}</label>
+      <MDBSelect class="text-left" id="group-input" inputGroup :formOutline="false" aria-describedby="group-addon"
+        v-model:selected="formGroup"
+        v-model:options="formGroupOptions"
+          @keyup="validateGroup()" @blur="validateGroup()" :isValid="!errors.formGroup" :isValidated="isValidated.formGroup" :invalidFeedback="errors.formGroup"
+      />
+      <br/>
+      <label for="rights-input" class="form-label">{{ t('default.rights') }}</label>
+      <MDBSelect class="text-left" id="rights-input" inputGroup :formOutline="false" aria-describedby="rights-addon"
+        v-model:selected="formRights"
+        v-model:options="formRightsOptions"
+          @keyup="validateRights()" @blur="validateRights()" :isValid="!errors.formRights" :isValidated="isValidated.formRights" :invalidFeedback="errors.formRights"
+      />
       <br/>
       <label for="description-input" class="form-label">{{ t('default.description') }}</label>
       <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
@@ -33,13 +40,14 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, nearAccountValidator, isValid } from '@/utils/validators'
-import { getAccountIdPostfix } from "@/services/nearService/utils"
+import { requiredValidator, isValid } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { getTranslateKey } from "@/models/auction"
 import {
   MDBBtn,
-  MDBInput,
+  //MDBInput,
+  MDBSelect,
   MDBModal,
   MDBModalHeader,
   MDBModalTitle,
@@ -51,7 +59,8 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 export default {
   components: {
     MDBBtn
-    , MDBInput
+    //, MDBInput
+    , MDBSelect
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
     , MDBWysiwyg
   },
@@ -84,13 +93,20 @@ export default {
 
     watch(show, openModal)
 
-    const formAccount = ref('')
     const formGroup = ref('Council')
+    const formGroupOptions = ref([
+        {value: 'Council', text: t('default.council')},
+    ])
+    const formRights = ref(null)
+    const formRightsOptions = ref([
+        {value: 'RefFinance', text: t('default.' + getTranslateKey('RefFinance'))},
+        {value: 'SkywardFinance', text: t('default.' + getTranslateKey('SkywardFinance'))},
+    ])
     const formDescription = ref('')
 
     const isValidated = ref({
-        formAccount: false,
         formGroup: false,
+        formRights: false,
         formDescription: false,
     })
 
@@ -98,7 +114,7 @@ export default {
 
     return {
       t, active
-      , formAccount, formGroup, formDescription
+      , formGroup, formGroupOptions, formRights, formRightsOptions, formDescription
       , isValidated, errors
     };
   },
@@ -117,35 +133,6 @@ export default {
     },
   },
   methods: {
-    getAccountPostfix() {
-      return getAccountIdPostfix(this.factoryAccount)
-    },
-    validateAccount(){
-      const field = "formAccount"
-      const requiredVal = requiredValidator(this.formAccount)
-      const nearAccountVal = nearAccountValidator(this.formAccount)
-      if (requiredVal.valid === false) {
-        this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
-      } else if (nearAccountVal.valid === false) {
-        this.errors[field] = this.t('default.' + nearAccountVal.message, nearAccountVal.params)
-      } else {
-        this.errors[field] = null
-      }
-      this.isValidated.formAccount = true
-    },
-    validateAccountExists() {
-      const field = "formAccount"
-      const accountId = this.formAccount.trim() + '.' + this.getAccountPostfix()
-      this.errors[field] = this.t('default.validating')
-      this.nearService.getAccountState(accountId)
-          .then(() => {
-              this.errors[field] = null
-          })
-          .catch(() => {
-              this.errors[field] = this.t('default.validator_near_account_not_found')
-          })
-      this.isValidated.formAccount = true
-    },
     validateGroup(){
       const field = "formGroup"
       const requiredVal = requiredValidator(this.formGroup)
@@ -156,6 +143,16 @@ export default {
       }
       this.isValidated.formGroup = true
     },
+    validateRights(){
+      const field = "formRights"
+      const requiredVal = requiredValidator(this.formRights)
+      if (requiredVal.valid === false) {
+        this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+      } else {
+        this.errors[field] = null
+      }
+      this.isValidated.formRights = true
+    },
     validateDescription(){
       const field = "formDescription"
       this.formDescription = ref(this.$refs.refWysiwyg.getCode())
@@ -163,8 +160,8 @@ export default {
       this.isValidated.formDescription = true
     },
     validate(){
-      this.validateAccount()
       this.validateGroup()
+      this.validateRights()
       this.validateDescription()
     },
     async vote() {
@@ -175,11 +172,11 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-addCouncil-' + getRandom(1, 999)
+          const name = this.accountId + '-addRightsForAction-' + getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
-          this.$logger.error('D', 'app@components/dao/ModalAddCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
-          this.$logger.error('B', 'app@components/dao/ModalAddCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$logger.error('D', 'app@components/dao/ModalAddRightsForAction', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$logger.error('B', 'app@components/dao/ModalAddRightsForAction', 'StoreFile-ipfs', 'File saving to ipfs failed')
           this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
           this.$notify.flush()
           console.log(e);
@@ -187,28 +184,24 @@ export default {
         }
 
         // BLOCKCHAIN
-        this.nearService.addProposal(
-            this.contractId
-            , ipfs_cid
-            , [this.t('default.add_member')]
-            , {
-                'AddMember': {
-                    group: this.formGroup,
-                    account_id: (this.formAccount + '.' + this.getAccountPostfix())
-                }
-            }
-            , 0.5
-            , this.accountId
+        this.nearService.rightForActionCall(
+            this.contractId,
+            this.formGroup,
+            [this.formRights],
+            null,
+            null,
+            [this.t('default.add_rights')],
+            ipfs_cid,
+            0.5
         ).then(r => {
             console.log(r)
-            this.formAccount = ''
+            this.formRights = []
             this.formDescription = ''
             this.active = false
         }).catch((e) => {
-            const council = this.formAccount + '.' + this.factoryAccount.split('.')[1]
-            this.$logger.error('D', 'app@components/dao/ModalAddCouncil', 'AddProposal-blockchain', `Failed to add council [${council}]`)
-            this.$logger.error('B', 'app@components/dao/ModalAddCouncil', 'AddProposal-blockchain', `Failed to add council [${council}]`)
-            this.$notify.danger(this.t('default.notify_add_council_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_add_council_fail_message', {council: council}))
+            this.$logger.error('D', 'app@components/dao/ModalAddRightsForAction', 'AddProposal-blockchain', `Failed to add rights`)
+            this.$logger.error('B', 'app@components/dao/ModalAddRightsForAction', 'AddProposal-blockchain', `Failed to add rights`)
+            this.$notify.danger(this.t('default.notify_add_rights_for_action_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_add_rights_for_action_message', {}))
             this.$notify.flush()
             console.log(e)
         })

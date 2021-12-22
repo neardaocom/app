@@ -88,6 +88,8 @@ export default {
 
     watch(show, openModal)
 
+    
+
     const downloaded = ref(false)
 
     return {
@@ -125,6 +127,10 @@ export default {
           console.log(r)
           this.active = false
       }).catch((e) => {
+          this.$logger.error('D', 'app@components/dao/ModalUgprade', 'DownloadNewVersion-blockchain', `Failed to download new DAO version [${this.contractId}]`)
+          this.$logger.error('B', 'app@components/dao/ModalUgprade', 'DownloadNewVersion-blockchain', `Failed to download new DAO version [${this.contractId}]`)
+          this.$notify.danger(this.t('default.notify_download_new_version_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_download_new_version_fail_message'))
+          this.$notify.flush()
           console.log(e)
       })
     },
@@ -137,6 +143,10 @@ export default {
           console.log(r)
           this.active = false
       }).catch((e) => {
+          this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+          this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+          this.$notify.danger(this.t('default.notify_upgrade_dao_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_upgrade_dao_fail_message'))
+          this.$notify.flush()
           console.log(e)
       })
 
@@ -150,7 +160,9 @@ export default {
         const newestHash = await this.nearService.getNewestVersionHash()
         return daoHash === newestHash
       }catch(e){
-        console.log(e);
+        this.$logger.error('D', 'app@components/dao/ModalUgprade', 'CompareDaoNewestHash-blockchain', `Failed to load version hash [${this.contractId}]`)
+        this.$logger.error('B', 'app@components/dao/ModalUgprade', 'CompareDaoNewestHash-blockchain', `Failed to load version hash [${this.contractId}]`)
+        console.log(e)
       }
     }
 

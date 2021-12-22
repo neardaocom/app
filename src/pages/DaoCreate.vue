@@ -64,12 +64,13 @@
                                     </div>
                                     
                                     <MDBInput inputGroup v-model="councilAdd" :isValid="!errors.councilAdd" :isValidated="isValidated.councilAdd" :invalidFeedback="errors.councilAdd" wrapperClass="mb-1">
+                                        <span class="input-group-text" id="dao-account">.{{ getAccountPostfix() }}</span>
                                         <MDBBtn @click="addCouncil()" id="dao-council-add" color="primary">{{ t('default.add') }}</MDBBtn>
                                     </MDBInput>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-12 col-md-7 mb-4">
+                                <div class="col-12 col-md-7 mb-4 mt-2">
                                     <MDBBtn v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
                                         {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
                                     </MDBBtn>
@@ -86,39 +87,39 @@
                              <div class = "row">
                                 <!-- ftName -->
                                 <div class="col-12 col-md-4">
-                                    <label for="dao-ft-name" class="form-label">{{ t('default.dao_ft_name') }}</label>
+                                    <label for="dao-ft-name" class="form-label">
+                                        {{ t('default.dao_ft_name') }}
+                                        <MDBTooltip v-model="tooltips.ftName.active">
+                                            <template #reference>
+                                                <MDBIcon icon="question-circle" iconStyle="far" />
+                                            </template>
+                                            <template #tip>
+                                                {{ tooltips.ftName.text }}
+                                            </template>
+                                        </MDBTooltip>
+                                    </label>
                                     <MDBInput wrapperClass="mb-4"  id="dao-ft-name" @keyup="validateFtName" @blur="validateFtName" v-model="ftName" :isValid="!errors.ftName" :isValidated="isValidated.ftName" :invalidFeedback="errors.ftName"/>
                                 </div>
 
                                 <!-- ftAmount -->
                                 <div class="col-12 col-md-4">
-                                    <label for="dao-ft-amount" class="form-label">{{ t('default.amount') }}</label>
+                                    <label for="dao-ft-amount" class="form-label">
+                                        {{ t('default.amount') }}
+                                        <MDBTooltip v-model="tooltips.ftAmount.active">
+                                            <template #reference>
+                                                <MDBIcon icon="question-circle" iconStyle="far" />
+                                            </template>
+                                            <template #tip>
+                                                {{ tooltips.ftAmount.text }}
+                                            </template>
+                                        </MDBTooltip>
+                                    </label>
                                     <MDBInput wrapperClass="mb-4" id="dao-ft-amount" @input="changeFtAmount" @keyup="validateFtAmount" @blur="validateFtAmount"  :model-value="ftAmountFormated" :isValid="!errors.ftAmount" :isValidated="isValidated.ftAmount" :invalidFeedback="errors.ftAmount"/>
                                 </div>
                              </div>
 
-                            <!-- ftCouncilInitDistribution -->
-                            <div v-if="false" class="row">
-                                <div class="col-md-6">
-                                    
-                                </div>
-                            </div>
-
                             <!-- error message for shares -->
                             <div v-show="false" ref="refFtShares" class="col text-danger invisible" >{{t('default.validator_shares_sum')}}</div>
-
-                            <h6 v-if="false">{{ t('default.allocation')}}</h6>
-                            <!-- ftCouncilShare -->
-                            <div class="row mb-4">
-                                <div class="col-12 col-md-7">
-                                    <MDBProgress :height="20" class="rounded">
-                                        <MDBProgressBar :value="ftCouncilShare" >{{ t('default.council') }} {{ ftCouncilShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftFoundationShare" bg="success" >{{ t('default.foundation') }} {{ ftFoundationShare }}%</MDBProgressBar>
-                                        <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ t('default.public_sale') }} {{ ftPublicShare }}%</MDBProgressBar>
-                                    </MDBProgress>
-                                </div>
-                            </div>
 
                             <!-- ftCouncilShare -->
                             <div class="row">
@@ -128,7 +129,17 @@
                                 <div class="col-12 col-md-7">
                                     <div class="row">
                                         <div class="col-4">
-                                            <label class="form-label">{{ t('default.dao_ft_init_distribution') }}</label>
+                                            <label class="form-label">
+                                                {{ t('default.dao_ft_init_distribution') }}
+                                                <MDBTooltip v-model="tooltips.ftConcilInit.active">
+                                                    <template #reference>
+                                                        <MDBIcon icon="question-circle" iconStyle="far" />
+                                                    </template>
+                                                    <template #tip>
+                                                        {{ tooltips.ftConcilInit.text }}
+                                                    </template>
+                                                </MDBTooltip>
+                                            </label>
                                             <MDBInput
                                               v-if="false"
                                               @input="changeftCouncilInitDistribution"
@@ -163,7 +174,17 @@
                                             />
                                         </div>
                                         <div class="col-4">
-                                            <label class="form-label">{{ t('default.unlocking') }}</label>
+                                            <label class="form-label">
+                                                {{ t('default.unlocking') }}
+                                                <MDBTooltip v-model="tooltips.ftConcilUnlocking.active">
+                                                    <template #reference>
+                                                        <MDBIcon icon="question-circle" iconStyle="far" />
+                                                    </template>
+                                                    <template #tip>
+                                                        {{ tooltips.ftConcilUnlocking.text }}
+                                                    </template>
+                                                </MDBTooltip>
+                                            </label>
                                             <MDBInput
                                                 inputGroup
                                                 :formOutline="false"
@@ -395,6 +416,18 @@
                                 </div>
                             </div>
 
+                            <h6 v-if="false">{{ t('default.allocation')}}</h6>
+                            <!-- ftCouncilShare -->
+                            <div class="row mt-4">
+                                <div class="col-12 col-md-7">
+                                    <MDBProgress :height="20" class="rounded">
+                                        <MDBProgressBar :value="ftCouncilShare" >{{ t('default.council') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftFoundationShare" bg="success" >{{ t('default.foundation') }} {{ ftFoundationShare }}%</MDBProgressBar>
+                                        <MDBProgressBar :value="ftPublicShare" bg="warning" >{{ t('default.public_sale') }} {{ ftPublicShare }}%</MDBProgressBar>
+                                    </MDBProgress>
+                                </div>
+                            </div>
                         </MDBStepperContent>
                     </MDBStepperStep>
                     <MDBStepperStep>
@@ -458,9 +491,7 @@
                             </MDBStepperHead>
                                 <MDBStepperContent>
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <h4>{{ t('default.basic') }}</h4>
-                                            <hr>
+                                        <div class="col-6">
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_name')}}:</dt>
                                                 <dd v-if="name" class="col-6 col-md-6">{{name}} </dd>
@@ -477,14 +508,7 @@
                                                 <dt class="col-6 col-md-6 ps-3">{{ t('default.type') }}:</dt>
                                                 <dd v-if="type" class="col-6 col-md-6">{{ t('default.' + type) }} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
-                                            </dl>
-                                        </div> 
-                                    
 
-                                        <div class="col-md-6">
-                                            <h4>{{ t('default.founding') }}</h4>
-                                            <hr>
-                                            <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_council')}}:</dt>
                                                 <dd v-if="council.length !== 0" class="col-6 col-md-6">{{council.join(', ')}} </dd>
                                                 <dd v-else class="col-6 col-md-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
@@ -494,7 +518,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.tokens') }}</h4>
+                                            <h5 class="text-muted">{{ t('default.tokens') }}</h5>
                                             <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_ft_name')}}:</dt>
@@ -525,7 +549,7 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <h4>{{ t('default.voting') }}</h4>
+                                            <h5 class="text-muted">{{ t('default.voting') }}</h5>
                                             <hr>
                                             <dl class="row">
                                                 <dt class="col-6 col-md-6 ps-3">{{t('default.dao_vote_approve_threshold')}}:</dt>
@@ -608,6 +632,13 @@ export default({
         
         console.log(locale.value)
         console.log()
+
+        const tooltips = reactive({
+          ftName: { active: false, text: t('default.ft_name_tooltip')},
+          ftAmount: { active: false, text: t('default.ft_amount_tooltip')},
+          ftConcilInit: { active: false, text: t('default.ft_council_init_tooltip')},
+          ftConcilUnlocking: { active: false, text: t('default.ft_council_unlocking_tooltip')},
+        })
 
         const contract = ref(undefined)
         // form feilds
@@ -724,6 +755,7 @@ export default({
            voteApproveThreshold, voteOnlyOnce, council, councilAdd, addFtFoundationShare,
            addFtCommunityShare, addFtPublicShare, isValidated, errors, fieldErrorAlert,
            createDaoErrorAlert, contract, nearTags, tooltipApproveThreshold, tooltipQuorum, defaultTypeOptions,
+           tooltips,
         }
     },
 
@@ -793,6 +825,9 @@ export default({
     },
     
     methods:{
+        getAccountPostfix() {
+            return _.last(this.factoryAccount.split('.'))
+        },
         generateAccountId(overwrite) {
             console.log('Generation account id')
             if (overwrite || this.account === '') {
@@ -1176,9 +1211,9 @@ export default({
             this.councilAdd = this.councilAdd.trim()
             
             this.errors[field] = this.t('default.validating')
-            this.nearService.getAccountState(this.councilAdd)
+            this.nearService.getAccountState(this.councilAdd + '.' + this.getAccountPostfix())
                 .then(() => {
-                    this.council.push(this.councilAdd);
+                    this.council.push(this.councilAdd + '.' + this.getAccountPostfix());
                     this.councilAdd = ''
                     this.errors[field] = null
                     this.validateCouncil()
@@ -1317,7 +1352,14 @@ export default({
             this.nearTags.value = tags
             this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(compareByText)
             // this.$refs.refDaoType.setValue('corporation')
-        })
+        }).catch((e) => {
+            this.$logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            this.$logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+
+            this.$notify.flush()
+            console.log(e);
+        } )
         // type select
         //this.$refs.refDaoType.setValue('')
         //console.log(this.type)
