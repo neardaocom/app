@@ -259,7 +259,7 @@ export default {
     validateFromDate() {
       const field = "formFromDate"
       const fromDate = moment(this.formFromDate, this.t('default._datepicker_format')).toDate()
-      const requiredVal = requiredValidator(fromDate)
+      const requiredVal = requiredValidator(this.formFromDate)
       const minDateVal = minDate(fromDate, { min: this.minDate }, this.d)
       const maxDateVal = maxDate(fromDate, { max: this.maxDate }, this.d)
       if (requiredVal.valid === false) {

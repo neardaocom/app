@@ -51,7 +51,7 @@ export default {
         onMounted(() => {
             // init skyward and get sales
             nearService.value.getNear().account(dao.value.wallet).then( account => {
-                skywardFinance.value = new SkywardFinance(account, 'supertest.testnet') // TODO: Move to config
+                skywardFinance.value = new SkywardFinance(account, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT) // TODO: Move to config
                 auctionListFetch()
             })
             // auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
