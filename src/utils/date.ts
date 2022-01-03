@@ -4,6 +4,10 @@ export const toNanoseconds = (day: number, hour: number, minute: number, second:
     return (((day ?? 0) * 86400) + ((hour ?? 0) * 3600) + ((minute ?? 0) * 60) + (second ?? 0)) * Math.pow(10,9);
 }
 
+export const toNanosecond = (date: Date): number => {
+    return date.valueOf() * Math.pow(10, 6);
+}
+
 export const toSeconds = (date: Date): number => {
     return new Decimal(date.valueOf()).div(1000).round().toNumber()
 }

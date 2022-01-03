@@ -43,7 +43,7 @@ import { useI18n } from "vue-i18n";
 import { requiredValidator, isValid } from '@/utils/validators'
 import { getRandom } from '@/utils/integer'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
-import { getTranslateKey } from "@/models/auction"
+import Auction from "@/models/auction"
 import {
   MDBBtn,
   //MDBInput,
@@ -99,8 +99,8 @@ export default {
     ])
     const formRights = ref(null)
     const formRightsOptions = ref([
-        {value: 'RefFinance', text: t('default.' + getTranslateKey('RefFinance'))},
-        {value: 'SkywardFinance', text: t('default.' + getTranslateKey('SkywardFinance'))},
+        {value: 'RefFinance', text: t('default.' + Auction.getTranslateKey('RefFinance'))},
+        {value: 'SkywardFinance', text: t('default.' + Auction.getTranslateKey('SkywardFinance'))},
     ])
     const formDescription = ref('')
 

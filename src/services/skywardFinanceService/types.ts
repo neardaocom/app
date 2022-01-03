@@ -31,17 +31,17 @@ export type Sale = {
 export const testDataset = [
     {
         id: 0,
-        title: 'Running sale',
+        title: 'NearDAO: First token sale of 1%',
         url: null,
         owner_id: 'neardao.testnet',
         out_tokens: [
           {
-            account_id: 'rft.tokenfactory.testnet',
-            remaining: 156_486,
-            distributed: 1_000_000,
-            treasury_unclaimed: 0,
-            referral_bpt: 500,
-          },
+              account_id: 'genesis.dev5.neardao.testnet',
+              remaining: 156_486,
+              distributed: 1_000_000,
+              treasury_unclaimed: 0,
+              referral_bpt: 500,
+            },
         ],
         in_token: {
             account_id: 'wrap.testnet',

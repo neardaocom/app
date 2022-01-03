@@ -531,7 +531,7 @@ class NearService {
       {
         action: actionBody
       },
-      Decimal.mul(100, TGas).toString(),
+      Decimal.mul(300, TGas).toString(),
       amountYokto.toString()
     );
   }
@@ -653,6 +653,15 @@ class NearService {
     members.forEach((accountId: string) => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
     });
+
+    // action rights
+    let council_rights = []
+    const now_nanoseconds = new Decimal(new Date().valueOf()).mul(1_000_000).toNumber()
+    // council
+    if (data[2].council_rights != undefined) {
+      council_rights = data[2].council_rights.filter( right => right[1].from <= now_nanoseconds && now_nanoseconds <= right[1].to).map( right => right[0])
+    }
+
     //console.log(member_promises)
     const balances = await Promise.all(member_promises).catch((e) => {
       console.log(e)
@@ -733,11 +742,13 @@ class NearService {
         groups: {
           council: {
             amount: data[2].council_share_percent,
-            wallets: data[2].council
+            wallets: data[2].council,
+            rights: council_rights,
           },
           public: {
             amount: getPublicSalePercent(data[2].council_share_percent, 0, 0),
-            wallets: []
+            wallets: [],
+            rights: [],
           },
         },
         tags: data[1].tags.map((tag: number) => data[7][tag]), // system tag

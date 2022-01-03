@@ -41,6 +41,14 @@ cp <path_to_downloaded_ui_kit>/mdb-vue-ui-kit-1.4.0.tgz ./mdb
 npm install
 ```
 
+## Testing
+
+### Unit test
+npm run test:unit
+
+Run specific test
+npm run test:unit tests/unit/models/auction
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve

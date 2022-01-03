@@ -12,8 +12,8 @@
 import Auction from "@/components/dao/Auction.vue"
 import { SkywardFinance } from '@/services/skywardFinanceService'
 import { onMounted, onUnmounted, toRefs, ref } from "vue"
-// import { transform } from "@/models/auction"
-import { testDataset } from "@/services/skywardFinanceService/types"
+import AuctionModel from "@/models/auction"
+// import { testDataset } from "@/services/skywardFinanceService/types"
 
 export default {
     components: {
@@ -42,19 +42,19 @@ export default {
         const auctionListIntervalStep = ref(10_000)
         const auctionList = ref([])
         const auctionListFetch = () => {
-            // skywardFinance.value.getSales('wrap.testnet').then( sales => {
-            //    auctionList.value = sales.map(sale => transform('skyward.finance', sale))
-            //})
-            auctionList.value = testDataset
+            skywardFinance.value.getSales('wrap.testnet').then( sales => {
+                auctionList.value = sales.map(sale => AuctionModel.transform('skyward.finance', sale))
+            })
+            // auctionList.value = testDataset
         }
 
         onMounted(() => {
             // init skyward and get sales
             nearService.value.getNear().account(dao.value.wallet).then( account => {
-                skywardFinance.value = new SkywardFinance(account, 'skyward.testnet') // TODO: Move to config
+                skywardFinance.value = new SkywardFinance(account, 'supertest.testnet') // TODO: Move to config
                 auctionListFetch()
             })
-            auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
+            // auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
         })
 
         onUnmounted(() => 
@@ -70,7 +70,7 @@ export default {
             let list = []
             //console.log(this.auctionList.length)
             if (this.auctionList && this.auctionList.length > 0) {
-                list = this.auctionList.filter( auction => auction.remaining_duration > 0 ) // TODO: auction.remaining_duration > 0
+                list = this.auctionList.filter( auction => auction.remaining_duration > 0 ).filter( auction => auction.out_tokens[0].token_account_id === this.dao.wallet ) // TODO: auction.remaining_duration > 0
             }
             return list
         }

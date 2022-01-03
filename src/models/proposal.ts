@@ -5,7 +5,7 @@ import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
 import { UnsupportedError } from '@/utils/error'
-import { getTranslateKey as auctionGetTranslateKey } from "@/models/auction"
+import Auction from "@/models/auction"
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -136,7 +136,7 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           group: t('default.' + action.AddRightsForActionGroup.to.Group.value.toLowerCase()),
           time_from: action.AddRightsForActionGroup.time_from,
           time_to: action.AddRightsForActionGroup.time_to,
-          rights: action.AddRightsForActionGroup.rights.map( value => t('default.' + auctionGetTranslateKey(value))).join(', '),
+          rights: action.AddRightsForActionGroup.rights.map( value => t('default.' + Auction.getTranslateKey(value))).join(', '),
         };
         break;
       default:

@@ -4,18 +4,22 @@ import Decimal from "decimal.js"
 import { parseNanoseconds } from "@/utils/date"
 import { parseNumber } from "@/utils/number"
 
-const getProgress = (start: Date, finish: Date): number | undefined => {
+const getProgress = (start: Date, finish: Date, now?: Date): number | undefined => {
     let progress: number | undefined;
     
-    const begin = start.valueOf()
-    const end = finish.valueOf();
-    const now = new Date().valueOf();
+    const begin: number = start.valueOf()
+    const end: number = finish.valueOf();
+    const target: number = (now) ? now.valueOf() : new Date().valueOf();
     
-    const nowFromBegin = now - begin;
-    const endFromBegin = end - begin;
-    // console.log('Progress values: ', begin, now, end);
-    if (endFromBegin >= 0) {
-      progress = new Decimal(nowFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
+    const targetFromBegin: number = target - begin;
+    const endFromBegin: number = end - begin;
+    // console.log('Progress values: ', begin, target, end);
+    if (target <= begin) {
+        progress = 0
+    } else if (target >= end) {
+        progress = 100
+    } else {
+      progress = new Decimal(targetFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
     }
     
     return progress
@@ -59,14 +63,14 @@ const transform = (source: string, sale: any): Sale | undefined => {
                         remaining: new Decimal(token.remaining).toNumber(),
                         distributed: new Decimal(token.distributed).toNumber(),
                         treasury_unclaimed: (token.treasury_unclaimed) ? new Decimal(token.treasury_unclaimed).toNumber() : null,
-                        referral_bpt: new Decimal(token.referral_bpt).toNumber(),
+                        referral_bpt: (token.referral_bpt) ? new Decimal(token.referral_bpt).toNumber() : null,
                     }
                 }),
                 in_token: {
                     account_id: sale.in_token_account_id,
-                    remaining: sale.in_token_remaining,
-                    paid_unclaimed: sale.in_token_paid_unclaimed,
-                    paid: sale.in_token_paid,
+                    remaining: new Decimal(sale.in_token_remaining).toNumber(),
+                    paid_unclaimed: new Decimal(sale.in_token_paid_unclaimed).toNumber(),
+                    paid: new Decimal(sale.in_token_paid).toNumber(),
                 },
                 total_shares: parseNumber(sale.total_shares),
                 start_time: parseNanoseconds(sale.start_time),
@@ -82,4 +86,4 @@ const transform = (source: string, sale: any): Sale | undefined => {
     return trans
 }
 
-export { transform, getProgress, getTranslateKey }
+export default { transform, getProgress, getTranslateKey }

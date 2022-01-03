@@ -17,6 +17,14 @@ export type ValidationParamsMax = {
     max: number;
 };
 
+export type ValidationParamsMinDate = {
+    min: Date;
+};
+
+export type ValidationParamsMaxDate = {
+    max: Date;
+};
+
 const successValidation = (): Validation => { return { valid: true } }
 const errorValidation = (message: string, params: any = {}): Validation => { return { valid: false, message: 'validator_' + message, params: params } }
 
@@ -156,6 +164,22 @@ export const maxLength = (value: string, params: ValidationParamsMax): Validatio
     let validation = successValidation()
     if (_.toString(value).length > params.max) {
         validation = errorValidation('maximum_characters', params)
+    }
+    return validation;
+}
+
+export const minDate = (value: Date, params: ValidationParamsMinDate, d: any): Validation => {
+    let validation = successValidation()
+    if (value.valueOf() < params.min.valueOf()) {
+        validation = errorValidation('min_date', { min: d(params.min) })
+    }
+    return validation;
+}
+
+export const maxDate = (value: Date, params: ValidationParamsMaxDate, d: any): Validation => {
+    let validation = successValidation()
+    if (value.valueOf() > params.max.valueOf()) {
+        validation = errorValidation('max_date', { max: d(params.max) })
     }
     return validation;
 }

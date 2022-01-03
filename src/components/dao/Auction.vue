@@ -7,9 +7,8 @@
       <MDBCardTitle>
         <a :href="'https://app.skyward.finance/sale/' + auction.id" target="_blank">{{ auction.title }}</a>
       </MDBCardTitle>
-      
-      <h3>{{ auction.in_token.account_id }}</h3>
       <MDBCardTitle subtitle class="mt-2 text-muted">{{ t('default.auction_total_paying') }}</MDBCardTitle>
+      <h3>{{ auction.in_token.account_id }}</h3>
       <dl class="row">
         <dt class="col-3">{{ t('default.auction_paid') }}:</dt>
         <dd class="col-3">{{ n(auction.in_token.paid) }}</dd>
@@ -21,8 +20,8 @@
           <MDBIcon icon="angle-double-down" iconStyle="fas" />
       </p>
       <hr class="mt-0 mb-3"/>
-      <h3>{{ auction.out_tokens[0].account_id }}</h3>
       <MDBCardTitle subtitle class="mt-2 text-muted">{{ t('default.auction_total_receiving') }}</MDBCardTitle>
+      <h3>{{ auction.out_tokens[0].account_id }}</h3>
       <dl class="row mb-0">
         <dt class="col-3">{{ t('default.auction_distributed') }}:</dt>
         <dd class="col-3">{{ n(auction.out_tokens[0].distributed) }}</dd>
@@ -51,7 +50,7 @@
 <script>
 import { ref, toRefs, onMounted, onUnmounted } from "vue"
 import { Auction } from "@/services/skywardFinanceService/types"
-import { getProgress } from '@/models/auction';
+import AuctionModel from '@/models/auction';
 import { toTimeString } from '@/utils/date'
 import { MDBCard,
     MDBCardHeader,
@@ -87,7 +86,7 @@ export default {
 
         const progress = ref(null)
         const progressCounter = () => {
-            progress.value = getProgress(auction.value.start_time, auction.value.end_time)
+            progress.value = AuctionModel.getProgress(auction.value.start_time, auction.value.end_time)
             // console.log('Progress: ' + progress.value)
         }
         const progressInterval = ref(null);

@@ -586,7 +586,7 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
-import FromErrorMessage from '@/components/FormErrorMessage.vue'
+import FromErrorMessage from '@/components/FormErrorMessage'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
@@ -631,7 +631,6 @@ export default({
         const unlockingInitFormated = d(unlockingInit) // unlockingInit.toLocaleDateString(locale.value).replace(' ', '')
         
         console.log(locale.value)
-        console.log()
 
         const tooltips = reactive({
           ftName: { active: false, text: t('default.ft_name_tooltip')},

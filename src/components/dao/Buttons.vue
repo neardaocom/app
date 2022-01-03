@@ -50,6 +50,7 @@
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
@@ -68,6 +69,7 @@
     <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
     <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
+    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.token_name" />
 </template>
 
 <script>
@@ -82,7 +84,8 @@ import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
 import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
 import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
 import ModalGeneral from '@/components/dao/ModalGeneral'
-import ModalUpgrade from '@/components/dao/ModalUpgrade';
+import ModalUpgrade from '@/components/dao/ModalUpgrade'
+import ModalActionSkywardFinanceCreateSale from '@/components/dao/ModalActionSkywardFinanceCreateSale'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,
@@ -93,7 +96,7 @@ export default {
   components: {
     MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
     MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction
+    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction, ModalActionSkywardFinanceCreateSale,
   },
   props: {
     dao: {
@@ -117,12 +120,13 @@ export default {
     const modalRemoveCouncil = ref(0)
     const modalGeneral = ref(0)
     const modalUpgrade = ref(0)
+    const modalSkywardFinanceCreateSale = ref(0)
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
 
     return {
       t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
-      modalAddRightsForAction,
+      modalAddRightsForAction, modalSkywardFinanceCreateSale,
       latestDaoVersion, modalUpgrade,
     };
   },
@@ -188,6 +192,10 @@ export default {
     },
     modalAddRightsForActionOpen() {
       this.modalAddRightsForAction += 1
+      this.dropdownAction = false
+    },
+    modalSkywardFinanceCreateSaleOpen() {
+      this.modalSkywardFinanceCreateSale += 1
       this.dropdownAction = false
     },
     getLatestDaoVersion(){
