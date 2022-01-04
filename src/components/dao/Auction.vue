@@ -49,8 +49,7 @@
 
 <script>
 import { ref, toRefs, onMounted, onUnmounted } from "vue"
-import { Auction } from "@/services/skywardFinanceService/types"
-import AuctionModel from '@/models/auction';
+import Auction from '@/models/auction';
 import { toTimeString } from '@/utils/date'
 import { MDBCard,
     MDBCardHeader,
@@ -76,7 +75,7 @@ export default {
     },
     props: {
         auction: {
-            type: Auction,
+            type: Object,
             required: true,
         },
     },
@@ -86,7 +85,7 @@ export default {
 
         const progress = ref(null)
         const progressCounter = () => {
-            progress.value = AuctionModel.getProgress(auction.value.start_time, auction.value.end_time)
+            progress.value = Auction.getProgress(auction.value.start_time, auction.value.end_time)
             // console.log('Progress: ' + progress.value)
         }
         const progressInterval = ref(null);
