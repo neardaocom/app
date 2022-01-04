@@ -30,6 +30,7 @@ export class ContractPool {
         'dao_config',
         'vote_policies',
         'version_hash',
+        'skyward_auctions',
       ],
       changeMethods: [
         'add_proposal',

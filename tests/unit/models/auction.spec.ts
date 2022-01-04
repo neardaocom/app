@@ -21,3 +21,5 @@ test('Progress', () => {
     target.add(1, 'm')
     expect(Auction.getProgress(start, finish, target.toDate())).toBe(100);
 });
+
+test('Progress', () => {

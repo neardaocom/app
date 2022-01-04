@@ -39,22 +39,25 @@ export default {
 
         const skywardFinance = ref(null)
         const auctionListInterval = ref(null)
-        const auctionListIntervalStep = ref(10_000)
+        const auctionListIntervalStep = ref(300_000) // 5 minutes
         const auctionList = ref([])
         const auctionListFetch = () => {
-            skywardFinance.value.getSales('wrap.testnet').then( sales => {
-                auctionList.value = sales.map(sale => AuctionModel.transform('skyward.finance', sale))
-            })
+            if (dao.value.auction.skyward_finance) {
+                skywardFinance.value.getSalesById(dao.value.auction.skyward_finance).then( sales => {
+                    auctionList.value = sales
+                        .map( sale => AuctionModel.transform('skyward.finance', sale) )
+                })
+            }
             // auctionList.value = testDataset
         }
 
         onMounted(() => {
             // init skyward and get sales
             nearService.value.getNear().account(dao.value.wallet).then( account => {
-                skywardFinance.value = new SkywardFinance(account, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT) // TODO: Move to config
+                skywardFinance.value = new SkywardFinance(account, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT) // TODO: Use confing from vue?
                 auctionListFetch()
             })
-            // auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
+            auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
         })
 
         onUnmounted(() => 
@@ -70,7 +73,7 @@ export default {
             let list = []
             //console.log(this.auctionList.length)
             if (this.auctionList && this.auctionList.length > 0) {
-                list = this.auctionList.filter( auction => auction.remaining_duration > 0 ).filter( auction => auction.out_tokens[0].token_account_id === this.dao.wallet ) // TODO: auction.remaining_duration > 0
+                list = this.auctionList.filter( auction => auction.remaining_duration > 0 ) // TODO: auction.remaining_duration > 0
             }
             return list
         }
