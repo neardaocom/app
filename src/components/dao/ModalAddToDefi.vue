@@ -27,12 +27,12 @@
             </MDBListGroupItem>
             <MDBListGroupItem :disabled="!registered" :color="registered ? 'dark' :  'light'">
               <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{t('default.add_pool')}}</h5>
-                  {{registered ? t('default.click_to_add_pool') : t('default.first_register_token')  }}
+                <h5 class="mb-1">{{t('default.create_pool')}}</h5>
+                  {{registered ? t('default.click_to_create_pool') : t('default.first_register_token')  }}
                   
               </div>
               <p class="mb-1">
-                {{registered ? t('default.add_pool_text') : ''}}
+                {{registered ? t('default.create_pool_text') : ''}}
               </p>
               <div class="d-flex w-100 justify-content-between align-items-end">
                 <div v-if="registered">
@@ -42,7 +42,7 @@
                   </MDBInput>
                 </div>
                 <MDBBtn v-if="registered" @click="addPool" color="primary" >
-                  {{t('default.add_pool')}} <MDBIcon icon="arrow-circle-up"></MDBIcon>
+                  {{t('default.create_pool')}} <MDBIcon icon="arrow-circle-up"></MDBIcon>
                 </MDBBtn>
               </div>
             </MDBListGroupItem>

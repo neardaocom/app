@@ -7,11 +7,11 @@
         </MDBCardTitle>
         <div class="d-flex justify-content-between">
             <h4>{{ sale.token_account_ids[0]}}</h4> 
-            {{sale.amounts[0]}}
+            {{amountDaoToken}}
         </div>
         <div class="d-flex justify-content-between">
             <h4>{{ sale.token_account_ids[1]}}</h4> 
-            {{sale.amounts[1]}}
+            {{amountNear}}
         </div>
         <hr class="mt-0 mb-3"/>
         <MDBCardText>
@@ -21,7 +21,7 @@
             </div>
             <div class="d-flex justify-content-between">
                 <h6>{{t('default.total_shares')}}</h6> 
-                {{sale.total_shares}}
+                {{ totalShares }}
             </div>
             <div class="d-flex justify-content-between">
                 <h6>{{t('default.shares')}}</h6> 
@@ -43,6 +43,8 @@
 <script>
     import { ref } from "vue";
     import { useI18n } from "vue-i18n";
+    import { yoctoNear } from '@/services/nearService'
+    import Decimal from 'decimal.js'
     import Sale from "@/components/dao/Sale.vue"
     import { MDBCard,
         MDBCardHeader,
@@ -96,5 +98,16 @@
                 this.modalRemoveLiquidity += 1
             },
         },
+        computed: {
+            amountNear(){
+                return new Decimal(this.sale.amounts[1] || 0).dividedBy(yoctoNear).toNumber()
+            },
+            amountDaoToken(){
+                return  new Decimal(this.sale.amounts[0]  || 0).dividedBy(10 ** this.dao.token_stats.decimals).toNumber()
+            },
+            totalShares(){
+                return new Decimal( this.sale.total_shares || 0).toFixed()
+            }
+        }
     }
 </script>

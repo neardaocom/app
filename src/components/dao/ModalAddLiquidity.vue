@@ -19,7 +19,7 @@
         </MDBModalBody>
         <MDBModalFooter>
             <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-            <MDBBtn color="primary" @click="addLiquidity">{{ t('default.add_liguidity') }}</MDBBtn>
+            <MDBBtn color="primary" @click="addLiquidity">{{ t('default.add_liquidity') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>

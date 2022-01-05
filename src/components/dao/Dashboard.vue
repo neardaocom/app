@@ -72,7 +72,7 @@
             </h2>
             <hr/>
             <h5 v-if="false" class="text-center text-muted mb-1">{{ t("default.treasury") }}</h5>
-            <h5 v-if="nearPrice && refFinanceNear" class="text-center">
+            <h5 v-if="nearPrice && refFinanceFounds['wrap.testnet']" class="text-center">
               <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">Ⓝ</small>
             </h5>
             <h5 v-if="refFinanceFounds[dao.wallet]" class="text-center">

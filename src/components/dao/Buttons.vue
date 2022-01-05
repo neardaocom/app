@@ -51,7 +51,7 @@
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
+            <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('RefFinance')" tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>
