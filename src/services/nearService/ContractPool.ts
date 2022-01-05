@@ -31,6 +31,7 @@ export class ContractPool {
         'vote_policies',
         'version_hash',
         'skyward_auctions',
+        'ref_pools'
       ],
       changeMethods: [
         'add_proposal',

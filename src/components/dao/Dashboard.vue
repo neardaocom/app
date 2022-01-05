@@ -60,9 +60,41 @@
           </div>
         </div>
       </div>
-    </div>
+       <div v-if="refFinanceFounds" class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body text-center">
+            <h5 class="text-muted">{{ t("default.ref_finance_funds") }}</h5>
+            <h2 v-if="nearPrice" class="text-center"> 
+              <NumberFormatter :amount="refFinanceNear * nearPrice" /> <small class="text-muted">USD</small>
+            </h2>
+            <h2 v-else class="text-center">
+              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">Ⓝ</small>
+            </h2>
+            <hr/>
+            <h5 v-if="false" class="text-center text-muted mb-1">{{ t("default.treasury") }}</h5>
+            <h5 v-if="nearPrice && refFinanceFounds['wrap.testnet']" class="text-center">
+              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">Ⓝ</small>
+            </h5>
+            <h5 v-if="refFinanceFounds[dao.wallet]" class="text-center">
+              <NumberFormatter :amount="refFinanceDaoToken" /> <small class="text-muted">{{ dao.token_name }}</small>
+            </h5>
+            <hr/>
+              <div v-if="refFinanceFounds['wrap.testnet'] && refFinanceFounds[dao.wallet]" class="d-flex justify-content-center align-self-end">
+                <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{t('default.withdraw')}} Ⓝ</MDBBtn>
+                <MDBBtn @click="modalRefWithdrawDaoTokenOpen" color="primary">{{`${t('default.withdraw')} ${dao.token_name}`}}</MDBBtn>
+                <ModalRefWithdrawNear :show="modalRefWithdrawNear" :contractId="dao.wallet" :balance="refFinanceNear"  />
+                <ModalRefWithdrawDaoToken :show="modalRefWithdrawDaoToken" :contractId="dao.wallet" :balance="refFinanceDaoToken"  :tokenDecimals="dao.token_stats.decimals" />
+              </div>  
+          </div>
+        </div>
+      </div>
+    </div> 
     <AuctionList
       :scenario="'active'"
+      :dao="dao"
+      :nearService="nearService"
+    />
+    <SalesList
       :dao="dao"
       :nearService="nearService"
     />
@@ -83,23 +115,31 @@
 </template>
 
 <script>
-import { MDBIcon, MDBBadge } from 'mdb-vue-ui-kit'
+import { MDBIcon, MDBBadge, MDBBtn } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/NumberFormatter.vue"
 import AuctionList from "@/components/dao/AuctionList.vue"
+import SalesList from "@/components/dao/SalesList.vue"
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import Analytics from "@/models/analytics"
-import { ref, toRefs, onMounted, onUnmounted } from "vue"
+import { ref, toRefs, onMounted, onUnmounted, computed } from "vue"
+import { useStore } from 'vuex'
 import _ from "lodash"
 import Decimal from 'decimal.js'
 import { nowToSeconds } from '@/utils/date';
+import { RefFinanceService } from '@/services/refFinanceService'
+import ModalRefWithdrawDaoToken from '@/components/dao/ModalRefWithdrawDaoToken.vue'
+import ModalRefWithdrawNear from '@/components/dao/ModalRefWithdrawNear.vue'
+import { yoctoNear } from '@/services/nearService'
 
 export default {
   components: {
-    MDBIcon, MDBBadge,
+    MDBIcon, MDBBadge, MDBBtn,
     NumberFormatter,
     Proposal, AuctionList,
+    SalesList, ModalRefWithdrawDaoToken,
+    ModalRefWithdrawNear
   },
   props: {
     dao: {
@@ -115,6 +155,8 @@ export default {
     const { t, n, d} = useI18n();
     const { dao, accountId } = toRefs(props)
     const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.token_holders, dao.value.token_holded, accountId.value, t, d))
+    const store = useStore()
+    const nearService = computed(() => store.getters['near/getService'])
 
     // council
     const token_council_interval = ref(null);
@@ -171,9 +213,41 @@ export default {
       //console.log('unmounted')
     })
 
+    // refFinance deposits
+    const refFinance = ref(null)
+    const refFinanceFounds = ref(null)
+
+    const refFinanceFetchFounds = () => {
+      refFinance.value.contract.get_deposits({"account_id": dao.value.wallet}).then( deposits => {
+        if(Object.keys(deposits).length !== 0){
+          refFinanceFounds.value = deposits
+        }
+      })
+    }
+
+    onMounted(() => {
+      nearService.value.getNear().account(dao.value.wallet).then( account => {
+          refFinance.value = new RefFinanceService(account, 'pstu.testnet') // TODO: Move to config
+          refFinanceFetchFounds()
+      })            
+    })
+
+    // modals
+    const modalRefWithdrawDaoToken = ref(0)
+    const modalRefWithdrawNear = ref(0)
+
+    const modalRefWithdrawDaoTokenOpen = () => {
+        modalRefWithdrawDaoToken.value += 1
+    }
+    const modalRefWithdrawNearOpen = () => {
+        modalRefWithdrawNear.value += 1
+    }
+
     return { t, n, proposals
       , token_council_interval, token_council_to_unlock, token_council_step, token_council_counter
       , token_public_interval, token_public_to_unlock, token_public_step, token_public_counter
+      , nearService, refFinanceFounds, modalRefWithdrawDaoToken, modalRefWithdrawNear,
+      modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen
     };
   },
   computed: {
@@ -198,9 +272,12 @@ export default {
     nearPrice() {
       return this.$root.near_price
     },
-    nearService() {
-      return this.$store.getters['near/getService']
+    refFinanceNear(){
+      return new Decimal(+this.refFinanceFounds['wrap.testnet'] || 0).dividedBy(yoctoNear).toNumber() // TODO: wrap.testnet move to config -->
     },
+    refFinanceDaoToken(){
+      return new Decimal(+this.refFinanceFounds[this.dao.wallet] || 0).dividedBy(10 ** this.dao.token_stats.decimals).toNumber()
+    }
   },
 };
 </script>

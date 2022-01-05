@@ -520,19 +520,15 @@ class NearService {
     contractId: string,
     action: string,
     params: object,
-    amountToTransfer: number
   ) {
-    const amountToTransferDecimal = new Decimal(amountToTransfer);
-    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
 
-    const actionBody = _.set({}, action, params)
-
+    const actionBody = params !== null ? _.set({}, action, params) : action
+    
     return this.contractPool.get(contractId).execute_privileged_action(
       {
         action: actionBody
       },
-      Decimal.mul(300, TGas).toString(),
-      amountYokto.toString()
+      Decimal.mul(300, TGas).toString()
     );
   }
 
@@ -719,6 +715,7 @@ class NearService {
         token_name: data[1].ft_name,
         version: data[6].version,
         token_stats: {
+          decimals: data[3].decimals,
           council: {
             total: data[3].council_ft_stats.total,
             init: data[3].council_ft_stats.init_distribution,
@@ -850,6 +847,10 @@ class NearService {
 
   async getSkywardAuctions(contractId: string) {
     return this.contractPool.get(contractId).skyward_auctions();
+  }
+
+  async getRefPools(contractId: string) {
+    return this.contractPool.get(contractId).ref_pools();
   }
 
 }
