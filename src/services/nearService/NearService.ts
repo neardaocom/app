@@ -210,7 +210,7 @@ class NearService {
         spec: "ft-1.0.0",
         name: ftName,
         symbol: accountId.toUpperCase(),
-        icon: null,
+        icon: null, // TODO: logo in DATA URL
         reference: null,
         reference_hash: null,
         decimals: 0
@@ -628,6 +628,7 @@ class NearService {
       this.getDaoConfig(daoAccount),
       this.getTags(),
       this.getVotePolicies(daoAccount),
+      this.getSkywardAuctions(daoAccount),
     ]).catch((e) => {
       console.log(e)
     });
@@ -638,6 +639,7 @@ class NearService {
     console.log(data)
 
     const amount = new Decimal(data[0]).toNumber()
+    const amountDeposit = new Decimal(data[3].storage_locked_near).div(yoctoNear).mul(100).round().div(100).toNumber()
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     //const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
     //const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
@@ -649,6 +651,15 @@ class NearService {
     members.forEach((accountId: string) => {
       member_promises.push(this.getFtBalanceOf(daoAccount, accountId))
     });
+
+    // action rights
+    let council_rights = []
+    const now_nanoseconds = new Decimal(new Date().valueOf()).mul(1_000_000).toNumber()
+    // council
+    if (data[2].council_rights != undefined) {
+      council_rights = data[2].council_rights.filter( right => right[1].from <= now_nanoseconds && now_nanoseconds <= right[1].to).map( right => right[0])
+    }
+
     //console.log(member_promises)
     const balances = await Promise.all(member_promises).catch((e) => {
       console.log(e)
@@ -730,16 +741,20 @@ class NearService {
         groups: {
           council: {
             amount: data[2].council_share_percent,
-            wallets: data[2].council
+            wallets: data[2].council,
+            rights: council_rights,
           },
           public: {
             amount: getPublicSalePercent(data[2].council_share_percent, 0, 0),
-            wallets: []
+            wallets: [],
+            rights: [],
           },
         },
         tags: data[1].tags.map((tag: number) => data[7][tag]), // system tag
         treasury: {
-          near: amount,
+          nearTotal: amount,
+          nearStorageLocked: amountDeposit,
+          near: amount - amountDeposit,
           w_delta: null,
           currency: 'czk',
           currency_amount: null
@@ -751,6 +766,9 @@ class NearService {
           btc: null,
           currency: 'czk',
           currency_amount: null
+        },
+        auction: {
+          skyward_finance: data[9],
         },
         proposals: data[4],
         docs: {
@@ -825,6 +843,10 @@ class NearService {
 
   async getDaoVersionHash(contractId: string) {
     return this.contractPool.get(contractId).version_hash();
+  }
+
+  async getSkywardAuctions(contractId: string) {
+    return this.contractPool.get(contractId).skyward_auctions();
   }
 
   async getRefPools(contractId: string) {

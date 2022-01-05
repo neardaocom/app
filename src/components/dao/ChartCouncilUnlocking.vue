@@ -25,6 +25,7 @@
       const { t, d } = useI18n()
       const { dao } = toRefs(props)
       const analytics = ref({})
+      const chartOptions = ref({})
 
       onMounted(() => {
         // const period: Analytics.Period = 
@@ -34,7 +35,7 @@
             Analytics.getPeriodFromDuration(dao.value.token_stats.council.duration),
             dao.value.created
         )
-        console.log(cashflow)
+        // console.log(cashflow)
         
         const labels = cashflow.map(obj => d(obj.date))
         const dataset = cashflow.map(obj => obj.value)
@@ -45,14 +46,18 @@
               {
                 color: "#FFCDD2",
                 data: dataset,
-                label: t('default.amount')
+                label: t('default.amount'),
               }
-            ]
+            ],
+        }
+
+        chartOptions.value = {
+          duration: 200,
         }
       });
     
       return {
-        analytics
+        analytics, chartOptions
       };
     }
   };

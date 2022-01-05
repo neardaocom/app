@@ -67,7 +67,7 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h6 class="text-muted text-center">{{ t("default.council_unlocking_token") }}</h6>
-            <chart-council-unlocking :dao="dao"/>
+            <ChartCouncilUnlocking :dao="dao"/>
           </div>
         </div>
       </div>

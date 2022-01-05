@@ -12,8 +12,8 @@
 import Auction from "@/components/dao/Auction.vue"
 import { SkywardFinance } from '@/services/skywardFinanceService'
 import { onMounted, onUnmounted, toRefs, ref } from "vue"
-// import { transform } from "@/models/auction"
-import { testDataset } from "@/services/skywardFinanceService/types"
+import AuctionModel from "@/models/auction"
+// import { testDataset } from "@/services/skywardFinanceService/types"
 
 export default {
     components: {
@@ -39,19 +39,22 @@ export default {
 
         const skywardFinance = ref(null)
         const auctionListInterval = ref(null)
-        const auctionListIntervalStep = ref(10_000)
+        const auctionListIntervalStep = ref(300_000) // 5 minutes
         const auctionList = ref([])
         const auctionListFetch = () => {
-            // skywardFinance.value.getSales('wrap.testnet').then( sales => {
-            //    auctionList.value = sales.map(sale => transform('skyward.finance', sale))
-            //})
-            auctionList.value = testDataset
+            if (dao.value.auction.skyward_finance) {
+                skywardFinance.value.getSalesById(dao.value.auction.skyward_finance).then( sales => {
+                    auctionList.value = sales
+                        .map( sale => AuctionModel.transform('skyward.finance', sale) )
+                })
+            }
+            // auctionList.value = testDataset
         }
 
         onMounted(() => {
             // init skyward and get sales
             nearService.value.getNear().account(dao.value.wallet).then( account => {
-                skywardFinance.value = new SkywardFinance(account, 'skyward.testnet') // TODO: Move to config
+                skywardFinance.value = new SkywardFinance(account, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT) // TODO: Use confing from vue?
                 auctionListFetch()
             })
             auctionListInterval.value = setInterval(auctionListFetch, auctionListIntervalStep.value)
