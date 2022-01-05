@@ -251,6 +251,30 @@
   "notify_download_new_version_fail_title":"Stažení nové verze",
   "notify_download_new_version_fail_message":"Nepodařilo se stáhnout novou verzi",
   "notify_upgrade_dao_fail_title":"Povýšit verzi DAO",
-  "notify_upgrade_dao_fail_message":"Nepodařilo se povýšit na novou verzi"
+  "notify_upgrade_dao_fail_message":"Nepodařilo se povýšit na novou verzi",
+  "defi_reffinance": "DeFi: Ref Finance",
+  "reffinance": "Ref Finance",
+  "pool": "Pool",
+  "fee": "Poplatek",
+  "total_fee": "Celkový poplatek",
+  "total_shares": "Celkový podíl",
+  "shares": "Podíl",
+  "add_to_reffinance": "Přidat na Ref Finance",
+  "register_token": "Registrace Tokenu",
+  "click_to_register_token": "Klikni na tlačítko registrace tokenu",
+  "register_text": "Nejříve je potřeba zaregistrovat token, před vytvořením poolu",
+  "create_pool": "Vytvořit Pool",
+  "click_to_create_pool": "Klikni na tlačítko Vyvořit Pool",
+  "first_register_token": "Nejříve je potřeba zaregistrovat token, před vytvořením poolu",
+  "create_pool_text": "Toto vytvoří pool na Ref Finance",
+  "add_liquidity": "Přidat Likviditu",
+  "remove_liquidity": "Odstranit Likviditu",
+  "ref_finance_funds": "Ref Finance Fondy",
+  "withdraw": "Vybrat"
+
+  
+  
+
+
 
 }

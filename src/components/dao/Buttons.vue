@@ -50,7 +50,7 @@
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.add_to_defi')}}</MDBDropdownItem>
+            <MDBDropdownItem tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
             <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
           </MDBDropdownMenu>

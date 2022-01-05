@@ -1,70 +1,80 @@
 <template>
     <MDBModal
-        id="modalAddToDefi"
+        id="modalUpgrade"
         tabindex="-1"
-        labelledby="modalAddToDefiLabel"
+        labelledby="modalUpgradeLabel"
         v-model="active"
         size="lg"
     >
         <MDBModalHeader>
-            <MDBModalTitle id="modalAddToDefiLabel"> {{ t('default.default.add_to_defi') }} </MDBModalTitle>
+            <MDBModalTitle id="modalUpgradeLabel"> {{ t('default.add_to_reffinance') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
-
-            <label for="defi-id-input" class="form-label">{{ t('default.defi') }}</label>
-            <MDBInput id="defi-id-input" inputGroup :formOutline="false" v-model="formDefi"
-            @keyup="validateDefi()" @blur="validateDefi()" :isValid="!errors.formDefi" :isValidated="isValidated.formDefi" :invalidFeedback="errors.formDefi"/>
+          <MDBListGroup>
+            <MDBListGroupItem :color="registered ? 'success' :  'dark'" >
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{t('default.register_token')}}</h5>
+                  {{registered ? t('default.done') : t('default.click_to_register_token')  }}
+              </div>
+              <p class="mb-1">
+                {{t('default.register_text')}}
+              </p>
+              <div class="d-flex w-100 flex-row-reverse">
+                <MDBBtn v-if="!registered" @click="registerToken" color="primary" >
+                  {{t('default.register_token')}} <MDBIcon icon></MDBIcon>
+                </MDBBtn>
+              </div>
+            </MDBListGroupItem>
+            <MDBListGroupItem :disabled="!registered" :color="registered ? 'dark' :  'light'">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{t('default.add_pool')}}</h5>
+                  {{registered ? t('default.click_to_add_pool') : t('default.first_register_token')  }}
+                  
+              </div>
+              <p class="mb-1">
+                {{registered ? t('default.add_pool_text') : ''}}
+              </p>
+              <div class="d-flex w-100 justify-content-between align-items-end">
+                <div v-if="registered">
+                  <label for="fee" class="form-label">{{ t('default.total_fee') }}</label>
+                  <MDBInput inputGroup :formOutline="false" id="fee" @input="changeFee" @keyup="validateFee" @blur="validateFee"  v-model="fee" :isValid="!errors.fee" :isValidated="isValidated.fee" :invalidFeedback="errors.fee">
+                    <span :outline="false" class="input-group-text">%</span>
+                  </MDBInput>
+                </div>
+                <MDBBtn v-if="registered" @click="addPool" color="primary" >
+                  {{t('default.add_pool')}} <MDBIcon icon="arrow-circle-up"></MDBIcon>
+                </MDBBtn>
+              </div>
+            </MDBListGroupItem>
+          </MDBListGroup>
         </MDBModalBody>
         <MDBModalFooter>
-        <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-        <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+            <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
 
 <script>
-import { ref, toRefs, watch } from "vue";
-import { reactive } from "@vue/reactivity";
+import { reactive, ref, toRefs, watch } from "vue";
+import { RefFinanceService } from '@/services/refFinanceService'
 import { useI18n } from "vue-i18n";
-import { isValid } from '@/utils/validators'
+import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
 import {
   MDBBtn,
-  MDBInput,
+  MDBIcon,
   MDBModal,
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter
+  MDBModalFooter,
+  MDBListGroup,
+  MDBListGroupItem,
+  MDBInput
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn
-    , MDBInput
-    , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    MDBBtn, MDBIcon, MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter, MDBListGroup, MDBListGroupItem, MDBInput
   },
   props: {
     show: {
@@ -87,21 +97,33 @@ export default {
 
     watch(show, openModal)
 
-    const formTitle = ref('')
-    const formDescription = ref('')
+    const registered = ref(false)
+
+    const fee = ref(0.25)
 
     const isValidated = ref({
-        formTitle: false,
-        formDescription: false,
+        fee: false,
     })
 
     const errors = reactive({});
 
     return {
-      t, active
-      , formTitle, formDescription
-      , isValidated, errors
+      t, active, registered, fee, isValidated, errors
     };
+  },
+  async mounted() {
+    this.nearService.getNear().account(this.contractId).then( account => {
+      const refFinance = new RefFinanceService(account, 'pstu.testnet')
+      refFinance.contract.get_user_whitelisted_tokens({"account_id": this.contractId}).then( tokens => {
+        if(tokens.includes(this.contractId)){
+          this.registered = true
+        }
+      })
+    })
+    if(localStorage.token_registered === 'true'){
+      this.active = true
+    } 
+    localStorage.token_registered = 'false'
   },
   computed: {
     factoryAccount() {
@@ -113,41 +135,69 @@ export default {
     nearService() {
       return this.$store.getters['near/getService']
     },
-    ipfsService() {
-      return this.$store.getters['ipfs/getService']
-    },
   },
   methods: {
-    
-    validate(){
+    registerToken(){
+      localStorage.token_registered = 'true'
+      this.nearService.executePrivilegedAction(
+          this.contractId,
+          'RefRegisterTokens',
+          null
+      ).then(r => {
+          console.log(r)
+          this.active = false
+      }).catch((e) => {
+          this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+          this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+          this.$notify.danger(this.t('default.notify_upgrade_dao_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_upgrade_dao_fail_message'))
+          this.$notify.flush()
+          console.log(e)
+      })
     },
-    async vote() {
-      this.validate()
+
+    addPool(){
       if (isValid(this.errors) === true) {
-        // Blockchain
-        this.nearService.addProposal(
-            this.contractId
-            , [this.t('default.general_proposal')]
-            , {
-                'GeneralProposal': {
-                    title: this.formTitle,
-                }
-            }
-            , 0.5
-            , this.accountId
+        this.nearService.executePrivilegedAction(
+            this.contractId,
+            'RefAddPool',
+            {"fee": this.fee * 100}
         ).then(r => {
             console.log(r)
-            this.formTitle = ''
-            this.formDescription = ''
             this.active = false
         }).catch((e) => {
+            this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+            this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+            this.$notify.danger(this.t('default.notify_upgrade_dao_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_upgrade_dao_fail_message'))
+            this.$notify.flush()
             console.log(e)
         })
       }
     },
+    
     close() {
       this.active = false
     },
+
+    validateFee(){
+        const field = "fee"
+        const requiredVal = requiredValidator(this.fee)
+        const isNumberVal = isNumber(this.fee)
+        const minNumberVal = minNumber(this.fee, {min: 0.01})
+        const maxNumberVal = maxNumber(this.fee, {max: 19})
+        if (isNumberVal.valid === false) {
+            this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+        }else if (requiredVal.valid === false) {
+            this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+        }else if (minNumberVal.valid === false) {
+            this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
+        } else if (maxNumberVal.valid === false) {
+            this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+        } else {
+            this.errors[field] = null
+        }
+        this.isValidated.fee = true
+    },
+
   }
 };
 </script>

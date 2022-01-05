@@ -30,6 +30,7 @@ export class ContractPool {
         'dao_config',
         'vote_policies',
         'version_hash',
+        'ref_pools'
       ],
       changeMethods: [
         'add_proposal',
