@@ -6,11 +6,11 @@
             <a :href="sale.url" target="_blank">{{`${t('default.pool')} ${sale.id}`}} </a>
         </MDBCardTitle>
         <div class="d-flex justify-content-between">
-            <h4>{{ sale.token_account_ids[0]}}</h4> 
+            <h4>{{ daoTokenName}}</h4> 
             {{amountDaoToken}}
         </div>
         <div class="d-flex justify-content-between">
-            <h4>{{ sale.token_account_ids[1]}}</h4> 
+            <h4>{{ tokenName }}</h4> 
             {{amountNear}}
         </div>
         <hr class="mt-0 mb-3"/>
@@ -21,7 +21,7 @@
             </div>
             <div class="d-flex justify-content-between">
                 <h6>{{t('default.total_shares')}}</h6> 
-                {{ totalShares }}
+                {{ n(+totalShares, { notation: 'compact' }) }}
             </div>
             <div class="d-flex justify-content-between">
                 <h6>{{t('default.shares')}}</h6> 
@@ -37,11 +37,11 @@
     </MDBCardFooter>                  
 </MDBCard>
     
-    <ModalAddLiquidity :show="modalAddLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.token_stats.decimals" />
-    <ModalRemoveLiquidity :show="modalRemoveLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.token_stats.decimals" />
+    <ModalAddLiquidity :show="modalAddLiquidity" :contractId="dao.wallet" :sale="sale" :maxNear="dao.treasury.near" :maxToken="dao.token_stats.public.free" :tokensNames="[daoTokenName, tokenName]" :tokenDecimals="dao.token_stats.decimals" />
+    <ModalRemoveLiquidity :show="modalRemoveLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.token_stats.decimals" :maxShares="+totalShares" />
 </template>
 <script>
-    import { ref } from "vue";
+    import { onMounted, ref, toRefs } from "vue";
     import { useI18n } from "vue-i18n";
     import { yoctoNear } from '@/services/nearService'
     import Decimal from 'decimal.js'
@@ -56,6 +56,7 @@
     } from "mdb-vue-ui-kit";
     import ModalAddLiquidity from "@/components/dao/ModalAddLiquidity.vue";
     import ModalRemoveLiquidity from "@/components/dao/ModalRemoveLiquidity.vue";
+    import { GeneralTokenService } from '@/services/generalTokenService';
 
     export default {
         components: {
@@ -78,15 +79,35 @@
                 type: Object,
                 required: true,
             },
+            nearService: {
+                type: Object,
+                required: true,
+            },
         },
-        setup() {
-            const { t } = useI18n();
+        setup(props) {
+            const {sale, nearService, dao} = toRefs(props)
+            const { t, n } = useI18n();
             const modalAddLiquidity = ref(0)
             const modalRemoveLiquidity = ref(0)
+
+            const generalTokenService = ref(null)
+            const tokenMetadata = ref(null)
+
+            const fetchTokenName = async () => {
+                tokenMetadata.value = await generalTokenService.value.getFtMetadata()
+            }
+
+            onMounted(() => {
+                nearService.value.getNear().account(dao.value.wallet).then( account => {
+                    generalTokenService.value = new GeneralTokenService(account, sale.value.token_account_ids[1])
+                    fetchTokenName()
+                })
+            })
             return {
-                t,
+                t, n,
                 modalAddLiquidity,
-                modalRemoveLiquidity
+                modalRemoveLiquidity,
+                tokenMetadata
             }
         },
 
@@ -107,6 +128,12 @@
             },
             totalShares(){
                 return new Decimal( this.sale.total_shares || 0).toFixed()
+            },
+            daoTokenName(){
+                return this.dao.token_name
+            },
+            tokenName(){
+                return this.tokenMetadata ? this.tokenMetadata['symbol'] : this.sale.token_account_ids[1]
             }
         }
     }

@@ -7,15 +7,22 @@
         size="lg"
     >
         <MDBModalHeader>
-            <MDBModalTitle id="modalAddLiguidity"> {{ t('default.withdraw_dao_token') }} </MDBModalTitle>
+            <MDBModalTitle id="modalAddLiguidity"> {{ `${t('default.withdraw')} ${tokenSymbol}`}} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-            <label for="amount" class="form-label">{{ t('default.dao_token_amount') }}</label>
-            <MDBInput id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount"/>
+          <div class="d-flex justify-content-between">
+              <label for="amount" class="form-label">{{ `${t('default.amount')} ${tokenSymbol}` }}</label>
+              <div class="small">{{`${t('default.balance')}: ${n(balance)}`}}</div>
+          </div>
+          <MDBInput inputGroup id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount">
+            <MDBBtn @click="tokenToMax" outline="primary" :ripple="{ color: 'dark' }">
+                  {{t('default.max')}}
+              </MDBBtn>
+          </MDBInput>
         </MDBModalBody>
         <MDBModalFooter>
             <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-            <MDBBtn color="primary" @click="removeLiquidity">{{ t('default.withdraw') }}</MDBBtn>
+            <MDBBtn color="primary" @click="withdrawDaoToken">{{ t('default.withdraw') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -58,7 +65,15 @@ export default {
     tokenDecimals:{
         type: Number,
         required: true,
-    } 
+    },
+    tokenSymbol:{
+      type: String,
+      required: true,
+    },
+    tokenId:{
+      type: String,
+      required: true,
+    }
   },
   setup(props) {
     const { t, n } = useI18n();
@@ -71,7 +86,7 @@ export default {
 
     watch(show, openModal)
 
-    const amount = ref(0) 
+    const amount = ref(new Decimal(0)) 
     const amountFormated = ref(n(0))
 
     const isValidated = ref({
@@ -91,14 +106,14 @@ export default {
     },
   },
   methods: {
-    removeLiquidity(){
+    withdrawDaoToken(){
         this.validate()
         if (isValid(this.errors) === true) {
             const amount = new Decimal(this.amount).mul(10 ** this.tokenDecimals).toFixed();
             this.nearService.executePrivilegedAction(
                 this.contractId,
                 'RefWithdrawDeposit',
-                { "token_id": this.contractId, "amount": amount.toString() }
+                { "token_id": this.tokenId, "amount": amount.toString() }
             ).then(r => {
                 console.log(r)
                 this.active = false
@@ -112,9 +127,13 @@ export default {
         }
     },
 
+    tokenToMax(){
+      this.amountFormated = this.n(this.balance)
+      this.amount = this.balance
+    },
+
     validate(){
       this.validateAmount()
-
     },
 
     changeAmount(event){

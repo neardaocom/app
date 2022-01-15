@@ -10,8 +10,15 @@
             <MDBModalTitle id="modalAddLiguidity"> {{ t('default.remove_liquidity') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-            <label for="amount" class="form-label">{{ t('default.shares') }}</label>
-            <MDBInput id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount"/>
+            <div class="d-flex justify-content-between">
+                <label for="amount" class="form-label">{{ t('default.shares') }}</label>
+                <div class="small">{{`${t('default.shares')}: ${n(maxShares)}`}}</div>
+            </div>
+            <MDBInput inputGroup id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount">
+                <MDBBtn @click="sharesToMax" outline="primary" :ripple="{ color: 'dark' }">
+                    {{t('default.max')}}
+                </MDBBtn>
+            </MDBInput>
         </MDBModalBody>
         <MDBModalFooter>
             <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
@@ -25,7 +32,7 @@ import { ref, toRefs, watch } from "vue";
 import Sale from "@/components/dao/Sale.vue"
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, isNumber, minNumber } from '@/utils/validators'
+import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
 import Decimal from 'decimal.js'
 import {
   MDBBtn,
@@ -59,7 +66,11 @@ export default {
     tokenDecimals:{
         type: Number,
         required: true,
-    }   
+    },
+    maxShares:{
+        type: Number,
+        required: true
+    }
   },
   setup(props) {
     const { t, n } = useI18n();
@@ -115,9 +126,15 @@ export default {
         }
     },
 
-    validate(){
-      this.validateAmount()
+    sharesToMax(){
+        this.amountFormated = this.n(this.maxShares)
+        this.amount = this.maxShares
+        console.log(this.amount);
+    },
 
+    validate(){
+        this.amount = +this.amountFormated.replace(/[^0-9]/g,'')
+        this.validateAmount()
     },
 
     changeAmount(event){
@@ -126,20 +143,21 @@ export default {
     },
     
     validateAmount(){
+        console.log(this.amount);
         console.log(new Decimal(this.amount).toFixed().toString());
         const field = "amount"
         const requiredVal = requiredValidator(this.amount)
         const isNumberVal = isNumber(new Decimal(this.amount).toFixed())
         const minNumberVal = minNumber(this.amount, {min: 1})
-        //const maxNumberVal = maxNumber(this.amount, {max: 100000000000000})
+        const maxNumberVal = maxNumber(this.amount, {max: this.maxShares})
         if (isNumberVal.valid === false) {
             this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {
             this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
         }else if (minNumberVal.valid === false) {
             this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
-        /*} else if (maxNumberVal.valid === false) {
-            this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)*/
+        } else if (maxNumberVal.valid === false) {
+            this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
         } else {
             this.errors[field] = null
         }
@@ -149,6 +167,12 @@ export default {
     close() {
       this.active = false
     },
+
+    // watch:{
+    //     amountFormated: (val) => {
+    //         this.amount = val
+    //     }
+    // }
   }
 };
 </script>

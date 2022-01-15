@@ -64,26 +64,19 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body text-center">
             <h5 class="text-muted">{{ t("default.ref_finance_funds") }}</h5>
-            <h2 v-if="nearPrice" class="text-center"> 
-              <NumberFormatter :amount="refFinanceNear * nearPrice" /> <small class="text-muted">USD</small>
-            </h2>
-            <h2 v-else class="text-center">
-              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">Ⓝ</small>
-            </h2>
             <hr/>
-            <h5 v-if="false" class="text-center text-muted mb-1">{{ t("default.treasury") }}</h5>
-            <h5 v-if="nearPrice && refFinanceFounds['wrap.testnet']" class="text-center">
-              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">Ⓝ</small>
+            <h5 v-if="nearPrice && refFinanceFounds[tokenId]" class="text-center">
+              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">{{tokenSymbol}}</small>
             </h5>
             <h5 v-if="refFinanceFounds[dao.wallet]" class="text-center">
               <NumberFormatter :amount="refFinanceDaoToken" /> <small class="text-muted">{{ dao.token_name }}</small>
             </h5>
             <hr/>
-              <div v-if="refFinanceFounds['wrap.testnet'] && refFinanceFounds[dao.wallet]" class="d-flex justify-content-center align-self-end">
-                <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{t('default.withdraw')}} Ⓝ</MDBBtn>
+              <div v-if="refFinanceFounds[tokenId] && refFinanceFounds[dao.wallet]" class="d-flex justify-content-center align-self-end">
+                <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{`${t('default.withdraw')} ${tokenSymbol}`}}</MDBBtn>
                 <MDBBtn @click="modalRefWithdrawDaoTokenOpen" color="primary">{{`${t('default.withdraw')} ${dao.token_name}`}}</MDBBtn>
-                <ModalRefWithdrawNear :show="modalRefWithdrawNear" :contractId="dao.wallet" :balance="refFinanceNear"  />
-                <ModalRefWithdrawDaoToken :show="modalRefWithdrawDaoToken" :contractId="dao.wallet" :balance="refFinanceDaoToken"  :tokenDecimals="dao.token_stats.decimals" />
+                <ModalRefWithdrawNear :show="modalRefWithdrawNear" :contractId="dao.wallet" :balance="refFinanceNear" :tokenId="tokenId" :tokenDecimals="tokenDecimals" :tokenSymbol="tokenSymbol" />
+                <ModalRefWithdrawDaoToken :show="modalRefWithdrawDaoToken" :contractId="dao.wallet" :balance="refFinanceDaoToken" :tokenId="dao.wallet" :tokenDecimals="dao.token_stats.decimals" :tokenSymbol="dao.token_name" />
               </div>  
           </div>
         </div>
@@ -131,7 +124,7 @@ import { nowToSeconds } from '@/utils/date';
 import { RefFinanceService } from '@/services/refFinanceService'
 import ModalRefWithdrawDaoToken from '@/components/dao/ModalRefWithdrawDaoToken.vue'
 import ModalRefWithdrawNear from '@/components/dao/ModalRefWithdrawNear.vue'
-import { yoctoNear } from '@/services/nearService'
+import { GeneralTokenService } from '@/services/generalTokenService';
 
 export default {
   components: {
@@ -216,18 +209,32 @@ export default {
     // refFinance deposits
     const refFinance = ref(null)
     const refFinanceFounds = ref(null)
+    const nearAccount = ref(null)
+    const tokenMetadata = ref(null)
+    const tokenId = ref('')
 
     const refFinanceFetchFounds = () => {
-      refFinance.value.contract.get_deposits({"account_id": dao.value.wallet}).then( deposits => {
+      refFinance.value.getDeposits(dao.value.wallet).then( deposits => {
         if(Object.keys(deposits).length !== 0){
+          Object.entries(deposits).forEach( async ([key]) => {
+            if (key !== dao.value.wallet){
+              tokenId.value = key
+              const generalTokenService = new GeneralTokenService(nearAccount.value, key)
+              tokenMetadata.value =  await generalTokenService.getFtMetadata()
+            }
+          })
+          
           refFinanceFounds.value = deposits
         }
       })
+
+
     }
 
     onMounted(() => {
       nearService.value.getNear().account(dao.value.wallet).then( account => {
-          refFinance.value = new RefFinanceService(account, 'pstu.testnet') // TODO: Move to config
+          nearAccount.value = account
+          refFinance.value = new RefFinanceService(account, process.env.VUE_APP_REF_FINANCE_CONTRACT)
           refFinanceFetchFounds()
       })            
     })
@@ -246,8 +253,8 @@ export default {
     return { t, n, proposals
       , token_council_interval, token_council_to_unlock, token_council_step, token_council_counter
       , token_public_interval, token_public_to_unlock, token_public_step, token_public_counter
-      , nearService, refFinanceFounds, modalRefWithdrawDaoToken, modalRefWithdrawNear,
-      modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen
+      , nearService, refFinanceFounds, modalRefWithdrawDaoToken, modalRefWithdrawNear, tokenId
+      , tokenMetadata,  modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen
     };
   },
   computed: {
@@ -273,10 +280,16 @@ export default {
       return this.$root.near_price
     },
     refFinanceNear(){
-      return new Decimal(+this.refFinanceFounds['wrap.testnet'] || 0).dividedBy(yoctoNear).toNumber() // TODO: wrap.testnet move to config -->
+      return new Decimal(+this.refFinanceFounds[this.tokenId] || 0).dividedBy(10 ** this.tokenDecimals ).toNumber()
     },
     refFinanceDaoToken(){
       return new Decimal(+this.refFinanceFounds[this.dao.wallet] || 0).dividedBy(10 ** this.dao.token_stats.decimals).toNumber()
+    },
+    tokenSymbol(){
+      return this.tokenMetadata ? this.tokenMetadata.symbol : ''
+    },
+    tokenDecimals(){
+      return this.tokenMetadata ? this.tokenMetadata.decimals : 0
     }
   },
 };

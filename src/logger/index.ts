@@ -26,7 +26,8 @@ export default {
                 message: message
             });
         }
-        app.config.globalProperties.$logger = {
+
+        const logger = {
 
             /**
              * System is unusable.
@@ -95,5 +96,8 @@ export default {
                 firestoreLog(lvl, target, action, 'debug', message)
             }
         }
+
+        app.config.globalProperties.$logger = logger
+        app.provide('logger', logger)
     }
 }
