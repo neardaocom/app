@@ -7,11 +7,19 @@
         size="lg"
     >
         <MDBModalHeader>
-            <MDBModalTitle id="modalAddLiguidity"> {{ t('default.withdraw_near_ref_finance') }} </MDBModalTitle>
+            <MDBModalTitle id="modalAddLiguidity"> {{ `${t('default.withdraw')} ${tokenSymbol}` }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-            <label for="amount" class="form-label">{{ t('default.near_amount') }}</label>
-            <MDBInput id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount"/>
+          <div class="d-flex justify-content-between">
+              <label for="amount" class="form-label">{{`${t('default.amount')} ${tokenSymbol}`}}</label>
+              <div class="small">{{`${t('default.balance')}: ${n(balance)}`}}</div>
+          </div>
+          <MDBInput inputGroup id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount">
+            <MDBBtn @click="nearToMax" outline="primary" :ripple="{ color: 'dark' }">
+              {{t('default.max')}}
+            </MDBBtn>
+          </MDBInput>
+            
         </MDBModalBody>
         <MDBModalFooter>
             <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
@@ -34,7 +42,6 @@ import {
   MDBModalBody,
   MDBModalFooter
 } from "mdb-vue-ui-kit";
-import { yoctoNear } from "@/services/nearService/constants";
 import Decimal from 'decimal.js'
 
 export default {
@@ -56,6 +63,18 @@ export default {
         type: Number,
         required: true,
     },
+    tokenDecimals:{
+      type: Number,
+      required: true,
+    },
+    tokenSymbol:{
+      type: String,
+      required: true,
+    },
+    tokenId:{
+      type: String,
+      required: true,
+    }
   },
   setup(props) {
     const { t, n } = useI18n();
@@ -91,11 +110,11 @@ export default {
     withdrawNear(){
         this.validate()
         if (isValid(this.errors) === true) {
-            const amount = new Decimal(this.amount).mul(yoctoNear).toFixed();
+            const amount = new Decimal(this.amount).mul(10 ** this.tokenDecimals).toFixed();
             this.nearService.executePrivilegedAction(
                 this.contractId,
                 'RefWithdrawDeposit',
-                { "token_id": "wrap.testnet", "amount": amount.toString() } // TODO: wrap.testnet move to config
+                { "token_id": this.tokenId, "amount": amount.toString() }
             ).then(r => {
                 console.log(r)
                 this.active = false
@@ -107,6 +126,11 @@ export default {
                 console.log(e)
             })
         }
+    },
+
+    nearToMax(){
+      this.amountFormated = this.n(this.balance)
+      this.amount = this.balance
     },
 
     validate(){
