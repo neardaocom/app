@@ -6,7 +6,7 @@
           <div class="card-body">
             <h5 class="text-center text-muted mb-0">{{ t("default.dao_funds") }}</h5>
             <h2 v-if="nearPrice" class="text-center">
-              <NumberFormatter :amount="dao.treasury.near * nearPrice"/> <small class="text-muted">USD</small>
+              <NumberFormatter :amount="dao.treasury.near.mul(nearPrice)"/> <small class="text-muted">USD</small>
             </h2>
             <h2 v-else class="text-center">
               <NumberFormatter :amount="dao.treasury.near"/> <small class="text-muted">Ⓝ</small>

@@ -86,11 +86,11 @@ export default {
 
     },
     maxNear:{
-        type: Number,
+        type: Object,
         required: true,
     },
     maxToken:{
-        type: Number,
+        type: Object,
         required: true,
     },
     
