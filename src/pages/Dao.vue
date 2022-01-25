@@ -26,6 +26,7 @@
       <div class="container">
         <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
         <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
+        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
         <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
@@ -56,6 +57,7 @@ import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
+import Activities from '@/components/dao/Activities.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
@@ -67,7 +69,7 @@ import DAOs from '@/data/DAOs'
 
 export default {
   components: {
-    About, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Members, Tokens, Documents
+    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Members, Tokens, Documents
     , SkeletonTitle, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },

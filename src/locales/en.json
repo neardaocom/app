@@ -4,6 +4,7 @@
   "account": "Account",
   "asset": "Asset",
   "activity": "Activity",
+  "activities": "Activities",
   "add_council": "Add council",
   "add_member": "Add member",
   "add_member_message": "New account ID <strong>{account}</strong> into <strong>{group}</strong>",
@@ -79,6 +80,9 @@
   "finalize": "Finalize",
   "founding_document": "Founding Document",
   "fundamental": "Fundamental",
+  "kyc": "KYC",
+  "legal_status": "Legal status",
+  "legal_document": "Legal document",
   "investor": "Investor",
   "global": "Global",
   "asia": "Asia",
@@ -295,5 +299,6 @@
   "ref_finance_funds": "Ref Finance funds",
   "withdraw": "Withdraw",
   "max": "Max",
-  "balance": "Balance"
+  "balance": "Balance",
+  "wf_daoPayout_payoutNear": "Amount <strong>{amount}</strong> to <strong>{receiverId}."
 }

@@ -3,11 +3,11 @@ import { toSearch } from "@/utils/string";
 import _ from "lodash"
 
 const getCategoriesInit = (t: any): string[] => {
-  return [t('default.fundamental')]
+  return [t('default.fundamental'), t('default.kyc')]
 }
 
 const getNamesInit = (t: any): string[] => {
-  return [t('default.founding_document'), t('default.discord'), t('default.web'), t('default.twitter')]
+  return [t('default.founding_document'), t('default.discord'), t('default.web'), t('default.twitter'), t('default.legal_status'), t('default.legal_document')]
 }
 
 const getCategories = (docs: any, t: any) => {
