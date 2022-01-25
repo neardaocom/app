@@ -3,10 +3,9 @@ import {
   Contract,
   transactions,
   keyStores,
-  WalletConnection,
+  WalletConnection
 } from 'near-api-js';
 import { toNanoseconds } from '@/utils/date';
-
 
 import Decimal from 'decimal.js';
 import BN from 'bn.js';
@@ -24,7 +23,7 @@ class NearService {
   factoryContract!: Contract & any;
 
   // wallet
-  walletConnection!: WalletConnection;
+  walletConnection!: WalletConnection & any;
 
   // near API
   near!: any;
@@ -572,18 +571,18 @@ class NearService {
     return this.contractPool.get(contractId).unlock_tokens({group: group}, Decimal.mul(10, TGas).toString());
   }
 
+  
   async unlockAllTokens(contractId: string) {
-    // const account = this.walletConnection._connectedAccount;
-    const account = await this.near.account('neardao.testnet')
-    console.log(account)
+    const account = this.walletConnection.account();
+
     return account.signAndSendTransaction({
-        receiverId: contractId,
-        actions: [
-            transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Council'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Community'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-            // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-        ],
+       receiverId: contractId,
+       actions: [
+          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Council'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Community'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+       ]
     });
   }
 
