@@ -113,7 +113,7 @@ export default {
   },
   async mounted() {
     this.nearService.getNear().account(this.contractId).then( account => {
-      const refFinance = new RefFinanceService(account, 'pstu.testnet')
+      const refFinance = new RefFinanceService(account, process.env.VUE_APP_REF_FINANCE_CONTRACT)
       refFinance.contract.get_user_whitelisted_tokens({"account_id": this.contractId}).then( tokens => {
         if(tokens.includes(this.contractId)){
           this.registered = true

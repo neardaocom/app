@@ -11,7 +11,7 @@ import { sharesValidator } from "@/utils/validators";
  * @returns Sale
  * 
  */
- const transform = (source: string, sale: any): Sale | undefined => {
+ const transformSale = (source: string, sale: any): Sale | undefined => {
     let trans: Sale | undefined
     switch (source) {
         case 'ref.finance':
@@ -32,4 +32,4 @@ import { sharesValidator } from "@/utils/validators";
     return trans
 }
 
-export { transform}
+export { transformSale}

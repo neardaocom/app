@@ -288,12 +288,8 @@
   "create_pool_text": "Toto vytvoří pool na Ref Finance",
   "add_liquidity": "Přidat Likviditu",
   "remove_liquidity": "Odstranit Likviditu",
-  "ref_finance_funds": "Ref Finance Fondy",
-  "withdraw": "Vybrat"
-
-  
-  
-
-
-
+  "ref_finance_funds": "Ref Finance fondy",
+  "withdraw": "Vybrat",
+  "max": "Max",
+  "balance": "Zůstatek"
 }

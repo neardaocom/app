@@ -697,6 +697,8 @@ class NearService {
       _.set(vote_policies, element[0], element[1])
     });
 
+      
+
     if (data !== null) {
       return {
         id: daoId,
