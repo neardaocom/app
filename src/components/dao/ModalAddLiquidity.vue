@@ -12,7 +12,7 @@
         <MDBModalBody class="text-start">
             <div class="d-flex justify-content-between">
                 <label for="amount1" class="form-label">{{ `${t('default.amount')} ${tokensNames[0]}` }}</label>
-                <div class="small">{{`${t('default.balance')}: ${n(maxToken)}`}}</div>
+                <div class="small">{{`${t('default.balance')}: ${maxTokenStr}`}}</div>
             </div>
             <MDBInput inputGroup @input="changeAmount($event, 1)" id="amount1" @keyup="validateAmount('amount1', amount1)" @blur="validateAmount('amount1', amount1)"  v-model="amountFormated1" :isValid="!errors.amount1" :isValidated="isValidated.amount1" :invalidFeedback="errors.amount1">
                 <MDBBtn @click="tokenToMax" outline="primary" :ripple="{ color: 'dark' }">
@@ -22,7 +22,7 @@
             <br/>
             <div class="d-flex justify-content-between">
                 <label for="amount2" class="form-label">{{ `${t('default.amount')} ${tokensNames[1]}` }}</label>
-                <div class="small">{{`${t('default.balance')}: ${n(maxNear)}`}}</div>
+                <div class="small">{{`${t('default.balance')}: ${nearServiceStr}`}}</div>
             </div>
             <MDBInput inputGroup @input="changeAmount($event, 2)" id="amount2" @keyup="validateAmount('amount2', amount2)" @blur="validateAmount('amount2', amount2)"  v-model="amountFormated2" :isValid="!errors.amount2" :isValidated="isValidated.amount2" :invalidFeedback="errors.amount2">
                 <MDBBtn @click="nearToMax" outline="primary" :ripple="{ color: 'dark' }">
@@ -116,8 +116,12 @@ export default {
     const amountFormated1 = ref(n(0))
     const amountFormated2 = ref(n(0)) 
 
-    const tokenToMax = () => { amountFormated1.value = n(maxToken.value) }
-    const nearToMax = () => { amountFormated2.value = n(maxNear.value) }
+    const maxTokenStr = computed(() => maxToken.value.toFixed().toLocaleString() )
+    const nearServiceStr = computed(() => maxNear.value.toFixed().toLocaleString('cs-CZ') )
+    console.log(nearServiceStr.value);
+
+    const tokenToMax = () => { amountFormated1.value = maxToken.value.toFixed().toLocaleString() }
+    const nearToMax = () => { amountFormated2.value = maxNear.value.toFixed().toLocaleString() }
     
     // validate inputs
     watch(amountFormated1, () => {
@@ -207,7 +211,8 @@ export default {
     return {
       t, n, active, close, 
       amountFormated1, amountFormated2,
-       tokenToMax, nearToMax,  
+       tokenToMax, nearToMax, maxTokenStr,
+       nearServiceStr,
        isValidated, errors, 
        amount1, amount2, 
        validateAmount, validate, 
