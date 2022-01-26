@@ -149,7 +149,6 @@ ul.timeline-3 > li:before {
   border-radius: 50%;
   border: 3px solid #22c0e8;
   left: 20px;
-  top: 3px;
   width: 20px;
   height: 20px;
   z-index: 400;

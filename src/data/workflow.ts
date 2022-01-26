@@ -91,6 +91,23 @@ export const payoutAfterPayNear: WFInstance = {
       actions: [
         {name: 'Treasury send NEAR', smartContractMethod: 'treasury_send_near'}
       ],
+    },
+    {
+      id: 2,
+      name: 'Payout TOKEN',
+      code: 'payoutToken',
+      rank: 2,
+      smartContractId: 'genesis.neardao.near',
+      txSignedAt: moment().subtract(20, 'd').toDate(),
+      txSigner: 'runner.dao.near',
+      txHash: 'A8DpeeFCiQEaBfjJUjiMTALAwLZnPvdCp8yVseckoYPJ',
+      inputs: [
+        { code: 'amount', name: 'TOKEN Amount', value: '250.0' },
+        { code: 'receiverId', name: 'Receiver ID', value: 'jsla.near' }
+      ],
+      actions: [
+        {name: 'Treasury send TOKEN', smartContractMethod: 'treasury_send_token'}
+      ],
     }
   ],
   ends: [
