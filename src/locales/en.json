@@ -5,6 +5,8 @@
   "asset": "Asset",
   "activity": "Activity",
   "activities": "Activities",
+  "action": "Action",
+  "actions": "Actions",
   "add_council": "Add council",
   "add_member": "Add member",
   "add_member_message": "New account ID <strong>{account}</strong> into <strong>{group}</strong>",
@@ -134,6 +136,8 @@
   "slogan": "Slogan",
   "voting": "Voting",
   "summary": "Summary",
+  "signed_by": "signed by",
+  "at": "at",
   "validating": "Validating...",
   "vote": "Vote",
   "vote_type_yes": "YES",
@@ -300,5 +304,6 @@
   "withdraw": "Withdraw",
   "max": "Max",
   "balance": "Balance",
-  "wf_daoPayout_payoutNear": "Amount <strong>{amount}</strong> to <strong>{receiverId}."
+  "wf_daoPayout_payoutNear": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
+  "wf_finish": "Finish"
 }

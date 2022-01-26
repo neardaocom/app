@@ -17,8 +17,9 @@ export type WFActivity = {
     smartContractId: string;
     txHash?: string;
     txSignedAt?: Date;
+    txSigner?: String;
     inputs: WFInput[];
-    action: WFAction[];
+    actions: WFAction[];
 }
 
 export type WFInstance = {
@@ -29,6 +30,6 @@ export type WFInstance = {
     inputs: WFInput[];
     activitiesNext: WFActivity[];
     activitiesLog: WFActivity[];
-    end: string[];
+    ends: string[];
     search: string;
 }
