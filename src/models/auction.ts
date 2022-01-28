@@ -86,4 +86,31 @@ const transform = (source: string, sale: any): Sale | undefined => {
     return trans
 }
 
-export default { transform, getProgress, getTranslateKey }
+/**
+ * Get rate of sale
+ * @param sale Sale
+ * @returns Decimal | undefined
+ */
+const rate = (sale: Sale): Decimal | undefined => {
+    let rate: Decimal | undefined = undefined
+    // console.log(sale.in_token)
+    if (sale.in_token.remaining > 0) {
+        rate = new Decimal(sale.out_tokens[0].remaining).div(sale.in_token.remaining)
+    }
+    return rate
+}
+
+/**
+ * Get rate of token
+ * @param sale Sale
+ * @returns Decimal | undefined
+ */
+const rateToken = (sale: Sale): Decimal | undefined => {
+    let rate: Decimal | undefined = undefined
+    if (sale.in_token.remaining > 0) {
+        rate = new Decimal(sale.in_token.remaining).div(sale.out_tokens[0].remaining)
+    }
+    return rate
+}
+
+export default { transform, getProgress, getTranslateKey, rate, rateToken }

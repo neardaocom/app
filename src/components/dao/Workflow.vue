@@ -17,7 +17,7 @@
           <span class="ms-2">{{ t('default.actions') }}:</span>
           <dl class="row ms-3">
             <template v-for="(action, index) in activity.actions" :key="index">
-              <dt class="col-sm-3">#{{ index + 1 }} {{ action.name }}</dt>
+              <dt class="col-sm-3">{{ index + 1 }}. {{ action.name }}</dt>
               <dd class="col-sm-9">{{ activity.smartContractId }} > {{ action.smartContractMethod }}</dd>
             </template>
           </dl>
