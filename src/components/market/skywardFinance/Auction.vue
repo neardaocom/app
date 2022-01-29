@@ -1,7 +1,7 @@
 <template>
   <MDBCard text="start">
     <MDBCardHeader>
-        {{ t('default.ft_auction') }}
+        <img class="me-1" :src="'/img/market/skywardFinance.jpg'" alt="" style="width: 24px; vertical-align: top"/> Skyward Finance
     </MDBCardHeader>
     <MDBCardBody>
       <MDBCardTitle>

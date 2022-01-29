@@ -94,7 +94,7 @@ export default {
 
     const formName = ref("")
     const formNameId = getRandom(1000, 9999)
-    const formNameOptions = ref([ t('default.founding_document') ])
+    const formNameOptions = ref([ t('default.founding_document'),  ])
     const formCategory = ref("")
     const formCategoryId = getRandom(1000, 9999)
     const formCategoryOptions = ref([ t('default.fundamental') ])

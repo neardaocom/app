@@ -26,7 +26,7 @@ export default {
     })
 
     onMounted(() => {
-      near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1000) // 5 minutes
+      near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1_000) // 5 minutes
       // console.log('App mounted')
     })
 

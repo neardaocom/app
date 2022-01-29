@@ -597,7 +597,7 @@ import {
     requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength,
     isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid, requiredArrayValidator
 } from '@/utils/validators'
-import { locationList } from '@/composables/location'
+import { locationList } from '@/hooks/location'
 import { compareByText } from '@/utils/object'
 import moment from 'moment'
 import {

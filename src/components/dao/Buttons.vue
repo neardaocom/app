@@ -8,6 +8,9 @@
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.voting') }}
         </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.activities') }}
+        </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
         </router-link>
@@ -16,6 +19,9 @@
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'markets' }}" :class="[isActive('markets') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.markets') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.documents') }}
@@ -219,8 +225,8 @@ export default {
     },
     unlockTokens(group) {
       console.log(group)
-      // this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
-      this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
+      this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
+      // this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
         console.log(r)
       }).catch((e) => {
         console.log(e)

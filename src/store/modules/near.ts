@@ -16,6 +16,9 @@ const getters = {
     getAccountId: (state: any) => {
       return state.service.walletConnection.getAccountId()
     },
+    getAccount: (state: any) => {
+      return state.service.walletConnection.account()
+    },
     getFactoryAccount: (state: any) => {
       return state.service.config !== undefined ? state.service.config.contractName : undefined
     },

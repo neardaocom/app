@@ -118,7 +118,7 @@ import {
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
-import { getCategories, transform, getIndexInFiles } from "@/models/document"
+import { getCategories, getCategoriesInit, transform, getIndexInFiles } from "@/models/document"
 
 export default {
   components: {
@@ -272,7 +272,7 @@ export default {
       }
     },
     getCategories() {
-      let categories = [ this.t('default.fundamental')]
+      let categories = getCategoriesInit( this.t )
       this.docs.map.categories.forEach(item => {
         if (_.isEqual(categories[0], item) !== true) {
           categories.push(item)
