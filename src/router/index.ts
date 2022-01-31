@@ -30,7 +30,12 @@ const routes = [
         next(false)
       }
     }
-  }
+  },
+  {
+    path: '/workflows',
+    name: 'workflows',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/Workflows.vue')
+  },
 ]
 
 const router = createRouter({
