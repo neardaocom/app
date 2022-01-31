@@ -2,6 +2,9 @@
   <div class="container mb-2">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <About :dao="dao" />
+      </div>
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Treasury :dao="dao" :nearPrice="nearPrice" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
@@ -59,6 +62,7 @@
 import { MDBBtn } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/NumberFormatter.vue"
 import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
+import About from "@/components/dao/dashboard/About.vue";
 import Treasury from "@/components/dao/dashboard/Treasury.vue";
 import Share from "@/components/dao/dashboard/Share.vue";
 import Activity from "@/components/dao/dashboard/Activity.vue";
@@ -80,6 +84,7 @@ export default {
     MDBBtn,
     NumberFormatter,
     Proposal,
+    About,
     SalesList, ModalRefWithdrawDaoToken,
     ModalRefWithdrawNear, SkywardFinance, Treasury, Share, Activity,
   },
@@ -127,7 +132,7 @@ export default {
     onMounted(() => {
       nearService.value.getNear().account(dao.value.wallet).then( account => {
           nearAccount.value = account
-          refFinance.value = new RefFinanceService(account, process.env.VUE_APP_REF_FINANCE_CONTRACT)
+          refFinance.value = new RefFinanceService(account, window.process.env.VUE_APP_REF_FINANCE_CONTRACT)
           refFinanceFetchFounds()
       })
     })

@@ -29,6 +29,9 @@
         <a :class="[isActive('about') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.about') }}
         </a>
+        <a :class="[isActive('settings') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.settings') }}
+        </a>
       </div>
       <!-- Left -->
 
