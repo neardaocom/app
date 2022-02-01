@@ -28,10 +28,9 @@
         <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
         <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
-        <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
+        <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao"/>
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
         <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs"/>
-        <Markets v-if="loaded === true && this.q_page === 'markets'" :dao="dao" :accountId="accountId"/>
         <About v-if="loaded === true && this.q_page === 'about'" :dao="dao"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
@@ -50,7 +49,7 @@ import Breadcrumb from '@/components/dao/Breadcrumb.vue'
 import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
 import Title from '@/components/dao/Title.vue'
-import Members from '@/components/dao/Members.vue'
+import DeFi from '@/components/dao/DeFi.vue'
 import Dashboard from '@/components/dao/Dashboard.vue'
 import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
 import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
@@ -58,7 +57,6 @@ import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
-import Markets from '@/components/dao/Markets.vue'
 import Activities from '@/components/dao/Activities.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
@@ -69,7 +67,7 @@ import _ from 'lodash'
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Members, Tokens, Documents, Markets
+    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi
     , SkeletonTitle, SkeletonButtons, SkeletonBody
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },

@@ -54,12 +54,12 @@
                 </thead>
                 <tbody>
                   <tr v-for="(template, index) in dataResults" :key="index">
-                    <td>{{ template.id }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td class="text-start">
                       <router-link class="fw-bold" :to="{ name: 'workflow-template', params: {id: template.id}}">{{ template.name }}</router-link>
                     </td>
                     <td class="text-start">v{{ template.version }}</td>
-                    <td class="text-start">{{ template.code }}</td>
+                    <td class="text-start">#{{ template.id }} {{ template.code }}</td>
                   </tr>
                 </tbody>
               </MDBTable>

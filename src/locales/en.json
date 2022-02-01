@@ -29,6 +29,7 @@
   "code": "Code",
   "distribute_ft": "Payout by tokens",
   "distribute_ft_message": "<strong>{amount}</strong> from <strong>{group}</strong> to <strong>{accounts}</strong>",
+  "defi": "DeFi",
   "remove_document": "Remove document",
   "remove_council": "Remove council",
   "remove_member": "Remove member",
