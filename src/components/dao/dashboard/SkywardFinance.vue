@@ -1,11 +1,8 @@
 <template>
-    <section v-if="sales.length > 0">
-        <div class="row">
-            <div class="col-12 col-md-4 mb-4" v-for="sale in sales" :key="sale.id">
-                <Widget :sale="sale" :dao="dao" />
-            </div>
-        </div>
-    </section>
+    <!-- v-if="sales.length > 0" -->
+    <div class="col-12 col-md-4 mb-4" v-for="sale in sales" :key="sale.id">
+        <Widget :sale="sale" :dao="dao" />
+    </div>
 </template>
 
 <script>
@@ -45,7 +42,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.auction.skyward_finance)
+        } = useSkywardFinanace(account.value, 'supertest.testnet', dao.value.auction.skyward_finance) // TODO: process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT
 
         skywardFetch()
 

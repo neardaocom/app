@@ -63,10 +63,8 @@ import Activities from '@/components/dao/Activities.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import _ from 'lodash'
-import DAO from '@/types/DAO'
-import DAOs from '@/data/DAOs'
 //import * as nearAPI from "near-api-js"
 
 export default {
@@ -77,18 +75,12 @@ export default {
   },
   setup() {
     const { t } = useI18n()
-    const daos = ref(DAOs.data().daos)
-    const search = ref('')
-    const filter = reactive({})
     const favorites = [1]
     const q_id = null
-    const dao = ref(DAO.data)
-    const dao_data = ref(DAO.data)
-    const proposals = null
-    const statistics_ft = null
+    const dao = ref(null)
     const loaded = ref(false)
 
-    return { t, dao, daos, q_id, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
+    return { t, dao, q_id, favorites, loaded}
   },
   created() {
     // dao id
@@ -100,8 +92,11 @@ export default {
     this.$store.commit('near/setContract', this.q_id)
 
     // dao
-    this.dao.id = this.q_id
-    this.dao.wallet = this.q_id
+    this.dao = {
+      id: this.q_id,
+      wallet: this.q_id,
+      tags: [],
+    }
   },
   computed: {
     wallet() {

@@ -67,7 +67,9 @@
   "eslintConfig": {
     "root": true,
     "env": {
-      "browser": true
+      "node": true,
+      "browser": true,
+      "commonjs": true
     },
     "extends": [
       "plugin:vue/vue3-essential",

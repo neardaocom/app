@@ -50,7 +50,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.auction.skyward_finance)
+        } = useSkywardFinanace(account.value, 'supertest.testnet', dao.value.auction.skyward_finance) // TODO: process.env (process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT)
 
         skywardFetch()
 

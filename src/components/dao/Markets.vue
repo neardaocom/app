@@ -4,37 +4,115 @@
       :scenario="'active'"
       :dao="dao"
     />
+    <h5 class="text-start">{{ t('default.ft_market') }}</h5>
+    <div v-if="refFinanceFounds" class="col-12 col-md-6 col-lg-4 mb-4">
+        <div class="card text-start w-auto p-2" style="width: 18rem">
+          <div class="card-body text-center">
+            <h5 class="text-muted">{{ t("default.ref_finance_funds") }}</h5>
+            <hr/>
+            <h5 v-if="nearPrice && refFinanceFounds[tokenId]" class="text-center">
+              <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">{{tokenSymbol}}</small>
+            </h5>
+            <h5 v-if="refFinanceFounds[dao.wallet]" class="text-center">
+              <NumberFormatter :amount="refFinanceDaoToken" /> <small class="text-muted">{{ dao.token_name }}</small>
+            </h5>
+            <hr/>
+              <div v-if="refFinanceFounds[tokenId] && refFinanceFounds[dao.wallet]" class="d-flex justify-content-center align-self-end">
+                <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{`${t('default.withdraw')} ${tokenSymbol}`}}</MDBBtn>
+                <MDBBtn @click="modalRefWithdrawDaoTokenOpen" color="primary">{{`${t('default.withdraw')} ${dao.token_name}`}}</MDBBtn>
+                <ModalRefWithdrawNear :show="modalRefWithdrawNear" :contractId="dao.wallet" :balance="refFinanceNear" :tokenId="tokenId" :tokenDecimals="tokenDecimals" :tokenSymbol="tokenSymbol" />
+                <ModalRefWithdrawDaoToken :show="modalRefWithdrawDaoToken" :contractId="dao.wallet" :balance="refFinanceDaoToken" :tokenId="dao.wallet" :tokenDecimals="dao.token_stats.decimals" :tokenSymbol="dao.token_name" />
+              </div>  
+          </div>
+        </div>
+    </div>
+    <SalesList
+      :dao="dao"
+      :nearService="nearService"
+    />
   </div>
 </template>
 
 <script>
-// import { MDBInput, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
-// import { ref } from "vue"
+import { MDBBtn } from "mdb-vue-ui-kit";
+import { ref, toRefs, computed, onMounted } from "vue"
+// import { ref, computed } from "vue"
 // import { reactive } from "@vue/reactivity"
 import AuctionList from "@/components/market/skywardFinance/List.vue"
+import SalesList from "@/components/dao/SalesList.vue"
+import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n"
+import { useStore } from "vuex";
+import ModalRefWithdrawDaoToken from '@/components/dao/ModalRefWithdrawDaoToken.vue'
+import ModalRefWithdrawNear from '@/components/dao/ModalRefWithdrawNear.vue'
+import Decimal from 'decimal.js'
+import { useRefFinance } from "@/hooks/market";
 
 export default {
   components: {
-    AuctionList
+    MDBBtn,
+    AuctionList, SalesList,
+    NumberFormatter,
+    ModalRefWithdrawDaoToken, ModalRefWithdrawNear
   },
   props: {
     dao: {
       type: Object,
       required: true,
     },
-    accountId: {
-      type: String,
-      required: true,
-    },
   },
-  setup() {
-    //const { dao, accountId } = toRefs(props)
+  setup(props) {
+    const { dao } = toRefs(props)
     const { t } = useI18n();
+    const store = useStore()
+    // const account = computed(() => store.getters['near/getAccount'])
+    const nearService = computed(() => store.getters['near/getService'])
+    const daoAccount = nearService.value.getNear().account(dao.value.wallet)
 
-    return { t };
+    const {
+      service, founds: refFinanceFounds, tokenMetadata, tokenId,
+      fetchFounds, reloadUp, reloadDown
+    } = useRefFinance(daoAccount, dao.value.wallet)
+
+    // modals
+    const modalRefWithdrawDaoToken = ref(0)
+    const modalRefWithdrawNear = ref(0)
+
+    const modalRefWithdrawDaoTokenOpen = () => {
+        modalRefWithdrawDaoToken.value += 1
+    }
+    const modalRefWithdrawNearOpen = () => {
+        modalRefWithdrawNear.value += 1
+    }
+
+    onMounted(() => {
+      fetchFounds()
+    })
+
+    return {
+      t, nearService,
+      modalRefWithdrawDaoToken, modalRefWithdrawNear,
+      modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen,
+      service, refFinanceFounds, tokenMetadata, tokenId,
+      fetchFounds, reloadUp, reloadDown
+    }
   },
   computed: {
+    refFinanceNear(){
+      return new Decimal(+this.refFinanceFounds[this.tokenId] || 0).dividedBy(10 ** this.tokenDecimals ).toNumber()
+    },
+    refFinanceDaoToken(){
+      return new Decimal(+this.refFinanceFounds[this.dao.wallet] || 0).dividedBy(10 ** this.dao.token_stats.decimals).toNumber()
+    },
+    tokenSymbol(){
+      return this.tokenMetadata ? this.tokenMetadata.symbol : ''
+    },
+    tokenDecimals(){
+      return this.tokenMetadata ? this.tokenMetadata.decimals : 0
+    },
+    nearPrice() {
+      return this.$root.near_price
+    },
   },
   methods: {
   }

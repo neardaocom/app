@@ -22,7 +22,7 @@
                     :formOutline="false"
                     wrapperClass="mb-3"
                     class="rounded"
-                    v-model="filterSearch"
+                    v-model="searchQuery"
                     aria-describedby="search-addon"
                     :aria-label="t('default.search')"
                     :placeholder="t('default.search')"
@@ -32,11 +32,11 @@
                     </template>
                   </MDBInput>
                 </div>
-                <div class="col-12 col-md-6 col-lg-7 text-start pt-1 ps-4">
+                <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
                   
                 </div>
                 <div class="col-6 col-md-4 col-lg-2 text-end">
-                  <MDBSelect v-model:options="filterOrderOptions" v-model:selected="filterOrder" />
+                  <MDBSelect v-model:options="filterOrder.options" v-model:selected="filterOrder.selected" />
                 </div>
               </div>
               <MDBProgress class="my-1">
@@ -49,17 +49,17 @@
                     <th scope="col">#</th>
                     <th scope="col" class="text-start">{{ t('default.name') }}</th>
                     <th scope="col" class="text-start">{{ t('default.version') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.code') }}</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(template, index) in dataResults" :key="index">
                     <td>{{ template.id }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'workflow-template', params: {id: template.id}}">{{ template.name }}</router-link>
+                      <router-link class="fw-bold" :to="{ name: 'workflow', params: {id: template.id}}">{{ template.name }}</router-link>
                     </td>
-                    <td class="text-start">v{{ template.version }}</td>
-                    <td class="text-start">{{ template.code }}</td>
+                    <td class="text-start">
+                      v{{ template.version }}
+                    </td>
                   </tr>
                 </tbody>
               </MDBTable>
@@ -84,7 +84,7 @@ import {
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { useTemplateList } from "@/hooks/workflow";
-import { onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 
 export default {
   components: {
@@ -97,17 +97,15 @@ export default {
   },
   setup() {
     const { t, n } = useI18n()
-    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
+    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filter } = useTemplateList()
 
     onMounted(() => {
       fetch()
       filter()
     })
 
-    watch([filterSearch, filterOrder], () => { filter()})
-
     return {
-      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter
+      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filter
     }
   },
 }

@@ -36,6 +36,11 @@ const routes = [
     name: 'workflows',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/Workflows.vue')
   },
+  {
+    path: '/workflow/:id',
+    name: 'workflow-template',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/WorkflowTemplate.vue')
+  },
 ]
 
 const router = createRouter({
