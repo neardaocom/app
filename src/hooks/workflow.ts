@@ -1,10 +1,13 @@
-import { ref, reactive } from 'vue'
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { toSearch } from '@/utils/string'
 import { useI18n } from 'vue-i18n'
 import { WFTemplate } from '@/types/workflow'
 import _orderBy from "lodash/orderBy"
+import _get from "lodash/get"
 import { getRandom } from '@/utils/integer'
 import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
+import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
 
 export const useTemplateList = () => {
     const { t } = useI18n()
@@ -57,5 +60,39 @@ export const useTemplateList = () => {
         dataSource, dataResults,
         fetchProgress, fetch,
         filterSearch, filterOrder, filterOrderOptions, filter,
+    }
+}
+
+export const useTemplate = () => {
+    const route = useRoute()
+    const q_id = _get(route, ['params', 'id']) 
+
+    const fetch = (): WFTemplate | undefined => {
+        let template: WFTemplate | undefined = undefined
+        // prototype
+        switch (q_id) {
+            case '1':
+                template = templatePayout
+                break;
+            case '2':
+                template = templateCreateGroup
+                break;
+            case '3':
+                template = templateAddMember
+                break;
+            default:
+                break;
+        }
+
+        return template;
+    }
+
+    const template = computed(() => fetch())
+    const startActivities = computed(() => { return template.value ? getStartActivities(template.value) : [] })
+    const endActivities = computed(() => { return template.value ? getEndActivities(template.value) : [] })
+    const transactions = computed(() => { return template.value ? getTransitions(template.value) : [] })
+
+    return {
+        q_id, fetch, template, startActivities, endActivities, transactions
     }
 }

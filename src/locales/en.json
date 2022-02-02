@@ -124,6 +124,7 @@
   "search": "Search",
   "sign_and_execute": "Sign & execute",
   "skyward_finance_create_sale": "Skyward: Create sale",
+  "smart_contract": "Smart contract",
   "contacts": "Contacts",
   "log_in": "Log In",
   "log_out": "Log Out",
@@ -312,6 +313,8 @@
   "whitepaper": "Whitepaper",
   "workflows": "Workflows",
   "workflows_header": "Select and use what you need on your way",
+  "workflows_start": "Start",
+  "workflows_finish": "Finish",
   "wiki": "Wiki",
   "source_code": "Source code",
   "social": "Social",
@@ -320,5 +323,8 @@
   "balance": "Balance",
   "wf_daoPayout_payoutNear": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
   "wf_daoPayout_payoutToken": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
-  "wf_finish": "Finish"
+  "wf_finish": "Finish",
+  "wf_transitions": "Transitions",
+  "wf_from": "From",
+  "wf_to": "To"
 }

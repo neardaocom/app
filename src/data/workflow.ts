@@ -12,7 +12,7 @@ export const templatePayout: WFTemplate = {
     id: 1,
     name: 'Payout',
     version: '1.0',
-    code: 'payout',
+    code: 'neardao_payout',
     attributes: [
       { code: 'receiverId', name: 'ReceiverId' },
       { code: 'nearAmount', name: 'NEAR Amount' },
@@ -24,7 +24,7 @@ export const templatePayout: WFTemplate = {
     ],
     transactions: [
       { id: 1, fromId: 1, toId: 2},
-      { id: 1, fromId: 2, toId: 1}
+      { id: 2, fromId: 2, toId: 1}
     ],
     startActivityIds: [1,2],
     endActivityIds: [1,2],

@@ -2,71 +2,108 @@
   <Header></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb />
+      <Breadcrumb :template="template" />
     </MDBContainer>
     <MDBContainer>
-      <div class="row">
-        <div class="col-12 text-center">
-          <h2>{{ t('default.workflows')}}</h2>
-          <p>{{ t('default.workflows_header')}}</p>
-        </div>
-      </div>
-      <div class="row mt-2 mb-4">
-        <MDBCard>
-          <MDBCardBody>
-            <MDBCardText>
-              <div class="row mt-3">
-                <div class="col-6 col-md-4 col-lg-3">
-                  <MDBInput
-                    inputGroup
-                    :formOutline="false"
-                    wrapperClass="mb-3"
-                    class="rounded"
-                    v-model="searchQuery"
-                    aria-describedby="search-addon"
-                    :aria-label="t('default.search')"
-                    :placeholder="t('default.search')"
-                  >
-                    <template #prepend>
-                      <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
+      <MDBCard>
+        <MDBCardBody>
+          <MDBCardText>
+            <h2>{{ template.name }}</h2>
+            <hr/>
+            <div class="row text-start">
+              <div class="col-md-6">
+                <dl class="row">
+                  <dd class="col-6">ID:</dd>
+                  <dt class="col-6">#{{ template.id }}</dt>
+
+                  <dd class="col-6">{{ t('default.version') }}:</dd>
+                  <dt class="col-6">v{{ template.version }}</dt>
+
+                  <dd class="col-6 col-md-6">{{ t('default.code') }}:</dd>
+                  <dt class="col-6 col-md-6">{{ template.code }}</dt>
+
+                  <dd class="col-6 col-md-6">{{ t('default.workflows_start') }}:</dd>
+                  <dt class="col-6 col-md-6">
+                    <template v-for="(activity, index) in startActivities" :key="activity.id">
+                      <span v-if="index > 0"> | </span>{{ activity.name }}
                     </template>
-                  </MDBInput>
-                </div>
-                <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
-                  
-                </div>
-                <div class="col-6 col-md-4 col-lg-2 text-end">
-                  <MDBSelect v-model:options="filterOrder.options" v-model:selected="filterOrder.selected" />
-                </div>
+                  </dt>
+
+                  <dd class="col-6 col-md-6">{{ t('default.workflows_finish') }}:</dd>
+                  <dt class="col-6 col-md-6">
+                    <template v-for="(activity, index) in endActivities" :key="activity.id">
+                      <span v-if="index > 0"> | </span>{{ activity.name }}
+                    </template>
+                  </dt>
+                </dl>
               </div>
-              <MDBProgress class="my-1">
-                <MDBProgressBar :value="fetchProgress" />
-              </MDBProgress>
-              <MDBTable responsive striped>
-                <thead>
-                  <tr>
-                    <!-- <th scope="col"></th>-->
-                    <th scope="col">#</th>
-                    <th scope="col" class="text-start">{{ t('default.name') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.version') }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(template, index) in dataResults" :key="index">
-                    <td>{{ template.id }}</td>
-                    <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'workflow', params: {id: template.id}}">{{ template.name }}</router-link>
-                    </td>
-                    <td class="text-start">
-                      v{{ template.version }}
-                    </td>
-                  </tr>
-                </tbody>
-              </MDBTable>
-            </MDBCardText>
-          </MDBCardBody>
-        </MDBCard>
-      </div>
+            </div>
+            <div class="row text-start">
+              <div class="col-12">
+                <h5 class="text-muted">{{ t('default.activities') }}</h5>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>{{ t('default.name') }}</th>
+                      <th>{{ t('default.actions') }}</th>
+                      <th>{{ t('default.smart_contract') }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="activity in template.activities" :key="activity.id">
+                      <td>#{{ activity.id }}</td>
+                      <td class="fw-bold">{{ activity.name }}</td>
+                      <td>
+                        <template v-for="(action, index) in activity.actions" :key="action.code">
+                          {{ action.name }}
+                          <span v-if="index > 0"> > </span>
+                        </template>
+                      </td>
+                      <td v-if="activity.smartContractId">{{ activity.smartContractId }}</td>
+                      <td v-else>dao</td>
+                      <td>
+                        <template v-for="(action, index) in activity.actions" :key="action.code">
+                          {{ action.smartContractMethod }}()<span v-if="index > 0"> → </span>
+                        </template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div v-if="transactions.length > 0" class="row text-start mt-3">
+              <div class="col-12">
+                <h5 class="text-muted">{{ t('default.wf_transitions') }}</h5>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>{{ t('default.wf_from') }}</th>
+                      <th></th>
+                      <th>{{ t('default.wf_to') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="trans in transactions" :key="trans.fromId">
+                      <td>#{{ trans.fromId }}</td>
+                      <td class="fw-bold">{{ trans.from.name }}</td>
+                      <td>→</td>
+                      <td class="fw-bold">
+                        <template v-for="(activityTo, index) in trans.tos" :key="index">
+                          {{ activityTo.name }}
+                          <span v-if="index > 0"> | </span>
+                        </template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </MDBCardText>
+        </MDBCardBody>
+      </MDBCard>
     </MDBContainer>
   </main>
 
@@ -76,36 +113,27 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/workflows/Breadcrumb.vue'
+import Breadcrumb from '@/components/workflowTemplate/Breadcrumb.vue'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar
-  , MDBCard, MDBCardBody, MDBCardText, MDBIcon
-  , MDBInput, MDBSelect,
+  MDBContainer,
+  MDBCard, MDBCardBody, MDBCardText,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplateList } from "@/hooks/workflow";
-import { onMounted } from 'vue'
+import { useTemplate } from "@/hooks/workflow";
 
 export default {
   components: {
-    Header, Breadcrumb, Footer, MDBContainer, MDBTable
-    , MDBProgress, MDBProgressBar
-    , MDBCard, MDBCardBody, MDBCardText
-    , MDBIcon
-    , MDBInput
-    , MDBSelect
+    Header, Breadcrumb, Footer, MDBContainer,
+    MDBCard, MDBCardBody, MDBCardText,
   },
   setup() {
     const { t, n } = useI18n()
-    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filter } = useTemplateList()
 
-    onMounted(() => {
-      fetch()
-      filter()
-    })
+    const { q_id, fetch, template, startActivities, endActivities, transactions } = useTemplate()
+
 
     return {
-      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filter
+      t, n, q_id, fetch, template, startActivities, endActivities, transactions
     }
   },
 }
