@@ -1,29 +1,5 @@
 <template>
   <div class="container mb-2">
-    <!-- Order -->
-    <!-- <div class="d-flex align-items-center mb-2">
-    <hr class="flex-grow-1 my-0" />
-    <p class="mb-0 px-2 small">Řadit podle:</p>
-    <div class="dropdown">
-      <a
-        class="link-dark dropdown-toggle font-weight-bold small"
-        href="#"
-        role="button"
-        id="dropdownMenuLink"
-        data-mdb-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Vytvořeno
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-      </ul>
-    </div>
-  </div>-->
-    <!-- /Order -->
-    <!-- Proposal in progress -->
     <div class="card mb-3">
       <div class="card-body">
         <div class="row">

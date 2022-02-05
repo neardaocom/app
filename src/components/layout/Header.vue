@@ -11,7 +11,7 @@
         <MDBNavbarNav center class="ms-auto align-items-center">
           <MDBNavbarItem v-if="false" class="mx-2" :to="{name: 'landing-page', query: {}}" :title="appName"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ appName }}</span></MDBNavbarItem>
           <MDBNavbarItem class="mx-2" :to="{name: 'dao-list', query: {}}" :title="t('default.organizations')"><MDBIcon class="pe-2" icon="building" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
-          <MDBNavbarItem class="mx-2" :to="{name: 'workflows', query: {}}" :title="t('default.workflows')"><MDBIcon class="pe-2" icon="download" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.workflows') }}</span></MDBNavbarItem>
+          <MDBNavbarItem class="mx-2" :to="{name: 'market', query: {}}" :title="t('default.market')"><MDBIcon class="pe-2" icon="download" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ t('default.market') }}</span></MDBNavbarItem>
           <li v-if="isAccountSigned" class="nav-item">
             <a v-if="isAccountSigned" class="nav-link mx-2" target="_blank" :href="walletUrl"><MDBIcon class="pe-2" icon="wallet" iconStyle="fas" /> {{ accountId }}</a>
           </li>

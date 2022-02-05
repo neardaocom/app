@@ -1,18 +1,21 @@
 import { computed } from "vue";
-import { findParam } from "@/utils/collection";
 import { useStore } from "vuex";
+import { DAO } from "@/types/dao";
+import { getGroupCouncil } from '@/models/dao'
+import Decimal from "decimal.js";
+import { getFile } from "@/models/document"
 
-export const useLinks = (dao: any) => {
-    // TODO: Refactor search pagh
-    const web = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Fundamental', 'name': 'Web'}, ['ipfs_cid']))
-    const whitepaper = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Fundamental', 'name': 'Whitepaper'}, ['ipfs_cid']))
-    const wiki = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Fundamental', 'name': 'Wiki'}, ['ipfs_cid']))
-    const sourceCode = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Fundamental', 'name': 'Source code'}, ['ipfs_cid']))
-    const kycStatus = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'KYC', 'name': 'Legal status'}, ['ipfs_cid']))
-    const kycDocument = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'KYC', 'name': 'Legal document'}, ['ipfs_cid']))
-    const socialTwitter = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Social', 'name': 'Twitter'}, ['ipfs_cid']))
-    const socialFacebook = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Social', 'name': 'Facebook'}, ['ipfs_cid']))
-    const chatDiscord = computed(() => findParam(dao.docs.files, {'ext': 'url', 'category': 'Chat', 'name': 'Discord'}, ['ipfs_cid']))
+
+export const useLinks = (dao: DAO) => {
+    const web = getFile(dao.docs, 'Web', 'Fundamental', 'url')
+    const whitepaper = getFile(dao.docs, 'Whitepaper', 'Fundamental', 'url')
+    const wiki = getFile(dao.docs, 'Wiki', 'Fundamental', 'url')
+    const sourceCode = getFile(dao.docs, 'Source code', 'Fundamental', 'url')
+    const kycStatus = getFile(dao.docs, 'Legal status', 'KYC', 'url')
+    const kycDocument = getFile(dao.docs, 'Legal document', 'KYC', 'url')
+    const socialTwitter = getFile(dao.docs, 'Twitter', 'Social', 'url')
+    const socialFacebook = getFile(dao.docs, 'Facebook', 'Social', 'url')
+    const chatDiscord = getFile(dao.docs, 'Discord', 'Chat', 'url')
 
     return {
         web, whitepaper, wiki, sourceCode,
@@ -22,8 +25,17 @@ export const useLinks = (dao: any) => {
     }
 }
 
-export const useStats = (dao: any) => {
-    const users = computed(() => Object.keys(dao.token_holders).length)
+export const useGroups = (dao: DAO, t: any) => {
+    const council = computed(() => getGroupCouncil(dao, t))
+    const councilPercent = computed(() => (council.value && council.value.token) ? new Decimal(council.value.token.locked ?? 0).div(dao.treasury.token.meta.amount ?? 1).mul(100).round().toNumber() : undefined)
+
+    return {
+        council, councilPercent
+    }
+}
+
+export const useStats = (dao: DAO) => {
+    const users = computed(() => dao.tokenHolders.length)
 
     return {
         users

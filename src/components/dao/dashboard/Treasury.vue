@@ -14,7 +14,7 @@
             <NumberFormatter :amount="dao.treasury.near"/>&nbsp;<small class="text-muted">NEAR</small>
         </h5>
         <h5 class="text-center">
-            <NumberFormatter :amount="dao.token_stats.public.free"/>&nbsp;<small class="text-muted">{{ dao.token_name }}</small>
+            <NumberFormatter :amount="dao.treasury.token.free"/>&nbsp;<small class="text-muted">{{ dao.treasury.token.meta.name }}</small>
         </h5>
         </div>
     </div>

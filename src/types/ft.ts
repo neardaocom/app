@@ -3,4 +3,11 @@ export type FTMeta = {
     short: string;
     img?: string;
     accountId: string;
+    amount?: number;
+    decimals?: number;
+}
+
+export type FT = {
+    meta: FTMeta;
+    amount: number;
 }

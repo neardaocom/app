@@ -7,7 +7,7 @@
     <MDBContainer>
       <div class="row">
         <div class="col-12 text-center">
-          <h2>{{ t('default.workflows')}}</h2>
+          <h2>{{ t('default.market')}}</h2>
           <p>{{ t('default.workflows_header')}}</p>
         </div>
       </div>
@@ -48,6 +48,7 @@
                     <!-- <th scope="col"></th>-->
                     <th scope="col">#</th>
                     <th scope="col" class="text-start">{{ t('default.name') }}</th>
+                    <th scope="col" class="text-start">{{ t('default.type') }}</th>
                     <th scope="col" class="text-start">{{ t('default.version') }}</th>
                     <th scope="col" class="text-start">{{ t('default.code') }}</th>
                   </tr>
@@ -56,8 +57,9 @@
                   <tr v-for="(template, index) in dataResults" :key="index">
                     <td>{{ index + 1 }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'workflow-template', params: {id: template.id}}">{{ template.name }}</router-link>
+                      <router-link class="fw-bold" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
                     </td>
+                    <td class="text-start">{{ t('default.workflows') }}</td>
                     <td class="text-start">v{{ template.version }}</td>
                     <td class="text-start">#{{ template.id }} {{ template.code }}</td>
                   </tr>
@@ -76,7 +78,7 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/workflows/Breadcrumb.vue'
+import Breadcrumb from '@/components/market/Breadcrumb.vue'
 import {
   MDBContainer, MDBTable, MDBProgress, MDBProgressBar
   , MDBCard, MDBCardBody, MDBCardText, MDBIcon

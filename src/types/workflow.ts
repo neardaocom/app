@@ -44,6 +44,7 @@ export type WFTemplate = {
     name: string;
     version: string;
     code: string;
+    constants: WFAttribute[];
     attributes: WFAttribute[];
     activities: WFActivity[];
     transactions: WFTransition[];
@@ -60,7 +61,7 @@ export type WFSettingsActivity = {
 export type WFSettings = {
     id: number;
     template: WFTemplate;
-    inputs: WFInput[];
+    constants: WFInput[];
     proposeRights: DAORight[];
     voteRight: DAORight;
     voteLevel: DAOVoteLevel;

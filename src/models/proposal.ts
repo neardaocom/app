@@ -4,8 +4,12 @@ import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
+import lodashToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/utils/error'
 import Auction from "@/models/auction"
+import { getValueById } from "@/types/generic";
+import { DAOTokenHolder } from '@/types/dao';
+import { findParam } from '@/utils/collection'
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -109,7 +113,7 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           name: action.AddFile.metadata.Curr.name,
           ipfs_cid: action.AddFile.cid,
           category:
-            action.AddFile.new_category || docs.map.categories[action.AddFile.metadata.category],
+            action.AddFile.new_category || docs.categories[action.AddFile.metadata.Curr.category].value,
         };
         break;
       case "InvalidateFile":
@@ -131,11 +135,10 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
         };
         break;
       case 'AddRightsForActionGroup':
-        // console.log(action)
         args = {
           group: t('default.' + action.AddRightsForActionGroup.to.Group.value.toLowerCase()),
-          time_from: action.AddRightsForActionGroup.time_from,
-          time_to: action.AddRightsForActionGroup.time_to,
+          time_from: (action.AddRightsForActionGroup.time_from > 0) ? action.AddRightsForActionGroup.time_from : null,
+          time_to: (action.AddRightsForActionGroup.time_to > 0) ? action.AddRightsForActionGroup.time_to : null,
           rights: action.AddRightsForActionGroup.rights.map( value => t('default.' + Auction.getTranslateKey(value))).join(', '),
         };
         break;
@@ -145,24 +148,23 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
     return args;
 };
 
-const getVotingStats = (proposal: any, token_holders: any, token_blocked: any) => {
+const getVotingStats = (proposal: any, tokenHolders: DAOTokenHolder[], token_blocked: any) => {
     //console.log(token_holders, token_blocked)
     const results = _.clone(voteMapper)
     //console.log(results)
-    Object.keys(proposal.votes).forEach((voter: any) => {
+    Object.keys(proposal.votes).forEach((voter: string) => {
       switch (_.toInteger(proposal.votes[voter])) {
         case 0:
-          results[0] += token_holders[voter] ?? 0;
+          results[0] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 1:
-          results[1] += token_holders[voter] ?? 0;
+          results[1] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 2:
-          results[2] += token_holders[voter] ?? 0;
+          results[2] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         default:
           throw new UnsupportedError('Undefined voting stat: ' + _.toInteger(proposal.votes[voter]))
-          break;
       }
     });
 
@@ -232,7 +234,7 @@ const getProgress = (status: string, config: any, durationTo: Date): number => {
 
 const isVoted = (proposal: any, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
 
-const transform = (proposal: any, vote_policies: any, docs: any, token_holders: any, token_blocked: any, accountId: string, t: any, d: any) => {
+const transform = (proposal: any, vote_policies: any, docs: any, tokenHolders: DAOTokenHolder[], token_blocked: number, accountId: string, accountRole: string, t: any, d: any) => {
     const action = getAction(proposal[1].Curr)
     const actionType = getActionType(action)
     const actionKey = getActionKey(action)
@@ -242,7 +244,7 @@ const transform = (proposal: any, vote_policies: any, docs: any, token_holders: 
     const stateIndex = getState(proposal[1].Curr, isOver)
     const args = getArgsFromAction(action, docs, t)
     const choiceIndex = getChoice(proposal[1].Curr, accountId)
-    const config = _.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: Hack Pay => SendNear
+    const config = null //_.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: rewrite, Hack Pay => SendNear
     const trans = {
         id: proposal[0],
         key: actionKey,
@@ -254,11 +256,11 @@ const transform = (proposal: any, vote_policies: any, docs: any, token_holders: 
         stateIndex: stateIndex,
         state: t("default.vote_status_" + stateIndex),
         status: status,
-        canVote: Object.keys(token_holders).includes(accountId),
+        canVote: accountRole !== 'guest',
         isOver: isOver,
         isVoted: isVoted(proposal[1].Curr, accountId),
         args: args,
-        votingStats: getVotingStats(proposal[1].Curr, token_holders, token_blocked),
+        votingStats: getVotingStats(proposal[1].Curr, tokenHolders, token_blocked),
         duration: {
             value: durationTo,
             date: d(durationTo),

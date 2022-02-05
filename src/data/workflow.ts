@@ -12,7 +12,11 @@ export const templatePayout: WFTemplate = {
     id: 1,
     name: 'Payout',
     version: '1.0',
-    code: 'neardao_payout',
+    code: 'daoPayout',
+    constants: [
+      { code: 'nearAmountLimit', name: 'NEAR Amount - limit' },
+      { code: 'tokenAmountLimit', name: 'TOKEN Amount - limit' },
+    ],
     attributes: [
       { code: 'receiverId', name: 'ReceiverId' },
       { code: 'nearAmount', name: 'NEAR Amount' },
@@ -24,7 +28,9 @@ export const templatePayout: WFTemplate = {
     ],
     transactions: [
       { id: 1, fromId: 1, toId: 2},
-      { id: 2, fromId: 2, toId: 1}
+      { id: 2, fromId: 1, toId: 1},
+      { id: 3, fromId: 2, toId: 1},
+      { id: 4, fromId: 2, toId: 2}
     ],
     startActivityIds: [1,2],
     endActivityIds: [1,2],
@@ -36,6 +42,7 @@ export const templateCreateGroup: WFTemplate = {
   name: 'Create GROUP',
   version: '1.0',
   code: 'groupCreate',
+  constants: [],
   attributes: [
     { code: 'name', name: 'Name' },
     { code: 'tokenUnlocking', name: 'Token unlocking' },
@@ -55,6 +62,7 @@ export const templateAddMember: WFTemplate = {
   name: 'Add member to group',
   version: '1.0',
   code: 'addMemberToGroup',
+  constants: [],
   attributes: [
     { code: 'accountId', name: 'Account ID' },
     { code: 'groupId', name: 'Group ID' },
@@ -72,7 +80,10 @@ export const templateAddMember: WFTemplate = {
 export const templatePayoutSettings: WFSettings = {
   id: 1,
   template: templatePayout,
-  inputs: [],
+  constants: [
+    { code: 'nearAmountLimit', value: '1_000.0' },
+    { code: 'tokenAmountLimit', value: '10_000.0' },
+  ],
   proposeRights: [rightMember],
   voteRight: rightMember,
   voteLevel: votingTokenWeightedLow,

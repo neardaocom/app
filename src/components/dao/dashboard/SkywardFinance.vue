@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Widget from "@/components/market/skywardFinance/Widget.vue"
+import Widget from "@/components/widget/skywardFinance/Widget.vue"
 import { onMounted, onUnmounted, toRefs, computed } from "vue"
 import { useStore } from "vuex"
 import { useSkywardFinanace } from "@/hooks/auction"
@@ -42,7 +42,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, 'supertest.testnet', dao.value.auction.skyward_finance) // TODO: process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT
+        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.register.skywardFinance) // TODO: 
 
         skywardFetch()
 

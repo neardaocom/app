@@ -67,10 +67,6 @@ export default {
     groups: {
       type: Object,
       required: true
-    },
-    tokenHolders: {
-      type: Object,
-      required: true
     }
   },
   setup(props) {
@@ -113,7 +109,7 @@ export default {
       return this.$store.getters['near/getService']
     },
     accountsDropdown() {
-      return Object.keys(this.tokenHolders).map(accountId => {return {value: accountId, text: accountId}})
+      return this.groups[0].members.map(member => {return {value: member.accountId, text: member.accountId}})
     },
     groupsDropdown() {
       return [

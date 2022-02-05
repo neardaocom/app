@@ -7,8 +7,14 @@
             <li class="breadcrumb-item">
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
-            <li class="breadcrumb-item active">
+            <li class="breadcrumb-item">
+              <router-link :to="{ name: 'market' }">{{ t("default.market") }}</router-link>
+            </li>
+            <li class="breadcrumb-item">
               {{ t("default.workflows") }}
+            </li>
+            <li class="breadcrumb-item active">
+              {{ template.name }}
             </li>
           </ol>
         </nav>
@@ -24,6 +30,12 @@ export default {
   setup() {
     const { t } = useI18n();
     return { t };
+  },
+  props: {
+    template: {
+      type: Object,
+      required: true,
+    }
   },
   computed: {
     appName() {

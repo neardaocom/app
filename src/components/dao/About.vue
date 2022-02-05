@@ -5,10 +5,6 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
-              <li v-if="dao.address">
-                <i class="fas fa-home fa-fw me-3 mb-3"></i>
-                <a class="text-reset font-weight-bold" href="">{{ dao.address }}</a>
-              </li>
               <li>
                 <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
                 <a
@@ -18,13 +14,13 @@
                   >{{ t("default.wallet") }}</a
                 >
               </li>
-              <li v-if="dao.web">
+              <li v-if="webLink">
                 <i class="fas fa-globe fa-fw me-3 mb-3"></i
-                ><a class="text-reset font-weight-bold" :href="dao.web">{{ dao.domain }}</a>
+                ><a class="text-reset font-weight-bold" :href="web" target="_blank">{{ webLink }}</a>
               </li>
               <li>
                 <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-                <span class="text-reset font-weight-bold">{{ n(dao.token) }}</span> {{ dao.token_name }}
+                <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.name }}
               </li>
             </ul>
           </div>
@@ -35,18 +31,9 @@
           <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
               <li>
-                <i class="fas fa-users fa-fw me-3 mb-3"></i
-                ><strong>{{ t("default.council") }}</strong>
-                {{ dao.groups.council.amount || "0" }}% |
-                <strong>{{ t("default.community") }}</strong>
-                {{ dao.groups.public.amount || "0" }}%
-              </li>
-              <li v-if="false">
-                <i class="fas fa-chart-line fa-fw me-3 mb-3"></i
-                ><strong>{{ t("default.investor") }}</strong>
-                {{ dao.groups.foundation.amount || "0" }}% |
-                <strong>{{ t("default.public_sale") }}</strong>
-                {{ dao.groups.public.amount || "0" }}%
+                <i class="fas fa-users fa-fw me-3 mb-3"></i>
+                <strong>{{ t("default.council") }}</strong>
+                {{ councilPercent || "0" }}%
               </li>
             </ul>
           </div>
@@ -57,17 +44,17 @@
           <div class="card-body">
             <h6 class="text-muted text-center">{{ t("default.council") }}</h6>
             <ul class="mb-0">
-              <li v-for="(council, index) in dao.groups.council.wallets" :key="index">{{ council }}</li>
+              <li v-for="(member, index) in council.members" :key="index">{{ member.accountId }}</li>
             </ul>
           </div>
         </div>
       </div>
       <!-- BEGIN: council unlocking cashflow -->
-      <div class="col-12 col-md-6 mb-4">
+      <div v-if="council" class="col-12 col-md-6 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h6 class="text-muted text-center">{{ t("default.council_unlocking_token") }}</h6>
-            <ChartCouncilUnlocking :dao="dao"/>
+            <ChartCouncilUnlocking :dao="dao" :group="council"/>
           </div>
         </div>
       </div>
@@ -82,8 +69,11 @@ import { useI18n } from "vue-i18n";
 import ChartCouncilUnlocking from '@/components/dao/ChartCouncilUnlocking.vue';
 //import Proposal from "@/components/dao/Proposal.vue"
 //import { transform } from '@/models/proposal';
-//import { toRefs } from "vue"
+import { ref } from "vue"
 //import _ from "lodash"
+import { useLinks, useGroups } from "@/hooks/dao";
+import { useIPFSService } from "@/hooks/vuex";
+import { fetch } from "@/models/ipfs";
 
 export default {
   components: {
@@ -103,9 +93,28 @@ export default {
       return this.$store.getters['near/getWalletUrl']
     },
   },
-  setup() {
+  setup(props) {
     const { t, n } = useI18n();
-    return { t, n};
+
+    const ipfsService = useIPFSService()
+
+    const {
+        web
+    } = useLinks(props.dao)
+
+    const webLink = ref(null)
+    if (web) fetch(web, ipfsService.value).then(r => {webLink.value = r})
+
+
+    // console.log(web)
+
+    const {
+      council, councilPercent
+    } = useGroups(props.dao, t)
+
+    //console.log(council)
+
+    return { t, n, web, webLink, council, councilPercent };
   },
 };
 </script>

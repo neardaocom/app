@@ -32,14 +32,14 @@ const routes = [
     }
   },
   {
-    path: '/workflows',
-    name: 'workflows',
-    component: () => import(/* webpackChunkName: "dao" */ '@/pages/Workflows.vue')
+    path: '/market',
+    name: 'market',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/Market.vue')
   },
   {
-    path: '/workflow/:id',
-    name: 'workflow-template',
-    component: () => import(/* webpackChunkName: "dao" */ '@/pages/WorkflowTemplate.vue')
+    path: '/market/workflow/:id',
+    name: 'market-workflow',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/MarketWorkflow.vue')
   },
 ]
 

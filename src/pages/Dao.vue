@@ -24,14 +24,14 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
-        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
-        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
-        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
-        <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao"/>
-        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
-        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs"/>
-        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao"/>
+        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao" />
+        <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao" />
+        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao" />
+        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs" />
+        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -63,6 +63,7 @@ import Activities from '@/components/dao/Activities.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import _ from 'lodash'
+import { getRole, loadById } from "@/models/dao";
 //import * as nearAPI from "near-api-js"
 
 export default {
@@ -73,12 +74,11 @@ export default {
   },
   setup() {
     const { t } = useI18n()
-    const favorites = [1]
     const q_id = null
     const dao = ref(null)
     const loaded = ref(false)
 
-    return { t, dao, q_id, favorites, loaded}
+    return { t, dao, q_id, loaded}
   },
   created() {
     // dao id
@@ -110,15 +110,7 @@ export default {
       return _.toString(this.$route.query.page) || 'overview'
     },
     accountRole() {
-      let role = 'guest'
-      if (this.dao.groups.council.wallets.includes(this.accountId)) {
-        role = 'council'
-      } else if (Object.keys(this.dao.token_holders).includes(this.accountId)) {
-        role = 'member'
-      } else if (this.accountId) {
-        role = 'user'
-      }
-      return role
+      return getRole(this.dao, this.wallet.getAccountId())
     },
   },
   mounted() {
@@ -129,7 +121,8 @@ export default {
   methods: {
     getState() {
       //console.log('getState')
-      this.nearService.getDaoById(this.q_id)
+      loadById(this.nearService, this.q_id, this.wallet.getAccountId())
+      // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
           //console.log(r)
           //this.dao_state = r
@@ -144,23 +137,6 @@ export default {
           console.log(e)
         })
     },
-    favorite_switch: function (id) {
-      // console.log(this.favorites);
-      // console.log(_.indexOf(this.favorites, id));
-
-      if (_.indexOf(this.favorites, id) >= 0) {
-        _.pull(this.favorites, id)
-        console.log('Favorites REMOVE: ' + id)
-      } else {
-        this.favorites.push(id)
-        console.log('Favorites ADD: ' + id)
-      }
-
-      // console.log(this.favorites);
-    },
-    favorite_is(id) {
-      return _.indexOf(this.favorites, id) >= 0
-    }
 
   }
 }

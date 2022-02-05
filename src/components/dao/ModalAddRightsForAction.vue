@@ -72,14 +72,6 @@ export default {
     contractId: {
       type: String,
       required: true
-    },
-    groups: {
-      type: Object,
-      required: true
-    },
-    tokenHolders: {
-      type: Object,
-      required: true
     }
   },
   setup(props) {

@@ -13,28 +13,41 @@
             <div class="row text-start">
               <div class="col-md-6">
                 <dl class="row">
-                  <dd class="col-6">ID:</dd>
+                  <dd class="col-4">ID:</dd>
                   <dt class="col-6">#{{ template.id }}</dt>
 
-                  <dd class="col-6">{{ t('default.version') }}:</dd>
+                  <dd class="col-4">{{ t('default.version') }}:</dd>
                   <dt class="col-6">v{{ template.version }}</dt>
 
-                  <dd class="col-6 col-md-6">{{ t('default.code') }}:</dd>
+                  <dd class="col-4 col-md-4">{{ t('default.code') }}:</dd>
                   <dt class="col-6 col-md-6">{{ template.code }}</dt>
 
-                  <dd class="col-6 col-md-6">{{ t('default.workflows_start') }}:</dd>
+                  <dd class="col-4 col-md-4">{{ t('default.workflows_start') }}:</dd>
                   <dt class="col-6 col-md-6">
                     <template v-for="(activity, index) in startActivities" :key="activity.id">
                       <span v-if="index > 0"> | </span>{{ activity.name }}
                     </template>
                   </dt>
 
-                  <dd class="col-6 col-md-6">{{ t('default.workflows_finish') }}:</dd>
+                  <dd class="col-4 col-md-4">{{ t('default.workflows_finish') }}:</dd>
                   <dt class="col-6 col-md-6">
                     <template v-for="(activity, index) in endActivities" :key="activity.id">
                       <span v-if="index > 0"> | </span>{{ activity.name }}
                     </template>
                   </dt>
+                </dl>
+              </div>
+              <div class="col-md-6">
+                <dl class="row">
+                  <template v-for="(constant, index) in template.constants" :key="index">
+                    <dd class="col-4 col-md-4" :class="[index == 0 ? 'mb-0' : '']"><span v-if="index == 0">{{ t('default.wf_constants') }}:</span></dd>
+                    <dt class="col-6 col-md-6">{{ constant.name }}</dt>
+                  </template>
+
+                  <template v-for="(input, index) in template.attributes" :key="index">
+                    <dd class="col-4 col-md-4" :class="[index == 0 ? 'mt-4 mb-0' : '']"><span v-if="index == 0">{{ t('default.wf_inputs') }}:</span></dd>
+                    <dt class="col-6 col-md-6" :class="[index == 0 ? 'mt-4' : '']">{{ input.name }}</dt>
+                  </template>
                 </dl>
               </div>
             </div>
@@ -92,8 +105,7 @@
                       <td>→</td>
                       <td class="fw-bold">
                         <template v-for="(activityTo, index) in trans.tos" :key="index">
-                          {{ activityTo.name }}
-                          <span v-if="index > 0"> | </span>
+                          <span v-if="index > 0"> | </span>{{ activityTo.name }}
                         </template>
                       </td>
                     </tr>
@@ -113,7 +125,7 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/workflowTemplate/Breadcrumb.vue'
+import Breadcrumb from '@/components/marketWorkflow/Breadcrumb.vue'
 import {
   MDBContainer,
   MDBCard, MDBCardBody, MDBCardText,

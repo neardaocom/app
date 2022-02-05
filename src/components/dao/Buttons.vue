@@ -69,18 +69,18 @@
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
-    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
-    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
+    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" />
+    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :docs="dao.docs" />
+    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" />
     <ModalAddToDefi :show="modalAddToDefi" :contractId="dao.wallet"/>
     <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
-    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.token_name" />
+    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
 </template>
 
 <script>

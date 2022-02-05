@@ -156,6 +156,7 @@
   "vote_status_executing": "Executing",
   "upgrade_version": "Upgrade version to {version}",
   "update_version": "Update version to {version}",
+  "market": "Market",
   "members": "Members",
   "month": "Month",
   "months": "Months",
@@ -164,6 +165,7 @@
   "none": "None",
   "no_results": "No results",
   "tokens": "Governance Tokens",
+  "or": "or",
   "organization": "Organization",
   "order_created_asc": "Created asc.",
   "order_created_desc": "Created desc.",
@@ -175,6 +177,7 @@
   "purpose": "Purpose",
   "settings": "Settings",
   "purpose_short": "Purpose in one sentence",
+  "powered_by": "Powered by",
   "discord": "Discord",
   "web": "Web",
   "twitter": "Twitter",
@@ -325,6 +328,8 @@
   "wf_daoPayout_payoutToken": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
   "wf_finish": "Finish",
   "wf_transitions": "Transitions",
+  "wf_constants": "Constants",
+  "wf_inputs": "Inputs",
   "wf_from": "From",
   "wf_to": "To"
 }
