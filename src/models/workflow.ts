@@ -1,9 +1,11 @@
 import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
+import { Translate } from "@/types/generic";
 import lodashFind from "lodash/find";
 import lodashFindIndex from "lodash/findIndex";
 import lodashGet from "lodash/get";
 import lodashSet from "lodash/set";
 import lodashLast from "lodash/last";
+import { convertArrayOfObjectToObject } from "@/utils/array";
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => lodashFind(template.activities, {'id': id});
 
@@ -81,4 +83,11 @@ export const canFinish = (instance: WFInstance, templates: WFTemplate[]): boolea
     const last: WFInstanceActivity | undefined = getLastActivity(instance);
     const template: WFTemplate | undefined = getTemplate(templates, instance.templateId)
     return (last && template) ? template.endActivityIds.includes(last.activityId) : false;
+}
+
+export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
+    const settings: WFSettings | undefined = getSettings(template, settingsId)
+    const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
+    // console.log(settings, params)
+    return {key: 'wf_' + template.code + '_constants', params: params}
 }

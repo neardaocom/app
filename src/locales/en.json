@@ -325,6 +325,8 @@
   "chat": "Chat",
   "max": "Max",
   "balance": "Balance",
+  "wf_daoPayout": "Payout",
+  "wf_daoPayout_constants": "Limit {nearAmountLimit} Near, {tokenAmountLimit} Token",
   "wf_daoPayout_payoutNear": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
   "wf_daoPayout_payoutToken": "Amount <strong>{amount}</strong> to <strong>{receiverId}.",
   "wf_finish": "Finish",

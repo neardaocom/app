@@ -11,8 +11,8 @@ export const actionDAOAddMember = { name: 'Add member to group', code: 'groupAdd
 export const templatePayoutSettings: WFSettings = {
   id: 1,
   constants: [
-    { code: 'nearAmountLimit', value: '1_000.0' },
-    { code: 'tokenAmountLimit', value: '10_000.0' },
+    { code: 'nearAmountLimit', value: '1000.0' },
+    { code: 'tokenAmountLimit', value: '10000.0' },
   ],
   proposeRights: [rightMember, rightAnyone],
   voteRight: rightMember,

@@ -16,7 +16,9 @@
           <tbody>
             <tr v-for="template in dao.templates" :key="template.id">
               <template v-for="settings in template.settings" :key="settings.id">
-                <td class="fw-bold">{{ template.name }}</td>
+                <td>
+                  <span class="fw-bold">{{ template.name }}</span><br/><span>{{ transSettingsConstants(template, settings.id) }}</span>
+                </td>
                 <td><span v-html="transVoteLevel(settings.voteLevel)"></span></td>
                 <td>
                   <template v-for="(right, index) in settings.proposeRights" :key="index">
@@ -49,7 +51,7 @@ import { useI18n } from "vue-i18n"
 import { useRights } from "@/hooks/dao";
 import { voteLevelToTranslate } from "@/models/dao"
 import { toTranslate } from "@/models/rights";
-import { getActivityById } from "@/models/workflow";
+import { getActivityById, settingsConstantsToTranslate } from "@/models/workflow";
 import { toRefs } from 'vue';
 //import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
 //import Workflow from "@/components/dao/Workflow.vue"
@@ -77,6 +79,10 @@ export default {
   methods: {
     transVoteLevel(voteLevel) {
       const trans = voteLevelToTranslate(voteLevel)
+      return this.t('default.' + trans.key, trans.params)
+    },
+    transSettingsConstants(template, settingsId) {
+      const trans = settingsConstantsToTranslate(template, settingsId)
       return this.t('default.' + trans.key, trans.params)
     },
     trans(right) {

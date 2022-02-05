@@ -157,7 +157,7 @@ export type DAO = {
   location: string;
   lang: string;
   created: Date;
-  register: object; // TODO: Rename to
+  register: Record<string, unknown>; // TODO: Rename according by smart contract
   docs: DAODocs;
   voteLevels: DAOVoteLevel[];
   groups: DAOGroup[];
