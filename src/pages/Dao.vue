@@ -32,6 +32,7 @@
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao" />
         <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs" />
         <About v-if="loaded === true && this.q_page === 'about'" :dao="dao" />
+        <Settings v-if="loaded === true && this.q_page === 'settings'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -58,6 +59,7 @@ import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
 import Activities from '@/components/dao/Activities.vue'
+import Settings from '@/components/dao/Settings.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
@@ -68,8 +70,8 @@ import { getRole, loadById } from "@/models/dao";
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi
-    , SkeletonTitle, SkeletonButtons, SkeletonBody
+    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
+    SkeletonTitle, SkeletonButtons, SkeletonBody,
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
   setup() {

@@ -4,7 +4,7 @@
       <!-- header -->
       <h5 class="card-title mt-1 mb-1">
         <small class="me-2 text-muted">#{{ workflow.id }}</small>
-        {{ workflow.settings.template.name }}
+        {{ template.name }}
       </h5>
       <hr/>
       <ul class="timeline-3">
@@ -13,7 +13,7 @@
           <span class="float-end">
             <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
           </span>
-          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_' + workflow.settings.template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
+          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
           <span class="ms-2">{{ t('default.actions') }}:</span>
           <dl class="row ms-3">
             <template v-for="(action, index) in activity.actions" :key="index">
@@ -95,13 +95,17 @@ export default {
       type: Object,
       required: true,
     },
+    template: {
+      type: Object,
+      required: true,
+    }
   },
   setup(props) {
     const { t, d } = useI18n();
-    const { workflow } = toRefs(props)
+    const { workflow, template } = toRefs(props)
 
-    const activityLogs = ref(getActivities(workflow.value.settings.template, workflow.value.activityLogs.map( activity => activity.activityId )))
-    const activityNexts = ref(getActivities(workflow.value.settings.template, workflow.value.activityNextIds))
+    const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
+    const activityNexts = ref(getActivities(template.value, workflow.value.activityNextIds))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
       return { text: activity.name, value: activity.code}

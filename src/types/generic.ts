@@ -24,3 +24,8 @@ export const getValueByCode = (items: CodeValue[], id: number): string | undefin
     const item: CodeValue | undefined | any = lodashFind(items, {code: id}) // TODO: Remove any
     return item ? item.value : undefined;
 };
+
+export type Translate = {
+    key: string;
+    params: Record<string, unknown>;
+}

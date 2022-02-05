@@ -1,9 +1,12 @@
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { DAO } from "@/types/dao";
+import { Translate } from "@/types/generic";
 import { getGroupCouncil } from '@/models/dao'
+import { getDAORights, toTranslate } from '@/models/rights'
 import Decimal from "decimal.js";
 import { getFile } from "@/models/document"
+import { useI18n } from "vue-i18n";
 
 
 export const useLinks = (dao: DAO) => {
@@ -25,7 +28,9 @@ export const useLinks = (dao: DAO) => {
     }
 }
 
-export const useGroups = (dao: DAO, t: any) => {
+export const useGroups = (dao: DAO) => {
+    const { t } = useI18n()
+
     const council = computed(() => getGroupCouncil(dao, t))
     const councilPercent = computed(() => (council.value && council.value.token) ? new Decimal(council.value.token.locked ?? 0).div(dao.treasury.token.meta.amount ?? 1).mul(100).round().toNumber() : undefined)
 
@@ -48,5 +53,19 @@ export const useVuex = () => {
 
     return {
         walletUrl
+    }
+}
+
+export const useRights = (dao: DAO) => {
+    const { t } = useI18n()
+    const rights = getDAORights(dao)
+    const daoRights = ref(rights)
+    const daoRightsOptions = ref(rights.map((right, index) => {
+        const trans: Translate = toTranslate(right, dao.groups)
+        return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
+    }))
+
+    return {
+        daoRights, daoRightsOptions
     }
 }

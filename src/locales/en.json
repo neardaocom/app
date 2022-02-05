@@ -314,6 +314,7 @@
   "ref_finance_funds": "Ref Finance funds",
   "withdraw": "Withdraw",
   "whitepaper": "Whitepaper",
+  "workflow": "Workflow",
   "workflows": "Workflows",
   "workflows_header": "Select and use what you need on your way",
   "workflows_start": "Start",
@@ -331,5 +332,19 @@
   "wf_constants": "Constants",
   "wf_inputs": "Inputs",
   "wf_from": "From",
-  "wf_to": "To"
+  "wf_to": "To",
+  "wf_can_propose": "Can propose",
+  "wf_can_vote": "Can vote",
+  "wf_vote_level": "Vote level",
+  "vote_level_democratic": "Democratic <strong>{approveThreshold}%</strong> ({quorum}% quorum)",
+  "vote_level_token_weighted": "Token weighted <strong>{approveThreshold}%</strong> ({quorum}% quorum)",
+  "wf_activities_rights": "Activities rights",
+  "rights_anyone": "Anyone",
+  "rights_member": "Member",
+  "rights_token_holder": "Token holder",
+  "rights_account": "Account: {accountId}",
+  "rights_group": "Group: {group}",
+  "rights_group_member": "Account: {accountId} in Group: {group}",
+  "rights_group_leader": "Leader in Group: {group}",
+  "rights_group_role": "Tole: {role} in Group: {group}"
 }

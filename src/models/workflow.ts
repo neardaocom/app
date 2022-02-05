@@ -1,4 +1,4 @@
-import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFTemplate, WFTransition } from "@/types/workflow";
+import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
 import lodashFind from "lodash/find";
 import lodashFindIndex from "lodash/findIndex";
 import lodashGet from "lodash/get";
@@ -65,11 +65,20 @@ export const getActivities = (template: WFTemplate, activityIds: number[]): WFAc
     return activities;
 }
 
+export const getTemplate = (templates: WFTemplate[], id: number): WFTemplate | undefined => {
+    return lodashFind(templates, {'id': id});
+}
+
+export const getSettings = (template: WFTemplate, settingsId: number): WFSettings | undefined => {
+    return lodashFind(template.settings, {'id': settingsId});
+}
+
 export const getLastActivity = (instance: WFInstance): WFInstanceActivity | undefined => {
     return lodashLast(instance.activityLogs);
 }
 
-export const canFinish = (instance: WFInstance): boolean => {
+export const canFinish = (instance: WFInstance, templates: WFTemplate[]): boolean => {
     const last: WFInstanceActivity | undefined = getLastActivity(instance);
-    return last ? instance.settings.template.endActivityIds.includes(last.activityId) : false;
+    const template: WFTemplate | undefined = getTemplate(templates, instance.templateId)
+    return (last && template) ? template.endActivityIds.includes(last.activityId) : false;
 }

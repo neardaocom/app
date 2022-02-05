@@ -1,4 +1,4 @@
-import { DAORight, DAOVoteLevel } from "@/types/dao";
+import { DAORights, DAOVoteLevel } from "@/types/dao";
 
 export type WFAttribute = {
     code: string;
@@ -50,20 +50,20 @@ export type WFTemplate = {
     transactions: WFTransition[];
     startActivityIds: number[];
     endActivityIds: number[];
-    search: text;
+    search: string;
+    settings: WFSettings[];
 }
 
 export type WFSettingsActivity = {
     activityId: number;
-    rights: DAORight[];
+    rights: DAORights[];
 }
 
 export type WFSettings = {
     id: number;
-    template: WFTemplate;
     constants: WFInput[];
-    proposeRights: DAORight[];
-    voteRight: DAORight;
+    proposeRights: DAORights[];
+    voteRight: DAORights;
     voteLevel: DAOVoteLevel;
     activities: WFSettingsActivity[];
 }
@@ -80,7 +80,8 @@ export type WFInstanceActivity = {
 
 export type WFInstance = {
     id: number;
-    settings: WFSettings;
+    templateId: number;
+    settingsId: number;
     state: string;
     inputs: WFInput[];
     activityNextIds: number[];

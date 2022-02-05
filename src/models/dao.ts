@@ -1,11 +1,12 @@
 import { toSearch } from '@/utils/string'
 import lodashFind from "lodash/find"
 import lodashToInteger from "lodash/toInteger"
+import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
 import lodashNth from "lodash/nth"
 import { DAO, DAODocs, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { IDValue } from '@/types/generic';
+import { IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
@@ -216,5 +217,23 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
         tags: tags,
         proposals: data[4],
         tokenHolders: tokenHolders,
+        templates: [templatePayout],
+        workflows: [payoutAtStart, payoutAfterPayNear, payoutFinished],
     }
+}
+
+export const voteLevelToTranslate = (voteLevel: DAOVoteLevel): Translate => {
+    const trans: Translate = {key: '', params: {quorum: voteLevel.quorum, approveThreshold: voteLevel.approveThreshold}}
+
+    switch (voteLevel.type) {
+        case DAOVoteType.Democratic:
+            trans.key = 'vote_level_democratic'
+            break;
+        case DAOVoteType.TokenWeighted:
+            trans.key = 'vote_level_token_weighted'
+            break;
+        default:
+            throw new Error("Unsupported type: " + voteLevel);
+    }
+    return trans
 }

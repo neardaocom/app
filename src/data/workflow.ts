@@ -1,5 +1,5 @@
 import { WFInstance, WFSettings, WFTemplate } from "@/types/workflow"
-import { rightMember, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
+import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
 
@@ -7,6 +7,21 @@ export const actionDAOSendNear = { name: 'Treasury: Send NEAR', code: 'sendNear'
 export const actionDAOSendToken = { name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_token' }
 export const actionDAOCreateGroup = { name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create' }
 export const actionDAOAddMember = { name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member' }
+
+export const templatePayoutSettings: WFSettings = {
+  id: 1,
+  constants: [
+    { code: 'nearAmountLimit', value: '1_000.0' },
+    { code: 'tokenAmountLimit', value: '10_000.0' },
+  ],
+  proposeRights: [rightMember, rightAnyone],
+  voteRight: rightMember,
+  voteLevel: votingTokenWeightedLow,
+  activities: [
+    { activityId: 1, rights: [rightTokenGroupCouncil] },
+    { activityId: 2, rights: [rightTokenGroupCouncil] },
+  ]
+}
 
 export const templatePayout: WFTemplate = {
     id: 1,
@@ -35,6 +50,7 @@ export const templatePayout: WFTemplate = {
     startActivityIds: [1,2],
     endActivityIds: [1,2],
     search: toSearch('Payout NEAR TOKEN'),
+    settings: [ templatePayoutSettings ],
 }
 
 export const templateCreateGroup: WFTemplate = {
@@ -55,6 +71,7 @@ export const templateCreateGroup: WFTemplate = {
   startActivityIds: [1],
   endActivityIds: [1],
   search: toSearch('Create Group'),
+  settings: [ ],
 }
 
 export const templateAddMember: WFTemplate = {
@@ -75,27 +92,13 @@ export const templateAddMember: WFTemplate = {
   startActivityIds: [1],
   endActivityIds: [1],
   search: toSearch('Add Member Group'),
-}
-
-export const templatePayoutSettings: WFSettings = {
-  id: 1,
-  template: templatePayout,
-  constants: [
-    { code: 'nearAmountLimit', value: '1_000.0' },
-    { code: 'tokenAmountLimit', value: '10_000.0' },
-  ],
-  proposeRights: [rightMember],
-  voteRight: rightMember,
-  voteLevel: votingTokenWeightedLow,
-  activities: [
-    { activityId: 1, rights: [rightTokenGroupCouncil] },
-    { activityId: 2, rights: [rightTokenGroupCouncil] }
-  ]
+  settings: [],
 }
 
 export const payoutAtStart: WFInstance = {
   id: 1,
-  settings: templatePayoutSettings,
+  templateId: 1,
+  settingsId: 1,
   state: 'inProgress',
   inputs: [
     { code: 'receiverId', value: 'pstu.near' },
@@ -108,7 +111,8 @@ export const payoutAtStart: WFInstance = {
 
 export const payoutAfterPayNear: WFInstance = {
   id: 2,
-  settings: templatePayoutSettings,
+  templateId: 1,
+  settingsId: 1,
   state: 'inProgress',
   inputs: [
     { code: 'receiverId', value: 'jsla.near' },
@@ -145,7 +149,8 @@ export const payoutAfterPayNear: WFInstance = {
 
 export const payoutFinished: WFInstance = {
   id: 3,
-  settings: templatePayoutSettings,
+  templateId: 1,
+  settingsId: 1,
   state: 'finished',
   inputs: [
     { code: 'receiverId', value: 'pfil.near' },

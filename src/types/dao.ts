@@ -1,6 +1,7 @@
 import { IPFSFile } from "@/types/ipfs";
 import { IDValue } from "@/types/generic";
 import { FT, FTMeta } from "@/types/ft";
+import { WFInstance, WFTemplate } from "./workflow";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -22,39 +23,62 @@ export type DAOVoteLevel = {
 }
 
 // RIGHTS
-export enum DAORightType {
-  Everyone, Member, TokenHolder, Group, GroupLeader, GroupRole
+/*
+"Anyone",
+"Member",
+"TokenHolder,
+{"Account": "string"},
+{"Group": integer},
+{"GroupMember": [integer, string]},
+{"GroupLeader": integer},
+{"GroupRole": [integer, integer]},
+
+*/
+export enum DAORightsType {
+  Anyone, Member, TokenHolder, Account, Group, GroupMember, GroupLeader, GroupRole
 }
 
-export type DAORightEveryone = {
-  type: DAORightType.Everyone;
+// export type DAORightsAnyone = DAORightsType.Anyone
+export type DAORightsAnyone = {
+  type: DAORightsType.Anyone;
 }
 
-export type DAORightMember = {
-  type: DAORightType.Member;
+export type DAORightsMember = {
+  type: DAORightsType.Member;
 }
 
-export type DAORightTokenHolder = {
-  type: DAORightType.TokenHolder;
+export type DAORightsTokenHolder = {
+  type: DAORightsType.TokenHolder;
 }
 
-export type DAORightGroup = {
-  type: DAORightType.Group;
+export type DAORightsAccount = {
+  type: DAORightsType.Account;
+  accountId: string;
+}
+
+export type DAORightsGroup = {
+  type: DAORightsType.Group;
   groupId: number;
 }
 
-export type DAORightGroupLeader = {
-  type: DAORightType.GroupLeader;
+export type DAORightsGroupMember = {
+  type: DAORightsType.GroupMember;
+  groupId: number;
+  accountId: string;
+}
+
+export type DAORightsGroupLeader = {
+  type: DAORightsType.GroupLeader;
   groupId: number;
 }
 
-export type DAORightGroupRole = {
-  type: DAORightType.GroupRole;
+export type DAORightsGroupRole = {
+  type: DAORightsType.GroupRole;
   groupId: number;
   roleId: number;
 }
 
-export type DAORight = DAORightEveryone | DAORightMember | DAORightTokenHolder | DAORightGroup | DAORightGroupLeader | DAORightGroupRole;
+export type DAORights = DAORightsAnyone | DAORightsMember | DAORightsTokenHolder | DAORightsAccount | DAORightsGroup | DAORightsGroupMember | DAORightsGroupLeader | DAORightsGroupRole;
 
 export enum DAODocsFileType {
   url, plain, binaryPdf, html
@@ -140,4 +164,6 @@ export type DAO = {
   tags: IDValue[];
   proposals: object[];
   tokenHolders: object[];
+  templates: WFTemplate[];
+  workflows: WFInstance[];
 }

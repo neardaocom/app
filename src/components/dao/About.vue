@@ -110,7 +110,7 @@ export default {
 
     const {
       council, councilPercent
-    } = useGroups(props.dao, t)
+    } = useGroups(props.dao)
 
     //console.log(council)
 
