@@ -86,7 +86,7 @@
         <!-- Copyright -->
         <div class="text-center p-4" style="background-color: hsla(0, 0%, 17%, 0.04)">
             © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a> {{ t('default.all_rights_reserved') }}
-            <span class="ms-4 me-1">{{ t('default.powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="publicPath + 'img/near.svg'" alt="" style="width: 75px;"/></a>
+            <span class="ms-4 me-1">{{ t('default.powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="publicPath + 'img/near.svg'" alt="" style="width: 70px;"/></a>
         </div>
     <!-- Copyright -->
     </MDBFooter>

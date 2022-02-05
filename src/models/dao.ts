@@ -54,6 +54,31 @@ export const getRole = (dao: DAO, walletId: string): string => {
     return role
 };
 
+export const getMembers = (groups: DAOGroup[], proposals: object[]): string[] => {
+    const members: string[] = []
+
+    // search in groups
+    groups.forEach((group: DAOGroup) => {
+        group.members.forEach((member: DAOGroupMember) => {
+            if (members.includes(member.accountId) === false) {
+                members.push(member.accountId)
+            }
+        })
+    })
+
+    // search in voters
+    proposals.forEach((proposal) => { // get list of voting token holders
+        // voters
+        Object.keys(proposal[1].Curr.votes).forEach((voter: string) => {
+            if (members.includes(voter) === false) {
+                members.push(voter)
+            }
+        })
+    })
+
+    return members;
+}
+
 export const loadById = async (nearService: any, id: string, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
@@ -79,44 +104,6 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
 
-    // wallet and voters tokens
-    const voters: string[] = []
-    if (walletId !== undefined) {
-        voters.push(walletId)
-    }
-    data[4].forEach((proposal) => { // get list of voting token holders
-        // voters
-        Object.keys(proposal[1].Curr.votes).forEach((voter) => {
-            if (voters.includes(voter) === false) {
-                voters.push(voter)
-            }
-        })
-    })
-
-    const tokenHolders: DAOTokenHolder[] = []
-    let walletToken: number | undefined = undefined
-    //console.log(member_promises)
-    const balances = await Promise.all(
-        voters.map((voter) => nearService.getFtBalanceOf(id, voter))
-    ).catch((e) => {
-        throw new Error(`DAO[${id}] balances not loaded: ${e}`);
-    });
-
-    voters.forEach((accountId: string, index: number) => {
-        tokenHolders.push({accountId: accountId, amount: new Decimal(balances[index] ?? 0).toNumber()})
-        if (accountId == walletId) {
-            walletToken = new Decimal(balances[index] ?? 0).toNumber()
-        }
-    });
-
-    // register
-    let council_rights = []
-    const now_nanoseconds = new Decimal(new Date().valueOf()).mul(1_000_000).toNumber()
-    // council
-    if (data[2].council_rights != undefined) {
-      council_rights = data[2].council_rights.filter( right => right[1].from <= now_nanoseconds && now_nanoseconds <= right[1].to).map( right => right[0])
-    }
-
     // groups
     const groups: DAOGroup[] = [{
         id: 1,
@@ -132,6 +119,30 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
             releaseEnd: data[3].council_release_model.Linear.release_end,
         },
     }]
+
+    // token holders
+    const members: string[] = getMembers(groups, data[4])
+
+    if (walletId !== undefined && members.includes(walletId) === false) {
+        members.push(walletId)
+    }
+    
+
+    const tokenHolders: DAOTokenHolder[] = []
+    let walletToken: number | undefined = undefined
+    //console.log(member_promises)
+    const balances = await Promise.all(
+        members.map((member) => nearService.getFtBalanceOf(id, member))
+    ).catch((e) => {
+        throw new Error(`DAO[${id}] balances not loaded: ${e}`);
+    });
+
+    members.forEach((accountId: string, index: number) => {
+        tokenHolders.push({accountId: accountId, amount: new Decimal(balances[index] ?? 0).toNumber()})
+        if (accountId == walletId) {
+            walletToken = new Decimal(balances[index] ?? 0).toNumber()
+        }
+    });
 
     // DOCs
     const docs: DAODocs = {
