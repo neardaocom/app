@@ -15,7 +15,7 @@
             <li class="breadcrumb-item active"
               v-for="(tag, index) in tags"
               :key="index"
-              >{{ t('default.' + tag) }}
+              >{{ t('default.' + tag.value) }}
             </li>
             <li class="breadcrumb-item active" aria-current="page">
               {{ account }}

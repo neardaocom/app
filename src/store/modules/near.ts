@@ -31,6 +31,9 @@ const getters = {
     getFactoryContract: (state: any) => {
       return state.service.factoryContract
     },
+    getProviderContract: (state: any) => {
+      return state.service.providerContract
+    },
     getService: (state: any) => {
       return state.service
     }

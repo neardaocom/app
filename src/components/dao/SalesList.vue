@@ -50,7 +50,7 @@ export default {
 
         onMounted(() => {
             nearService.value.getNear().account(dao.value.wallet).then( account => {
-                refFinance.value = new RefFinanceService(account, process.env.VUE_APP_REF_FINANCE_CONTRACT) // TODO: Move to config
+                refFinance.value = new RefFinanceService(account, 'pstu.testnet') // TODO: process.env.VUE_APP_REF_FINANCE_CONTRACT
                 refFinanceFetch()
             })            
         })

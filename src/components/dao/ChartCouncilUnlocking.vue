@@ -11,6 +11,7 @@
   import { useI18n } from "vue-i18n";
   import Analytics from '@/models/analytics'
 
+
   export default {
     components: {
       MDBChart
@@ -20,19 +21,22 @@
         type: Object,
         required: true,
       },
+      group: {
+        type: Object,
+        required: true,
+      },
     },
     setup(props) {
       const { t, d } = useI18n()
-      const { dao } = toRefs(props)
+      const { dao, group } = toRefs(props)
       const analytics = ref({})
       const chartOptions = ref({})
 
       onMounted(() => {
-        // const period: Analytics.Period = 
         const cashflow = Analytics.computeUnlockingCashflow(
-            Analytics.parseAlgorithm(dao.value.token_stats.council.algorithm),
-            dao.value.token_stats.council,
-            Analytics.getPeriodFromDuration(dao.value.token_stats.council.duration),
+            Analytics.parseAlgorithm(group.value.token.algorithm),
+            { release_end: group.value.token.releaseEnd, duration: group.value.token.duration, total: group.value.token.locked, init: group.value.token.init },
+            Analytics.getPeriodFromDuration(group.value.token.duration),
             dao.value.created
         )
         // console.log(cashflow)

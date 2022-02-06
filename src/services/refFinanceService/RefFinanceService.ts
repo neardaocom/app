@@ -4,7 +4,7 @@ import { GeneralTokenService } from "@/services/generalTokenService";
 export default class RefFinanceService {
     private contract: Contract & any;
 
-    constructor(account: Account, contractId: string) {
+    constructor(account: Account & any, contractId: string) {
       this.contract = new Contract(account, contractId, {
         viewMethods: [
           'get_pool',

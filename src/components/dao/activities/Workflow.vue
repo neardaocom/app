@@ -4,16 +4,16 @@
       <!-- header -->
       <h5 class="card-title mt-1 mb-1">
         <small class="me-2 text-muted">#{{ workflow.id }}</small>
-        {{ workflow.name }}
+        {{ template.name }}
       </h5>
       <hr/>
       <ul class="timeline-3">
-        <li v-for="(activity, index) in workflow.activitiesLog" :key="index">
+        <li v-for="(activity, index) in workflow.activityLogs" :key="index">
           <span class="h6">{{ activity.name }}</span> {{ t('default.signed_by') }} <strong class="text-muted">{{ activity.txSigner }}</strong> {{ t('default.at') }} {{ d(activity.txSignedAt) }}
           <span class="float-end">
             <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
           </span>
-          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_' + workflow.code + '_' + activity.code, convertInput(activity.inputs))"></p>
+          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_templ_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
           <span class="ms-2">{{ t('default.actions') }}:</span>
           <dl class="row ms-3">
             <template v-for="(action, index) in activity.actions" :key="index">
@@ -22,39 +22,41 @@
             </template>
           </dl>
         </li>
-        <li class="separator" v-if="workflow.activitiesLog.length > 0">
+        <li class="separator" v-if="workflow.activityLogs.length > 0">
           <hr/>
         </li>
         <li
-          v-if="workflow.activitiesNext.length > 0"
+          v-if="workflow.activityNextIds.length > 0"
           class="last"
         >
-          <template v-if="workflow.activitiesNext.length == 1">
-            <span class="h6 border border-1 rounded px-3 py-2">{{ workflow.activitiesNext[0].name }}</span>
-            <template v-if="activityLast !== undefined && workflow.ends.includes(activityLast.code)">
-              <span class="ms-2 me-2">or</span>
-              <button  class="btn btn-info btn-sm">{{ t('default.wf_finish') }}</button>
-            </template>
-          </template>
-          <template v-else>
             <div class="row">
               <div class="col-8 col-md-6 col-lg-4 pe-0">
-                <MDBSelect v-model:options="optionsNextActivities" v-model:selected="formNextActivity" />
+                <MDBBtnGroup>
+                  <MDBRadio
+                    v-for="(option, index) in optionsNextActivities" :key="index"
+                    :btnCheck="true" :wrap="false" labelClass="btn btn-secondary"
+                    :label="option.text"
+                    :name="'nextActivity-' + workflow.id"
+                    :value="option.value"
+                    v-model="formNextActivity"
+                  />
+                </MDBBtnGroup>
               </div>
-              <div class="col-4 ps-2">
-                <template v-if="activityLast !== undefined && workflow.ends.includes(activityLast.code)">
-                  <span class="me-2">or</span>
-                  <button  class="btn btn-info btn-sm">{{ t('default.wf_finish') }}</button>
-                </template>
-              </div>
+              <template v-if="activityLast !== undefined && showFinish === true">
+                <div class="col-1 ps-2 text-center">
+                  {{ t('default.or') }}
+                </div>
+                <div class="col-4 ps-2">
+                    <button  class="btn btn-info">{{ t('default.wf_finish') }}</button>
+                </div>
+              </template>
             </div>
-          </template>
         </li>
         <li
-          v-else-if="activityLast !== undefined && workflow.ends.includes(activityLast.code)"
+          v-else-if="activityLast !== undefined && showFinish === true"
           class="last"
         >
-          <button  class="btn btn-info btn-sm">{{ t('default.wf_finish') }}</button>
+          <button  class="btn btn-info">{{ t('default.wf_finish') }}</button>
         </li>
         <li v-else class="last">
           Nothing to do
@@ -66,21 +68,23 @@
 
 <script>
 import {
-  MDBSelect
+  // MDBSelect
   // MDBProgress, MDBProgressBar, MDBBadge
   // , MDBCollapse, MDBBtn, MDBIcon
+  MDBBtnGroup, MDBRadio
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { convertArrayOfObjectToObject } from '@/utils/array'
 import { ref, toRefs } from "vue";
 // import padEnd from "lodash/padEnd";
-import last from "lodash/last";
+import lodashLast from "lodash/last";
+import { getActivities, canFinish } from "@/models/workflow";
 
 // import { WFInstance } from '@/types/workflow';
 
 export default {
   components: {
-    MDBSelect
+    MDBBtnGroup, MDBRadio
     // MDBProgress, MDBProgressBar, MDBBadge,
     // WFInstance
     // MDBCollapse, MDBBtn, MDBIcon,
@@ -91,27 +95,36 @@ export default {
       type: Object,
       required: true,
     },
+    template: {
+      type: Object,
+      required: true,
+    }
   },
   setup(props) {
     const { t, d } = useI18n();
-    const { workflow } = toRefs(props)
+    const { workflow, template } = toRefs(props)
 
-    const optionsNextActivities = ref(workflow.value.activitiesNext.map( activity => {
+    const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
+    const activityNexts = ref(getActivities(template.value, workflow.value.activityNextIds))
+
+    const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
       return { text: activity.name, value: activity.code}
     }))
-    const formNextActivity = ref(workflow.value.activitiesNext.length > 0 ? workflow.value.activitiesNext[0].code : '')
+    const formNextActivity = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value : '')
     // const selectedNextActivity = ref("");
 
-    return { t, d, formNextActivity, optionsNextActivities };
+    const showFinish = ref(canFinish(workflow.value))
+
+    return { t, d, formNextActivity, optionsNextActivities, activityNexts, showFinish, activityLogs };
   },
   computed: {
     activityLast() {
-      return last(this.workflow.activitiesLog)
+      return lodashLast(this.workflow.activityLogs)
     }
   },
   methods: {
-    convertInput(input) {
-      return convertArrayOfObjectToObject(input, 'code', 'value')
+    convertInput(inputActivity, inputInstance) {
+      return Object.assign(convertArrayOfObjectToObject(inputActivity, 'code', 'value'), convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
     },
     
   },

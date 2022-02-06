@@ -70,10 +70,6 @@ export default {
       type: Object,
       required: true
     },
-    tokenHolders: {
-      type: Object,
-      required: true
-    }
   },
   setup(props) {
     const { t } = useI18n();

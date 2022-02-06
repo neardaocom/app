@@ -37,8 +37,8 @@
     </MDBCardFooter>                  
 </MDBCard>
     
-    <ModalAddLiquidity :show="modalAddLiquidity" :contractId="dao.wallet" :sale="sale" :maxNear="dao.treasury.near" :maxToken="dao.token_stats.public.free" :tokensNames="[daoTokenName, tokenName]" :tokenDecimals="dao.token_stats.decimals" />
-    <ModalRemoveLiquidity :show="modalRemoveLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.token_stats.decimals" :maxShares="+totalShares" />
+    <ModalAddLiquidity :show="modalAddLiquidity" :contractId="dao.wallet" :sale="sale" :maxNear="dao.treasury.near" :maxToken="dao.treasury.token.free" :tokensNames="[daoTokenName, tokenName]" :tokenDecimals="dao.treasury.token.meta.decimals" />
+    <ModalRemoveLiquidity :show="modalRemoveLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.treasury.token.meta.decimals" :maxShares="+totalShares" />
 </template>
 <script>
     import { onMounted, ref, toRefs } from "vue";
@@ -124,7 +124,7 @@
                 return new Decimal(this.sale.amounts[1] || 0).dividedBy(yoctoNear).toNumber()
             },
             amountDaoToken(){
-                return  new Decimal(this.sale.amounts[0]  || 0).dividedBy(10 ** this.dao.token_stats.decimals).toNumber()
+                return  new Decimal(this.sale.amounts[0]  || 0).dividedBy(10 ** this.dao.treasury.token.meta.decimals).toNumber()
             },
             totalShares(){
                 return new Decimal( this.sale.total_shares || 0).toFixed()

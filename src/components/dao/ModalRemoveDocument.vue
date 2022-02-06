@@ -75,10 +75,6 @@ export default {
     groups: {
       type: Object,
       required: true
-    },
-    tokenHolders: {
-      type: Object,
-      required: true
     }
   },
   setup(props) {

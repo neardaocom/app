@@ -22,6 +22,9 @@ class NearService {
   // factory contract
   factoryContract!: Contract & any;
 
+  // provider contract
+  providerContract!: Contract & any;
+
   // wallet
   walletConnection!: WalletConnection & any;
 
@@ -60,6 +63,15 @@ class NearService {
       ],
     });
 
+    this.providerContract = new Contract(account, process.env.VUE_APP_PROVIDER_CONTRACT_NAME || '', {
+      viewMethods: [
+        'list',
+        'get',
+      ],
+      changeMethods: [
+      ],
+    });
+
     this.contractPool = new ContractPool(account);
   }
 
@@ -90,6 +102,20 @@ class NearService {
 
   async getAccount() {
     return this.walletConnection.getAccountId();
+  }
+
+  /**
+   * Provider: List
+   */
+  async providerList() {
+    return this.providerContract.list();
+  }
+
+  /**
+   * Provider: Get
+   */
+   async providerGet(id: number) {
+    return this.providerContract.get({id: id});
   }
 
   /**
@@ -852,6 +878,10 @@ class NearService {
 
   async getRefPools(contractId: string) {
     return this.contractPool.get(contractId).ref_pools();
+  }
+
+  async getWfTemplates() {
+    return this.contractPool.getHack().wf_templates();
   }
 
 }

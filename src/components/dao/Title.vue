@@ -3,7 +3,7 @@
     <div class="row d-flex justify-content-center">
       <div class="col-lg-6 mt-4">
         <h1 class="fw-bolder">{{ dao.name }}</h1>
-        <p class="text-muted">{{ dao.slogan }}</p>
+        <p class="text-muted">{{ dao.purpose }}</p>
       </div>
     </div>
   </section>

@@ -20,8 +20,8 @@
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'markets' }}" :class="[isActive('markets') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
-          {{ t('default.markets') }}
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}" :class="[isActive('defi') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.defi') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.documents') }}
@@ -29,11 +29,14 @@
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.about') }}
         </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+          {{ t('default.settings') }}
+        </router-link>
       </div>
       <!-- Left -->
 
       <!-- Right -->
-      <div v-if="accountRole != 'guest'" class="col-12 col-lg-3">
+      <div class="col-12 col-lg-3">
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>-->
@@ -46,6 +49,11 @@
           </MDBBtn>
           <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
           <MDBDropdownMenu>
+            <template v-for="templ in dao.templates" :key="templ.id">
+              <template v-for="templSettings in templ.settings" :key="templSettings.id">
+                <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
+              </template>
+            </template>
             <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
@@ -66,18 +74,18 @@
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.token_name" />
-    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" :docs="dao.docs" />
-    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
+    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" />
+    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :docs="dao.docs" />
+    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" />
+    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" />
     <ModalAddToDefi :show="modalAddToDefi" :contractId="dao.wallet"/>
     <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
-    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.token_name" />
+    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
 </template>
 
 <script>
@@ -100,6 +108,7 @@ import {
   MDBBtn,
   MDBIcon,
 } from "mdb-vue-ui-kit";
+import { check } from "@/models/rights";
 
 export default {
   components: {
@@ -117,9 +126,14 @@ export default {
       type: String,
       required: true,
     },
+    walletRights: {
+      type: Object,
+      required: true,
+    }
   },
   setup() {
     const { t } = useI18n();
+    const modalProposal = ref(0)
     const modalPayout = ref(0)
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
@@ -136,9 +150,9 @@ export default {
     const latestDaoVersion = ref(0)
 
     return {
-      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
+      t, dropdownAction, modalProposal, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
       modalAddRightsForAction, modalSkywardFinanceCreateSale,
-      latestDaoVersion, modalUpgrade, modalAddToDefi,
+      latestDaoVersion, modalUpgrade, modalAddToDefi, check,
     };
   },
 
@@ -164,6 +178,10 @@ export default {
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
+    },
+    modalOpen() {
+      this.modalProposal += 1
+      this.dropdownAction = false
     },
     modalPayoutOpen() {
       this.modalPayout += 1

@@ -30,7 +30,17 @@ const routes = [
         next(false)
       }
     }
-  }
+  },
+  {
+    path: '/market',
+    name: 'market',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/Market.vue')
+  },
+  {
+    path: '/market/workflow/:id',
+    name: 'market-workflow',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/MarketWorkflow.vue')
+  },
 ]
 
 const router = createRouter({

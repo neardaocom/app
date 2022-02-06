@@ -15,7 +15,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole"/>
+        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -24,15 +24,15 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId"/>
-        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
-        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole"/>
-        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao"/>
-        <Members v-if="loaded === true && this.q_page === 'members'" :dao="dao"/>
-        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao"/>
-        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs"/>
-        <Markets v-if="loaded === true && this.q_page === 'markets'" :dao="dao" :accountId="accountId"/>
-        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao"/>
+        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao" />
+        <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao" />
+        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao" />
+        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs" />
+        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao" />
+        <Settings v-if="loaded === true && this.q_page === 'settings'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -50,7 +50,7 @@ import Breadcrumb from '@/components/dao/Breadcrumb.vue'
 import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
 import Title from '@/components/dao/Title.vue'
-import Members from '@/components/dao/Members.vue'
+import DeFi from '@/components/dao/DeFi.vue'
 import Dashboard from '@/components/dao/Dashboard.vue'
 import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
 import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
@@ -58,37 +58,31 @@ import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
-import Markets from '@/components/dao/Markets.vue'
 import Activities from '@/components/dao/Activities.vue'
+import Settings from '@/components/dao/Settings.vue'
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
 // MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import _ from 'lodash'
-import DAO from '@/types/DAO'
-import DAOs from '@/data/DAOs'
-//import * as nearAPI from "near-api-js"
+import { getRole, loadById } from "@/models/dao";
+import { getDAORights, getWalletRights } from '@/models/rights'
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Members, Tokens, Documents, Markets
-    , SkeletonTitle, SkeletonButtons, SkeletonBody
+    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
+    SkeletonTitle, SkeletonButtons, SkeletonBody,
     // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
   },
   setup() {
     const { t } = useI18n()
-    const daos = ref(DAOs.data().daos)
-    const search = ref('')
-    const filter = reactive({})
-    const favorites = [1]
     const q_id = null
-    const dao = ref(DAO.data)
-    const dao_data = ref(DAO.data)
-    const proposals = null
-    const statistics_ft = null
+    const dao = ref(null)
     const loaded = ref(false)
+    const daoRights = ref([])
+    const walletRights = ref([])
 
-    return { t, dao, daos, q_id, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
+    return { t, dao, q_id, loaded, daoRights, walletRights }
   },
   created() {
     // dao id
@@ -100,8 +94,11 @@ export default {
     this.$store.commit('near/setContract', this.q_id)
 
     // dao
-    this.dao.id = this.q_id
-    this.dao.wallet = this.q_id
+    this.dao = {
+      id: this.q_id,
+      wallet: this.q_id,
+      tags: [],
+    }
   },
   computed: {
     wallet() {
@@ -117,15 +114,7 @@ export default {
       return _.toString(this.$route.query.page) || 'overview'
     },
     accountRole() {
-      let role = 'guest'
-      if (this.dao.groups.council.wallets.includes(this.accountId)) {
-        role = 'council'
-      } else if (Object.keys(this.dao.token_holders).includes(this.accountId)) {
-        role = 'member'
-      } else if (this.accountId) {
-        role = 'user'
-      }
-      return role
+      return getRole(this.dao, this.wallet.getAccountId())
     },
   },
   mounted() {
@@ -136,12 +125,15 @@ export default {
   methods: {
     getState() {
       //console.log('getState')
-      this.nearService.getDaoById(this.q_id)
+      loadById(this.nearService, this.q_id, this.t, this.wallet?.getAccountId())
+      // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
           //console.log(r)
           //this.dao_state = r
           this.dao = r
           this.loaded = true
+          this.daoRights = getDAORights(r)
+          this.walletRights = getWalletRights(r, this.wallet?.getAccountId())
         })
         .catch((e) => {
           this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)
@@ -151,23 +143,6 @@ export default {
           console.log(e)
         })
     },
-    favorite_switch: function (id) {
-      // console.log(this.favorites);
-      // console.log(_.indexOf(this.favorites, id));
-
-      if (_.indexOf(this.favorites, id) >= 0) {
-        _.pull(this.favorites, id)
-        console.log('Favorites REMOVE: ' + id)
-      } else {
-        this.favorites.push(id)
-        console.log('Favorites ADD: ' + id)
-      }
-
-      // console.log(this.favorites);
-    },
-    favorite_is(id) {
-      return _.indexOf(this.favorites, id) >= 0
-    }
 
   }
 }

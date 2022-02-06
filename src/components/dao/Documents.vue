@@ -39,8 +39,8 @@
                 <th scope="col"></th>
                 <th scope="col">{{ t("default.name")}}</th>
                 <th scope="col">{{ t("default.category")}}</th>
-                <th scope="col" style="min-width:200px">{{ t("default.description")}}</th>
-                <!-- <th scope="col" style="min-width:200px">{{ t("default.tags")}}</th>-->
+                <th v-if="false" scope="col" style="min-width:200px">{{ t("default.description")}}</th>
+                <th v-if="false" scope="col" style="min-width:200px">{{ t("default.tags")}}</th>
                 <th scope="col">{{ t("default.valid")}}</th>
                 <th scope="col">{{ t("default.version")}}</th>
               </tr>
@@ -48,16 +48,16 @@
             <tbody>
               <tr v-for="(doc, index) in results" :key="index">
                 <td>{{ doc.index + 1 }}</td>
-                <td><MDBIcon :icon="getIcon(doc.ext)" iconStyle="fas" /></td>
-                <td class="fw-bold text-start"><a href="#" @click="openDoc(doc.index)">{{ doc.name }} <MDBIcon v-if="doc.ext.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
+                <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
+                <td class="fw-bold text-start"><a href="#" @click.prevent="open(doc.index)">{{ doc.name }} <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
                 <td class="text-start">{{ doc.category }}</td>
-                <td class="text-truncate">{{ doc.description }}</td>
-                <!-- <td class="text-start">{{ doc.tags.join(', ') }}</td>-->
+                <td v-if="false" class="text-truncate">{{ doc.description }}</td>
+                <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
                 <td class="text-start" :class="doc.valid ? 'text-success' : 'text-danger'"><MDBIcon style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                 <td>
                     <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                     <MDBBtnGroup size="sm" role="toolbar">
-                      <MDBBtn color="primary" @click="openDoc(doc.index)">{{ doc.version }}</MDBBtn>
+                      <MDBBtn color="primary" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
                       <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
                     </MDBBtnGroup>
                 </td>
@@ -91,6 +91,8 @@ import ModalDocument from '@/components/dao/ModalDocument'
 import { transform } from "@/models/document"
 import { toSearch } from '@/utils/string'
 import _ from 'lodash'
+import { useIPFSService } from "@/hooks/vuex";
+import { fetch } from "@/models/ipfs";
 
 export default {
   components: {
@@ -116,6 +118,7 @@ export default {
     const openOldVersion = ref(0)
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
+    const ipfsService = useIPFSService()
 
     const searchQuery = ref('')
     const filterType = reactive({
@@ -136,14 +139,12 @@ export default {
       },
     })
     return {
-      t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion
-      , searchQuery, filterType
+      t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
+      searchQuery, filterType,
+      ipfsService
     };
   },
   computed: {
-    ipfsService() {
-      return this.$store.getters['ipfs/getService']
-    },
     results() {
       let results = this.files
       // filter
@@ -182,6 +183,25 @@ export default {
       }
       return icon
     },
+    async open(index) {
+      const doc = this.docs.files[index]
+      fetch(doc, this.ipfsService).then(r => {
+        switch (doc.type) {
+          case 'url': {
+            window.open(r, "_blank");
+            break;
+          }
+          case 'pdf':
+          case 'html': {
+            this.selectedDoc = doc;
+            this.modalDocument += 1;
+            break;
+          }
+          default:
+            console.log('Undefined doc.ext: ' + doc.ext);
+        }
+      })
+    },
     async openDoc(index) {
       let doc = this.docs.files[index]
 
@@ -202,7 +222,7 @@ export default {
 
       doc.data = this.fetchedDocs[doc.ipfs_cid][0]
 
-      switch (doc.ext) {
+      switch (doc.type) {
         case 'url': {
           const doc_link = await doc.data.text();
           window.open(doc_link, "_blank");
@@ -215,7 +235,7 @@ export default {
           break;
         }
         default:
-          console.log('Undefined doc.ext: ' + doc.ext);
+          console.log('Undefined doc.type: ' + doc.ext);
       }
     }
   }

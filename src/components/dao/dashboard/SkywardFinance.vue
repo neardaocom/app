@@ -1,15 +1,12 @@
 <template>
-    <section v-if="sales.length > 0">
-        <div class="row">
-            <div class="col-12 col-md-4 mb-4" v-for="sale in sales" :key="sale.id">
-                <Widget :sale="sale" :dao="dao" />
-            </div>
-        </div>
-    </section>
+    <!-- v-if="sales.length > 0" -->
+    <div class="col-12 col-md-4 mb-4" v-for="sale in sales" :key="sale.id">
+        <Widget :sale="sale" :dao="dao" />
+    </div>
 </template>
 
 <script>
-import Widget from "@/components/market/skywardFinance/Widget.vue"
+import Widget from "@/components/widget/skywardFinance/Widget.vue"
 import { onMounted, onUnmounted, toRefs, computed } from "vue"
 import { useStore } from "vuex"
 import { useSkywardFinanace } from "@/hooks/auction"
@@ -45,7 +42,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.auction.skyward_finance)
+        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.register.skywardFinance) // TODO: 
 
         skywardFetch()
 

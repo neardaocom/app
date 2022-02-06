@@ -4,9 +4,17 @@ import _ from "lodash"
 export class ContractPool {
   private account: Account;
   private pool: { [key: string]: Contract } = {};
+  private poolHack: Contract;
 
   constructor(account: Account) {
     this.account = account;
+    this.poolHack = new Contract(account, 'dao.dev-1644159607446-77187721377410', {
+      viewMethods: [
+        'wf_templates'
+      ],
+      changeMethods: [
+      ],
+    });
   }
 
   get(contractId: string): Contract & any {
@@ -49,5 +57,9 @@ export class ContractPool {
     this.pool[contractId] = contract;
 
     return contract;
+  }
+
+  getHack(): Contract & any {
+    return this.poolHack;
   }
 }
