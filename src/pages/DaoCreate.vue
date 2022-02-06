@@ -586,7 +586,7 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
-import FromErrorMessage from '@/components/FormErrorMessage'
+import FromErrorMessage from '@/components/forms/FormErrorMessage'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { mask } from 'vue-the-mask'
