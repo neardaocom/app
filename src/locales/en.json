@@ -27,6 +27,7 @@
   "token_sale_token_id": "Token ID",
   "all_rights_reserved": "All rights reserved",
   "code": "Code",
+  "creator": "Creator",
   "distribute_ft": "Payout by tokens",
   "distribute_ft_message": "<strong>{amount}</strong> from <strong>{group}</strong> to <strong>{accounts}</strong>",
   "defi": "DeFi",

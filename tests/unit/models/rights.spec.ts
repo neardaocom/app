@@ -1,4 +1,4 @@
-import { parse, toObject, check, getDAORights, toTranslate } from '@/models/rights'
+import { parse, toObject, check, getDAORights, getWalletRights, toTranslate } from '@/models/rights'
 import { DAORights, DAORightsType } from "@/types/dao";
 import { daoTestOne } from "@/data/dao";
 
@@ -68,7 +68,31 @@ test('getDAORights', () => {
     expect(check([{type: DAORightsType.GroupLeader, groupId: 2}], daoRights)).toBe(false);
     expect(check([{type: DAORightsType.GroupRole, groupId: 1, roleId: 2}], daoRights)).toBe(false);
     expect(check([{type: DAORightsType.GroupRole, groupId: 2, roleId: 1}], daoRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupRole, groupId: 2, roleId: 2}], daoRights)).toBe(false);
 });
+
+test('getWalletRights', () => {
+    const walletRights: DAORights[] = getWalletRights(daoTestOne, 'account.testnet')
+    // TRUE
+    expect(check([{type: DAORightsType.Anyone}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.Member}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.Account, accountId: 'account.testnet'}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.Group, groupId: 1}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.GroupMember, groupId: 1, accountId: 'account.testnet'}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.GroupLeader, groupId: 1}], walletRights)).toBe(true);
+    expect(check([{type: DAORightsType.GroupRole, groupId: 1, roleId: 1}], walletRights)).toBe(true);
+    
+    // FALSE
+    expect(check([{type: DAORightsType.TokenHolder}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.Account, accountId: 'token-holder.testnet'}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupMember, groupId: 2, accountId: 'account.testnet'}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupMember, groupId: 1, accountId: 'token-holder.testnet'}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupLeader, groupId: 2}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupRole, groupId: 1, roleId: 2}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupRole, groupId: 2, roleId: 1}], walletRights)).toBe(false);
+    expect(check([{type: DAORightsType.GroupRole, groupId: 2, roleId: 2}], walletRights)).toBe(false);
+
+})
 
 test('toTranslate', () => {
     expect(toTranslate({type: DAORightsType.Anyone}, daoTestOne.groups)).toEqual({key: 'rights_anyone', params: {}});

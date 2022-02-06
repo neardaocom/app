@@ -19,8 +19,8 @@
                   <dd class="col-4">{{ t('default.version') }}:</dd>
                   <dt class="col-6">v{{ template.version }}</dt>
 
-                  <dd class="col-4 col-md-4">{{ t('default.code') }}:</dd>
-                  <dt class="col-6 col-md-6">{{ template.code }}</dt>
+                  <dd class="col-4 col-md-4">{{ t('default.creator') }}:</dd>
+                  <dt class="col-6 col-md-6">{{ creator.name }}</dt>
 
                   <dd class="col-4 col-md-4">{{ t('default.workflows_start') }}:</dd>
                   <dt class="col-6 col-md-6">
@@ -131,7 +131,7 @@ import {
   MDBCard, MDBCardBody, MDBCardText,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplate } from "@/hooks/workflow";
+import { useTemplate, useCreators } from "@/hooks/workflow";
 
 export default {
   components: {
@@ -142,10 +142,11 @@ export default {
     const { t, n } = useI18n()
 
     const { q_id, fetch, template, startActivities, endActivities, transactions } = useTemplate()
+    const { creator } = useCreators()
 
 
     return {
-      t, n, q_id, fetch, template, startActivities, endActivities, transactions
+      t, n, q_id, fetch, template, creator, startActivities, endActivities, transactions
     }
   },
 }

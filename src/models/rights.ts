@@ -1,7 +1,9 @@
-import { DAO, DAOGroup, DAORights, DAORightsType } from "@/types/dao";
+import { DAO, DAOGroup, DAOGroupMember, DAORights, DAORightsType, DAOTokenHolder } from "@/types/dao";
 import { Translate } from "@/types/generic";
-import lodashIsEqual from "lodash/isEqual";
-import lodashFirst from "lodash/first";
+import loIsEqual from "lodash/isEqual";
+import loFirst from "lodash/first";
+import loFind from "lodash/find";
+import loFilter from "lodash/filter";
 
 export const parse = (value: any): DAORights | undefined => {
     let right: DAORights | undefined = undefined
@@ -121,7 +123,40 @@ export const getDAORights = (dao: DAO): DAORights[] => {
 
 export const getWalletRights = (dao: DAO, walletId: string): DAORights[] => {
     const list: DAORights[] = []
-    throw new Error("Undefined");
+
+    list.push({type: DAORightsType.Anyone})
+
+    // token holders
+    const holder: DAOTokenHolder | undefined = loFind(dao.tokenHolders, {accountId: walletId})
+    if (holder !== undefined) list.push({type: DAORightsType.TokenHolder})
+
+    // groups
+    let member: DAOGroupMember | undefined
+    let isMember: boolean = false
+    dao.groups.forEach((group) => {
+        member = loFind(group.members, {accountId: walletId})
+        // membership
+        if (member !== undefined) {
+            isMember = true
+            list.push({type: DAORightsType.Group, groupId: group.id})
+            list.push({type: DAORightsType.GroupMember, groupId: group.id, accountId: walletId})
+            const roleIterator: IterableIterator<number> = member.roles.keys();
+            for (const roleKey of roleIterator) {
+                list.push({type: DAORightsType.GroupRole, groupId: group.id, roleId: (roleKey + 1)})
+            }
+        }
+        // leader
+        if (group.leader === walletId) {
+            list.push({type: DAORightsType.GroupLeader, groupId: group.id})
+        }
+    })
+    if (isMember) {
+        list.push({type: DAORightsType.Member})
+    }
+
+    // accounts
+    list.push({type: DAORightsType.Account, accountId: walletId})
+
     return list
 }
 
@@ -130,7 +165,7 @@ export const check = (owned: DAORights[], target: DAORights[]): boolean => {
 
     for (const targetRight of target) {
         for (const ownedRight of owned) {
-            if (lodashIsEqual(targetRight, ownedRight) === true) {
+            if (loIsEqual(targetRight, ownedRight) === true) {
                 checked = true
                 break
             }
@@ -162,14 +197,14 @@ export const toTranslate = (rights: DAORights, daoGroups: DAOGroup[]): Translate
             trans.key = 'rights_group'
             trans.params = {
                 groupId: rights.groupId,
-                group: lodashFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
+                group: loFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
             }
             break;
         case DAORightsType.GroupMember:
             trans.key = 'rights_group_member'
             trans.params = {
                 groupId: rights.groupId,
-                group: lodashFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
+                group: loFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
                 accountId: rights.accountId,
             }
             break;
@@ -177,14 +212,14 @@ export const toTranslate = (rights: DAORights, daoGroups: DAOGroup[]): Translate
             trans.key = 'rights_group_leader'
             trans.params = {
                 groupId: rights.groupId,
-                group: lodashFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
+                group: loFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
             }
             break;
         case DAORightsType.GroupRole:
             trans.key = 'rights_group_role'
             trans.params = {
                 groupId: rights.groupId,
-                group: lodashFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
+                group: loFirst(daoGroups.filter(group => group.id === rights.groupId))?.name,
                 roleId: rights.groupId,
                 role: '',
             }

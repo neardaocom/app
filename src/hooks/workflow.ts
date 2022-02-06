@@ -3,11 +3,14 @@ import { useRoute } from 'vue-router'
 import { toSearch } from '@/utils/string'
 import { useI18n } from 'vue-i18n'
 import { WFTemplate } from '@/types/workflow'
-import _orderBy from "lodash/orderBy"
-import _get from "lodash/get"
+import loOrderBy from "lodash/orderBy"
+import loGet from "lodash/get"
+import loFind from "lodash/find"
+import { accounts } from "@/data/blockchain";
 import { getRandom } from '@/utils/integer'
 import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
+import { Wallet } from '@/types/blockchain'
 
 export const useTemplateList = () => {
     const { t } = useI18n()
@@ -36,10 +39,10 @@ export const useTemplateList = () => {
         // order
         switch (filterOrder.value) {
             case 'name_desc':
-                dataResults.value = _orderBy(dataResults.value, ['name'], ['desc'])
+                dataResults.value = loOrderBy(dataResults.value, ['name'], ['desc'])
                 break;
             case 'name_asc':
-                dataResults.value = _orderBy(dataResults.value, ['name'], ['asc'])
+                dataResults.value = loOrderBy(dataResults.value, ['name'], ['asc'])
                 break;
             default:
                 break;
@@ -65,7 +68,7 @@ export const useTemplateList = () => {
 
 export const useTemplate = () => {
     const route = useRoute()
-    const q_id = _get(route, ['params', 'id']) 
+    const q_id = loGet(route, ['params', 'id']) 
 
     const fetch = (): WFTemplate | undefined => {
         let template: WFTemplate | undefined = undefined
@@ -94,5 +97,13 @@ export const useTemplate = () => {
 
     return {
         q_id, fetch, template, startActivities, endActivities, transactions
+    }
+}
+
+export const useCreators = () => {
+    const creator: Wallet | undefined = loFind(accounts, {code: 'near_dao'})
+
+    return {
+        creator
     }
 }

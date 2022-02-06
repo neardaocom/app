@@ -49,6 +49,7 @@
                     <th scope="col">#</th>
                     <th scope="col" class="text-start">{{ t('default.name') }}</th>
                     <th scope="col" class="text-start">{{ t('default.type') }}</th>
+                    <th scope="col" class="text-start">{{ t('default.creator') }}</th>
                     <th scope="col" class="text-start">{{ t('default.version') }}</th>
                     <th scope="col" class="text-start">{{ t('default.code') }}</th>
                   </tr>
@@ -60,6 +61,7 @@
                       <router-link class="fw-bold" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
                     </td>
                     <td class="text-start">{{ t('default.workflows') }}</td>
+                    <td class="text-start">{{ creator.name }}</td>
                     <td class="text-start">v{{ template.version }}</td>
                     <td class="text-start">#{{ template.id }} {{ template.code }}</td>
                   </tr>
@@ -85,7 +87,7 @@ import {
   , MDBInput, MDBSelect,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplateList } from "@/hooks/workflow";
+import { useTemplateList, useCreators } from "@/hooks/workflow";
 import { onMounted, watch } from 'vue'
 
 export default {
@@ -100,6 +102,7 @@ export default {
   setup() {
     const { t, n } = useI18n()
     const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
+    const { creator } = useCreators()
 
     onMounted(() => {
       fetch()
@@ -109,7 +112,7 @@ export default {
     watch([filterSearch, filterOrder], () => { filter()})
 
     return {
-      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter
+      t, n, dataSource, dataResults, creator, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter
     }
   },
 }

@@ -163,7 +163,7 @@ export type DAO = {
   groups: DAOGroup[];
   tags: IDValue[];
   proposals: object[];
-  tokenHolders: object[];
+  tokenHolders: DAOTokenHolder[];
   templates: WFTemplate[];
   workflows: WFInstance[];
 }
