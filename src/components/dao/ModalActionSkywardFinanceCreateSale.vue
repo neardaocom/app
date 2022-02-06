@@ -97,7 +97,7 @@ import { requiredValidator, isValid, minLength, nearRootAccountValidator, maxLen
 import { toNanoseconds, toNanosecond } from '@/utils/date'
 import moment from 'moment'
 import last from "lodash/last"
-import FromErrorMessage from '@/components/FormErrorMessage'
+import FromErrorMessage from '@/components/forms/FormErrorMessage'
 import {
   MDBBtn,
   MDBInput,

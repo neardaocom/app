@@ -637,12 +637,12 @@ class NearService {
     }
     console.log(data)
 
-    const amount = new Decimal(data[0]).toNumber()
-    const amountDeposit = new Decimal(data[3].storage_locked_near).div(yoctoNear).mul(100).round().div(100).toNumber()
+    const amount = new Decimal(data[0])
+    const amountDeposit = new Decimal(data[3].storage_locked_near).div(yoctoNear).mul(100).round().div(100)
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     //const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
     //const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
-    const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
+    const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed)
 
     // token state
     const members = data[2].council
@@ -755,7 +755,7 @@ class NearService {
         treasury: {
           nearTotal: amount,
           nearStorageLocked: amountDeposit,
-          near: amount - amountDeposit,
+          near: amount.minus(amountDeposit),
           w_delta: null,
           currency: 'czk',
           currency_amount: null
