@@ -1,9 +1,9 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import { DAO } from "@/types/dao";
+import { DAO, DAORights } from "@/types/dao";
 import { Translate } from "@/types/generic";
 import { getGroupCouncil } from '@/models/dao'
-import { getDAORights, toTranslate } from '@/models/rights'
+import { getDAORights, toTranslate, getWalletRights } from '@/models/rights'
 import Decimal from "decimal.js";
 import { getFile } from "@/models/document"
 import { useI18n } from "vue-i18n";
@@ -56,16 +56,18 @@ export const useVuex = () => {
     }
 }
 
-export const useRights = (dao: DAO) => {
+export const useRights = (dao: DAO, walletId?: string) => {
     const { t } = useI18n()
     const rights = getDAORights(dao)
     const daoRights = ref(rights)
+    const walletRights = ref<DAORights[]>(getWalletRights(dao, walletId))
+    
     const daoRightsOptions = ref(rights.map((right, index) => {
         const trans: Translate = toTranslate(right, dao.groups)
         return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
     }))
 
     return {
-        daoRights, daoRightsOptions
+        daoRights, walletRights, daoRightsOptions
     }
 }

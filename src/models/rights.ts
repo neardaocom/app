@@ -3,10 +3,9 @@ import { Translate } from "@/types/generic";
 import loIsEqual from "lodash/isEqual";
 import loFirst from "lodash/first";
 import loFind from "lodash/find";
-import loFilter from "lodash/filter";
 
-export const parse = (value: any): DAORights | undefined => {
-    let right: DAORights | undefined = undefined
+export const parse = (value: any): DAORights => {
+    let right: DAORights = {type: 0}
 
     if (typeof value === "string") {
         switch (value) {
@@ -121,41 +120,43 @@ export const getDAORights = (dao: DAO): DAORights[] => {
     return list
 }
 
-export const getWalletRights = (dao: DAO, walletId: string): DAORights[] => {
+export const getWalletRights = (dao: DAO, walletId: string | undefined): DAORights[] => {
     const list: DAORights[] = []
 
     list.push({type: DAORightsType.Anyone})
 
-    // token holders
-    const holder: DAOTokenHolder | undefined = loFind(dao.tokenHolders, {accountId: walletId})
-    if (holder !== undefined) list.push({type: DAORightsType.TokenHolder})
+    if (walletId !== undefined) {
+        // token holders
+        const holder: DAOTokenHolder | undefined = loFind(dao.tokenHolders, {accountId: walletId})
+        if (holder !== undefined) list.push({type: DAORightsType.TokenHolder})
 
-    // groups
-    let member: DAOGroupMember | undefined
-    let isMember: boolean = false
-    dao.groups.forEach((group) => {
-        member = loFind(group.members, {accountId: walletId})
-        // membership
-        if (member !== undefined) {
-            isMember = true
-            list.push({type: DAORightsType.Group, groupId: group.id})
-            list.push({type: DAORightsType.GroupMember, groupId: group.id, accountId: walletId})
-            const roleIterator: IterableIterator<number> = member.roles.keys();
-            for (const roleKey of roleIterator) {
-                list.push({type: DAORightsType.GroupRole, groupId: group.id, roleId: (roleKey + 1)})
+        // groups
+        let member: DAOGroupMember | undefined
+        let isMember: boolean = false
+        dao.groups.forEach((group) => {
+            member = loFind(group.members, {accountId: walletId})
+            // membership
+            if (member !== undefined) {
+                isMember = true
+                list.push({type: DAORightsType.Group, groupId: group.id})
+                list.push({type: DAORightsType.GroupMember, groupId: group.id, accountId: walletId})
+                const roleIterator: IterableIterator<number> = member.roles.keys();
+                for (const roleKey of roleIterator) {
+                    list.push({type: DAORightsType.GroupRole, groupId: group.id, roleId: (roleKey + 1)})
+                }
             }
+            // leader
+            if (group.leader === walletId) {
+                list.push({type: DAORightsType.GroupLeader, groupId: group.id})
+            }
+        })
+        if (isMember) {
+            list.push({type: DAORightsType.Member})
         }
-        // leader
-        if (group.leader === walletId) {
-            list.push({type: DAORightsType.GroupLeader, groupId: group.id})
-        }
-    })
-    if (isMember) {
-        list.push({type: DAORightsType.Member})
-    }
 
-    // accounts
-    list.push({type: DAORightsType.Account, accountId: walletId})
+        // accounts
+        list.push({type: DAORightsType.Account, accountId: walletId})
+    }
 
     return list
 }

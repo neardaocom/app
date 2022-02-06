@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { toSearch } from '@/utils/string'
 import { useI18n } from 'vue-i18n'
@@ -6,14 +6,19 @@ import { WFTemplate } from '@/types/workflow'
 import loOrderBy from "lodash/orderBy"
 import loGet from "lodash/get"
 import loFind from "lodash/find"
+import loToString from "lodash/toString"
 import { accounts } from "@/data/blockchain";
 import { getRandom } from '@/utils/integer'
 import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
 import { Wallet } from '@/types/blockchain'
+import { useStore } from 'vuex'
 
 export const useTemplateList = () => {
     const { t } = useI18n()
+    const store = useStore()
+    const nearService = computed(() => store.getters['near/getService'])
+
     const dataSource = ref<WFTemplate[]>([])
     const dataResults = ref<WFTemplate[]>([])
 
@@ -52,11 +57,31 @@ export const useTemplateList = () => {
     }
 
     const fetch = (): void => {
+        const list: WFTemplate[] = [];
         fetchProgress.value = getRandom(5, 15)
-        dataSource.value = [
-            templatePayout, templateCreateGroup, templateAddMember
-        ]
-        fetchProgress.value = 100
+
+        nearService.value.providerList().then( r => {
+            r.forEach(template => {
+                list.push({
+                    id: template.id,
+                    name: t('default.wf_templ_' + template.name),
+                    version: loToString(template.version),
+                    code: template.name,
+                    constants: [],
+                    attributes: [],
+                    activities: [],
+                    transactions: [],
+                    startActivityIds: [],
+                    endActivityIds: [],
+                    search: [toSearch(t('default.wf_templ_' + template.name)), toSearch(t('default.workflow'))].join('-'),
+                    settings: [],
+                })
+            });
+            fetchProgress.value = 100
+            filter()
+        })
+        
+        dataSource.value = list // [templatePayout, templateCreateGroup, templateAddMember]
     }
 
     return {
@@ -68,7 +93,8 @@ export const useTemplateList = () => {
 
 export const useTemplate = () => {
     const route = useRoute()
-    const q_id = loGet(route, ['params', 'id']) 
+    const q_id = loGet(route, ['params', 'id'])
+    const template = ref<WFTemplate | undefined>(undefined)
 
     const fetch = (): WFTemplate | undefined => {
         let template: WFTemplate | undefined = undefined
@@ -90,7 +116,10 @@ export const useTemplate = () => {
         return template;
     }
 
-    const template = computed(() => fetch())
+    onMounted(() => {
+        template.value = fetch()
+    })
+
     const startActivities = computed(() => { return template.value ? getStartActivities(template.value) : [] })
     const endActivities = computed(() => { return template.value ? getEndActivities(template.value) : [] })
     const transactions = computed(() => { return template.value ? getTransitions(template.value) : [] })
@@ -102,8 +131,9 @@ export const useTemplate = () => {
 
 export const useCreators = () => {
     const creator: Wallet | undefined = loFind(accounts, {code: 'near_dao'})
+    const provider: Wallet | undefined = loFind(accounts, {code: 'market_near_dao'})
 
     return {
-        creator
+        creator, provider
     }
 }

@@ -13,7 +13,7 @@
           <span class="float-end">
             <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
           </span>
-          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
+          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_templ_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
           <span class="ms-2">{{ t('default.actions') }}:</span>
           <dl class="row ms-3">
             <template v-for="(action, index) in activity.actions" :key="index">

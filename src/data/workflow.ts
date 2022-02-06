@@ -27,7 +27,7 @@ export const templatePayout: WFTemplate = {
     id: 1,
     name: 'Payout',
     version: '1.0',
-    code: 'daoPayout',
+    code: 'payout',
     constants: [
       { code: 'nearAmountLimit', name: 'NEAR Amount - limit' },
       { code: 'tokenAmountLimit', name: 'TOKEN Amount - limit' },

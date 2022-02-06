@@ -36,7 +36,7 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div v-if="accountRole != 'guest'" class="col-12 col-lg-3">
+      <div class="col-12 col-lg-3">
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas text-warning fa-star"></i>
         </button>-->
@@ -49,6 +49,11 @@
           </MDBBtn>
           <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
           <MDBDropdownMenu>
+            <template v-for="templ in dao.templates" :key="templ.id">
+              <template v-for="templSettings in templ.settings" :key="templSettings.id">
+                <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
+              </template>
+            </template>
             <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
@@ -103,6 +108,7 @@ import {
   MDBBtn,
   MDBIcon,
 } from "mdb-vue-ui-kit";
+import { check } from "@/models/rights";
 
 export default {
   components: {
@@ -120,9 +126,14 @@ export default {
       type: String,
       required: true,
     },
+    walletRights: {
+      type: Object,
+      required: true,
+    }
   },
   setup() {
     const { t } = useI18n();
+    const modalProposal = ref(0)
     const modalPayout = ref(0)
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
@@ -139,9 +150,9 @@ export default {
     const latestDaoVersion = ref(0)
 
     return {
-      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
+      t, dropdownAction, modalProposal, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
       modalAddRightsForAction, modalSkywardFinanceCreateSale,
-      latestDaoVersion, modalUpgrade, modalAddToDefi,
+      latestDaoVersion, modalUpgrade, modalAddToDefi, check,
     };
   },
 
@@ -167,6 +178,10 @@ export default {
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
+    },
+    modalOpen() {
+      this.modalProposal += 1
+      this.dropdownAction = false
     },
     modalPayoutOpen() {
       this.modalPayout += 1

@@ -1,8 +1,8 @@
 import { DAO, DAORights, DAORightsType, DAOVoteLevel, DAOVoteType } from "@/types/dao";
 // voting
-export const votingDemocraticHalfOneHour: DAOVoteLevel = { type: DAOVoteType.Democratic, quorum: 50, approveThreshold: 50, duration: { days: 0, hours: 1, minutes: 0 } }
-export const votingTokenWeightedLow: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 30, duration: { days: 0, hours: 1, minutes: 0 } }
-export const votingTokenWeightedHigh: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 80, duration: { days: 0, hours: 1, minutes: 0 } }
+export const votingDemocraticHalfOneHour: DAOVoteLevel = { type: DAOVoteType.Democratic, quorum: 50, approveThreshold: 50, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
+export const votingTokenWeightedLow: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 30, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
+export const votingTokenWeightedHigh: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 80, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
 // rights
 export const rightAnyone: DAORights = {type: DAORightsType.Anyone};
 export const rightMember: DAORights = {type: DAORightsType.Member};

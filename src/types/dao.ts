@@ -20,6 +20,7 @@ export type DAOVoteLevel = {
   approveThreshold: number;
   spamThreshold?: number;
   duration: DAOVoteDuration;
+  voteOnlyOnce: boolean;
 }
 
 // RIGHTS

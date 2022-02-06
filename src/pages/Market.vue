@@ -51,6 +51,7 @@
                     <th scope="col" class="text-start">{{ t('default.type') }}</th>
                     <th scope="col" class="text-start">{{ t('default.creator') }}</th>
                     <th scope="col" class="text-start">{{ t('default.version') }}</th>
+                    <th scope="col" class="text-start">{{ t('default.provider') }}</th>
                     <th scope="col" class="text-start">{{ t('default.code') }}</th>
                   </tr>
                 </thead>
@@ -63,6 +64,7 @@
                     <td class="text-start">{{ t('default.workflows') }}</td>
                     <td class="text-start">{{ creator.name }}</td>
                     <td class="text-start">v{{ template.version }}</td>
+                    <td class="text-start">{{ provider.name }}</td>
                     <td class="text-start">#{{ template.id }} {{ template.code }}</td>
                   </tr>
                 </tbody>
@@ -102,17 +104,16 @@ export default {
   setup() {
     const { t, n } = useI18n()
     const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
-    const { creator } = useCreators()
+    const { creator, provider } = useCreators()
 
     onMounted(() => {
       fetch()
-      filter()
     })
 
-    watch([filterSearch, filterOrder], () => { filter()})
+    watch([filterSearch, filterOrder], () => { filter() })
 
     return {
-      t, n, dataSource, dataResults, creator, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter
+      t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
     }
   },
 }

@@ -1,10 +1,10 @@
 <template>
   <Header></Header>
   <main>
-    <MDBContainer>
+    <MDBContainer v-if="template">
       <Breadcrumb :template="template" />
     </MDBContainer>
-    <MDBContainer>
+    <MDBContainer v-if="template">
       <MDBCard>
         <MDBCardBody>
           <MDBCardText>

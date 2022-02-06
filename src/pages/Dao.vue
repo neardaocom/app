@@ -15,7 +15,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole"/>
+        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -66,7 +66,7 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import _ from 'lodash'
 import { getRole, loadById } from "@/models/dao";
-//import * as nearAPI from "near-api-js"
+import { getDAORights, getWalletRights } from '@/models/rights'
 
 export default {
   components: {
@@ -79,8 +79,10 @@ export default {
     const q_id = null
     const dao = ref(null)
     const loaded = ref(false)
+    const daoRights = ref([])
+    const walletRights = ref([])
 
-    return { t, dao, q_id, loaded}
+    return { t, dao, q_id, loaded, daoRights, walletRights }
   },
   created() {
     // dao id
@@ -123,13 +125,15 @@ export default {
   methods: {
     getState() {
       //console.log('getState')
-      loadById(this.nearService, this.q_id, this.wallet.getAccountId())
+      loadById(this.nearService, this.q_id, this.t, this.wallet?.getAccountId())
       // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
           //console.log(r)
           //this.dao_state = r
           this.dao = r
           this.loaded = true
+          this.daoRights = getDAORights(r)
+          this.walletRights = getWalletRights(r, this.wallet?.getAccountId())
         })
         .catch((e) => {
           this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)

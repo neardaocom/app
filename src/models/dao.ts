@@ -1,6 +1,8 @@
 import { toSearch } from '@/utils/string'
 import lodashFind from "lodash/find"
-import lodashToInteger from "lodash/toInteger"
+import loToString from "lodash/toString"
+import loIsBoolean from "lodash/isBoolean"
+import loToInteger from "lodash/toInteger"
 import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
 import lodashNth from "lodash/nth"
 import { DAO, DAODocs, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
@@ -8,6 +10,8 @@ import Decimal from "decimal.js";
 import moment from 'moment';
 import { IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
+import { WFSettings, WFTemplate } from '@/types/workflow'
+import { parse as rightsParse } from "@/models/rights";
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -20,7 +24,7 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
         location: item[1].lang,
         ft_name: item[1].ft_name,
         ft_amount: n(item[1].ft_amount),
-        tags: item[1].tags.map((tag: any) => t('default.' + lodashNth(tags, lodashToInteger(tag)))),
+        tags: item[1].tags.map((tag: any) => t('default.' + lodashNth(tags, loToInteger(tag)))),
         search: '',
         amount: null,
     }
@@ -80,7 +84,7 @@ export const getMembers = (groups: DAOGroup[], proposals: object[]): string[] =>
     return members;
 }
 
-export const loadById = async (nearService: any, id: string, walletId?: string): Promise<DAO> => {
+export const loadById = async (nearService: any, id: string, t: any, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
     console.log(walletId)
@@ -100,7 +104,13 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
       throw new Error(`DAO[${id}] not loaded: ${e}`);
     });
 
-    console.log(data)
+    const dataHack = await Promise.all([
+      nearService.getWfTemplates(),
+    ]).catch((e) => {
+      throw new Error(`DAOHack[${id}] not loaded: ${e}`);
+    });
+
+    console.log(data, dataHack)
 
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
@@ -176,11 +186,66 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
             days: moment.duration(firstRight.duration).hours(),
             hours: moment.duration(firstRight.duration).minutes(),
             minutes: moment.duration(firstRight.duration).minutes(),
-        }
+        },
+        voteOnlyOnce: true,
     }
 
     // tags
     const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
+
+    // workflow
+    const templates: WFTemplate[] = [templatePayout]
+    dataHack[0].forEach((template, index) => {
+        // settings
+        const settings: WFSettings[] = []
+
+        console.log(template)
+        /*
+        allowed_proposers: [{…}]
+        allowed_voters: "TokenHolder"
+        approve_threshold: 51
+        deposit_propose: 1e+24
+        deposit_propose_return: 50
+        deposit_vote: 1000
+        duration: 300
+        quorum: 30
+        scenario: "TokenWeighted"
+        spam_threshold: 80
+        vote_only_once: true
+        */
+        template[1][1].forEach((settingsItem, index) => {
+            settings.push({
+                id: index + 1,
+                constants: [],
+                proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
+                voteRight: rightsParse(settingsItem.allowed_voters),
+                voteLevel: {
+                    type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
+                    quorum: settingsItem.quorum,
+                    approveThreshold: settingsItem.approve_threshold,
+                    spamThreshold: settingsItem.spam_threshold,
+                    duration: settingsItem.duration,
+                    voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
+                },
+                activities: [],
+            })
+        })
+
+        templates.push({
+            id: loToInteger(template[0]),
+            name: t('default.wf_templ_' + template[1][0].name),
+            version: loToString(template[1][0].version),
+            code: template[1][0].name,
+            constants: [],
+            attributes: [],
+            activities: [],
+            transactions: [],
+            startActivityIds: [],
+            endActivityIds: [],
+            search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
+            settings: settings,
+        })
+    });
 
     return {
         name: data[1].name,
@@ -217,7 +282,7 @@ export const loadById = async (nearService: any, id: string, walletId?: string):
         tags: tags,
         proposals: data[4],
         tokenHolders: tokenHolders,
-        templates: [templatePayout],
+        templates: templates,
         workflows: [payoutAtStart, payoutAfterPayNear, payoutFinished],
     }
 }

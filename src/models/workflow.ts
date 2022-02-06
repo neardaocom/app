@@ -89,5 +89,5 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
     const settings: WFSettings | undefined = getSettings(template, settingsId)
     const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
     // console.log(settings, params)
-    return {key: 'wf_' + template.code + '_constants', params: params}
+    return {key: 'wf_templ_' + template.code + '_constants', params: params}
 }
