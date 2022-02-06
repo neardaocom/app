@@ -86,12 +86,14 @@
         <!-- Copyright -->
         <div class="text-center p-4" style="background-color: hsla(0, 0%, 17%, 0.04)">
             © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a> {{ t('default.all_rights_reserved') }}
+            <span class="ms-4 me-1">{{ t('default.powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="publicPath + 'img/near.svg'" alt="" style="width: 70px;"/></a>
         </div>
     <!-- Copyright -->
     </MDBFooter>
 </template>
 
 <script>
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { MDBFooter } from "mdb-vue-ui-kit"
 export default {
@@ -112,9 +114,11 @@ export default {
         const today = new Date();
         const today_year = today.getFullYear();
 
+        const publicPath = computed(() => process.env.BASE_URL)
+
         return {
             app_brand_name, app_brand_about, app_brand_web, app_brand_address, app_brand_email, app_brand_twitter, app_brand_discord
-            , today_year, t
+            , today_year, t, publicPath,
         };
     }
 }

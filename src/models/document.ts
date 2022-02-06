@@ -1,9 +1,60 @@
 import { toCompare } from "@/utils/version";
 import { toSearch } from "@/utils/string";
+// import { convertArrayOfObjectToObject } from "@/utils/array";
 import _ from "lodash"
+import { getValueById, getIdByValue, IDValue } from "@/types/generic";
+import { DAODocs, DAODocsFile } from "@/types/dao";
+import lodashFilter from "lodash/filter"
+import lodashOrderBy from "lodash/orderBy"
+// import lodashGet from "lodash/get"
+import lodashSet from "lodash/set"
+import lodashFirst from "lodash/first"
+
+const getFile = (docs: DAODocs, name: string, category?: string, type?: string, version?: string): DAODocsFile | undefined | any => { // TODO: Remove any
+    const filter: object = {'name': name, 'valid': true}
+
+    if (category !== undefined)
+        lodashSet(filter, ['categoryId'], getIdByValue(docs.categories, category))
+    if (type !== undefined)
+        lodashSet(filter, ['type'], type)
+    if (version !== undefined)
+        lodashSet(filter, ['version'], version)
+
+    return lodashFirst( lodashOrderBy(lodashFilter(docs.files, filter) , ['version'], ['desc']))
+}
+
+const initStructure = [
+    { category: 'fundamental', items: [
+        { name: 'web', type: 'url' },
+        { name: 'wiki', type: 'url' },
+        { name: 'whitepaper', type: 'url' },
+        { name: 'source_code', type: 'url' },
+        { name: 'domain', type: 'plain' },
+        { name: 'logo', type: 'binaryImage' },
+        { name: 'cover', type: 'binaryImage' },
+      ],
+    },
+    { category: 'social', items: [
+        { name: 'twitter', type: 'url' },
+        { name: 'facebook', type: 'url' },
+        { name: 'linkedIn', type: 'url' },
+      ]
+    },
+    { category: 'kyc', items: [
+        { name: 'legal_status', type: 'plain' },
+        { name: 'legal_document', type: 'url' },
+      ]
+    },
+    { category: 'chat', items: [
+        { name: 'discord', type: 'url' },
+        { name: 'signal', type: 'url' },
+        { name: 'telegram', type: 'url' },
+      ]
+    },
+]
 
 const getCategoriesInit = (t: any): string[] => {
-  return [t('default.fundamental'), t('default.kyc')]
+  return initStructure.map(item => t('default.' + item.category))
 }
 
 const getNamesInit = (t: any): string[] => {
@@ -12,7 +63,7 @@ const getNamesInit = (t: any): string[] => {
 
 const getCategories = (docs: any, t: any) => {
   const initCategory = getCategoriesInit(t)
-  const others = docs.map.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item) == -1).sort()
+  const others = docs.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item.value) == -1).sort()
   return initCategory.concat(others)
 }
 
@@ -47,7 +98,7 @@ const getIndexInFiles = (files: any, name: string, category: string) => {
     return _.findIndex(files, {'key': file_key})
 }
 
-const transform = (docs: any) => {
+const transform = (docs: DAODocs) => {
     // console.log(category)
     //const initCategories = getCategoriesInit(t)
     //const initNames = getNamesInit(t)
@@ -57,11 +108,13 @@ const transform = (docs: any) => {
     let file_index: number
     let file_version: number
     let version: number
+    // const categories: object = convertArrayOfObjectToObject(docs.categories, 'id', 'value')
+    
     docs.files.forEach((element: any, index: number) => {
         version = toCompare(element.version)
-        key = getKey(element.name, element.category)
+        key = getKey(element.name, element.categoryId)
         // exists
-        file_index = getIndexInFiles(files, element.name, element.category)
+        file_index = getIndexInFiles(files, element.name, element.categoryId)
         if (file_index >= 0) {
             file_version = toCompare(files[file_index].version)
             // new/old version
@@ -74,17 +127,17 @@ const transform = (docs: any) => {
                     ipfs_cid: files[file_index].ipfs_cid,
                 })
                 files[file_index].index = index,
-                files[file_index].tags = element.tags
+                files[file_index].tags = element.tagIds
                 files[file_index].version = element.version
-                files[file_index].ext = element.ext
+                files[file_index].type = element.type
                 files[file_index].valid = element.valid
-                files[file_index].ipfs_cid = element.ipfs_cid
-                files[file_index].search = [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map((tag: any) => toSearch(tag))).join('-')
+                files[file_index].ipfs_cid = element.value
+                files[file_index].search = [toSearch(element.name), toSearch( getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => toSearch(tag)))
             } else {
                 files[file_index].versions.push({
                     index: index,
                     version: element.version,
-                    ext: element.ext,
+                    type: element.ext,
                     valid: element.valid,
                     ipfs_cid: element.ipfs_cid,
                 })
@@ -94,15 +147,15 @@ const transform = (docs: any) => {
                 index: index,
                 key: key,
                 name: element.name,
-                category: element.category,
-                tags: element.tags,
-                ext: element.ext,
+                category: getValueById(docs.categories, element.categoryId),
+                tags: element.tagIds,
+                type: element.type,
                 version: element.version,
                 valid: element.valid,
-                ipfs_cid: element.ipfs_cid,
+                ipfs_cid: element.value,
                 description: element.description,
                 versions: [],
-                search: [toSearch(element.name), toSearch(element.category), toSearch(element.description)].concat(element.tags.map((tag: any) => toSearch(tag))).join('-')
+                search: [toSearch(element.name), toSearch( getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => toSearch(tag)))
             })
         }
     });
@@ -110,4 +163,4 @@ const transform = (docs: any) => {
     return files
 }
 
-export {getCategories, getNames, transform, getIndexInFiles}
+export {getCategories, getNames, transform, getIndexInFiles, initStructure, getFile}

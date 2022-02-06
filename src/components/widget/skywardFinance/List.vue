@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Auction from "@/components/market/skywardFinance/Auction.vue"
+import Auction from "@/components/widget/skywardFinance/Auction.vue"
 import { onMounted, onUnmounted, toRefs, computed } from "vue"
 import { useStore } from "vuex"
 // import { testDataset } from "@/services/skywardFinanceService/types"
@@ -50,7 +50,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.auction.skyward_finance)
+        } = useSkywardFinanace(account.value, 'supertest.testnet', dao.value.register.skywardFinance) // TODO: process.env (process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT)
 
         skywardFetch()
 

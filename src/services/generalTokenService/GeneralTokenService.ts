@@ -3,7 +3,7 @@ import { Contract, Account} from "near-api-js";
 export default class GeneralTokenService {
   private contract: Contract & any;
 
-  constructor(account: Account, contractId: string) {
+  constructor(account: Account & any, contractId: string) {
     this.contract = new Contract(account, contractId, {
       viewMethods: [
         'ft_metadata'

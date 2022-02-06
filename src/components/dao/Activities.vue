@@ -1,29 +1,5 @@
 <template>
   <div class="container mb-2">
-    <!-- Order -->
-    <!-- <div class="d-flex align-items-center mb-2">
-    <hr class="flex-grow-1 my-0" />
-    <p class="mb-0 px-2 small">Řadit podle:</p>
-    <div class="dropdown">
-      <a
-        class="link-dark dropdown-toggle font-weight-bold small"
-        href="#"
-        role="button"
-        id="dropdownMenuLink"
-        data-mdb-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Vytvořeno
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-      </ul>
-    </div>
-  </div>-->
-    <!-- /Order -->
-    <!-- Proposal in progress -->
     <div class="card mb-3">
       <div class="card-body">
         <div class="row">
@@ -53,7 +29,7 @@
     <div class="row">
       <div v-for="(workflow, index) in results" :key="index" class="col-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Workflow :workflow="workflow" />
+          <Workflow :workflow="workflow" :template="template(dao.templates, workflow.templateId)" />
         </section>
       </div>
     </div>
@@ -65,10 +41,10 @@ import { MDBInput, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
 import { ref } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
-import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
-import Workflow from "@/components/dao/Workflow.vue"
+import Workflow from "@/components/dao/activities/Workflow.vue"
 import orderBy from "lodash/orderBy"
 import { toSearch } from '@/utils/string'
+import { getTemplate } from "@/models/workflow";
 
 export default {
   components: {
@@ -92,8 +68,6 @@ export default {
     //const { dao, accountId } = toRefs(props)
     const { t } = useI18n();
 
-    const workflows = [payoutAtStart, payoutAfterPayNear, payoutFinished]
-
     const searchQuery = ref('')
     const filterState = reactive({
     })
@@ -104,11 +78,11 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { t, workflows, searchQuery, filterState, order };
+    return { t, searchQuery, filterState, order };
   },
   computed: {
     results() {
-      let results = this.workflows
+      let results = this.dao.workflows
       // filter
       // searching
       const searchText = toSearch(this.searchQuery)
@@ -130,6 +104,9 @@ export default {
     },
   },
   methods: {
+    template(templates, templateId) {
+      return getTemplate(templates, templateId)
+    }
   }
 };
 </script>

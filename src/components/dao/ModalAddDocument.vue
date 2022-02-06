@@ -139,14 +139,6 @@ export default {
       type: String,
       required: true
     },
-    groups: {
-      type: Object,
-      required: true
-    },
-    tokenHolders: {
-      type: Object,
-      required: true
-    },
     docs: {
       type: Object,
       required: true
