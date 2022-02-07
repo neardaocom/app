@@ -54,7 +54,7 @@
                 <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
               </template>
             </template>
-            <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
+            <!-- <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
             <MDBDropdownItem tag="button" @click="modalRemoveCouncilOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_council')}}</MDBDropdownItem>
@@ -67,14 +67,17 @@
             <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('RefFinance')" tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
             <MDBDropdownItem v-if="possibleUpgrade" divider />
-            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem>
+            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem> -->
           </MDBDropdownMenu>
         </MDBDropdown>
       </div>
       <!-- /Right -->
     </section>
+    <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
+      <component :is="activeForm" v-bind="formProps"></component>
+    </ModalProposal>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
+    <!-- <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
     <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" />
     <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" />
     <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" />
@@ -85,24 +88,26 @@
     <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" />
     <ModalAddToDefi :show="modalAddToDefi" :contractId="dao.wallet"/>
     <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
-    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
+    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" /> -->
 </template>
 
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import ModalPayout from '@/components/dao/ModalPayout'
-import ModalAddDocument from '@/components/dao/ModalAddDocument'
-import ModalAddMember from '@/components/dao/ModalAddMember'
-import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
-import ModalAddRightsForAction from '@/components/dao/ModalAddRightsForAction'
-import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
-import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
-import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
-import ModalGeneral from '@/components/dao/ModalGeneral'
-import ModalUpgrade from '@/components/dao/ModalUpgrade'
-import ModalActionSkywardFinanceCreateSale from '@/components/dao/ModalActionSkywardFinanceCreateSale'
-import ModalAddToDefi from '@/components/dao/ModalAddToDefi';
+// import ModalPayout from '@/components/dao/ModalPayout'
+// import ModalAddDocument from '@/components/dao/ModalAddDocument'
+// import ModalAddMember from '@/components/dao/ModalAddMember'
+// import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
+// import ModalAddRightsForAction from '@/components/dao/ModalAddRightsForAction'
+// import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
+// import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
+// import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
+// import ModalGeneral from '@/components/dao/ModalGeneral'
+// import ModalUpgrade from '@/components/dao/ModalUpgrade'
+// import ModalActionSkywardFinanceCreateSale from '@/components/dao/ModalActionSkywardFinanceCreateSale'
+// import ModalAddToDefi from '@/components/dao/ModalAddToDefi';
+import ModalProposal from '@/components/forms/ModalProposal.vue'
+import Payout from '@/components/forms/PayoutForm.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn,
@@ -112,10 +117,17 @@ import { check } from "@/models/rights";
 
 export default {
   components: {
-    MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction, ModalActionSkywardFinanceCreateSale,
-    ModalAddToDefi
+    MDBDropdown, 
+    MDBDropdownToggle, 
+    MDBDropdownMenu, 
+    MDBDropdownItem, 
+    MDBBtn,
+    MDBIcon,
+    ModalProposal, 
+    Payout, 
+    // ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
+    // ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction, ModalActionSkywardFinanceCreateSale,
+    // ModalAddToDefi
   },
   props: {
     dao: {
@@ -133,7 +145,6 @@ export default {
   },
   setup() {
     const { t } = useI18n();
-    const modalProposal = ref(0)
     const modalPayout = ref(0)
     const modalAddDocument = ref(0)
     const modalAddMember = ref(0)
@@ -149,10 +160,16 @@ export default {
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
 
+    const modalProposal = ref(0)
+    const modalTitle = ref('')
+    const activeForm = ref('')
+    const activeFormCode = ref('')
+    const formProps = ref({})
     return {
-      t, dropdownAction, modalProposal, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
+      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
       modalAddRightsForAction, modalSkywardFinanceCreateSale,
-      latestDaoVersion, modalUpgrade, modalAddToDefi, check,
+      latestDaoVersion, modalUpgrade, modalAddToDefi, 
+      modalProposal, modalTitle, activeForm, activeFormCode, formProps, check,
     };
   },
 
@@ -179,9 +196,47 @@ export default {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalOpen() {
+    modalOpen(templ, templSettings){
       this.modalProposal += 1
       this.dropdownAction = false
+      this.modalTitle = templ.name
+      switch (templ.code) {
+        case 'wf_near_send':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name}
+          this.activeForm = 'Payout'
+          this.activeFormCode = templ.code 
+          break
+        case 'payout':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name}
+          this.activeForm = 'Payout'
+          this.activeFormCode = templ.code 
+          break
+        case 'add_wf':
+          console.log('add_wf');
+          break
+        default:
+            this.formProps = {}
+            this.activeForm = ''
+            this.activeFormCode = ''
+      }
+      console.log(templ);
+      console.log(templSettings);
+    },
+
+    vote(){
+      switch (this.activeFormCode) {
+        case 'wf_near_send':
+          console.log('wf_near_send');
+          break
+        case 'payout':
+          console.log('add_wf');
+          break
+        case 'add_wf':
+          console.log('add_wf');
+          break
+        default:
+          console.log('invalid code');
+      }
     },
     modalPayoutOpen() {
       this.modalPayout += 1
