@@ -3,14 +3,16 @@ import lodashFind from "lodash/find"
 import loToString from "lodash/toString"
 import loIsBoolean from "lodash/isBoolean"
 import loToInteger from "lodash/toInteger"
+import loNth from "lodash/nth"
+import loFind from "lodash/find"
+import loUniq from "lodash/uniq"
 import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
-import lodashNth from "lodash/nth"
 import { DAO, DAODocs, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
 import { IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
-import { WFSettings, WFTemplate } from '@/types/workflow'
+import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
@@ -24,13 +26,79 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
         location: item[1].lang,
         ft_name: item[1].ft_name,
         ft_amount: n(item[1].ft_amount),
-        tags: item[1].tags.map((tag: any) => t('default.' + lodashNth(tags, loToInteger(tag)))),
+        tags: item[1].tags.map((tag: any) => t('default.' + loNth(tags, loToInteger(tag)))),
         search: '',
         amount: null,
     }
     trans.search = [toSearch(trans.id), toSearch(trans.name), toSearch(trans.description), toSearch(trans.ft_name)].concat(trans.tags.map((tag: any) => toSearch(tag))).join('-')
     return trans
-});
+})
+
+export const getDaoActionMethod = (name: string): string => {
+    let methodName: string = ''
+    switch (name) {
+        case "GroupAdd":
+            methodName = 'group_add'
+            break;
+        case "GroupRemove":
+            methodName = 'group_remove'
+            break;
+        case "GroupUpdate":
+            methodName = 'group_update'
+            break;
+        case "GroupMemberAdd":
+            methodName = 'group_member_add'
+            break;
+        case "GroupMemberRemove":
+            methodName = 'group_member_remove'
+            break;
+        case "SettingsUpdate":
+            methodName = 'settings_update'
+            break;
+        case "MediaAdd":
+            methodName = 'media_add'
+            break;
+        case "MediaInvalidate":
+            methodName = 'media_invalidate'
+            break;
+        case "FnCall":
+            methodName = 'function_call'
+            break;
+        case "FnCallAdd":
+            methodName = 'function_call_add'
+            break;
+        case "FnCallRemove":
+            methodName = 'function_call_remove'
+            break;
+        case "TagAdd":
+            methodName = 'tag_add'
+            break;
+        case "TagEdit":
+            methodName = 'tag_edit'
+            break;
+        case "TagRemove":
+            methodName = 'tag_remove'
+            break;
+        case "FtDistribute":
+            methodName = 'ft_distribute'
+            break;
+        case "FtSend":
+            methodName = 'treasury_ft_send'
+            break;
+        case "NftSend":
+            methodName = 'treasury_nft_send'
+            break;
+        case "NearSend":
+            methodName = 'treasury_near_send'
+            break;
+        case "WorkflowAdd":
+            methodName = 'workflow_add'
+            break;
+        default:
+            throw new Error("Unsupported name: " + name)
+    }
+    return methodName
+}
 
 export const getAccountId = (accountId: string): string => accountId.split('.')[0];
 
@@ -193,27 +261,102 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     // tags
     const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
 
-    // workflow
-    const templates: WFTemplate[] = [templatePayout]
-    dataHack[0].forEach((template, index) => {
+    // templates
+    const templates: WFTemplate[] = []
+    let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: ''}
+    let activity: WFActivity | undefined = undefined
+    // console.log(dataHack[0])
+    dataHack[0].forEach((template) => {
+        console.log(template)
+
+        // activities
+        const activities: WFActivity[] = []
+        const startActivityIds: number[] = []
+        const endActivityIds: number[] = []
+        template[1][0].activities.forEach((actionTempl, index) => {
+            if (actionTempl !== null) {
+                action = {
+                    id: index,
+                    name: t('default.wf_templ_' + template[1][0].name + '_action_' + actionTempl.action),
+                    code: actionTempl.action,
+                    smartContractMethod: getDaoActionMethod(actionTempl.action),
+                }
+                activity = loFind(activities, {code: action.code})
+                if (activity !== undefined) {
+                    activity.actions.push(action)
+                } else {
+                    activity = {
+                        id: index,
+                        name: t('default.wf_templ_' + template[1][0].name + '_activity_' + actionTempl.code),
+                        code: actionTempl.code,
+                        smartContractId: (actionTempl.fncall_id === null) ? '' : loToString(actionTempl.fncall_id),
+                        attributes: [],
+                        actions: [action]
+                    }
+                    activities.push(activity)
+                }
+
+                // end
+                if (template[1][0].end.includes(index)) {
+                    endActivityIds.push(activity.id)
+                }
+            }
+        })
+
+        // transitions
+        const transitions: WFTransition[] = []
+        let activityTarget: WFActivity | undefined;
+        let activityTo: WFActivity | undefined;
+        template[1][0].transitions.forEach((transToIds, index) => {
+            if (transToIds !== null ) {
+                if (index === 0) {
+                    // start
+                    transToIds.forEach((transToId) => {
+                        activityTo = loFind(activities, {code: template[1][0].activities[transToId].code})
+                        if (activityTo) {
+                            startActivityIds.push(activityTo.id)
+                        }
+                    })
+                } else {
+                    // transitions
+                    activityTarget = loFind(activities, {code: template[1][0].activities[index].code})
+                    transToIds.forEach((transToId) => {
+                        activityTo = loFind(activities, {code: template[1][0].activities[transToId].code})
+                        if (activityTarget && activityTo) {
+                            transitions.push({
+                                id: index,
+                                fromId: activityTarget.id,
+                                toId: activityTo.id,
+                            })
+                        }
+                        // start
+                        if (index === 0 && activityTo) {
+                            startActivityIds.push(activityTo.id)
+                        }
+                    })
+                }
+            }
+        })
+
         // settings
         const settings: WFSettings[] = []
-
-        console.log(template)
-        /*
-        allowed_proposers: [{…}]
-        allowed_voters: "TokenHolder"
-        approve_threshold: 51
-        deposit_propose: 1e+24
-        deposit_propose_return: 50
-        deposit_vote: 1000
-        duration: 300
-        quorum: 30
-        scenario: "TokenWeighted"
-        spam_threshold: 80
-        vote_only_once: true
-        */
+        const settingsActivities: WFSettingsActivity[] = []
+        let settingsActivitiesItem: WFSettingsActivity | undefined
         template[1][1].forEach((settingsItem, index) => {
+            settingsItem.activity_rights.forEach((rightsList, index) => {
+                if (index > 0) {
+                    activityTarget = loFind(activities, {code: template[1][0].activities[index].code})
+                    settingsActivitiesItem = loFind(settingsActivities, {activityId: activityTarget!.id})
+                    if (settingsActivitiesItem === undefined) {
+                        settingsActivitiesItem = {activityId: activityTarget!.id, rights: []}
+                        settingsActivities.push(settingsActivitiesItem)
+                    }
+                    rightsList.forEach((rights) => {
+                        settingsActivitiesItem!.rights.push(rightsParse(rights))
+                    })
+                    settingsActivitiesItem!.rights = loUniq(settingsActivitiesItem!.rights)
+                }
+            })
             settings.push({
                 id: index + 1,
                 constants: [],
@@ -227,10 +370,10 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                     duration: settingsItem.duration,
                     voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
                 },
-                activities: [],
+                activities: settingsActivities,
             })
         })
-
+        
         templates.push({
             id: loToInteger(template[0]),
             name: t('default.wf_templ_' + template[1][0].name),
@@ -238,14 +381,18 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             code: template[1][0].name,
             constants: [],
             attributes: [],
-            activities: [],
-            transactions: [],
-            startActivityIds: [],
-            endActivityIds: [],
+            activities: activities,
+            transactions: transitions,
+            startActivityIds: loUniq(startActivityIds),
+            endActivityIds: loUniq(endActivityIds),
             search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
             settings: settings,
         })
+        
     });
+
+    // workflows TODO: Load from smart contract
+    const workflows: WFInstance[] = [payoutAtStart, payoutAfterPayNear, payoutFinished]
 
     return {
         name: data[1].name,
@@ -283,7 +430,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         proposals: data[4],
         tokenHolders: tokenHolders,
         templates: templates,
-        workflows: [payoutAtStart, payoutAfterPayNear, payoutFinished],
+        workflows: workflows,
     }
 }
 

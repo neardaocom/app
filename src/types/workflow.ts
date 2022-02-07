@@ -19,6 +19,7 @@ export type WFExpression = {
 }
 
 export type WFAction = {
+    id: number;
     name: string;
     code: string;
     smartContractMethod: string;

@@ -125,7 +125,7 @@ export default {
   methods: {
     getState() {
       //console.log('getState')
-      loadById(this.nearService, this.q_id, this.t, this.wallet?.getAccountId())
+      loadById(this.nearService, this.q_id, this.t, this.wallet.getAccountId())
       // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
           //console.log(r)

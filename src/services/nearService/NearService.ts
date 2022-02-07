@@ -63,7 +63,7 @@ class NearService {
       ],
     });
 
-    this.providerContract = new Contract(account, process.env.VUE_APP_PROVIDER_CONTRACT_NAME || '', {
+    this.providerContract = new Contract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME, {
       viewMethods: [
         'list',
         'get',
