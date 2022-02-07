@@ -1,12 +1,12 @@
-import { WFInstance, WFSettings, WFTemplate } from "@/types/workflow"
+import { WFAction, WFInstance, WFSettings, WFTemplate } from "@/types/workflow"
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
 
-export const actionDAOSendNear = { name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near' }
-export const actionDAOSendToken = { name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_token' }
-export const actionDAOCreateGroup = { name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create' }
-export const actionDAOAddMember = { name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member' }
+export const actionDAOSendNear: WFAction = {id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near' }
+export const actionDAOSendToken: WFAction = {id: 2,  name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_token' }
+export const actionDAOCreateGroup: WFAction = {id: 3,  name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create' }
+export const actionDAOAddMember: WFAction = {id: 4,  name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member' }
 
 export const templatePayoutSettings: WFSettings = {
   id: 1,

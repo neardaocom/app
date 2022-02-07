@@ -8,7 +8,7 @@ export class ContractPool {
 
   constructor(account: Account) {
     this.account = account;
-    this.poolHack = new Contract(account, 'dao.dev-1644163574244-52976787737902', {
+    this.poolHack = new Contract(account, 'dao.' + process.env.VUE_APP_CONTRACT_NAME, {
       viewMethods: [
         'wf_templates'
       ],
