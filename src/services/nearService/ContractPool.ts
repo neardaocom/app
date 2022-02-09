@@ -10,7 +10,12 @@ export class ContractPool {
     this.account = account;
     this.poolHack = new Contract(account, 'dao.' + process.env.VUE_APP_CONTRACT_NAME, {
       viewMethods: [
-        'wf_templates'
+        'wf_templates',
+        'groups',
+        'tags',
+        'media_list',
+        'proposals',
+        'dao_settings',
       ],
       changeMethods: [
       ],

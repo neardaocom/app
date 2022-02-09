@@ -2,6 +2,7 @@ import { defineRule } from 'vee-validate';
 import { required, numeric, max, min, alpha } from '@vee-validate/rules';
 import store from '@/store'
 import Decimal from 'decimal.js';
+import { getAccountIdPostfix } from "@/services/nearService/utils"
 
 const stringLocaleNumber = (value, [localeString]) => {
     if (localeString === 'en') {
@@ -30,21 +31,21 @@ const strNumMax = (value, [max]) => {
     return false
 }
 
-const accountExists = async (value: string) => {
+const accountExists = async (value: string, [accountPosfix]) => {        
     try{
         const newValue = value.trim()
-        const account = await store.getters['near/getService'].getAccountState(newValue + '.' + store.getters['near/getFactoryAccount'])        
+        const account = await store.getters['near/getService'].getAccountState(accountPosfix ? `${newValue}.${accountPosfix}` : newValue)   
         if (account){
             return true
         }
         return false
-    }catch(e){        
+    }catch(e){    
         return false
     }
 }
 
-const accountNotExists = async (value: string) => {
-    const result = await accountExists(value)
+const accountNotExists = async (value: string, [accountPosfix]) => {
+    const result = await accountExists(value, [accountPosfix])
     return !result
 }
 

@@ -35,7 +35,7 @@
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('default.purpose_short')" id="dao_council" :buttonText="t('default.add')" :addon="`.${factoryAccount}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('default.purpose_short')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 col-md-7 mb-4 mt-2">
@@ -238,6 +238,7 @@ import { inject, onMounted, watch, watchEffect } from '@vue/runtime-core';
 import { compareByText } from '@/utils/object'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
+import { getAccountIdPostfix } from "@/services/nearService/utils"
 
 export default {
     components: {
@@ -264,16 +265,17 @@ export default {
         const store = useStore()   
 
         const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const schema = computed(() => {
             return {
                 dao_name: 'required|min:3|max:64',
-                dao_account: 'required|accountNotExists',
+                dao_account: `required|accountNotExists:${factoryAccount.value}`,
                 dao_purpose: 'max:160',
                 dao_type: 'required',
-                dao_council: 'required|accountExists',
+                dao_council: `required|accountExists:${accountPostfix.value}`,
                 council_array: 'required',
                 dao_ft_name: 'required|min:3|max:64|alpha',
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
@@ -330,7 +332,7 @@ export default {
 
         const addCouncil = () =>{
             if (!errors.value.dao_council && values.dao_council){
-                council.value.push(`${values.dao_council}.${factoryAccount.value}`)
+                council.value.push(`${values.dao_council}.${accountPostfix.value}`)
             }
         }
 
@@ -339,10 +341,10 @@ export default {
         }
 
         const onSubmit = handleSubmit(values => {
-            console.log(values);
             alert(JSON.stringify(values, null, 2));
+            //createDao(values)
         }, () => {
-                console.log(errors.value)
+            console.log(errors.value)
         });
 
         // type loading
@@ -362,9 +364,46 @@ export default {
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
         const unlockingTime = computed(() => `${values.dao_unlocking_year ? `${values.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.dao_unlocking_month > 0 ? `${values.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
+        // const createDao = (values) => {
+        //     const accountId = values.dao_account + '.' + this.factoryAccount
+
+        //     //create
+        //     await this.nearService.createDao(
+        //         this.account
+        //         , null
+        //         , this.name
+        //         , this.slogan
+        //         , [this.nearTags.value.indexOf(this.type)] // tags
+        //         , [...this.council] // founders
+        //         , this.location // location
+        //         , this.ftName // ftName
+        //         , this.ftAmount // ftAmount
+        //         , this.ftCouncilShare // ftCouncilShare
+        //         , new Decimal(this.ftCouncilInitDistributionPercent).div(100).mul(this.ftCouncilShare).div(100).mul(this.ftAmount).toNumber()  // ftCouncilInitDistribution
+        //         , null // ftCouncilUnlockingFrom
+        //         , moment.duration().add(Number.parseFloat(this.ftCouncilUnlockingYear), 'y').add(Number.parseFloat(this.ftCouncilUnlockingMonth), 'M').asSeconds() // ftCouncilUnlockingDuration
+        //         , this.ftCommunityShare // ftCommunityShare
+        //         , null // ftCommunityUnlockingFrom
+        //         , null // ftCommunityUnlockingDuration
+        //         , this.ftFoundationShare // ftFoundationShare
+        //         , null // ftFoundationUnlockingFrom
+        //         , null // ftFoundationUnlockingDuration
+        //         , null // ftPublicSaleUnlockingFrom
+        //         , null // ftPublicSaleUnlockingDuration
+        //         , this.voteSpamThreshold // voteSpamThreshold
+        //         , this.voteDurationDays // voteDurationDays
+        //         , this.voteDurationHours // voteDurationHours
+        //         , this.voteQuorum // voteQuorum
+        //         , this.voteApproveThreshold // voteApproveThreshold
+        //         , this.voteOnlyOnce // voteOnlyOnce
+        //         , 5 // amountToTransfer
+        //     )
+        // }
+
         return {
             t,
             factoryAccount,
+            accountPostfix,
             typeOptions,
             onSubmit,
             council,

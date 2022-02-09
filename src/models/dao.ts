@@ -5,15 +5,19 @@ import loIsBoolean from "lodash/isBoolean"
 import loToInteger from "lodash/toInteger"
 import loNth from "lodash/nth"
 import loFind from "lodash/find"
+import loFindKey from "lodash/findKey"
 import loUniq from "lodash/uniq"
+import loUniqWith from "lodash/uniqWith"
+import loIsEqual from "lodash/isEqual"
 import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
-import { DAO, DAODocs, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
+import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
 import { IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
 import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
+import { keys } from 'lodash'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -152,6 +156,46 @@ export const getMembers = (groups: DAOGroup[], proposals: object[]): string[] =>
     return members;
 }
 
+export const getMediaCategories = (docFiles: any[]) => {
+    const categories: IDValue[] = []
+    let i = 0
+    docFiles.forEach((item) => { 
+        const bool = categories.some(category => category.value === item.category)
+        if(bool === false){
+            categories.push({
+                id: i,
+                value: item.category
+            })
+            i++
+        }
+    })
+    return categories
+}
+
+
+export const getTagsObjects = (tagsObj: object, keys: number[] ) =>{
+    const tags: IDValue[] = []
+    Object.keys(tagsObj).forEach((key) => {
+        if(keys.includes(+key)){
+            tags.push({
+                id: +key,
+                value: tagsObj[key.toString()]
+            })
+        } 
+    })
+    return tags
+}
+
+export const getTags = (globalTags: object, validTags: number[] | boolean = false ) => {
+    let keys
+    if(validTags === false){
+        keys = Object.keys(globalTags).map((el) => +el);
+    }else{
+        keys = validTags
+    }    
+    return getTagsObjects(globalTags, keys)
+}
+
 export const loadById = async (nearService: any, id: string, t: any, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
@@ -174,6 +218,13 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     const dataHack = await Promise.all([
       nearService.getWfTemplates(),
+      nearService.getGroups(),
+      nearService.getGroupTags(),
+      nearService.getMediaTags(),
+      nearService.getMediaList(),
+      nearService.getGlobalTags(),
+      nearService.getHackProposals(id,0, 1000),
+      nearService.getDaoSettings()
     ]).catch((e) => {
       throw new Error(`DAOHack[${id}] not loaded: ${e}`);
     });
@@ -183,33 +234,66 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
 
-    // groups
-    const groups: DAOGroup[] = [{
-        id: 1,
-        name: 'Council',
-        members: data[2].council.map((member: string) => { return { accountId: member, roles: [] }}),
-        token: {
-            algorithm: (typeof data[3].council_release_model === 'string') ? data[3].council_release_model : Object.keys(data[3].council_release_model)[0],
-            locked: data[3].council_ft_stats.total,
-            init: data[3].council_ft_stats.init_distribution,
-            distributed: data[3].council_ft_stats.distributed,
-            unlocked: data[3].council_ft_stats.unlocked,
-            duration: data[3].council_release_model.Linear.duration,
-            releaseEnd: data[3].council_release_model.Linear.release_end,
-        },
-    }]
+     // groups
 
-    // token holders
-    const members: string[] = getMembers(groups, data[4])
+    // const groups: DAOGroup[] = [{
+    //     id: 1,
+    //     name: 'Council',
+    //     members: data[2].council.map((member: string) => { return { accountId: member, roles: [] }}),
+    //     token: {
+    //         algorithm: (typeof data[3].council_release_model === 'string') ? data[3].council_release_model : Object.keys(data[3].council_release_model)[0],
+    //         locked: data[3].council_ft_stats.total,
+    //         init: data[3].council_ft_stats.init_distribution,
+    //         distributed: data[3].council_ft_stats.distributed,
+    //         unlocked: data[3].council_ft_stats.unlocked,
+    //         duration: data[3].council_release_model.Linear.duration,
+    //         releaseEnd: data[3].council_release_model.Linear.release_end,
+    //     },
+    // }]
+
+    const groupTags = dataHack[2]
+    const groups: DAOGroup[] = dataHack[1].map(group => {
+        const members = group.members.map(member => {
+            return{
+                accountId: member.account_id, 
+                roles: member.tags.map(tag => groupTags.map[tag])
+            }
+        } )
+        let token
+        if (group.release_data && group.release_model){
+            const algorithm: string = Object.keys(group.release_model)[0]
+            token = {
+                algorithm: algorithm,
+                locked: group.release_data.total,
+                init: group.release_data.init_distribution,
+                distributed: group.release_data.init_distribution,
+                unlocked: group.release_data.unlocked,
+                duration: group.release_model[algorithm].duration,
+                releaseEnd: group.release_model[algorithm].release_end,
+            }
+        }
+        return {
+            id: group.id,
+            name: group.settings.name,
+            leader: group.settings.leader || undefined,
+            members,
+            token: token || undefined
+        }        
+    });
+        
+
+    // token holders 
+        // TODO: Is it good way to find members, form proposals??
+
+    //const members: string[] = getMembers(groups, data[4])
+    const members: string[] = getMembers(groups, dataHack[6])
 
     if (walletId !== undefined && members.includes(walletId) === false) {
         members.push(walletId)
     }
     
-
     const tokenHolders: DAOTokenHolder[] = []
     let walletToken: number | undefined = undefined
-    //console.log(member_promises)
     const balances = await Promise.all(
         members.map((member) => nearService.getFtBalanceOf(id, member))
     ).catch((e) => {
@@ -222,44 +306,104 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             walletToken = new Decimal(balances[index] ?? 0).toNumber()
         }
     });
+    
 
     // DOCs
+
+    // const docs: DAODocs = {
+    //     files: [],
+    //     categories: data[5].map["Doc"].categories.map((item, index) => { return {id: index, value: item}}),
+    //     tags: [],
+    // }
+    // data[5].files.forEach((element: any[]) => {
+    //   docs.files.push({
+    //     name: element[1].Curr.name,
+    //     type: element[1].Curr.ext,
+    //     categoryId: element[1].Curr.category,
+    //     version: element[1].Curr.v,
+    //     valid: element[1].Curr.valid,
+    //     value: {
+    //         source: 'web3.storage',
+    //         cid: element[0],
+    //     },
+    //     tagIds: [],
+    //   })
+    // });
+    
     const docs: DAODocs = {
         files: [],
-        categories: data[5].map["Doc"].categories.map((item, index) => { return {id: index, value: item}}),
-        tags: [],
+        categories: getMediaCategories(dataHack[4]),
+        tags: getTags(dataHack[3].map),
     }
-    data[5].files.forEach((element: any[]) => {
-      docs.files.push({
-        name: element[1].Curr.name,
-        type: element[1].Curr.ext,
-        categoryId: element[1].Curr.category,
-        version: element[1].Curr.v,
-        valid: element[1].Curr.valid,
-        value: {
-            source: 'web3.storage',
-            cid: element[0],
-        },
-        tagIds: [],
-      })
-    });
+    console.log(docs);
+    
+
+    dataHack[4].forEach((element) => {
+        const mediaTypeKey = Object.keys(element.media_type)[0]
+        const value = mediaTypeKey === 'Link' ? 
+            element.media_type[mediaTypeKey] : 
+            { source: element.media_type[mediaTypeKey].ipfs, cid: element.media_type[mediaTypeKey].cid }
+        const type = mediaTypeKey === 'Link' ?
+            DAODocsFileType.url :
+            DAODocsFileType[loFindKey(DAODocsFileType, value => value === element.media_type[mediaTypeKey].mimetype ) || '']            
+
+        docs.files.push({
+          name: element.name,
+          type: type,
+          categoryId: loFind(docs.categories, { value: element.category })?.id || -1,
+          version: element.version,
+          valid: element.valid,
+          value: value,
+          tagIds: element.tags,
+        })
+      });
+
+
 
     // vote level
-    const firstRight = data[8][0][1];
-    const voteLevel: DAOVoteLevel = {
-        type: DAOVoteType.TokenWeighted,
-        quorum: firstRight.quorum,
-        approveThreshold: firstRight.approve_threshold,
-        duration: {
-            days: moment.duration(firstRight.duration).hours(),
-            hours: moment.duration(firstRight.duration).minutes(),
-            minutes: moment.duration(firstRight.duration).minutes(),
-        },
-        voteOnlyOnce: true,
-    }
+
+    // const firstRight = data[8][0][1];
+    // const durationDay = moment.duration(firstRight.duration).hours()
+    // const durationHours = moment.duration(firstRight.duration).minutes()
+    // const durationMinutes = moment.duration(firstRight.duration).minutes()
+    // const voteLevel: DAOVoteLevel = {
+    //     type: DAOVoteType.TokenWeighted,
+    //     quorum: firstRight.quorum,
+    //     approveThreshold: firstRight.approve_threshold,
+    //     duration: {
+    //         days: moment().startOf('year').add(durationDay).hours(),
+    //         hours: moment().startOf('year').add(durationHours).minutes(),
+    //         minutes: moment().startOf('year').add(durationMinutes).minutes(),
+    //     },
+    //     voteOnlyOnce: true,
+    // }
+
+    const voteLevels: DAOVoteLevel[] = []
+    dataHack[0].forEach((template) => {
+        template[1][1].forEach((settingsItem) => {
+            voteLevels.push({
+                type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
+                quorum: settingsItem.quorum,
+                approveThreshold: settingsItem.approve_threshold,
+                spamThreshold: settingsItem.spam_threshold,
+                duration: {
+                    days: moment.duration(settingsItem.duration * 1000).days(),
+                    hours: moment.duration(settingsItem.duration * 1000).hours(),
+                    minutes: moment.duration(settingsItem.duration * 1000).minutes()
+                  },
+                voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
+            })
+        })
+    })
+    loUniqWith(voteLevels, loIsEqual)
+    
 
     // tags
-    const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
+    //const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
+    const tags: IDValue[] = getTags(dataHack[5].map, dataHack[7].tags)
+
+   console.log(tags);
+   
 
     // templates
     const templates: WFTemplate[] = []
@@ -367,7 +511,11 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                     quorum: settingsItem.quorum,
                     approveThreshold: settingsItem.approve_threshold,
                     spamThreshold: settingsItem.spam_threshold,
-                    duration: settingsItem.duration,
+                    duration: {
+                        days: moment.duration(settingsItem.duration * 1000).days(),
+                        hours: moment.duration(settingsItem.duration * 1000).hours(),
+                        minutes: moment.duration(settingsItem.duration * 1000).minutes()
+                      },
                     voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
                 },
                 activities: settingsActivities,
@@ -422,9 +570,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             skywardFinance: data[9] ?? undefined,
         },
         docs: docs,
-        voteLevels: [
-            voteLevel
-        ],
+        voteLevels: voteLevels,
         groups: groups,
         tags: tags,
         proposals: data[4],

@@ -342,6 +342,134 @@ class NearService {
     );
   }
 
+  /**
+   * Create DAO
+   */
+  async createDao2(
+    accountId: string,
+    publicKey: string,
+    name: string,
+    purpose: string,
+    ftName: string,
+    ftAmount: number
+  ){
+
+    const setFtMeta = {
+      spec: "ft-1.0.0",
+      name: name,
+      symbol: ftName, 
+      icon: null, // TODO: logo in DATA URL
+      reference:null,
+      reference_hash:null,
+      decimals:0
+    }
+    const setSettings = {
+      name: name,
+      purpose: purpose,
+      tags: [0,1,2],
+      dao_admin_account_id: "'$CID'",
+      dao_admin_rights: ["TODO"],
+      workflow_provider: "wf-provider." + process.env.VUE_APP_CONTRACT_NAME
+    }
+    const setGroups = [
+      {
+        settings:{
+          name:"council",
+          leader:"'$CID1'"
+        },
+        members:[
+          {
+            account_id:"'$CID1'",
+            tags:[1]
+          },
+          {
+            account_id:"'$CID2'",
+            tags:[3,4]},
+            {
+              account_id:"'$CID3'",
+              tags:[4]
+            }
+        ],
+        release:{
+          amount:100000000,
+          init_distribution:10000000,
+          start_from:0,
+          duration:1000000000,
+          model:"Linear"
+        }
+      }
+    ]
+    const setMedia = []
+    const setTags = [
+      {
+        category:"global",
+        values:["test dao", "new", "top"]
+      },
+      {
+        category:"group",
+        values:["CEO", "CTO", "no idea", "good guy"]
+      },
+      {
+        category:"media",
+        values:["very important", "probably virus"]
+      }
+    ]
+    const setFnCalls = []
+    const setFnCallMeta = []
+    const setWfTemplate = [
+      {
+        name:"wf_add",
+        version:1,
+        activities:[
+          null,
+          {
+            code:"wf_add",
+            exec_condition:null,
+            action:"WorkflowAdd",
+            fncall_id:null,
+            tgas:0,
+            deposit:0,
+            arg_types:[{"U16":false},{"Object":0}],
+            postprocessing:null
+          }
+        ],
+        transitions:[[1]],
+        binds:[],
+        start:[0],
+        end:[1]
+      }]
+    const setWfSettings = [
+      [
+        {
+          allowed_proposers:[{"Group":1}],
+          allowed_voters:"TokenHolder",
+          activity_rights:[[{"GroupLeader":1}]],
+          scenario:"TokenWeighted",
+          duration:60,
+          quorum:51,
+          approve_threshold:20,
+          spam_threshold:80,
+          vote_only_once:true,
+          deposit_propose:1,
+          deposit_vote:1000,
+          deposit_propose_return:0
+        }
+      ]
+    ]
+    const args = {
+      total_supply:1000000000,
+      ft_metadata:'$S_FT_META',
+      settings:'$S_SETTINGS',
+      groups:'$S_GROUPS',
+      media:'$S_MEDIA',
+      tags:'$S_TAGS',
+      function_calls:'$S_FNCALLS',
+      function_call_metadata:'$S_FNCALL_META',
+      workflow_templates:'$S_WFT',
+      workflow_template_settings:'$S_WFS'
+    }
+  }  
+
   /////////////////
   // DAO changes //
   /////////////////
@@ -883,6 +1011,39 @@ class NearService {
   async getWfTemplates() {
     return this.contractPool.getHack().wf_templates();
   }
+
+  async getGroups() {
+    return this.contractPool.getHack().groups();
+  }
+  async getGroupTags() {
+    return this.contractPool.getHack().tags({category: "group"});
+  }
+  async getMediaTags() {
+    return this.contractPool.getHack().tags({category: "media"});
+  }
+  async getGlobalTags(){
+    return this.contractPool.getHack().tags({category: "global"});
+  }
+  async getMediaList() {
+    return this.contractPool.getHack().media_list();
+  }
+
+  async getHackProposals(_contractId: string, fromIndex: number, limit: number) {
+    return this.contractPool.getHack().proposals({
+      from_index: fromIndex ?? 0,
+      limit: limit ?? 1000
+    });
+  }
+
+  async getDaoSettings(){
+    return this.contractPool.getHack().dao_settings()
+  }
+
+
+
+ 
+  
+
 
 }
 

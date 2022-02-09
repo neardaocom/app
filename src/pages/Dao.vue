@@ -88,6 +88,7 @@ export default {
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id
+      console.log(this.q_id);
     } else {
       this.q_id = process.env.VUE_APP_DAO_DEFAULT
     }
@@ -128,7 +129,7 @@ export default {
       loadById(this.nearService, this.q_id, this.t, this.wallet.getAccountId())
       // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
-          //console.log(r)
+          console.log(r)
           //this.dao_state = r
           this.dao = r
           this.loaded = true
