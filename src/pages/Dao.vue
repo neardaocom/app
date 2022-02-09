@@ -88,6 +88,7 @@ export default {
     // dao id
     if (this.$route.params && this.$route.params.id) {
       this.q_id = this.$route.params.id
+      console.log(this.q_id);
     } else {
       this.q_id = process.env.VUE_APP_DAO_DEFAULT
     }

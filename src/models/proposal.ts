@@ -113,7 +113,7 @@ const getArgsFromAction = (action: any, docs: any, t: any) => {
           name: action.AddFile.metadata.Curr.name,
           ipfs_cid: action.AddFile.cid,
           category:
-            action.AddFile.new_category || docs.categories[action.AddFile.metadata.Curr.category].value,
+            action.AddFile.new_category || docs.categories[action.AddFile.metadata.Curr.category]?.value,
         };
         break;
       case "InvalidateFile":

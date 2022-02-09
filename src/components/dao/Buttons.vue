@@ -204,7 +204,7 @@ export default {
         case 'wf_near_send':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name}
           this.activeForm = 'Payout'
-          this.activeFormCode = templ.code 
+          this.activeFormCode = templ.code
           break
         case 'payout':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name}

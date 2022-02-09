@@ -884,6 +884,39 @@ class NearService {
     return this.contractPool.getHack().wf_templates();
   }
 
+  async getGroups() {
+    return this.contractPool.getHack().groups();
+  }
+  async getGroupTags() {
+    return this.contractPool.getHack().tags({category: "group"});
+  }
+  async getMediaTags() {
+    return this.contractPool.getHack().tags({category: "media"});
+  }
+  async getGlobalTags(){
+    return this.contractPool.getHack().tags({category: "global"});
+  }
+  async getMediaList() {
+    return this.contractPool.getHack().media_list();
+  }
+
+  async getHackProposals(_contractId: string, fromIndex: number, limit: number) {
+    return this.contractPool.getHack().proposals({
+      from_index: fromIndex ?? 0,
+      limit: limit ?? 1000
+    });
+  }
+
+  async getDaoSettings(){
+    return this.contractPool.getHack().dao_settings()
+  }
+
+
+
+ 
+  
+
+
 }
 
 export default NearService;

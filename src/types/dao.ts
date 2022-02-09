@@ -82,7 +82,10 @@ export type DAORightsGroupRole = {
 export type DAORights = DAORightsAnyone | DAORightsMember | DAORightsTokenHolder | DAORightsAccount | DAORightsGroup | DAORightsGroupMember | DAORightsGroupLeader | DAORightsGroupRole;
 
 export enum DAODocsFileType {
-  url, plain, binaryPdf, html
+  url = 'url',
+  plain = 'text/plain', 
+  binaryPdf = 'application/pdf', 
+  html = 'text/html'
 }
 
 export type DAODocsFile = {
