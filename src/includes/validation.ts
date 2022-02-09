@@ -31,10 +31,10 @@ const strNumMax = (value, [max]) => {
     return false
 }
 
-const accountExists = async (value: string) => {    
+const accountExists = async (value: string, [accountPosfix]) => {        
     try{
         const newValue = value.trim()
-        const account = await store.getters['near/getService'].getAccountState(newValue + '.' + getAccountIdPostfix(store.getters['near/getFactoryAccount']))   
+        const account = await store.getters['near/getService'].getAccountState(accountPosfix ? `${newValue}.${accountPosfix}` : newValue)   
         if (account){
             return true
         }
@@ -44,8 +44,8 @@ const accountExists = async (value: string) => {
     }
 }
 
-const accountNotExists = async (value: string) => {
-    const result = await accountExists(value)
+const accountNotExists = async (value: string, [accountPosfix]) => {
+    const result = await accountExists(value, [accountPosfix])
     return !result
 }
 

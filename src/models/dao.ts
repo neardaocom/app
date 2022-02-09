@@ -225,7 +225,6 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
       nearService.getGlobalTags(),
       nearService.getHackProposals(id,0, 1000),
       nearService.getDaoSettings()
-
     ]).catch((e) => {
       throw new Error(`DAOHack[${id}] not loaded: ${e}`);
     });
@@ -254,33 +253,33 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     const groupTags = dataHack[2]
     const groups: DAOGroup[] = dataHack[1].map(group => {
-            const members = group.members.map(member => {
-                return{
-                    accountId: member.account_id, 
-                    roles: member.tags.map(tag => groupTags.map[tag])
-                }
-            } )
-            let token
-            if (group.release_data && group.release_model){
-                const algorithm: string = Object.keys(group.release_model)[0]
-                token = {
-                    algorithm: algorithm,
-                    locked: group.release_data.total,
-                    init: group.release_data.init_distribution,
-                    distributed: group.release_data.init_distribution,
-                    unlocked: group.release_data.unlocked,
-                    duration: group.release_model[algorithm].duration,
-                    releaseEnd: group.release_model[algorithm].release_end,
-                }
+        const members = group.members.map(member => {
+            return{
+                accountId: member.account_id, 
+                roles: member.tags.map(tag => groupTags.map[tag])
             }
-            return {
-                id: group.id,
-                name: group.settings.name,
-                leader: group.settings.leader || undefined,
-                members,
-                token: token || undefined
-            }        
-        });
+        } )
+        let token
+        if (group.release_data && group.release_model){
+            const algorithm: string = Object.keys(group.release_model)[0]
+            token = {
+                algorithm: algorithm,
+                locked: group.release_data.total,
+                init: group.release_data.init_distribution,
+                distributed: group.release_data.init_distribution,
+                unlocked: group.release_data.unlocked,
+                duration: group.release_model[algorithm].duration,
+                releaseEnd: group.release_model[algorithm].release_end,
+            }
+        }
+        return {
+            id: group.id,
+            name: group.settings.name,
+            leader: group.settings.leader || undefined,
+            members,
+            token: token || undefined
+        }        
+    });
         
 
     // token holders 
@@ -307,6 +306,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             walletToken = new Decimal(balances[index] ?? 0).toNumber()
         }
     });
+    
 
     // DOCs
 
