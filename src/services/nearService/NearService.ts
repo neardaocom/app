@@ -1059,10 +1059,9 @@ class NearService {
     return this.contractPool.getHack().dao_settings()
   }
 
-
-
- 
-  
+  async getWfInstance(proposalId: number){
+    return this.contractPool.getHack().wf_instance({proposal_id: proposalId})
+  }
 
 
 }

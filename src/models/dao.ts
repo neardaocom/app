@@ -10,7 +10,7 @@ import loUniq from "lodash/uniq"
 import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
 import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
-import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from '@/types/dao';
+import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
 import { IDValue, Translate } from '@/types/generic';
@@ -536,11 +536,44 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
             settings: settings,
         })
-        
     });
 
+    // Proposals
+    const proposals: DAOProposal[] = []
+    dataHack[6].forEach((proposal) => {
+        proposals.push({
+            id: proposal[0],
+            created: proposal[1].Curr.created,
+            votes: proposal[1].Curr.votes,
+            state: proposal[1].Curr.state,
+            workflowId: proposal[1].Curr.workflow_id,
+            workflowSettingsId: proposal[1].Curr.workflow_settings_id,
+            workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
+        })
+    })
+
     // workflows TODO: Load from smart contract
-    const workflows: WFInstance[] = [payoutAtStart, payoutAfterPayNear, payoutFinished]
+    const workflows: WFInstance[] = [] //[payoutAtStart, payoutAfterPayNear, payoutFinished]
+    const dataWorkflows = await Promise.all(
+        proposals.map((proposal) => nearService.getWfInstance(proposal.id))
+    ).catch((e) => {
+        throw new Error(`DAO[${id}] wf_instance not loaded: ${e}`);
+    });
+    proposals.forEach((proposal, index) => {
+        workflows.push({
+            id: proposal.id,
+            templateId: proposal.workflowId,
+            settingsId: proposal.workflowSettingsId,
+            state: dataWorkflows[index][0].state,
+            inputs: [], // TODO: Add inputs
+            activityNextIds: [],
+            activityLogs: [],
+            search: '',
+        })
+    })
+    
+    console.log(dataWorkflows)
+
 
     return {
         name: data[1].name,
@@ -566,14 +599,14 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         location: '',
         lang: data[6].lang,
         created: new Date(new Decimal(data[1].founded_s).mul(1000).toNumber()),
-        register: {
+        storage: {
             skywardFinance: data[9] ?? undefined,
         },
         docs: docs,
         voteLevels: voteLevels,
         groups: groups,
         tags: tags,
-        proposals: data[4],
+        proposals: proposals,
         tokenHolders: tokenHolders,
         templates: templates,
         workflows: workflows,

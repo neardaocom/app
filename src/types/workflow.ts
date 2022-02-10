@@ -1,5 +1,22 @@
 import { DAORights, DAOVoteLevel } from "@/types/dao";
 
+
+export type WFMetaAttribute = {
+    code: string;
+    bindId: number;
+}
+
+export type WFMetaActivity = {
+    activityId: number;
+    attributes: WFMetaAttribute[];
+}
+
+export type WFMetaTemplate = {
+    settingsAttributes: WFMetaAttribute[];
+    proposalAttributes: WFMetaAttribute[];
+    activities: WFMetaActivity[];
+};
+
 export type WFAttribute = {
     code: string;
     name: string;

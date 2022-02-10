@@ -23,6 +23,11 @@ export type DAOVoteLevel = {
   voteOnlyOnce: boolean;
 }
 
+export type DAOVote = {
+  accountId: string;
+  vote: number;
+}
+
 // RIGHTS
 /*
 "Anyone",
@@ -153,6 +158,16 @@ export type DAOTokenHolder = {
   amount: number;
 }
 
+export type DAOProposal = {
+  id: number;
+  created: Date;
+  votes: DAOVote[];
+  state: string;
+  workflowId: number;
+  workflowSettingsId: number;
+  workflowAddSettingsId: number;
+}
+
 export type DAO = {
   name: string;
   purpose: string;
@@ -161,13 +176,13 @@ export type DAO = {
   location: string;
   lang: string;
   created: Date;
-  register: Record<string, unknown>; // TODO: Rename according by smart contract
+  storage: Record<string, unknown>; // TODO: Rename according by smart contract
   docs: DAODocs;
   voteLevels: DAOVoteLevel[];
   groups: DAOGroup[];
   tags: IDValue[];
-  proposals: object[];
   tokenHolders: DAOTokenHolder[];
   templates: WFTemplate[];
+  proposals: DAOProposal[];
   workflows: WFInstance[];
 }
