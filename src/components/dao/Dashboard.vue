@@ -40,7 +40,7 @@ import Share from "@/components/dao/dashboard/Share.vue";
 import Activity from "@/components/dao/dashboard/Activity.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
-import { transform } from '@/models/proposal';
+// import { transform } from '@/models/proposal';
 import { toRefs } from "vue"
 import _ from "lodash"
 
@@ -67,12 +67,13 @@ export default {
   setup(props) {
     const { t, n, d } = useI18n();
     const { dao, accountId, accountRole } = toRefs(props)
-
+    console.log(dao, accountId, accountRole, d)
     // proposals
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.tokenHolders, dao.value.treasury.token.holded, accountId.value, accountRole.value, t, d))
+    // const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.tokenHolders, dao.value.treasury.token.holded, accountId.value, accountRole.value, t, d))
+    const proposals = []
 
     return {
-      t, n, proposals
+      t, n, proposals,
     };
   },
   computed: {

@@ -1,4 +1,6 @@
 const CONTRACT_NAME: string | undefined = process.env.VUE_APP_NEAR_CONTRACT_NAME
+console.log(CONTRACT_NAME);
+
 const NAME: string | undefined = process.env.VUE_APP_NEAR_NAME
 
 const getConfig = (env: string): any => {
@@ -19,7 +21,7 @@ const getConfig = (env: string): any => {
         networkId: 'testnet',
         nodeUrl: 'https://rpc.testnet.near.org',
         name: NAME,
-        contractName: CONTRACT_NAME + '.testnet',
+        contractName: CONTRACT_NAME,// + '.testnet',
         walletUrl: 'https://wallet.testnet.near.org',
         helperUrl: 'https://helper.testnet.near.org'
       }

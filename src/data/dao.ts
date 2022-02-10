@@ -35,7 +35,7 @@ export const daoTestOne: DAO = {
     location: 'glo',
     lang: 'en',
     created: new Date(),
-    register: {
+    storage: {
 
     },
     docs: {

@@ -19,8 +19,8 @@
             </div>
         </section>
     </main>
-    <MDBAlert v-model="fieldErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
-    <MDBAlert v-model="createDaoErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
+    <!-- <MDBAlert v-model="fieldErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
+    <MDBAlert v-model="createDaoErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert> -->
   <Footer></Footer>
 </template>
 
@@ -31,7 +31,7 @@ import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
 import DaoCreateForm from '@/components/daoCreate/DaoCreateForm.vue'
 import {
     MDBContainer,
-    MDBAlert
+    //MDBAlert
 } from 'mdb-vue-ui-kit';
 import { useI18n } from 'vue-i18n';
 
@@ -41,7 +41,7 @@ export default {
         Footer,
         Breadcrumb,
         MDBContainer,
-        MDBAlert,
+        //MDBAlert,
         DaoCreateForm
     },
     setup(){

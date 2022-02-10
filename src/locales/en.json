@@ -330,6 +330,7 @@
   "wf_templ_add_wf_constants": "",
   "wf_templ_add_wf_activity_wf_add": "Add",
   "wf_templ_add_wf_action_WorkflowAdd": "Workflow add",
+  "wf_templ_wf_add": "Add workflow",
   "wf_templ_wf_near_send": "Payout",
   "wf_templ_wf_near_send_constants": "Up to {nearAmountLimit} Near/{tokenAmountLimit} Token",
   "wf_templ_wf_near_send_activity_near_send": "NEAR Send",
