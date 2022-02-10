@@ -14,6 +14,7 @@ import { yoctoNear, TGas } from './constants';
 import { ContractPool } from './ContractPool';
 import { getPublicSalePercent } from './utils';
 import _ from "lodash"
+import { duration } from 'moment';
 
 class NearService {
   // config of near
@@ -178,180 +179,189 @@ class NearService {
   /**
    * Create DAO
    */
-  async createDao(
-    accountId: string
-    , publicKey: string
-    , name: string
-    , slogan: string
-    , tags: number[]
-    , founders: string[]
-    , location: string
-    , ftName: string
-    , ftAmount: number
-    , ftCouncilShare: number
-    , ftCouncilInitDistribution: number
-    , ftCouncilUnlockingFrom: number
-    , ftCouncilUnlockingDuration: number
-    , ftCommunityShare: number
-    , ftCommunityUnlockingFrom: number
-    , ftCommunityUnlockingDuration: number
-    , ftFoundationShare: number
-    , ftFoundationUnlockingFrom: number
-    , ftFoundationUnlockingDuration: number
-    , ftPublicSaleUnlockingFrom: number
-    , ftPublicSaleUnlockingDuration: number
-    , voteSpamThreshold: number
-    , voteDurationDays: number
-    , voteDurationHours: number
-    , voteQuorum: number
-    , voteApproveThreshold: number
-    , voteOnlyOnce: boolean
-    , amountToTransfer: number
-  ) {
-    const info = {
-      name: name,
-      tags: tags,
-      founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
-      description: slogan,
-      ft_name: ftName,
-      ft_amount: ftAmount
-    };
-    // console.log(info)
+  // async createDao(
+  //   accountId: string
+  //   , publicKey: string
+  //   , name: string
+  //   , slogan: string
+  //   , tags: number[]
+  //   , founders: string[]
+  //   , location: string
+  //   , ftName: string
+  //   , ftAmount: number
+  //   , ftCouncilShare: number
+  //   , ftCouncilInitDistribution: number
+  //   , ftCouncilUnlockingFrom: number
+  //   , ftCouncilUnlockingDuration: number
+  //   , ftCommunityShare: number
+  //   , ftCommunityUnlockingFrom: number
+  //   , ftCommunityUnlockingDuration: number
+  //   , ftFoundationShare: number
+  //   , ftFoundationUnlockingFrom: number
+  //   , ftFoundationUnlockingDuration: number
+  //   , ftPublicSaleUnlockingFrom: number
+  //   , ftPublicSaleUnlockingDuration: number
+  //   , voteSpamThreshold: number
+  //   , voteDurationDays: number
+  //   , voteDurationHours: number
+  //   , voteQuorum: number
+  //   , voteApproveThreshold: number
+  //   , voteOnlyOnce: boolean
+  //   , amountToTransfer: number
+  // ) {
+  //   const info = {
+  //     name: name,
+  //     tags: tags,
+  //     founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
+  //     description: slogan,
+  //     ft_name: ftName,
+  //     ft_amount: ftAmount
+  //   };
+  //   // console.log(info)
 
-    let releaseCouncilConfig: any = "None";
-    let releaseCommunityConfig: any = "None";
-    let releaseFoundationConfig: any = "None";
-    let releasePublicSaleConfig: any = "None";
+  //   let releaseCouncilConfig: any = "None";
+  //   let releaseCommunityConfig: any = "None";
+  //   let releaseFoundationConfig: any = "None";
+  //   let releasePublicSaleConfig: any = "None";
 
-    if (ftCouncilUnlockingDuration != null) releaseCouncilConfig = {"Linear": {"from": ftCouncilUnlockingFrom, "duration": ftCouncilUnlockingDuration }}
-    if (ftCommunityUnlockingDuration != null) releaseCommunityConfig = {"Linear": {"from": ftCommunityUnlockingFrom, "duration": ftCommunityUnlockingDuration }}
-    if (ftFoundationUnlockingDuration != null) releaseFoundationConfig = {"Linear": {"from": ftFoundationUnlockingFrom, "duration": ftFoundationUnlockingDuration }}
-    if (ftPublicSaleUnlockingDuration != null) releasePublicSaleConfig = {"Linear": {"from": ftPublicSaleUnlockingFrom, "duration": ftPublicSaleUnlockingDuration }}
+  //   if (ftCouncilUnlockingDuration != null) releaseCouncilConfig = {"Linear": {"from": ftCouncilUnlockingFrom, "duration": ftCouncilUnlockingDuration }}
+  //   if (ftCommunityUnlockingDuration != null) releaseCommunityConfig = {"Linear": {"from": ftCommunityUnlockingFrom, "duration": ftCommunityUnlockingDuration }}
+  //   if (ftFoundationUnlockingDuration != null) releaseFoundationConfig = {"Linear": {"from": ftFoundationUnlockingFrom, "duration": ftFoundationUnlockingDuration }}
+  //   if (ftPublicSaleUnlockingDuration != null) releasePublicSaleConfig = {"Linear": {"from": ftPublicSaleUnlockingFrom, "duration": ftPublicSaleUnlockingDuration }}
 
-    const args = {
-      total_supply: ftAmount,
-      founders_init_distribution: ftCouncilInitDistribution,
-      ft_metadata: {
-        spec: "ft-1.0.0",
-        name: ftName,
-        symbol: accountId.toUpperCase(),
-        icon: null, // TODO: logo in DATA URL
-        reference: null,
-        reference_hash: null,
-        decimals: 0
-      },
-      config: {
-        name: name,
-        lang: location,
-        slogan: slogan,
-        description: slogan,
-        council_share: ftCouncilShare,
-        //community_share: ftCommunityShare,
-        //foundation_share: ftFoundationShare,
-        vote_spam_threshold: voteSpamThreshold
-      },
-      release_config: [
-        ["Council", releaseCouncilConfig],
-        //["Community", releaseCommunityConfig],
-        //["Foundation", releaseFoundationConfig],
-      ],
-      vote_policy_configs: [
-        {
-          proposal_kind: 'Pay',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'AddMember',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'RemoveMember',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'GeneralProposal',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'AddDocFile',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'InvalidateFile',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'DistributeFT',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        },
-        {
-          proposal_kind: 'RightForActionCall',
-          duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
-          quorum: voteQuorum,
-          approve_threshold: voteApproveThreshold,
-          vote_only_once: voteOnlyOnce,
-          waiting_open_duration: 0
-        }
-      ],
-      founders: founders
-    }
-    // console.log(args)
+  //   const args = {
+  //     total_supply: ftAmount,
+  //     founders_init_distribution: ftCouncilInitDistribution,
+  //     ft_metadata: {
+  //       spec: "ft-1.0.0",
+  //       name: ftName,
+  //       symbol: accountId.toUpperCase(),
+  //       icon: null, // TODO: logo in DATA URL
+  //       reference: null,
+  //       reference_hash: null,
+  //       decimals: 0
+  //     },
+  //     config: {
+  //       name: name,
+  //       lang: location,
+  //       slogan: slogan,
+  //       description: slogan,
+  //       council_share: ftCouncilShare,
+  //       //community_share: ftCommunityShare,
+  //       //foundation_share: ftFoundationShare,
+  //       vote_spam_threshold: voteSpamThreshold
+  //     },
+  //     release_config: [
+  //       ["Council", releaseCouncilConfig],
+  //       //["Community", releaseCommunityConfig],
+  //       //["Foundation", releaseFoundationConfig],
+  //     ],
+  //     vote_policy_configs: [
+  //       {
+  //         proposal_kind: 'Pay',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'AddMember',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'RemoveMember',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'GeneralProposal',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'AddDocFile',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'InvalidateFile',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'DistributeFT',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       },
+  //       {
+  //         proposal_kind: 'RightForActionCall',
+  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         quorum: voteQuorum,
+  //         approve_threshold: voteApproveThreshold,
+  //         vote_only_once: voteOnlyOnce,
+  //         waiting_open_duration: 0
+  //       }
+  //     ],
+  //     founders: founders
+  //   }
+  //   // console.log(args)
 
-    const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
+  //   const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
-    const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoctoNear).toFixed();
+  //   const amount = new Decimal(amountToTransfer);
+  //   const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    return this.factoryContract.create(
-      {
-        acc_name: accountId,
-        public_key: publicKey,
-        dao_info: info,
-        args: args_base64
-      },
-      Decimal.mul(300, TGas).toString(),
-      amountYokto.toString()
-    );
-  }
+  //   return this.factoryContract.create(
+  //     {
+  //       acc_name: accountId,
+  //       public_key: publicKey,
+  //       dao_info: info,
+  //       args: args_base64
+  //     },
+  //     Decimal.mul(300, TGas).toString(),
+  //     amountYokto.toString()
+  //   );
+  // }
+
 
   /**
    * Create DAO
    */
-  async createDao2(
-    accountId: string,
-    publicKey: string,
+  async createDao(
     name: string,
+    account: string,
     purpose: string,
     ftName: string,
-    ftAmount: number
+    ftAmount: number|string, // maybe better as a string, can be a large number
+    councilMembers: any[],
+    councilReleaseAmount: number|string, // maybe better as a string, can be a large number
+    councilReleaseInitDistribution: number|string,
+    councilReleaseDuration: number,
+    approveThreshold: number,
+    quorum: number,
+    voteDurationDays: number,
+    voteDurationHours: number,
+    amountToTransfer: number
   ){
 
     const setFtMeta = {
@@ -366,8 +376,8 @@ class NearService {
     const setSettings = {
       name: name,
       purpose: purpose,
-      tags: [0,1,2],
-      dao_admin_account_id: "'$CID'",
+      tags: [1,2,3],
+      dao_admin_account_id: process.env.VUE_APP_CONTRACT_NAME,
       dao_admin_rights: ["TODO"],
       workflow_provider: "wf-provider." + process.env.VUE_APP_CONTRACT_NAME
     }
@@ -375,26 +385,14 @@ class NearService {
       {
         settings:{
           name:"council",
-          leader:"'$CID1'"
+          leader: councilMembers[0].account_id
         },
-        members:[
-          {
-            account_id:"'$CID1'",
-            tags:[1]
-          },
-          {
-            account_id:"'$CID2'",
-            tags:[3,4]},
-            {
-              account_id:"'$CID3'",
-              tags:[4]
-            }
-        ],
+        members: councilMembers,
         release:{
-          amount:100000000,
-          init_distribution:10000000,
-          start_from:0,
-          duration:1000000000,
+          amount: councilReleaseAmount,
+          init_distribution: councilReleaseInitDistribution,
+          start_from: 0, // co je to
+          duration: councilReleaseDuration,
           model:"Linear"
         }
       }
@@ -441,33 +439,55 @@ class NearService {
     const setWfSettings = [
       [
         {
-          allowed_proposers:[{"Group":1}],
-          allowed_voters:"TokenHolder",
+          allowed_proposers: [{"Group":1}],
+          allowed_voters: "TokenHolder",
           activity_rights:[[{"GroupLeader":1}]],
           scenario:"TokenWeighted",
-          duration:60,
-          quorum:51,
-          approve_threshold:20,
-          spam_threshold:80,
-          vote_only_once:true,
-          deposit_propose:1,
-          deposit_vote:1000,
-          deposit_propose_return:0
+          duration: new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, 0, 0)).div(1000000000).toNumber(),
+          quorum: quorum,
+          approve_threshold: approveThreshold,
+          spam_threshold: 80, // ??
+          vote_only_once: true,
+          deposit_propose: 1,
+          deposit_vote: 1000,
+          deposit_propose_return: 0
         }
       ]
     ]
     const args = {
-      total_supply:1000000000,
-      ft_metadata:'$S_FT_META',
-      settings:'$S_SETTINGS',
-      groups:'$S_GROUPS',
-      media:'$S_MEDIA',
-      tags:'$S_TAGS',
-      function_calls:'$S_FNCALLS',
-      function_call_metadata:'$S_FNCALL_META',
-      workflow_templates:'$S_WFT',
-      workflow_template_settings:'$S_WFS'
+      total_supply: ftAmount,
+      ft_metadata: setFtMeta,
+      settings: setSettings,
+      groups: setGroups,
+      media: setMedia,
+      tags: setTags,
+      function_calls: setFnCalls,
+      function_call_metadata: setFnCallMeta,
+      workflow_templates: setWfTemplate,
+      workflow_template_settings: setWfSettings
     }
+
+    const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
+
+    const amount = new Decimal(amountToTransfer);
+    const amountYokto = amount.mul(yoctoNear).toFixed();
+
+    return this.factoryContract.create(
+      {
+        acc_name: account, 
+        dao_info: {
+          founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
+          name: name,
+          description: purpose,
+          ft_name: ftName,
+          ft_amount: ftAmount,
+          tags: [0,1,2]
+        },
+          args: args_base64
+      },
+      Decimal.mul(300, TGas).toString(),
+      amountYokto.toString()
+    );
   }  
 
   /////////////////

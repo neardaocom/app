@@ -178,7 +178,7 @@
 
                             <FormSummary :name="t('default.amount')" :value="values.dao_ft_amount"/>
 
-                            <FormSummary :name="t('default.dao_council')" :value="(ftCouncilShare ? ftCouncilShare : '0') + '%' "/>
+                            <FormSummary :name="t('default.dao_council')" :value="(ftCouncilShare ? ftCouncilShare : '0') + '%'"/>
                             
                             <FormSummary :name="t('default.dao_ft_init_distribution')" :value="(values.dao_ft_init_distribution ? values.dao_ft_init_distribution  : '0') + '%'"/>
                             
@@ -230,6 +230,7 @@ import InputNumber from '@/components/forms/InputNumber.vue';
 import TooltipLabel from '@/components/forms/TooltipLabel.vue'
 import FormSummary from '@/components/forms/FormSummary.vue'
 import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
+import moment from 'moment'
 
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
@@ -342,10 +343,34 @@ export default {
 
         const onSubmit = handleSubmit(values => {
             alert(JSON.stringify(values, null, 2));
-            //createDao(values)
+            createDao(values)
         }, () => {
-            console.log(errors.value)
+            alert(JSON.stringify(errors.value, null, 2));
+            if(Object.keys(errors.value).length === 1 && errors.value['dao_council']){
+                createDao(values)
+            }
         });
+
+        const createDao = (values) => {
+            const councilMembers = values.council_array.map((councilAccount) =>{ return {account_id: councilAccount, tags : [1]}})
+            //create
+            nearService.value.createDao(
+                values.dao_name,
+                values.dao_account,
+                values.dao_purpose,
+                values.dao_ft_name,
+                new Decimal(values.dao_ft_amount).toNumber(), // TODO: when Peta update smartContract toFixed()
+                councilMembers,
+                new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toNumber(), //councilReleaseAmount  TODO: when Peta update smartContract toFixed()
+                new Decimal(values.dao_ft_init_distribution).div(100).mul(ftCouncilShare.value).div(100).mul(values.dao_ft_amount).toNumber(), //councilReleaseInitDistribution  TODO: when Peta update smartContract toFixed()
+                moment.duration().add(Number.parseFloat(values.dao_unlocking_year), 'y').add(Number.parseFloat(values.dao_unlocking_month), 'M').asSeconds(), //councilReleaseDuration
+                voteApproveThreshold.value,
+                voteQuorum.value,
+                voteDurationDays.value,
+                voteDurationHours.value,
+                10
+            )
+        }
 
         // type loading
         onMounted(() => {
@@ -363,42 +388,6 @@ export default {
 
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
         const unlockingTime = computed(() => `${values.dao_unlocking_year ? `${values.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.dao_unlocking_month > 0 ? `${values.dao_unlocking_month} ${t('default.month')}`: ''}`)
-
-        // const createDao = (values) => {
-        //     const accountId = values.dao_account + '.' + this.factoryAccount
-
-        //     //create
-        //     await this.nearService.createDao(
-        //         this.account
-        //         , null
-        //         , this.name
-        //         , this.slogan
-        //         , [this.nearTags.value.indexOf(this.type)] // tags
-        //         , [...this.council] // founders
-        //         , this.location // location
-        //         , this.ftName // ftName
-        //         , this.ftAmount // ftAmount
-        //         , this.ftCouncilShare // ftCouncilShare
-        //         , new Decimal(this.ftCouncilInitDistributionPercent).div(100).mul(this.ftCouncilShare).div(100).mul(this.ftAmount).toNumber()  // ftCouncilInitDistribution
-        //         , null // ftCouncilUnlockingFrom
-        //         , moment.duration().add(Number.parseFloat(this.ftCouncilUnlockingYear), 'y').add(Number.parseFloat(this.ftCouncilUnlockingMonth), 'M').asSeconds() // ftCouncilUnlockingDuration
-        //         , this.ftCommunityShare // ftCommunityShare
-        //         , null // ftCommunityUnlockingFrom
-        //         , null // ftCommunityUnlockingDuration
-        //         , this.ftFoundationShare // ftFoundationShare
-        //         , null // ftFoundationUnlockingFrom
-        //         , null // ftFoundationUnlockingDuration
-        //         , null // ftPublicSaleUnlockingFrom
-        //         , null // ftPublicSaleUnlockingDuration
-        //         , this.voteSpamThreshold // voteSpamThreshold
-        //         , this.voteDurationDays // voteDurationDays
-        //         , this.voteDurationHours // voteDurationHours
-        //         , this.voteQuorum // voteQuorum
-        //         , this.voteApproveThreshold // voteApproveThreshold
-        //         , this.voteOnlyOnce // voteOnlyOnce
-        //         , 5 // amountToTransfer
-        //     )
-        // }
 
         return {
             t,
