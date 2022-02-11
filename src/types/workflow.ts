@@ -1,4 +1,5 @@
 import { DAORights, DAOVoteLevel } from "@/types/dao";
+import { CodeValue } from "./generic";
 
 
 export type WFMetaAttribute = {
@@ -22,11 +23,6 @@ export type WFAttribute = {
     name: string;
     default?: string;
     description?: string;
-}
-
-export type WFInput = {
-    code: string;
-    value: string;
 }
 
 export type WFExpression = {
@@ -79,7 +75,7 @@ export type WFSettingsActivity = {
 
 export type WFSettings = {
     id: number;
-    constants: WFInput[];
+    constants: CodeValue[];
     proposeRights: DAORights[];
     voteRight: DAORights;
     voteLevel: DAOVoteLevel;
@@ -93,7 +89,7 @@ export type WFInstanceActivity = {
     txHash: string;
     txSigner: String;
     txSignedAt: Date;
-    inputs: WFInput[];
+    inputs: CodeValue[];
 }
 
 export type WFInstance = {
@@ -101,7 +97,8 @@ export type WFInstance = {
     templateId: number;
     settingsId: number;
     state: string;
-    inputs: WFInput[];
+    inputs: CodeValue[];
+    constants: CodeValue[];
     activityNextIds: number[];
     activityLogs: WFInstanceActivity[];
     search: string;

@@ -24,8 +24,8 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
-        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao" />
         <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao" />
@@ -129,7 +129,7 @@ export default {
       loadById(this.nearService, this.q_id, this.t, this.wallet.getAccountId())
       // this.nearService.getDaoById(this.q_id) // OLD VERSION
         .then(r => {
-          console.log(r)
+          // console.log(r)
           //this.dao_state = r
           this.dao = r
           this.loaded = true

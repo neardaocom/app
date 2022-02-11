@@ -118,6 +118,7 @@ export const templateMeta: Record<string, WFMetaTemplate> = {
   'skyward': templateMetaSkyward,
   'general': templateMetaGeneral,
   'addWorkflow': templateMetaAddWorkflow,
+  'add_wf': templateMetaAddWorkflow,
 }
 
 
@@ -218,6 +219,7 @@ export const payoutAtStart: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'inProgress',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'pstu.near' },
     { code: 'nearAmount', value: '500.0' },
@@ -232,6 +234,7 @@ export const payoutAfterPayNear: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'inProgress',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'jsla.near' },
     { code: 'nearAmount', value: '700.0' },
@@ -270,6 +273,7 @@ export const payoutFinished: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'finished',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'pfil.near' },
     { code: 'nearAmount', value: '500.0' },

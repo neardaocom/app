@@ -2,12 +2,12 @@ import lodashFind from "lodash/find";
 
 export type IDValue = {
     id: number;
-    value: string;
+    value: string | undefined;
 }
 
 export type CodeValue = {
     code: string;
-    value: string;
+    value: string | undefined;
 }
 
 export const getValueById = (items: IDValue[], id: number): string | undefined => {

@@ -6,14 +6,15 @@ import loToInteger from "lodash/toInteger"
 import loNth from "lodash/nth"
 import loFind from "lodash/find"
 import loFindKey from "lodash/findKey"
+import loGet from "lodash/get"
 import loUniq from "lodash/uniq"
 import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
-import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
+import { templateMeta, templateMetaAddWorkflow } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { IDValue, Translate } from '@/types/generic';
+import { CodeValue, IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
 import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
@@ -199,7 +200,7 @@ export const getTags = (globalTags: object, validTags: number[] | boolean = fals
 export const loadById = async (nearService: any, id: string, t: any, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
-    console.log(walletId)
+    // console.log(walletId)
 
     const data = await Promise.all([
       nearService.getDaoAmount(id),
@@ -335,7 +336,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         categories: getMediaCategories(dataHack[4]),
         tags: getTags(dataHack[3].map),
     }
-    console.log(docs);
+    // console.log(docs);
     
 
     dataHack[4].forEach((element) => {
@@ -402,7 +403,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     //const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
     const tags: IDValue[] = getTags(dataHack[5].map, dataHack[7].tags)
 
-   console.log(tags);
+//    console.log(tags);
    
 
     // templates
@@ -411,7 +412,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     let activity: WFActivity | undefined = undefined
     // console.log(dataHack[0])
     dataHack[0].forEach((template) => {
-        console.log(template)
+        // console.log(template)
 
         // activities
         const activities: WFActivity[] = []
@@ -502,7 +503,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                 }
             })
             settings.push({
-                id: index + 1,
+                id: index,
                 constants: [],
                 proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
                 voteRight: rightsParse(settingsItem.allowed_voters),
@@ -540,39 +541,52 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     // Proposals
     const proposals: DAOProposal[] = []
-    dataHack[6].forEach((proposal) => {
+    const workflows: WFInstance[] = []
+    let workflowInstance: any
+    let proposalTemplate: WFTemplate | undefined
+    let proposalSettings: WFSettings | undefined
+    let proposalConstants: CodeValue[] | undefined
+    let proposalInputs: CodeValue[] | undefined
+
+    for (const proposal of dataHack[6]) {
+        // console.log(proposal)
+        workflowInstance = await nearService.getWfInstance(proposal[0])
+        proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
+        proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
+        //console.log(workflowInstance, proposalTemplate, proposalSettings)
+
+        proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.proposalAttributes.map((attr) => {
+            return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
+        }) ?? []
+        proposalInputs = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
+            return { code: attr.code, value: workflowInstance[1].binds[attr.bindId]}
+        }) ?? []
+
         proposals.push({
             id: proposal[0],
-            created: proposal[1].Curr.created,
+            created: moment(new Decimal(proposal[1].Curr.created).div(1_000_000).toNumber()).toDate(),
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
-            workflowId: proposal[1].Curr.workflow_id,
-            workflowSettingsId: proposal[1].Curr.workflow_settings_id,
+            constants: proposalConstants,
+            inputs: proposalInputs,
+            templateId: proposal[1].Curr.workflow_id,
+            settingsId: proposal[1].Curr.workflow_settings_id,
             workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
         })
-    })
 
-    // workflows TODO: Load from smart contract
-    const workflows: WFInstance[] = [] //[payoutAtStart, payoutAfterPayNear, payoutFinished]
-    const dataWorkflows = await Promise.all(
-        proposals.map((proposal) => nearService.getWfInstance(proposal.id))
-    ).catch((e) => {
-        throw new Error(`DAO[${id}] wf_instance not loaded: ${e}`);
-    });
-    proposals.forEach((proposal, index) => {
         workflows.push({
             id: proposal.id,
-            templateId: proposal.workflowId,
-            settingsId: proposal.workflowSettingsId,
-            state: dataWorkflows[index][0].state,
-            inputs: [], // TODO: Add inputs
+            templateId: proposal.templateId,
+            settingsId: proposal.settingsId,
+            state: workflowInstance[0].state,
+            constants: proposalConstants,
+            inputs: proposalInputs,
             activityNextIds: [],
             activityLogs: [],
             search: '',
         })
-    })
-    
-    console.log(dataWorkflows)
+    }
+    // console.log(proposals, workflows)
 
 
     return {
