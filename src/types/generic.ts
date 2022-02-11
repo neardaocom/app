@@ -20,7 +20,7 @@ export const getIdByValue = (items: IDValue[], value: string): number | undefine
     return item ? item.id : undefined;
 };
 
-export const getValueByCode = (items: CodeValue[], id: number): string | undefined => {
+export const getValueByCode = (items: CodeValue[], id: string): string | undefined => {
     const item: CodeValue | undefined | any = lodashFind(items, {code: id}) // TODO: Remove any
     return item ? item.value : undefined;
 };

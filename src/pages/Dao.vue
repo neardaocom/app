@@ -135,6 +135,7 @@ export default {
           this.loaded = true
           this.daoRights = getDAORights(r)
           this.walletRights = getWalletRights(r, this.wallet?.getAccountId())
+          // console.log(this.walletRights)
         })
         .catch((e) => {
           this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)

@@ -15,6 +15,9 @@ import { WFSettings, WFTemplate } from '@/types/workflow';
 import { check } from './rights';
 import moment from 'moment';
 import { accounts } from '@/data/blockchain';
+import { convertArrayOfObjectToObject } from "@/utils/array";
+import { getValueByCode } from "@/types/generic";
+import { yoctoToNear } from '@/utils/near';
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -151,6 +154,21 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
     return kind_to_choice;
 };
 
+const getArgs = (proposal: DAOProposal, templateCode: string): Record<string, unknown> => {
+  let values: Record<string, unknown> = {}
+  switch (templateCode) {
+    case 'wf_near_send':
+      values = {
+        receiverId: getValueByCode(proposal.inputs, 'receiverId'),
+        amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
+      }
+      break;
+    default:
+      break;
+  }
+  return values;
+}
+
 const getProgress = (status: string, settings: WFSettings, durationTo: Date): number => {
     let progress: number = 0;
     if (status === "InProgress") {
@@ -183,7 +201,7 @@ const transform = (
 ) => {
   // console.log(template)
     const settings = loFind(template.settings, {id: proposal.settingsId})
-    const args = proposal.constants.concat(proposal.inputs)
+    const args = getArgs(proposal, template.code)
     const stateIndex = getState(proposal.state)
     const durationTo = getDurationTo(proposal, settings!)
     console.log(durationTo)

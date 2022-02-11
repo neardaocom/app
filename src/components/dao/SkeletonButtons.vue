@@ -45,7 +45,7 @@
         </button>-->
         <MDBDropdown btnGroup :align="['end']">
           <MDBBtn aria-controls="modalPayout" class="btn btn-primary" data-mdb-ripple-color="dark">
-            <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
+            <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
           </MDBBtn>
           <MDBDropdownToggle/>
         </MDBDropdown>

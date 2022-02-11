@@ -145,6 +145,12 @@
                     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="voteDurationHours" :min="0" :max="23" />
                     <label class="form-label col-md-6 col-3">{{ voteDurationHours }}h</label>
                 </div>
+
+                <!-- voteDurationHours TODO: Delete or to rights -->
+                <div class="row mb-4"> 
+                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_minutes')" v-model="voteDurationMinutes" :min="0" :max="60" />
+                    <label class="form-label col-md-6 col-3">{{ voteDurationMinutes }}m</label>
+                </div>
             </MDBStepperContent>
         </MDBStepperStep>
             
@@ -199,6 +205,8 @@
                             <FormSummary :name="t('default.dao_vote_duration_days')" :value="voteDurationDays"/>
 
                             <FormSummary :name="t('default.dao_vote_duration_hours')" :value="voteDurationHours"/>
+
+                            <FormSummary :name="t('default.dao_vote_duration_minutes')" :value="voteDurationMinutes"/>
                         </dl>       
                     </div>
                 </div> 
@@ -299,6 +307,7 @@ export default {
         const voteApproveThreshold = ref(51)
         const voteDurationDays = ref(3)
         const voteDurationHours = ref(0)
+        const voteDurationMinutes = ref(0)
 
         
         const defaultTypeOptions = [
@@ -368,6 +377,7 @@ export default {
                 voteQuorum.value,
                 voteDurationDays.value,
                 voteDurationHours.value,
+                voteDurationMinutes.value,
                 10
             )
         }
@@ -404,6 +414,7 @@ export default {
             voteApproveThreshold,
             voteDurationDays,
             voteDurationHours,
+            voteDurationMinutes,
             values,
             unlockingTime,
             addCouncil,

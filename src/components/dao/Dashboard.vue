@@ -13,7 +13,7 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Activity :dao="dao" />
       </div>
-      <SkywardFinance :dao="dao" :scenario="'active'" />
+      <SkywardFinance v-if="dao.storage?.skywardFinance" :dao="dao" :scenario="'active'" />
     </div>
 
     <hr/>

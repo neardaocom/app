@@ -31,15 +31,17 @@ const strNumMax = (value, [max]) => {
     return false
 }
 
-const accountExists = async (value: string, [accountPosfix]) => {        
+const accountExists = async (value: string, [accountPosfix]) => {
     try{
+        // console.log("accountExists", `${value.trim()}.${accountPosfix}`)
+        // console.log(store)
         const newValue = value.trim()
         const account = await store.getters['near/getService'].getAccountState(accountPosfix ? `${newValue}.${accountPosfix}` : newValue)   
         if (account){
             return true
         }
         return false
-    }catch(e){    
+    } catch(e) {
         return false
     }
 }
