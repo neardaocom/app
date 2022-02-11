@@ -18,7 +18,8 @@ import { useI18n } from 'vue-i18n';
 //import { useStore } from 'vuex'
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-
+import { useIPFSService } from "@/hooks/vuex";
+import { storeText } from '@/models/ipfs';
 
 export default {
     components:{
@@ -33,6 +34,7 @@ export default {
     },
     setup () {
         const {t} = useI18n()
+        const ipfsService = useIPFSService()
         //const store = useStore()   
 
         //const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
@@ -50,7 +52,19 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(values => {
-            console.log(values);
+            let ipfsError = false
+            if (description.value){
+                const cid = storeText(description.value, description.value.substring(0,7) + '-Description' , ipfsService.value)
+                if(cid){
+                    values.cid = cid
+                }else{
+                    ipfsError = true
+                } 
+            }
+            
+            if(!ipfsError){
+                // send proposal
+            }
             alert(JSON.stringify(values, null, 2));
         }, () => {
                 console.log(errors.value)
