@@ -60,7 +60,7 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(values => {
-            console.log(values);
+            values.groupId = 1
             alert(JSON.stringify(values, null, 2));
         }, () => {
                 console.log(errors.value)
