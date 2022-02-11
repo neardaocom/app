@@ -1,4 +1,5 @@
 import { IpfsService } from "@/services/ipfsService/IpfsService";
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { DAODocsFile, DAODocsFileType } from "@/types/dao";
 import lodashToString from "lodash/toString";
 
@@ -32,4 +33,19 @@ export const fetch = async (file: DAODocsFile, service?: IpfsService): Promise<s
             throw new Error("Unsupported scenario: " + file.type);
     }
     return value
+}
+
+export const storeText = async (text: string, name: string, service: IpfsService): Promise<string | undefined> => {
+    try {
+        const ipfsCid = await service.storeFiles(makeFileFromString(text, name), name)
+        return ipfsCid
+      } catch(e){
+        // this.$logger.error('D', 'app@components/dao/ModalAddCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
+        // this.$logger.error('B', 'app@components/dao/ModalAddCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')
+        // this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
+        // this.$notify.flush()
+        console.log(e);
+        return 
+      }
+
 }
