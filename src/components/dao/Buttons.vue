@@ -43,33 +43,36 @@
         <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
           <i class="fas fa-ellipsis-h"></i>
         </button>-->
-        <MDBDropdown btnGroup :align="['end']" v-model="dropdownAction">
-          <MDBBtn aria-controls="modalPayout" @click="modalPayoutOpen()" class="btn btn-primary" data-mdb-ripple-color="dark">
-            <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
-          </MDBBtn>
-          <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
-          <MDBDropdownMenu>
-            <template v-for="templ in dao.templates" :key="templ.id">
-              <template v-for="templSettings in templ.settings" :key="templSettings.id">
-                <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
+        <MDBBtnGroup id="dropdown-target">
+          <MDBBtn
+            color="primary"
+            v-on:click="dropdownAction = !dropdownAction"
+            class="dropdown-toggle"
+          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn>
+          <MDBDropdown v-model="dropdownAction" target="#dropdown-target">
+            <MDBDropdownMenu>
+              <template v-for="templ in dao.templates" :key="templ.id">
+                <template v-for="templSettings in templ.settings" :key="templSettings.id">
+                  <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
+                </template>
               </template>
-            </template>
-            <!-- <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalRemoveCouncilOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_council')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
-            <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('RefFinance')" tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
-            <MDBDropdownItem v-if="possibleUpgrade" divider />
-            <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem> -->
-          </MDBDropdownMenu>
-        </MDBDropdown>
+              <!-- <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click="modalRemoveCouncilOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_council')}}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('RefFinance')" tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
+              <MDBDropdownItem v-if="possibleUpgrade" divider />
+              <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem> -->
+            </MDBDropdownMenu>
+          </MDBDropdown>
+        </MDBBtnGroup>
       </div>
       <!-- /Right -->
     </section>
@@ -107,10 +110,11 @@ import { useI18n } from "vue-i18n";
 // import ModalActionSkywardFinanceCreateSale from '@/components/dao/ModalActionSkywardFinanceCreateSale'
 // import ModalAddToDefi from '@/components/dao/ModalAddToDefi';
 import ModalProposal from '@/components/forms/ModalProposal.vue'
-import Payout from '@/components/forms/PayoutForm.vue'
+import loFind from "lodash/find";
+import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-  MDBBtn,
+  MDBBtn, MDBBtnGroup,
   MDBIcon,
 } from "mdb-vue-ui-kit";
 import { check } from "@/models/rights";
@@ -122,6 +126,7 @@ export default {
     MDBDropdownMenu, 
     MDBDropdownItem, 
     MDBBtn,
+    MDBBtnGroup,
     MDBIcon,
     ModalProposal, 
     Payout, 
@@ -202,17 +207,17 @@ export default {
       this.modalTitle = templ.name
       switch (templ.code) {
         case 'wf_near_send':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.name}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'Payout'
           this.activeFormCode = templ.code
           break
         case 'payout':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.name}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'Payout'
           this.activeFormCode = templ.code 
           break
-        case 'add_wf':
-          console.log('add_wf');
+        case 'wf_add':
+          console.log('wf_add');
           break
         default:
             this.formProps = {}

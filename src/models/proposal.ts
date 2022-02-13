@@ -4,12 +4,20 @@ import Decimal from "decimal.js";
 import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
+import loFind from "lodash/find";
 import lodashToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/utils/error'
 import Auction from "@/models/auction"
 import { getValueById } from "@/types/generic";
-import { DAOTokenHolder } from '@/types/dao';
+import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/types/dao';
 import { findParam } from '@/utils/collection'
+import { WFSettings, WFTemplate } from '@/types/workflow';
+import { check } from './rights';
+import moment from 'moment';
+import { accounts } from '@/data/blockchain';
+import { convertArrayOfObjectToObject } from "@/utils/array";
+import { getValueByCode } from "@/types/generic";
+import { yoctoToNear } from '@/utils/near';
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 const statusBgMapper = {
@@ -21,16 +29,10 @@ const statusBgMapper = {
     invalid: 'warning',
 };
 
-const getAction = (proposal: any) => proposal.transactions.actions[0];
 
-const getActionKey = (action: any): string => {
-  return Object.keys(action)[0]
-}
-
-
-const getActionType = (action: any) => {
+const getActionType = (action: string) => {
     let type = "";
-    switch (getActionKey(action)) {
+    switch (action) {
       case "Pay":
         type = "payout";
         break;
@@ -56,99 +58,36 @@ const getActionType = (action: any) => {
         type = 'add_rights_for_action';
         break;
       default:
-        throw new UnsupportedError('Undefined action type: ' + getActionKey(action))
+        throw new UnsupportedError('Undefined action type: ' + action)
     }
     return type;
 };
 
-const getState = (proposal: any, isOver: boolean) => {
-    let state = ""
-    if (proposal.status === 'InProgress' && isOver === false) {
-        state = 'in_progress'
-    } else if (proposal.status === 'InProgress' && isOver === true) {
-        state = 'executing'
-    } else if (proposal.status === 'Accepted') {
-        state = 'accepted'
-    } else if (proposal.status === 'Rejected') {
-        state = 'rejected'
-    } else if (proposal.status === 'Spam') {
-        state = 'spam'
-    } else if (proposal.status === 'Invalid') {
-        state = 'invalid'
-    }
-    return state
-}
-
-const getArgsFromAction = (action: any, docs: any, t: any) => {
-    let args = {};
-    const action_key = getActionKey(action);
-    switch (action_key) {
-      case "Pay":
-        args = {
-          account: action.SendNear.account_id,
-          amount: new Decimal(action.SendNear.amount_near)
-            .div(yoctoNear)
-            .toFixed(),
-        };
+const getState = (state: string) => {
+    let value = "-" + state + "-"
+    switch (state) {
+      case 'InProgress':
+        value = 'in_progress'
         break;
-      case "AddMember":
-        args = {
-          account: action.AddMember.account_id,
-          group: groupTrans(action.AddMember.group, t),
-        };
+      case 'Accepted':
+        value = 'accepted'
         break;
-      case "RemoveMember":
-        args = {
-          account: action.RemoveMember.account_id,
-          group: groupTrans(action.RemoveMember.group, t),
-        };
+      case 'Rejected':
+        value = 'rejected'
         break;
-      case "GeneralProposal":
-        args = {
-          title: action.GeneralProposal.title
-        };
+      case 'Spam':
+        value = 'spam'
         break;
-      case "AddFile":
-        args = {
-          name: action.AddFile.metadata.Curr.name,
-          ipfs_cid: action.AddFile.cid,
-          category:
-            action.AddFile.new_category || docs.categories[action.AddFile.metadata.Curr.category]?.value,
-        };
-        break;
-      case "InvalidateFile":
-        {
-          const doc_file = docs.files.find(
-            (elem: any) => elem.address == action.InvalidateFile.uuid
-          );
-          args = {
-            name: doc_file.name,
-            category: doc_file.category,
-          };
-        }
-        break;
-      case 'DistributeFT':
-        args = {
-          amount: new Decimal(action.DistributeFT.amount),
-          group: t('default.' + action.DistributeFT.from_group.toLowerCase()),
-          accounts: action.DistributeFT.accounts.join(', '),
-        };
-        break;
-      case 'AddRightsForActionGroup':
-        args = {
-          group: t('default.' + action.AddRightsForActionGroup.to.Group.value.toLowerCase()),
-          time_from: (action.AddRightsForActionGroup.time_from > 0) ? action.AddRightsForActionGroup.time_from : null,
-          time_to: (action.AddRightsForActionGroup.time_to > 0) ? action.AddRightsForActionGroup.time_to : null,
-          rights: action.AddRightsForActionGroup.rights.map( value => t('default.' + Auction.getTranslateKey(value))).join(', '),
-        };
+      case 'Invalid':
+        value = 'invalid'
         break;
       default:
-        throw new UnsupportedError('Undefined action type: ' + action_key)
+        break;
     }
-    return args;
-};
+    return value
+}
 
-const getVotingStats = (proposal: any, tokenHolders: DAOTokenHolder[], token_blocked: any) => {
+const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) => {
     //console.log(token_holders, token_blocked)
     const results = _.clone(voteMapper)
     //console.log(results)
@@ -171,13 +110,13 @@ const getVotingStats = (proposal: any, tokenHolders: DAOTokenHolder[], token_blo
     return [
         {
             choice: "yes",
-            percent: new Decimal(results[1]).div(token_blocked).times(100).round().toNumber(),
+            percent: new Decimal(results[1]).div(tokenBlocked).times(100).round().toNumber(),
             amount: new Decimal(results[1]).toNumber(),
             bg: "success",
         },
         {
             choice: "no",
-            percent: new Decimal(results[2]).div(token_blocked).times(100).round().toNumber(),
+            percent: new Decimal(results[2]).div(tokenBlocked).times(100).round().toNumber(),
             amount: new Decimal(results[2]).toNumber(),
             bg: "danger",
         },
@@ -186,20 +125,20 @@ const getVotingStats = (proposal: any, tokenHolders: DAOTokenHolder[], token_blo
     ];
 }
 
-const getDurationTo = (proposal: any) => parseNanoseconds(proposal.duration_to);
+const getDurationTo = (proposal: DAOProposal, settings: WFSettings): Date => moment(proposal.created).toDate(); // TODO: ADD duration .add(settings.voteLevel.duration)
 
-const getOver = (proposal: any): boolean => {
-    if (proposal.status === "InProgress") {
-      const end = getDurationTo(proposal).valueOf();
+const isOver = (proposal: DAOProposal, settings: WFSettings): boolean => {
+    if (proposal.state === "InProgress") {
+      const end = getDurationTo(proposal, settings).valueOf();
       const now = new Date().valueOf();
       return now > end;
     }
     return false;
 };
 
-const getChoice = (proposal: any, accountId: string): string => {
+const getChoice = (proposal: DAOProposal, accountId: string): string => {
     let kind_to_choice = "";
-    switch (proposal.votes[accountId]) {
+    switch (loFind(proposal.votes, {accountId: accountId})?.vote) {
       case 0:
         kind_to_choice = "spam";
         break;
@@ -215,12 +154,27 @@ const getChoice = (proposal: any, accountId: string): string => {
     return kind_to_choice;
 };
 
-const getProgress = (status: string, config: any, durationTo: Date): number => {
+const getArgs = (proposal: DAOProposal, templateCode: string): Record<string, unknown> => {
+  let values: Record<string, unknown> = {}
+  switch (templateCode) {
+    case 'wf_near_send':
+      values = {
+        receiverId: getValueByCode(proposal.inputs, 'receiverId'),
+        amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
+      }
+      break;
+    default:
+      break;
+  }
+  return values;
+}
+
+const getProgress = (status: string, settings: WFSettings, durationTo: Date): number => {
     let progress: number = 0;
     if (status === "InProgress") {
       const end = durationTo.valueOf();
       const now = new Date().valueOf();
-      const duration = new Decimal(_.get(config, ['duration'])).div(1_000_000).toNumber()
+      const duration = new Decimal(settings.voteLevel.duration.days).div(1_000_000).toNumber() // TODO: settings.voteLevel.duration >>
       const begin = new Decimal(durationTo.valueOf()).minus(duration).toNumber()
       const nowFromBegin = now - begin;
       const endFromBegin = end - begin;
@@ -232,45 +186,53 @@ const getProgress = (status: string, config: any, durationTo: Date): number => {
     return progress
 };
 
-const isVoted = (proposal: any, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
+const isVoted = (proposal: DAOProposal, accountId: string): boolean => Object.keys(proposal.votes).includes(accountId);
 
-const transform = (proposal: any, vote_policies: any, docs: any, tokenHolders: DAOTokenHolder[], token_blocked: number, accountId: string, accountRole: string, t: any, d: any) => {
-    const action = getAction(proposal[1].Curr)
-    const actionType = getActionType(action)
-    const actionKey = getActionKey(action)
-    const durationTo = getDurationTo(proposal[1].Curr)
-    const status = proposal[1].Curr.status
-    const isOver = getOver(proposal[1].Curr)
-    const stateIndex = getState(proposal[1].Curr, isOver)
-    const args = getArgsFromAction(action, docs, t)
-    const choiceIndex = getChoice(proposal[1].Curr, accountId)
+const transform = (
+  proposal: DAOProposal,
+  template: WFTemplate,
+  tokenHolders: DAOTokenHolder[],
+  tokenBlocked: number,
+  walletId: string,
+  walletRights: DAORights[],
+  daoRights: DAORights[],
+  t: any,
+  d: any
+) => {
+  // console.log(template)
+    const settings = loFind(template.settings, {id: proposal.settingsId})
+    const args = getArgs(proposal, template.code)
+    const stateIndex = getState(proposal.state)
+    const durationTo = getDurationTo(proposal, settings!)
+    console.log(durationTo)
+    const status = proposal.state
+    const choiceIndex = getChoice(proposal, walletId)
     const config = null //_.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: rewrite, Hack Pay => SendNear
     const trans = {
-        id: proposal[0],
-        key: actionKey,
-        index: proposal[1].Curr.uuid,
-        title: t('default.' + actionType + '_message', args),
-        description: proposal[1].Curr.description,
-        typeIndex: actionType,
-        type: t("default." + getActionType(action)),
+        id: proposal.id,
+        code: template.code,
+        title: t('default.wf_templ_' + template.code + '_title', args),
+        description: t('default.wf_templ_' + template.code + '_description', args),
+        typeIndex: template.id,
+        type: t('default.wf_templ_' + template.code),
         stateIndex: stateIndex,
-        state: t("default.vote_status_" + stateIndex),
+        state: t("default.proposal_state_" + stateIndex),
         status: status,
-        canVote: accountRole !== 'guest',
-        isOver: isOver,
-        isVoted: isVoted(proposal[1].Curr, accountId),
+        canVote: check(walletRights, daoRights),
+        isOver: isOver(proposal, settings!),
+        isVoted: isVoted(proposal, walletId),
         args: args,
-        votingStats: getVotingStats(proposal[1].Curr, tokenHolders, token_blocked),
+        votingStats: getVotingStats(proposal, tokenHolders, tokenBlocked),
         duration: {
-            value: durationTo,
+            value: durationTo, // TODO: Rewrite to END
             date: d(durationTo),
             time: toTimeString(durationTo),
         },
         config: config,
         choiceIndex: choiceIndex,
         choice: (choiceIndex) ? t("default.vote_type_" + choiceIndex) : null,
-        progress: getProgress(status, config, durationTo),
-        quorum: proposal[1].Curr.quorum,
+        progress: getProgress(status, settings!, durationTo),
+        quorum: settings?.voteLevel.quorum,
         search: '',
     }
     trans.search = [toSearch(trans.title), toSearch(trans.description), toSearch(trans.duration.date), toSearch(trans.duration.time), toSearch(trans.type), toSearch(trans.state)].join('-')

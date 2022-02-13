@@ -2,6 +2,8 @@ import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate } from "@/
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
+import { DAORights } from "@/types/dao"
+import { toObject } from "@/models/rights";
 
 export const templateMetaPayout: WFMetaTemplate = {
     settingsAttributes: [
@@ -14,6 +16,28 @@ export const templateMetaPayout: WFMetaTemplate = {
       { code: 'tokenAmount', bindId: 2 },
     ],
     activities: [],
+}
+
+export const templateMetaSendNear: WFMetaTemplate = {
+  settingsAttributes: [
+    { code: 'amountLimit', bindId: 0 },
+  ],
+  proposalAttributes: [
+    { code: 'receiverId', bindId: 0 },
+    { code: 'amount', bindId: 1 },
+  ],
+  activities: [],
+}
+
+export const templateMetaSendFt: WFMetaTemplate = {
+  settingsAttributes: [
+    { code: 'amountLimit', bindId: 0 },
+  ],
+  proposalAttributes: [
+    { code: 'receiverId', bindId: 0 },
+    { code: 'amount', bindId: 1 },
+  ],
+  activities: [],
 }
 
 export const templateMetaGroupAddMember: WFMetaTemplate = {
@@ -118,6 +142,10 @@ export const templateMeta: Record<string, WFMetaTemplate> = {
   'skyward': templateMetaSkyward,
   'general': templateMetaGeneral,
   'addWorkflow': templateMetaAddWorkflow,
+  'wf_add': templateMetaAddWorkflow,
+  'wf_send_near': templateMetaSendNear,
+  'wf_near_send': templateMetaSendNear,
+  'wf_send_ft': templateMetaSendFt,
 }
 
 
@@ -218,6 +246,7 @@ export const payoutAtStart: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'inProgress',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'pstu.near' },
     { code: 'nearAmount', value: '500.0' },
@@ -232,6 +261,7 @@ export const payoutAfterPayNear: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'inProgress',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'jsla.near' },
     { code: 'nearAmount', value: '700.0' },
@@ -270,6 +300,7 @@ export const payoutFinished: WFInstance = {
   templateId: 1,
   settingsId: 1,
   state: 'finished',
+  constants: [],
   inputs: [
     { code: 'receiverId', value: 'pfil.near' },
     { code: 'nearAmount', value: '500.0' },
@@ -290,3 +321,70 @@ export const payoutFinished: WFInstance = {
   ],
   search: toSearch('Payout pfil.near'),
 }
+
+export const workflowTemplateWfAdd: Record<string, unknown> = {
+  name:"wf_add",
+  version:1,
+  activities:[
+    null,
+    {
+      code:"wf_add",
+      exec_condition:null,
+      action:"WorkflowAdd",
+      fncall_id:null,
+      tgas:0,
+      deposit:0,
+      arg_types:[{"U16":false},{"Object":0}],
+      postprocessing:null
+    }
+  ],
+  transitions:[[1]],
+  binds:[],
+  start:[0],
+  end:[1]
+};
+
+export const workflowTemplateWfNearSend: Record<string, unknown> = {
+  name:"wf_near_send",
+  version:1,
+  activities:[
+    null,
+    {
+      code:"near_send",
+      exec_condition:null,
+      action:"NearSend",
+      fncall_id:null,
+      tgas:0,
+      deposit:0,
+      arg_types:[{String:false},{U128:false}],
+  postprocessing:null}],
+  transitions:[[1],[1]],
+  binds:[],
+  start:[0],
+  end:[1]
+};
+
+export const worlflowTemplateSettingsBuilder = (
+  canVote: DAORights,
+  canPropose: DAORights[],
+  activityRights: DAORights[][],
+  duration: number,
+  quorum: number,
+  approveThreshold: number,
+  depositPropose: number, // TODO: string
+  depositVote: number, // TODO: string
+  depositProposeReturn: number
+): Record<string, unknown> => ({
+    allowed_proposers: canPropose.map((right) => toObject(right)),
+    allowed_voters: toObject(canVote),
+    activity_rights: activityRights.map((rights: DAORights[]) => rights.map((right) => toObject(right))),
+    scenario: "TokenWeighted",
+    duration: duration,
+    quorum: quorum,
+    approve_threshold: approveThreshold,
+    spam_threshold: 80, // ??
+    vote_only_once: true,
+    deposit_propose: depositPropose,
+    deposit_vote: depositVote,
+    deposit_propose_return: depositProposeReturn
+})

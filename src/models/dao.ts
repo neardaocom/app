@@ -6,18 +6,21 @@ import loToInteger from "lodash/toInteger"
 import loNth from "lodash/nth"
 import loFind from "lodash/find"
 import loFindKey from "lodash/findKey"
+import loGet from "lodash/get"
 import loUniq from "lodash/uniq"
 import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
-import { templatePayout, payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
+import loValues from "lodash/values"
+import { templateMeta, templateMetaAddWorkflow } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { IDValue, Translate } from '@/types/generic';
+import { CodeValue, IDValue, Translate } from '@/types/generic';
 import { yoctoNear } from '@/services/nearService/constants';
 import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
+import near from '@/store/modules/near'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -106,7 +109,7 @@ export const getDaoActionMethod = (name: string): string => {
 
 export const getAccountId = (accountId: string): string => accountId.split('.')[0];
 
-export const getGroupCouncil = (dao: DAO, t: any): DAOGroup | undefined => lodashFind(dao.groups, {name: t('default.council')});
+export const getGroupCouncil = (dao: DAO, t: any): DAOGroup | undefined => lodashFind(dao.groups, {name: t('default.council')}) ?? lodashFind(dao.groups, {name: 'council'}); // TODO: Move to translate by lang of DAO
 
 export const getMemberFromGroup = (group: DAOGroup, walletId: string): DAOGroupMember | undefined => lodashFind(group.members, {accountId: walletId});
 
@@ -199,8 +202,8 @@ export const getTags = (globalTags: object, validTags: number[] | boolean = fals
 export const loadById = async (nearService: any, id: string, t: any, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
-    console.log(walletId)
-
+    // console.log(walletId)
+    /*
     const data = await Promise.all([
       nearService.getDaoAmount(id),
       nearService.getDaoInfo(daoId),
@@ -215,24 +218,27 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     ]).catch((e) => {
       throw new Error(`DAO[${id}] not loaded: ${e}`);
     });
+    */
 
     const dataHack = await Promise.all([
-      nearService.getWfTemplates(),
-      nearService.getGroups(),
-      nearService.getGroupTags(),
-      nearService.getMediaTags(),
-      nearService.getMediaList(),
-      nearService.getGlobalTags(),
-      nearService.getHackProposals(id,0, 1000),
-      nearService.getDaoSettings()
+      nearService.getWfTemplates(id),
+      nearService.getGroups(id),
+      nearService.getGroupTags(id),
+      nearService.getMediaTags(id),
+      nearService.getMediaList(id),
+      nearService.getGlobalTags(id),
+      nearService.getProposals(id, 0, 1000),
+      nearService.getDaoSettings(id),
+      nearService.getStats(id),
+      nearService.getFtMetadata(id),
+      nearService.getDaoAmount(id),
+      nearService.getStorage(id),
     ]).catch((e) => {
       throw new Error(`DAOHack[${id}] not loaded: ${e}`);
     });
 
-    console.log(data, dataHack)
-
-    const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
-    const ft_public_free = new Decimal(data[3].public_ft_stats.unlocked).minus(data[3].public_ft_stats.distributed).toNumber()
+    // console.log(data, dataHack)
+    console.log(dataHack)
 
      // groups
 
@@ -280,7 +286,9 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             token: token || undefined
         }        
     });
-        
+
+    const ft_treasury_holded = new Decimal(dataHack[8].ft_total_distributed).toNumber()
+    const ft_treasury_free = new Decimal(dataHack[8].ft_total_supply).minus(dataHack[8].ft_total_locked).toNumber()
 
     // token holders 
         // TODO: Is it good way to find members, form proposals??
@@ -288,9 +296,9 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     //const members: string[] = getMembers(groups, data[4])
     const members: string[] = getMembers(groups, dataHack[6])
 
-    if (walletId !== undefined && members.includes(walletId) === false) {
-        members.push(walletId)
-    }
+    //if (walletId !== undefined && members.includes(walletId) === false) {
+    //    members.push(walletId)
+    //}
     
     const tokenHolders: DAOTokenHolder[] = []
     let walletToken: number | undefined = undefined
@@ -335,7 +343,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         categories: getMediaCategories(dataHack[4]),
         tags: getTags(dataHack[3].map),
     }
-    console.log(docs);
+    // console.log(docs);
     
 
     dataHack[4].forEach((element) => {
@@ -402,16 +410,16 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     //const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
     const tags: IDValue[] = getTags(dataHack[5].map, dataHack[7].tags)
 
-   console.log(tags);
+//    console.log(tags);
    
 
     // templates
     const templates: WFTemplate[] = []
     let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: ''}
     let activity: WFActivity | undefined = undefined
-    // console.log(dataHack[0])
+    console.log("Template", dataHack[0])
     dataHack[0].forEach((template) => {
-        console.log(template)
+        // console.log(template)
 
         // activities
         const activities: WFActivity[] = []
@@ -502,7 +510,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                 }
             })
             settings.push({
-                id: index + 1,
+                id: index,
                 constants: [],
                 proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
                 voteRight: rightsParse(settingsItem.allowed_voters),
@@ -540,68 +548,81 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     // Proposals
     const proposals: DAOProposal[] = []
-    dataHack[6].forEach((proposal) => {
+    const workflows: WFInstance[] = []
+    let workflowInstance: any
+    let proposalTemplate: WFTemplate | undefined
+    let proposalSettings: WFSettings | undefined
+    let proposalConstants: CodeValue[] | undefined
+    let proposalInputs: CodeValue[] | undefined
+
+    for (const proposal of dataHack[6]) {
+        // console.log(proposal)
+        workflowInstance = await nearService.getWfInstance(id, proposal[0])
+        proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
+        proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
+        console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
+
+        proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
+            return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
+        }) ?? []
+
+        proposalInputs = loGet(templateMeta, [proposalTemplate!.code])?.proposalAttributes.map((attr) => {
+            // console.log('Binds', Object.values(workflowInstance[1].binds[attr.bindId]))
+            return { code: attr.code, value: loValues(workflowInstance[1].binds[attr.bindId])[0]}
+        }) ?? []
+
         proposals.push({
             id: proposal[0],
-            created: proposal[1].Curr.created,
+            created: moment(new Decimal(proposal[1].Curr.created).div(1_000_000).toNumber()).toDate(),
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
-            workflowId: proposal[1].Curr.workflow_id,
-            workflowSettingsId: proposal[1].Curr.workflow_settings_id,
+            constants: proposalConstants,
+            inputs: proposalInputs,
+            templateId: proposal[1].Curr.workflow_id,
+            settingsId: proposal[1].Curr.workflow_settings_id,
             workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
         })
-    })
 
-    // workflows TODO: Load from smart contract
-    const workflows: WFInstance[] = [] //[payoutAtStart, payoutAfterPayNear, payoutFinished]
-    const dataWorkflows = await Promise.all(
-        proposals.map((proposal) => nearService.getWfInstance(proposal.id))
-    ).catch((e) => {
-        throw new Error(`DAO[${id}] wf_instance not loaded: ${e}`);
-    });
-    proposals.forEach((proposal, index) => {
         workflows.push({
-            id: proposal.id,
-            templateId: proposal.workflowId,
-            settingsId: proposal.workflowSettingsId,
-            state: dataWorkflows[index][0].state,
-            inputs: [], // TODO: Add inputs
+            id: proposal[0],
+            templateId: proposal[1].Curr.workflow_id,
+            settingsId: proposal[1].Curr.workflow_settings_id,
+            state: workflowInstance[0].state,
+            constants: proposalConstants,
+            inputs: proposalInputs,
             activityNextIds: [],
             activityLogs: [],
             search: '',
         })
-    })
-    
-    console.log(dataWorkflows)
+    }
+    // console.log(proposals, workflows)
 
 
     return {
-        name: data[1].name,
-        purpose: data[1].description,
+        name: dataHack[7].name,
+        purpose: dataHack[7].purpose,
         wallet: id,
         treasury: {
             token: {
                 meta: {
-                    name: data[1].ft_name,
-                    short: data[1].ft_name,
+                    name: dataHack[9].name,
+                    short: dataHack[9].symbol, // TODO: short -> symbol
                     accountId: id,
-                    amount: data[1].ft_amount,
-                    decimals: data[3].decimals,
+                    amount: dataHack[8].ft_total_supply,
+                    decimals: dataHack[9].decimals,
                 },
-                free: new Decimal(ft_council_free).plus(ft_public_free).toNumber(),
-                holded: data[3].total_distributed,
+                free: ft_treasury_free,
+                holded: ft_treasury_holded,
                 owned: walletToken,
             },
-            near: new Decimal(data[0]).toNumber(),
-            nearStorageLocked: new Decimal(data[3].storage_locked_near).div(yoctoNear).mul(100).round().div(100).toNumber(),
+            near: new Decimal(dataHack[10]).toNumber(),
+            nearStorageLocked: 6.7, // TODO: Add storage locked
             fts: [],
         },
         location: '',
-        lang: data[6].lang,
-        created: new Date(new Decimal(data[1].founded_s).mul(1000).toNumber()),
-        storage: {
-            skywardFinance: data[9] ?? undefined,
-        },
+        lang: '', // TODO: Add lang to DAO
+        created: new Date(), // TODO: DAO created
+        storage: dataHack[11],
         docs: docs,
         voteLevels: voteLevels,
         groups: groups,

@@ -13,7 +13,7 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Activity :dao="dao" />
       </div>
-      <SkywardFinance :dao="dao" :scenario="'active'" />
+      <SkywardFinance v-if="dao.storage?.skywardFinance" :dao="dao" :scenario="'active'" />
     </div>
 
     <hr/>
@@ -40,9 +40,10 @@ import Share from "@/components/dao/dashboard/Share.vue";
 import Activity from "@/components/dao/dashboard/Activity.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
-// import { transform } from '@/models/proposal';
+import { transform } from '@/models/proposal';
 import { toRefs } from "vue"
 import _ from "lodash"
+import loFind from "lodash/find"
 
 export default {
   components: {
@@ -55,22 +56,28 @@ export default {
       type: Object,
       required: true,
     },
-    accountId: {
+    walletId: {
       type: String,
       required: false,
     },
-    accountRole: {
-      type: String,
-      required: false,
+    walletRights: {
+      type: Object,
+      required: true,
+    },
+    daoRights: {
+      type: Object,
+      required: true,
     },
   },
   setup(props) {
     const { t, n, d } = useI18n();
-    const { dao, accountId, accountRole } = toRefs(props)
-    console.log(dao, accountId, accountRole, d)
+    const { dao, walletId, walletRights, daoRights } = toRefs(props)
+    // console.log(dao, walletId, walletRights, daoRights, d)
     // proposals
-    // const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.tokenHolders, dao.value.treasury.token.holded, accountId.value, accountRole.value, t, d))
-    const proposals = []
+    const proposals = dao.value.proposals.map((proposal) => {
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d)
+    })
+    // const proposals = []
 
     return {
       t, n, proposals,

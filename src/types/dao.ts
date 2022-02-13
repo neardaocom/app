@@ -1,5 +1,5 @@
 import { IPFSFile } from "@/types/ipfs";
-import { IDValue } from "@/types/generic";
+import { CodeValue, IDValue } from "@/types/generic";
 import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
 
@@ -163,9 +163,11 @@ export type DAOProposal = {
   created: Date;
   votes: DAOVote[];
   state: string;
-  workflowId: number;
-  workflowSettingsId: number;
+  templateId: number;
+  settingsId: number;
   workflowAddSettingsId: number;
+  inputs: CodeValue[];
+  constants: CodeValue[];
 }
 
 export type DAO = {
@@ -185,4 +187,28 @@ export type DAO = {
   templates: WFTemplate[];
   proposals: DAOProposal[];
   workflows: WFInstance[];
+}
+
+export type DAODTO = {
+  id: number;
+  code: string;
+  title: string;
+  description: string;
+  typeIndex: number;
+  type: string;
+  stateIndex: number;
+  state: string;
+  status: string;
+  canVote: boolean;
+  isOver: boolean;
+  isVoted: boolean;
+  args: Record<string, unknown>;
+  votingStats: Record<string, unknown>[];
+  duration: Record<string, unknown>;
+  config: Record<string, unknown>;
+  choiceIndex: number;
+  choice: string;
+  progress: number;
+  quorum: number;
+  search: string;
 }

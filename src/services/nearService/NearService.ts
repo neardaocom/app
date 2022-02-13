@@ -14,7 +14,11 @@ import { yoctoNear, TGas } from './constants';
 import { ContractPool } from './ContractPool';
 import { getPublicSalePercent } from './utils';
 import _ from "lodash"
+import loSet from "lodash/set"
 import { duration } from 'moment';
+import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
+import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
+import { nearToYocto, toTGas } from '@/utils/near';
 
 class NearService {
   // config of near
@@ -66,8 +70,10 @@ class NearService {
 
     this.providerContract = new Contract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME, {
       viewMethods: [
-        'list',
-        'get',
+        'wf_templates',
+        'wf_template',
+        'wf_template_fncalls',
+        'fncalls_metadata',
       ],
       changeMethods: [
       ],
@@ -109,14 +115,14 @@ class NearService {
    * Provider: List
    */
   async providerList() {
-    return this.providerContract.list();
+    return this.providerContract.wf_templates();
   }
 
   /**
    * Provider: Get
    */
    async providerGet(id: number) {
-    return this.providerContract.get({id: id});
+    return this.providerContract.wf_template({id: id});
   }
 
   /**
@@ -361,6 +367,7 @@ class NearService {
     quorum: number,
     voteDurationDays: number,
     voteDurationHours: number,
+    voteDurationMinutes: number,
     amountToTransfer: number
   ){
 
@@ -384,7 +391,7 @@ class NearService {
     const setGroups = [
       {
         settings:{
-          name:"council",
+          name: "Council",
           leader: councilMembers[0].account_id
         },
         members: councilMembers,
@@ -414,46 +421,19 @@ class NearService {
     ]
     const setFnCalls = []
     const setFnCallMeta = []
-    const setWfTemplate = [
-      {
-        name:"wf_add",
-        version:1,
-        activities:[
-          null,
-          {
-            code:"wf_add",
-            exec_condition:null,
-            action:"WorkflowAdd",
-            fncall_id:null,
-            tgas:0,
-            deposit:0,
-            arg_types:[{"U16":false},{"Object":0}],
-            postprocessing:null
-          }
-        ],
-        transitions:[[1]],
-        binds:[],
-        start:[0],
-        end:[1]
-      }]
-    const setWfSettings = [
-      [
-        {
-          allowed_proposers: [{"Group":1}],
-          allowed_voters: "TokenHolder",
-          activity_rights:[[{"GroupLeader":1}]],
-          scenario:"TokenWeighted",
-          duration: new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, 0, 0)).div(1000000000).toNumber(),
-          quorum: quorum,
-          approve_threshold: approveThreshold,
-          spam_threshold: 80, // ??
-          vote_only_once: true,
-          deposit_propose: 1,
-          deposit_vote: 1000,
-          deposit_propose_return: 0
-        }
-      ]
-    ]
+    const setWfTemplate = [workflowTemplateWfAdd, workflowTemplateWfNearSend]
+    const setWfSettings = worlflowTemplateSettingsBuilder(
+      rightTokenGroupCouncil,
+      [rightTokenHolder],
+      [[rightTokenGroupCouncilLeader]],
+      new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
+      quorum,
+      approveThreshold,
+      1000, // TODO: nearToYocto(1.0),
+      1000, // TODO: nearToYocto(0.0001),
+      0
+    )
+
     const args = {
       total_supply: ftAmount,
       ft_metadata: setFtMeta,
@@ -464,13 +444,10 @@ class NearService {
       function_calls: setFnCalls,
       function_call_metadata: setFnCallMeta,
       workflow_templates: setWfTemplate,
-      workflow_template_settings: setWfSettings
+      workflow_template_settings: [[setWfSettings], [setWfSettings]]
     }
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
-
-    const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoctoNear).toFixed();
 
     return this.factoryContract.create(
       {
@@ -485,8 +462,8 @@ class NearService {
         },
           args: args_base64
       },
-      Decimal.mul(300, TGas).toString(),
-      amountYokto.toString()
+      toTGas(300),
+      nearToYocto(amountToTransfer)
     );
   }  
 
@@ -495,26 +472,88 @@ class NearService {
   /////////////////
   /**
    * Add proposal to DAO
+   * 
+   * 
    */
+  
   async addProposal(
     contractId: string
-    , description: string
-    , tags: any
-    , transactions: any
+    , templateId: number
+    , templateSettingsId: number
+    , activity_inputs: any
+    , transition_constraints: any
+    , binds: any
+    , obj_validators
+    , validator_exprs
+    , storage_key
     , amountToTransfer: number
-    , accountId: string
+  ) {
+    return this.contractPool.get(contractId).propose(
+      {
+        template_id: templateId,
+        template_settings_id: templateSettingsId,
+        propose_settings: {
+          activity_inputs: activity_inputs,
+          transition_constraints: transition_constraints,
+          binds: binds,
+          obj_validators: obj_validators,
+          validator_exprs: validator_exprs,
+          storage_key: storage_key
+        },
+        template_settings: null,
+      },
+      toTGas(100),
+      nearToYocto(amountToTransfer)
+    );
+  }
+
+  async addWorkflow(
+    contractId: string
+    , templateSettingsId: number
+    , activity_inputs: any
+    , transition_constraints: any
+    , binds: any
+    , obj_validators
+    , validator_exprs
+    , storage_key,
+    approveThreshold: number,
+    quorum: number,
+    voteDurationDays: number,
+    voteDurationHours: number,
+    voteDurationMinutes: number,
+    depositPropose: number,
+    depositVote: number,
+    depositProposeReturn: number,
+    amountToTransfer: number
   ) {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_proposal(
+    const setWfSettings = worlflowTemplateSettingsBuilder(
+      rightTokenGroupCouncil,
+      [rightTokenHolder],
+      [[rightTokenGroupCouncilLeader]],
+      new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
+      quorum,
+      approveThreshold,
+      depositPropose, // TODO: .toString(),
+      depositVote, // TODO: .toString(),
+      depositProposeReturn
+    )
+
+    return this.contractPool.get(contractId).propose(
       {
-        proposal_input: {
-          description: description,
-          tags: tags,
+        template_id: 1,
+        template_settings_id: templateSettingsId,
+        propose_settings: {
+          activity_inputs: activity_inputs,
+          transition_constraints: transition_constraints,
+          binds: binds,
+          obj_validators: obj_validators,
+          validator_exprs: validator_exprs,
+          storage_key: storage_key
         },
-        tx_input: transactions,
-        account_id: accountId
+        template_settings: [setWfSettings],
       },
       Decimal.mul(100, TGas).toString(),
       amountYokto.toString()
@@ -717,10 +756,9 @@ class NearService {
       {
         proposal_id: proposalId,
         vote_kind: vote,
-        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
       },
-      Decimal.mul(10, TGas).toString()
-      , new Decimal(0.00125).mul(yoctoNear).toFixed()
+      toTGas(10),
+      nearToYocto(0.00125) // TODO: Get from template settings
     );
   }
 
@@ -734,9 +772,8 @@ class NearService {
     return this.contractPool.get(contractId).finish_proposal(
       {
         proposal_id: proposalId,
-        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
       },
-      Decimal.mul(100, TGas).toString()
+      toTGas(100)
     );
   }
 
@@ -1028,39 +1065,57 @@ class NearService {
     return this.contractPool.get(contractId).ref_pools();
   }
 
-  async getWfTemplates() {
-    return this.contractPool.getHack().wf_templates();
+  async getWfTemplates(contractId: string) {
+    return this.contractPool.get(contractId).wf_templates();
   }
 
-  async getGroups() {
-    return this.contractPool.getHack().groups();
+  async getGroups(contractId: string) {
+    return this.contractPool.get(contractId).groups();
   }
-  async getGroupTags() {
-    return this.contractPool.getHack().tags({category: "group"});
+  async getGroupTags(contractId: string) {
+    return this.contractPool.get(contractId).tags({category: "group"});
   }
-  async getMediaTags() {
-    return this.contractPool.getHack().tags({category: "media"});
+  async getMediaTags(contractId: string) {
+    return this.contractPool.get(contractId).tags({category: "media"});
   }
-  async getGlobalTags(){
-    return this.contractPool.getHack().tags({category: "global"});
+  async getGlobalTags(contractId: string){
+    return this.contractPool.get(contractId).tags({category: "global"});
   }
-  async getMediaList() {
-    return this.contractPool.getHack().media_list();
+  async getMediaList(contractId: string) {
+    return this.contractPool.get(contractId).media_list();
   }
 
-  async getHackProposals(_contractId: string, fromIndex: number, limit: number) {
-    return this.contractPool.getHack().proposals({
-      from_index: fromIndex ?? 0,
-      limit: limit ?? 1000
+  async getDaoSettings(contractId: string){
+    return this.contractPool.get(contractId).dao_settings()
+  }
+
+  async getWfInstance(contractId: string, proposalId: number){
+    return this.contractPool.get(contractId).wf_instance({proposal_id: proposalId})
+  }
+
+  async getStats(contractId: string){
+    return this.contractPool.get(contractId).stats()
+  }
+
+  async getFtMetadata(contractId: string){
+    return this.contractPool.get(contractId).ft_metadata()
+  }
+
+  async getStorage(contractId: string) {
+    // get keys
+    const storageKeys: string[] = await this.contractPool.get(contractId).storage_buckets()
+  
+    // load data
+    const data = await Promise.all(
+      storageKeys.map((key: string) => this.contractPool.get(contractId).storage_bucket_data_all({bucket_id: key}))
+    ).catch((e) => {
+      throw new Error("Storage data not louded" + e);
     });
-  }
 
-  async getDaoSettings(){
-    return this.contractPool.getHack().dao_settings()
-  }
-
-  async getWfInstance(proposalId: number){
-    return this.contractPool.getHack().wf_instance({proposal_id: proposalId})
+    const result: Record<string, unknown> = {}
+    storageKeys.forEach((key, index) => loSet(result, [key], data[index]))
+    
+    return result
   }
 
 

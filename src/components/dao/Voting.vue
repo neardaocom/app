@@ -70,6 +70,7 @@ import { useI18n } from "vue-i18n"
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import _ from "lodash"
+import loFind from "lodash/find"
 import { toSearch } from '@/utils/string'
 
 export default {
@@ -86,16 +87,26 @@ export default {
       type: String,
       required: true,
     },
-    accountRole: {
+    walletId: {
       type: String,
+      required: false,
+    },
+    walletRights: {
+      type: Object,
+      required: true,
+    },
+    daoRights: {
+      type: Object,
       required: true,
     },
   },
   setup(props) {
-    const { dao, accountId, accountRole } = toRefs(props)
+    const { dao, walletId, walletRights, daoRights } = toRefs(props)
     const { t, d } = useI18n();
 
-    const proposals = dao.value.proposals.map((proposal) => transform(proposal, dao.value.vote_policies, dao.value.docs, dao.value.tokenHolders, dao.value.treasury.token.holded, accountId.value, accountRole.value, t, d))
+    const proposals = dao.value.proposals.map((proposal) => {
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d)
+    })
 
     const searchQuery = ref('')
     const filterState = reactive({

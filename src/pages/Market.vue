@@ -59,7 +59,8 @@
                   <tr v-for="(template, index) in dataResults" :key="index">
                     <td>{{ index + 1 }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
+                      <router-link v-if="false" class="fw-bold" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
+                      <span v-else class="fw-bold">{{ template.name }}</span>
                     </td>
                     <td class="text-start">{{ t('default.workflows') }}</td>
                     <td class="text-start">{{ creator.name }}</td>
