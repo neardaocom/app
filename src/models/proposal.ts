@@ -5,10 +5,10 @@ import { yoctoNear } from "@/services/nearService/constants";
 import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
 import loFind from "lodash/find";
+import loGet from "lodash/get";
 import lodashToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/utils/error'
 import Auction from "@/models/auction"
-import { getValueById } from "@/types/generic";
 import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/types/dao';
 import { findParam } from '@/utils/collection'
 import { WFSettings, WFTemplate } from '@/types/workflow';
@@ -16,55 +16,13 @@ import { check } from './rights';
 import moment from 'moment';
 import { accounts } from '@/data/blockchain';
 import { convertArrayOfObjectToObject } from "@/utils/array";
-import { getValueByCode } from "@/types/generic";
+import { getValueById, getValueByCode, addInterval, subtractInterval } from "@/utils/generics";
 import { yoctoToNear } from '@/utils/near';
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
-const statusBgMapper = {
-    in_progress: 'primary',
-    executing: 'danger',
-    accepted: 'success',
-    rejected: 'danger',
-    spam: 'dark',
-    invalid: 'warning',
-};
 
-
-const getActionType = (action: string) => {
-    let type = "";
-    switch (action) {
-      case "Pay":
-        type = "payout";
-        break;
-      case "AddMember":
-        type = "add_member";
-        break;
-      case "RemoveMember":
-        type = "remove_member";
-        break;
-      case "GeneralProposal":
-        type = "general_proposal";
-        break;
-      case "AddFile":
-        type = "add_doc_file";
-        break;
-      case "InvalidateFile":
-        type = "invalidate_file";
-        break;
-      case "DistributeFT":
-        type = "distribute_ft";
-        break;
-      case "AddRightsForActionGroup":
-        type = 'add_rights_for_action';
-        break;
-      default:
-        throw new UnsupportedError('Undefined action type: ' + action)
-    }
-    return type;
-};
-
-const getState = (state: string) => {
-    let value = "-" + state + "-"
+const getStateCode = (state: string): string => {
+    let value: string = "-" + state + "-"
     switch (state) {
       case 'InProgress':
         value = 'in_progress'
@@ -86,6 +44,35 @@ const getState = (state: string) => {
     }
     return value
 }
+
+const getWorkflowCode = (state: string, progress: number): string => {
+  let code: string = ''
+  if (state === 'InProgress' && progress < 100) {
+    code = 'in_progress'
+  } else if (state === 'InProgress') {
+    code = 'finishing'
+  } else if (state === 'Accepted') {
+    code = 'accepted'
+  } else if (state === 'Rejected') {
+    code = 'rejected'
+  } else if (state === 'Spam') {
+    code = 'spam'
+  } else if (state === 'Invalid') {
+    code = 'invalid'
+  }
+
+  return code
+}
+
+const workflowCodeBgMapper = {
+  in_progress: 'primary',
+  finishing: 'danger',
+  accepted: 'success',
+  rejected: 'danger',
+  spam: 'dark',
+  invalid: 'warning',
+};
+
 
 const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) => {
     //console.log(token_holders, token_blocked)
@@ -125,7 +112,7 @@ const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], t
     ];
 }
 
-const getDurationTo = (proposal: DAOProposal, settings: WFSettings): Date => moment(proposal.created).toDate(); // TODO: ADD duration .add(settings.voteLevel.duration)
+const getDurationTo = (proposal: DAOProposal, settings: WFSettings): Date => addInterval(proposal.created, settings.voteLevel.duration);
 
 const isOver = (proposal: DAOProposal, settings: WFSettings): boolean => {
     if (proposal.state === "InProgress") {
@@ -138,7 +125,7 @@ const isOver = (proposal: DAOProposal, settings: WFSettings): boolean => {
 
 const getChoice = (proposal: DAOProposal, accountId: string): string => {
     let kind_to_choice = "";
-    switch (loFind(proposal.votes, {accountId: accountId})?.vote) {
+    switch (loGet(proposal.votes, [accountId])) {
       case 0:
         kind_to_choice = "spam";
         break;
@@ -174,12 +161,15 @@ const getProgress = (status: string, settings: WFSettings, durationTo: Date): nu
     if (status === "InProgress") {
       const end = durationTo.valueOf();
       const now = new Date().valueOf();
-      const duration = new Decimal(settings.voteLevel.duration.days).div(1_000_000).toNumber() // TODO: settings.voteLevel.duration >>
-      const begin = new Decimal(durationTo.valueOf()).minus(duration).toNumber()
+      const begin = subtractInterval(durationTo, settings.voteLevel.duration).valueOf()
       const nowFromBegin = now - begin;
       const endFromBegin = end - begin;
-      // console.log('Progress values: ', begin, now, end);
-      if (endFromBegin >= 0) {
+      // console.log('Progress values:', begin, now, end);
+      if (end - now < 0) {
+        progress = 100
+      } else if (now - begin < 0) {
+        progress = 0
+      } else {
         progress = new Decimal(nowFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
       }
     }
@@ -202,9 +192,9 @@ const transform = (
   // console.log(template)
     const settings = loFind(template.settings, {id: proposal.settingsId})
     const args = getArgs(proposal, template.code)
-    const stateIndex = getState(proposal.state)
+    const stateCode = getStateCode(proposal.state)
     const durationTo = getDurationTo(proposal, settings!)
-    console.log(durationTo)
+    // console.log(durationTo)
     const status = proposal.state
     const choiceIndex = getChoice(proposal, walletId)
     const config = null //_.get(vote_policies, [actionKey]) || _.get(vote_policies, ['Pay'])  // TODO: rewrite, Hack Pay => SendNear
@@ -213,10 +203,10 @@ const transform = (
         code: template.code,
         title: t('default.wf_templ_' + template.code + '_title', args),
         description: t('default.wf_templ_' + template.code + '_description', args),
-        typeIndex: template.id,
+        typeCode: template.code,
         type: t('default.wf_templ_' + template.code),
-        stateIndex: stateIndex,
-        state: t("default.proposal_state_" + stateIndex),
+        stateCode: stateCode,
+        state: t("default.proposal_state_" + stateCode),
         status: status,
         canVote: check(walletRights, daoRights),
         isOver: isOver(proposal, settings!),
@@ -234,6 +224,7 @@ const transform = (
         progress: getProgress(status, settings!, durationTo),
         quorum: settings?.voteLevel.quorum,
         search: '',
+        templateSettings: settings,
     }
     trans.search = [toSearch(trans.title), toSearch(trans.description), toSearch(trans.duration.date), toSearch(trans.duration.time), toSearch(trans.type), toSearch(trans.state)].join('-')
     // console.log(trans)
@@ -241,5 +232,5 @@ const transform = (
 };
 
 export {
-    transform, voteMapper, statusBgMapper, getProgress
+    transform, voteMapper, workflowCodeBgMapper, getProgress, getWorkflowCode
 }

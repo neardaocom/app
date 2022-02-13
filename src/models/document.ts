@@ -2,7 +2,7 @@ import { toCompare } from "@/utils/version";
 import { toSearch } from "@/utils/string";
 // import { convertArrayOfObjectToObject } from "@/utils/array";
 import _ from "lodash"
-import { getValueById, getIdByValue, IDValue } from "@/types/generic";
+import { getValueById, getIdByValue } from "@/utils/generics";
 import { DAODocs, DAODocsFile } from "@/types/dao";
 import lodashFilter from "lodash/filter"
 import lodashOrderBy from "lodash/orderBy"

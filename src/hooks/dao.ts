@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { DAO, DAORights } from "@/types/dao";
-import { Translate } from "@/types/generic";
+import { Translate } from "@/types/generics";
 import { getGroupCouncil } from '@/models/dao'
 import { getDAORights, toTranslate, getWalletRights } from '@/models/rights'
 import Decimal from "decimal.js";

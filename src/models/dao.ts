@@ -15,12 +15,13 @@ import { templateMeta, templateMetaAddWorkflow } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { CodeValue, IDValue, Translate } from '@/types/generic';
+import { CodeValue, IDValue, Translate } from '@/types/generics';
 import { yoctoNear } from '@/services/nearService/constants';
 import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
+import { dateFromChain } from '@/utils/near'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -573,7 +574,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
         proposals.push({
             id: proposal[0],
-            created: moment(new Decimal(proposal[1].Curr.created).div(1_000_000).toNumber()).toDate(),
+            created: dateFromChain(proposal[1].Curr.created),
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
             constants: proposalConstants,

@@ -55,7 +55,7 @@
     <div class="row">
       <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal" :contractId="dao.wallet" :accountRole="accountRole"/>
+          <Proposal :proposal="proposal" :contractId="dao.wallet" />
         </section>
       </div>
     </div>
@@ -111,12 +111,12 @@ export default {
     const searchQuery = ref('')
     const filterState = reactive({
       inProgress: {
-        name: t('default.vote_status_in_progress'),
+        name: t('default.proposal_state_in_progress'),
         state: 'in_progress',
         active: false,
       },
       accepted: {
-        name: t('default.vote_status_accepted'),
+        name: t('default.proposal_state_accepted'),
         state: 'accepted',
         active: false,
       },
@@ -136,7 +136,7 @@ export default {
       // filter
       const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
       if (filterStates.length > 0) {
-        results = results.filter(item => _.intersection([item.stateIndex], filterStates).length > 0)
+        results = results.filter(item => _.intersection([item.stateCode], filterStates).length > 0)
       }
       // searching
       const searchText = toSearch(this.searchQuery)

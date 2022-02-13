@@ -33,19 +33,19 @@ export default {
             type: Object,
             required: true,
         },
-        accountId: {
+        walletId: {
             type: String,
             required: false,
         },
     },
     setup(props) {
-        const { dao, accountId } = toRefs(props)
+        const { dao, walletId } = toRefs(props)
         const { t } = useI18n()
 
         const myTokensAmount = computed(() => dao.value.treasury.token.owned);
         const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(dao.value.treasury.token.owned || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
 
-        const isCouncil = computed(() => isWalletInCouncil(dao.value, accountId.value, t));
+        const isCouncil = computed(() => isWalletInCouncil(dao.value, walletId.value, t));
 
         // token unclock
         const token_council_to_unlock = ref(null)

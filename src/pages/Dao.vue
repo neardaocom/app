@@ -26,7 +26,7 @@
       <div class="container">
         <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :accountId="accountId" :accountRole="accountRole" />
+        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao" />
         <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao" />
         <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao" />

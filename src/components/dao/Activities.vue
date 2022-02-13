@@ -55,12 +55,16 @@ export default {
       type: Object,
       required: true,
     },
-    accountId: {
+    walletId: {
       type: String,
+      required: false,
+    },
+    walletRights: {
+      type: Object,
       required: true,
     },
-    accountRole: {
-      type: String,
+    daoRights: {
+      type: Object,
       required: true,
     },
   },

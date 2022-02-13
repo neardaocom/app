@@ -8,7 +8,7 @@
         <Treasury :dao="dao" :nearPrice="nearPrice" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <Share :dao="dao" :accountId="accountId" />
+        <Share :dao="dao" :walletId="walletId" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Activity :dao="dao" />

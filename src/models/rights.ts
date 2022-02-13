@@ -1,5 +1,5 @@
 import { DAO, DAOGroup, DAOGroupMember, DAORights, DAORightsType, DAOTokenHolder } from "@/types/dao";
-import { Translate } from "@/types/generic";
+import { Translate } from "@/types/generics";
 import loIsEqual from "lodash/isEqual";
 import loFirst from "lodash/first";
 import loFind from "lodash/find";

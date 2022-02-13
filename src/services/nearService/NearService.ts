@@ -508,14 +508,14 @@ class NearService {
   }
 
   async addWorkflow(
-    contractId: string
-    , templateSettingsId: number
-    , activity_inputs: any
-    , transition_constraints: any
-    , binds: any
-    , obj_validators
-    , validator_exprs
-    , storage_key,
+    contractId: string,
+    templateSettingsId: number,
+    activityInputs: any,
+    transitionConstraints: any,
+    binds: any,
+    objValidators,
+    validatorExprs,
+    storageKey: string,
     approveThreshold: number,
     quorum: number,
     voteDurationDays: number,
@@ -546,12 +546,12 @@ class NearService {
         template_id: 1,
         template_settings_id: templateSettingsId,
         propose_settings: {
-          activity_inputs: activity_inputs,
-          transition_constraints: transition_constraints,
+          activity_inputs: activityInputs,
+          transition_constraints: transitionConstraints,
           binds: binds,
-          obj_validators: obj_validators,
-          validator_exprs: validator_exprs,
-          storage_key: storage_key
+          obj_validators: objValidators,
+          validator_exprs: validatorExprs,
+          storage_key: storageKey
         },
         template_settings: [setWfSettings],
       },

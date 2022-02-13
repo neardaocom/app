@@ -1,5 +1,5 @@
 import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
-import { Translate } from "@/types/generic";
+import { Translate } from "@/types/generics";
 import lodashFind from "lodash/find";
 import lodashFindIndex from "lodash/findIndex";
 import lodashGet from "lodash/get";

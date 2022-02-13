@@ -1,14 +1,6 @@
-import lodashFind from "lodash/find";
-
-export type IDValue = {
-    id: number;
-    value: string | undefined;
-}
-
-export type CodeValue = {
-    code: string;
-    value: string | undefined;
-}
+import lodashFind from "lodash/find"
+import { IDValue, CodeValue, Interval } from "@/types/generics";
+import moment from "moment";
 
 export const getValueById = (items: IDValue[], id: number): string | undefined => {
     const item: IDValue | undefined = lodashFind(items, {id: id})
@@ -25,7 +17,6 @@ export const getValueByCode = (items: CodeValue[], id: string): string | undefin
     return item ? item.value : undefined;
 };
 
-export type Translate = {
-    key: string;
-    params: Record<string, unknown>;
-}
+export const addInterval = (value: Date, interval: Interval): Date => moment(value).add(interval).toDate();
+
+export const subtractInterval = (value: Date, interval: Interval): Date => moment(value).subtract(interval).toDate();
