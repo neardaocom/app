@@ -19,6 +19,7 @@ import { duration } from 'moment';
 import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
 import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
 import { nearToYocto, toTGas } from '@/utils/near';
+import { DAORights } from '@/types/dao';
 import { TransactionAction } from "@/types/blockchain";
 
 class NearService {
@@ -422,16 +423,17 @@ class NearService {
     ]
     const setFnCalls = []
     const setFnCallMeta = []
-    const setWfTemplate = [workflowTemplateWfAdd, workflowTemplateWfNearSend]
+    const setWfTemplate = [workflowTemplateWfAdd, workflowTemplateWfNearSend] // [workflowTemplateWfAdd]
     const setWfSettings = worlflowTemplateSettingsBuilder(
+      [[{'transition_limit': 1, 'cond': null}]],
       rightTokenGroupCouncil,
       [rightTokenHolder],
       [[rightTokenGroupCouncilLeader]],
       new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
       quorum,
       approveThreshold,
-      1000, // TODO: nearToYocto(1.0),
-      1000, // TODO: nearToYocto(0.0001),
+      nearToYocto(0.000001), // TODO: nearToYocto(1.0),
+      nearToYocto(0.0000000001), // TODO: nearToYocto(0.0001),
       0
     )
 
@@ -445,7 +447,7 @@ class NearService {
       function_calls: setFnCalls,
       function_call_metadata: setFnCallMeta,
       workflow_templates: setWfTemplate,
-      workflow_template_settings: [[setWfSettings], [setWfSettings]]
+      workflow_template_settings: [[setWfSettings], [setWfSettings]] // [[setWfSettings]]
     }
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
@@ -478,27 +480,19 @@ class NearService {
    */
   
   async addProposal(
-    contractId: string
-    , templateId: number
-    , templateSettingsId: number
-    , activity_inputs: any
-    , transition_constraints: any
-    , binds: any
-    , obj_validators
-    , validator_exprs
-    , storage_key
-    , amountToTransfer: number
+    contractId: string,
+    templateId: number,
+    templateSettingsId: number,
+    binds: any,
+    storage_key: string,
+    amountToTransfer: number
   ) {
     return this.contractPool.get(contractId).propose(
       {
         template_id: templateId,
         template_settings_id: templateSettingsId,
         propose_settings: {
-          activity_inputs: activity_inputs,
-          transition_constraints: transition_constraints,
           binds: binds,
-          obj_validators: obj_validators,
-          validator_exprs: validator_exprs,
           storage_key: storage_key
         },
         template_settings: null,
@@ -511,19 +505,19 @@ class NearService {
   async addWorkflow(
     contractId: string,
     templateSettingsId: number,
-    activityInputs: any,
     transitionConstraints: any,
+    canVote: DAORights,
+    canPropose: DAORights[],
+    activityRights: DAORights[][],
     binds: any,
-    objValidators,
-    validatorExprs,
     storageKey: string,
     approveThreshold: number,
     quorum: number,
     voteDurationDays: number,
     voteDurationHours: number,
     voteDurationMinutes: number,
-    depositPropose: number,
-    depositVote: number,
+    depositPropose: string,
+    depositVote: string,
     depositProposeReturn: number,
     amountToTransfer: number
   ) {
@@ -531,9 +525,10 @@ class NearService {
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
     const setWfSettings = worlflowTemplateSettingsBuilder(
-      rightTokenGroupCouncil,
-      [rightTokenHolder],
-      [[rightTokenGroupCouncilLeader]],
+      transitionConstraints,
+      canVote,//rightTokenGroupCouncil,
+      canPropose,//[rightTokenHolder],
+      activityRights,//[[rightTokenGroupCouncilLeader]],
       new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
       quorum,
       approveThreshold,
@@ -547,11 +542,7 @@ class NearService {
         template_id: 1,
         template_settings_id: templateSettingsId,
         propose_settings: {
-          activity_inputs: activityInputs,
-          transition_constraints: transitionConstraints,
           binds: binds,
-          obj_validators: objValidators,
-          validator_exprs: validatorExprs,
           storage_key: storageKey
         },
         template_settings: [setWfSettings],
@@ -798,12 +789,12 @@ class NearService {
     });
   }
 
-  async signAndSendTransactions(contractId: string, actions: TransactionAction[]) {
+  async signAndSendTransactions(contractId: string, actions:  TransactionAction[]) {
     const account = this.walletConnection.account();
 
     return account.signAndSendTransaction({
         receiverId: contractId,
-        actions: actions.map((action: TransactionAction) => 
+        actions: actions.map((action:  TransactionAction) => 
             transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(action.gas).mul(new BN(TGas)), new BN(action.deposit))
         )
     });

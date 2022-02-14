@@ -15,7 +15,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" />
+        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>

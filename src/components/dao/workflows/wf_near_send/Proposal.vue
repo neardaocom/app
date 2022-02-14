@@ -18,8 +18,6 @@
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
         <section v-html="description"></section>
     </MDBWysiwyg>
-    
-    <MDBBtn color="primary" @click="onSubmit()">{{ t('default.vote') }}</MDBBtn>
 </template>
 
 <script>
@@ -33,11 +31,11 @@ import { useForm } from 'vee-validate';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
 import { useNearService } from "@/hooks/vuex";
 import { nearToYocto } from "@/utils/near";
+import moment from 'moment'
 
 import {
   MDBRadio,
   MDBBtnGroup,
-  MDBBtn,
 } from "mdb-vue-ui-kit";
 
 export default {
@@ -47,7 +45,6 @@ export default {
         MDBWysiwyg,
         MDBRadio,
         MDBBtnGroup,
-        MDBBtn
     },
     props:{
         contractId: {
@@ -61,7 +58,7 @@ export default {
         template: {
             type: Object,
             required: true
-        }
+        },
     },
     setup (props) {
         const { tokenName, contractId, template } = toRefs(props)
@@ -99,19 +96,18 @@ export default {
             }else{
                 values.tokenAmount = values.amount
             }
+
+            console.log(template.value);
             // alert(JSON.stringify(values, null, 2));
 
             if(formAsset.value === 'near'){
+                const storageKey = `${template.value.code}-${template.value.settings[0].id}-${moment().valueOf()}`
                 nearService.value.addProposal(
                     contractId.value,
                     template.value.id,
-                    0,
-                    [[["Free","Free"]]],
-                    [[{"transition_limit":1,"cond":null}], [{"transition_limit":4,"cond":null}]],
+                    template.value.settings[0].id,
                     [{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": nearToYocto(values.nearAmount)}],
-                    [[{"Primitive":0}]],
-                    [{"args":[{"User": 1},{"Bind": 1}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"GtE"}}],"terms":[{"Arg":1},{"Arg":0}]}}}],
-                    'wf_send_near_1',
+                    storageKey,
                     1.0
                 )
             }

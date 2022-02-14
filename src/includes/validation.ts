@@ -1,5 +1,5 @@
 import { defineRule } from 'vee-validate';
-import { required, numeric, max, min, alpha } from '@vee-validate/rules';
+import { required, numeric, max, min, alpha, url } from '@vee-validate/rules';
 import store from '@/store'
 import Decimal from 'decimal.js';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
@@ -65,5 +65,6 @@ export default{
         defineRule('accountExists', accountExists)
         defineRule('accountNotExists', accountNotExists)
         defineRule('localeNumber', stringLocaleNumber)
+        defineRule('url', url)
     },
 }

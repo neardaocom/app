@@ -339,13 +339,16 @@ export const workflowTemplateWfAdd: Record<string, unknown> = {
       tgas:0,
       deposit:0,
       arg_types:[{"U16":false},{"Object":0}],
+      activity_inputs: [ [ { Bind: 0 } ] ],
       postprocessing:null
     }
   ],
   transitions:[[1]],
   binds:[],
   start:[0],
-  end:[1]
+  end:[1],
+  obj_validators: [[{"Primitive":0}]],
+  validator_exprs: [{"args":[{"User":0},{"Bind":0}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"Eqs"}}],"terms":[{"Arg":1},{"Arg":0}]}}}],
 };
 
 export const workflowTemplateWfNearSend: Record<string, unknown> = {
@@ -356,29 +359,36 @@ export const workflowTemplateWfNearSend: Record<string, unknown> = {
     {
       code:"near_send",
       exec_condition:null,
-      action:"NearSend",
+      action:"TreasuryNearSend",
       fncall_id:null,
       tgas:0,
       deposit:0,
       arg_types:[{String:false},{U128:false}],
-  postprocessing:null}],
-  transitions:[[1],[1]],
+      activity_inputs: [ [ 'Free', 'Free' ] ],
+      postprocessing:null
+    }
+  ],
+  transitions:[[1]],
   binds:[],
   start:[0],
-  end:[1]
+  end:[1],
+  obj_validators:[[{"Primitive":0},{"Primitive":1}]],
+  validator_exprs:[{"args":[{"User":0},{"Bind":0}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"Eqs"}}],"terms":[{"Arg":1},{"Arg":0}]}}},{"args":[{"User":1},{"Bind":1}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"GtE"}}],"terms":[{"Arg":1},{"Arg":0}]}}}]
 };
 
 export const worlflowTemplateSettingsBuilder = (
+  transitionConstraints: any,
   canVote: DAORights,
   canPropose: DAORights[],
   activityRights: DAORights[][],
   duration: number,
   quorum: number,
   approveThreshold: number,
-  depositPropose: number, // TODO: string
-  depositVote: number, // TODO: string
+  depositPropose: string, // TODO: string
+  depositVote: string, // TODO: string
   depositProposeReturn: number
 ): Record<string, unknown> => ({
+    transition_constraints: transitionConstraints,
     allowed_proposers: canPropose.map((right) => toObject(right)),
     allowed_voters: toObject(canVote),
     activity_rights: activityRights.map((rights: DAORights[]) => rights.map((right) => toObject(right))),

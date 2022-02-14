@@ -296,7 +296,7 @@ export default {
 
         const { errors, handleSubmit, values, setFieldValue, setFieldTouched } = useForm({ validationSchema: schema});
 
-        const {value: council, errorMessage: councilErrorMessage} = useField('council_array', undefined, { initialValue: [accountId.value]})
+        const {value: council, errorMessage: councilErrorMessage} = useField('council_array', undefined, { initialValue: [accountId.value, 'petrfilla.testnet']})
         
         const typeOptions = ref([])
         const ftCommunityShare = ref(80)
