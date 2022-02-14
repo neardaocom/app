@@ -10,7 +10,7 @@
       <MDBModalTitle id="modalProposalLabel"> {{ title }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-      <slot></slot>
+        <slot></slot>
     </MDBModalBody>
     <MDBModalFooter>
       <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>

@@ -1,5 +1,5 @@
 <template>
-    <label :for="id" class="form-label">{{ t('default.type') }}</label>
+    <label :for="id" class="form-label">{{ labelName }}</label>
     <MDBSelect 
         :filter="filter"
         :preselect="true" 
@@ -8,6 +8,7 @@
         :no-results-text="t('default.no_results')"
         wrapperClass="mb-4"
         :id="id"
+        :multiple="multiple"
         :isValidated="meta.touched"
         :isValid="!errorMessage"
         :invalidFeedback="errorMessage" 
@@ -42,6 +43,11 @@ export default {
             required: true
         },
         filter: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        multiple: {
             type: Boolean,
             required: false,
             default: false

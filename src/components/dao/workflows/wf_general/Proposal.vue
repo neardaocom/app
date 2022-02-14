@@ -63,7 +63,7 @@ export default {
             }
             
             if(!ipfsError){
-                // send proposal
+                console.log(values.cid);
             }
             alert(JSON.stringify(values, null, 2));
         }, () => {

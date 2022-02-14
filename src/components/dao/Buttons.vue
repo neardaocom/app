@@ -56,20 +56,6 @@
                   <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights)" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon icon="user-plus" class="pe-2"/>{{ templ.name }}</MDBDropdownItem>
                 </template>
               </template>
-              <!-- <MDBDropdownItem v-if="false" tag="button" @click="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
-              <MDBDropdownItem tag="button" @click="modalAddCouncilOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_council')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
-              <MDBDropdownItem tag="button" @click="modalRemoveCouncilOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_council')}}</MDBDropdownItem>
-              <MDBDropdownItem tag="button" @click="modalAddDocumentOpen()"><MDBIcon icon="folder-plus" class="pe-2"/>{{ t('default.add_document')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="false" tag="button" @click="modalRemoveDocumentOpen()"><MDBIcon icon="folder-minus" class="pe-2"/>{{ t('default.remove_document')}}</MDBDropdownItem>
-              <MDBDropdownItem tag="button" @click="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="unlockTokens('Council')"><MDBIcon icon="unlock" class="pe-2"/>{{ t('default.unlock_tokens')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="distributeToCouncilTokens()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.token_withdraw')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="accountRole == 'council'" tag="button" @click="modalAddRightsForActionOpen()"><MDBIcon icon="handshake" class="pe-2"/>{{ t('default.add_rights')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('SkywardFinance')" tag="button" @click="modalSkywardFinanceCreateSaleOpen()"><MDBIcon icon="gavel" class="pe-2"/>{{ t('default.skyward_finance_create_sale')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="accountRole == 'council' && dao.groups.council.rights.includes('RefFinance')" tag="button" @click="modalAddToDefiOpen()"><MDBIcon icon="hand-holding-usd" class="pe-2"/>{{ t('default.defi_reffinance')}}</MDBDropdownItem>
-              <MDBDropdownItem v-if="possibleUpgrade" divider />
-              <MDBDropdownItem class="bg-danger"  v-if="possibleUpgrade && accountRole == 'council'" tag="button" @click="modalUpgradeOpen()"><MDBIcon icon="sync" class="pe-2"/>{{ t('default.upgrade_contract')}}</MDBDropdownItem> -->
             </MDBDropdownMenu>
           </MDBDropdown>
         </MDBBtnGroup>
@@ -77,41 +63,25 @@
       <!-- /Right -->
     </section>
     <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
-      <component :is="activeForm" v-bind="formProps"></component>
+      <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
 
-    <!-- <ModalPayout :show="modalPayout" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" />
-    <ModalAddMember v-if="false" :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" />
-    <ModalAddCouncil :show="modalAddCouncil" :contractId="dao.wallet" :groups="dao.groups" />
-    <ModalAddRightsForAction :show="modalAddRightsForAction" :contractId="dao.wallet" />
-    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" />
-    <ModalRemoveCouncil :show="modalRemoveCouncil" :contractId="dao.wallet" :groups="dao.groups" />
-    <ModalAddDocument :show="modalAddDocument" :contractId="dao.wallet" :docs="dao.docs" />
-    <ModalRemoveDocument :show="modalRemoveDocument" :contractId="dao.wallet" :groups="dao.groups" />
-    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" />
-    <ModalAddToDefi :show="modalAddToDefi" :contractId="dao.wallet"/>
-    <ModalUpgrade :show="modalUpgrade" :contractId="dao.wallet" />
-    <ModalActionSkywardFinanceCreateSale :show="modalSkywardFinanceCreateSale" :contractId="dao.wallet" :tokenName="dao.treasury.token.meta.name" /> -->
+    <MDBBtn @click="modalPropOpen"> Test </MDBBtn>
+
+    <ModalProposal title="Test" :show="modalProp" @vote="vote">
+      <AddMedia/>
+    </ModalProposal>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-// import ModalPayout from '@/components/dao/ModalPayout'
-// import ModalAddDocument from '@/components/dao/ModalAddDocument'
-// import ModalAddMember from '@/components/dao/ModalAddMember'
-// import ModalAddCouncil from '@/components/dao/ModalAddCouncil'
-// import ModalAddRightsForAction from '@/components/dao/ModalAddRightsForAction'
-// import ModalRemoveDocument from '@/components/dao/ModalRemoveDocument'
-// import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
-// import ModalRemoveCouncil from '@/components/dao/ModalRemoveCouncil'
-// import ModalGeneral from '@/components/dao/ModalGeneral'
-// import ModalUpgrade from '@/components/dao/ModalUpgrade'
-// import ModalActionSkywardFinanceCreateSale from '@/components/dao/ModalActionSkywardFinanceCreateSale'
-// import ModalAddToDefi from '@/components/dao/ModalAddToDefi';
 import ModalProposal from '@/components/forms/ModalProposal.vue'
 import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
+import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
+import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
+import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn, MDBBtnGroup,
@@ -130,9 +100,9 @@ export default {
     MDBIcon,
     ModalProposal, 
     Payout, 
-    // ModalPayout, ModalAddMember, ModalRemoveMember, ModalAddDocument, ModalRemoveDocument, ModalGeneral,
-    // ModalAddCouncil, ModalRemoveCouncil, ModalUpgrade, ModalAddRightsForAction, ModalActionSkywardFinanceCreateSale,
-    // ModalAddToDefi
+    AddWorkflow,
+    GeneralProposal,
+    AddMedia
   },
   props: {
     dao: {
@@ -146,35 +116,40 @@ export default {
     walletRights: {
       type: Object,
       required: true,
-    }
+    },
+    daoRights: {
+      type: Object,
+      required: true,
+    },
   },
   setup() {
     const { t } = useI18n();
-    const modalPayout = ref(0)
-    const modalAddDocument = ref(0)
-    const modalAddMember = ref(0)
-    const modalAddCouncil = ref(0)
-    const modalAddRightsForAction = ref(0)
-    const modalRemoveDocument = ref(0)
-    const modalRemoveMember = ref(0)
-    const modalRemoveCouncil = ref(0)
-    const modalGeneral = ref(0)
-    const modalUpgrade = ref(0)
-    const modalSkywardFinanceCreateSale = ref(0)
-    const modalAddToDefi = ref(0)
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
+
+    const form = ref()
 
     const modalProposal = ref(0)
     const modalTitle = ref('')
     const activeForm = ref('')
     const activeFormCode = ref('')
     const formProps = ref({})
+
+    // for tests
+    const modalProp = ref(0)
+
     return {
-      t, dropdownAction, modalPayout, modalAddMember, modalAddCouncil, modalRemoveMember, modalRemoveCouncil, modalAddDocument, modalRemoveDocument, modalGeneral,
-      modalAddRightsForAction, modalSkywardFinanceCreateSale,
-      latestDaoVersion, modalUpgrade, modalAddToDefi, 
-      modalProposal, modalTitle, activeForm, activeFormCode, formProps, check,
+      t,
+      dropdownAction, 
+      latestDaoVersion,  
+      modalProposal,
+      modalTitle, 
+      activeForm, 
+      activeFormCode, 
+      formProps, 
+      check, 
+      form,
+      modalProp
     };
   },
 
@@ -201,6 +176,9 @@ export default {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
+    modalPropOpen(){
+      this.modalProp += 1 
+    },
     modalOpen(templ, templSettings){
       this.modalProposal += 1
       this.dropdownAction = false
@@ -211,13 +189,26 @@ export default {
           this.activeForm = 'Payout'
           this.activeFormCode = templ.code
           break
-        case 'payout':
+        case 'wf_treasury_send_ft':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'Payout'
-          this.activeFormCode = templ.code 
+          this.activeFormCode = templ.code
           break
         case 'wf_add':
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.activeForm = 'AddWorkflow'
+          this.activeFormCode = templ.code
           console.log('wf_add');
+          break
+        case 'wf_general':
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.activeForm = 'GeneralProposal'
+          this.activeFormCode = templ.code
+          break
+        case 'wf_media_add':
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.activeForm = 'AddMedia'
+          this.activeFormCode = templ.code
           break
         default:
             this.formProps = {}
@@ -233,63 +224,19 @@ export default {
         case 'wf_near_send':
           console.log('wf_near_send');
           break
-        case 'payout':
+        case 'wf_add':
           console.log('add_wf');
           break
-        case 'add_wf':
+        case 'wf_general':
           console.log('add_wf');
+          break
+        case 'wf_media_add':
+          console.log('wf_media_add');
           break
         default:
           console.log('invalid code');
       }
-    },
-    modalPayoutOpen() {
-      this.modalPayout += 1
-      this.dropdownAction = false
-    },
-    modalAddMemberOpen() {
-      this.modalAddMember += 1
-      this.dropdownAction = false
-    },
-    modalAddCouncilOpen() {
-      this.modalAddCouncil += 1
-      this.dropdownAction = false
-    },
-    modalRemoveMemberOpen() {
-      this.modalRemoveMember += 1
-      this.dropdownAction = false
-    },
-    modalRemoveCouncilOpen() {
-      this.modalRemoveCouncil += 1
-      this.dropdownAction = false
-    },
-    modalAddDocumentOpen() {
-      this.modalAddDocument += 1
-      this.dropdownAction = false
-    },
-    modalRemoveDocumentOpen() {
-      this.modalRemoveDocument += 1
-      this.dropdownAction = false
-    },
-    modalGeneralOpen() {
-      this.modalGeneral += 1
-      this.dropdownAction = false
-    },
-    modalUpgradeOpen() {
-      this.modalUpgrade += 1
-      this.dropdownAction = false
-    },
-    modalAddRightsForActionOpen() {
-      this.modalAddRightsForAction += 1
-      this.dropdownAction = false
-    },
-    modalSkywardFinanceCreateSaleOpen() {
-      this.modalSkywardFinanceCreateSale += 1
-      this.dropdownAction = false
-    },
-    modalAddToDefiOpen() {
-      this.modalAddToDefi += 1
-      this.dropdownAction = false
+      this.$refs.form?.onSubmit()
     },
     getLatestDaoVersion(){
       this.nearService.getDaoStats()

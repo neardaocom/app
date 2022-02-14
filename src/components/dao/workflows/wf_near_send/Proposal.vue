@@ -18,8 +18,6 @@
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
         <section v-html="description"></section>
     </MDBWysiwyg>
-    
-    <MDBBtn color="primary" @click="onSubmit()">{{ t('default.vote') }}</MDBBtn>
 </template>
 
 <script>
@@ -37,7 +35,6 @@ import { nearToYocto } from "@/utils/near";
 import {
   MDBRadio,
   MDBBtnGroup,
-  MDBBtn,
 } from "mdb-vue-ui-kit";
 
 export default {
@@ -47,7 +44,6 @@ export default {
         MDBWysiwyg,
         MDBRadio,
         MDBBtnGroup,
-        MDBBtn
     },
     props:{
         contractId: {

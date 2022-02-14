@@ -263,6 +263,8 @@ export default {
         removeBtn: this.t('default.file_upload_remove_btn')
       }
     },
+
+    //nepouzito
     getCategories() {
       let categories = getCategoriesInit( this.t )
       this.docs.map.categories.forEach(item => {
@@ -272,6 +274,8 @@ export default {
       })
       return categories
     },
+
+    // nepouzito
     getNames() {
       let names = []
       if (this.formCategory.length > 0) {
@@ -281,6 +285,7 @@ export default {
       }
       return names
     },
+    
     getIndexOfFile() {
       return getIndexInFiles(this.files, this.formName, this.formCategory)
     },
