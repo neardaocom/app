@@ -31,67 +31,76 @@ export type WFExpression = {
     value: string;
 }
 
-export type WFAction = {
+
+export type WFActionFunctionCall = {
     id: number;
-    name: string;
-    code: string;
-    smartContractMethod: string;
+    activityId: number;
     gas: number; // TGas
     deposit: number; // Near
+    fncallId: number;
+    fncallGas: number; // TGas
+    fncallDeposit: number; // Near
 }
+
+export type WFActionCall = {
+    id: number;
+    activityId: number;
+    gas: number; // TGas
+    deposit: number; // Near
+    method: string;
+}
+
+export type WFAction = WFActionCall | WFActionFunctionCall
 
 export type WFActivity = {
     id: number;
-    name: string;
     code: string;
-    smartContractId?: string;
+    actionIds: number[];
     attributes: WFAttribute[];
-    actions: WFAction[];
 }
 
 export type WFTransition = {
     id: number;
-    fromId: number;
-    toId: number;
+    toIds: number[];
 }
 
 export type WFTemplate = {
     id: number;
-    name: string;
-    version: string;
     code: string;
-    constants: WFAttribute[];
-    attributes: WFAttribute[];
+    version: string;
+    actions: WFAction[];
     activities: WFActivity[];
     transactions: WFTransition[];
-    startActivityIds: number[];
-    endActivityIds: number[];
+    startActionIds: number[];
+    endActionIds: number[];
     search: string;
     settings: WFSettings[];
+    // constants: WFAttribute[];
+    // attributes: WFAttribute[];
 }
 
-export type WFSettingsActivity = {
-    activityId: number;
+export type WFSettingsAction = {
+    actionId: number;
     rights: DAORights[];
 }
 
 export type WFSettings = {
     id: number;
-    constants: CodeValue[];
     proposeRights: DAORights[];
     voteRight: DAORights;
     voteLevel: DAOVoteLevel;
-    activities: WFSettingsActivity[];
+    actionRights: WFSettingsAction[];
+    // constants: CodeValue[];
 }
 
-export type WFInstanceActivity = {
+export type WFInstanceAction = {
     id: number;
-    activityId: number;
-    rank: number;
-    txHash: string;
+    actionId: number;
+    txHash?: string;
+    txBlock?: string;
     txSigner: String;
     txSignedAt: Date;
-    inputs: CodeValue[];
+    args: CodeValue[];
 }
 
 export type WFInstance = {
@@ -99,10 +108,11 @@ export type WFInstance = {
     templateId: number;
     settingsId: number;
     state: string;
+    storage: string;
     inputs: CodeValue[];
     constants: CodeValue[];
-    activityNextIds: number[];
-    activityLogs: WFInstanceActivity[];
+    actionLastId: number[];
+    actionLogs: WFInstanceAction[];
     search: string;
 }
 

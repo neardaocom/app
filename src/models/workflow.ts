@@ -1,4 +1,4 @@
-import { WFAction, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
+import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceAction, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
 import { CodeValue, Translate } from "@/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
@@ -11,15 +11,16 @@ import { nearToYocto } from "@/utils/near";
 import { NearService } from "@/services/nearService";
 import { getValueByCode } from "@/utils/generics"
 import loToNumber from "lodash/toNumber"
+import { DAORights } from "@/types/dao";
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
 export const getStartActivities = (template: WFTemplate): WFActivity[] => {
     const activities: WFActivity[] = [];
 
-    template.startActivityIds.map((id: number) => getActivityById(template, id)).forEach((item: WFActivity | undefined) => {
-        if (item !== undefined) activities.push(item)
-    })
+    //template.startActivityIds.map((id: number) => getActivityById(template, id)).forEach((item: WFActivity | undefined) => {
+    //    if (item !== undefined) activities.push(item)
+    //})
 
     return activities;
 }
@@ -27,9 +28,9 @@ export const getStartActivities = (template: WFTemplate): WFActivity[] => {
 export const getEndActivities = (template: WFTemplate): WFActivity[] => {
     const activities: WFActivity[] = [];
 
-    template.endActivityIds.map((id: number) => getActivityById(template, id)).forEach((item: WFActivity | undefined) => {
-        if (item !== undefined) activities.push(item)
-    })
+    //template.endActivityIds.map((id: number) => getActivityById(template, id)).forEach((item: WFActivity | undefined) => {
+    //    if (item !== undefined) activities.push(item)
+    //})
 
     return activities;
 }
@@ -42,10 +43,11 @@ export type WFTransitionFrom = {
 
 export const getTransitions = (template: WFTemplate): WFTransitionFrom[] => {
     const transFrom: WFTransitionFrom[] = []
+    
+    /*
     let activityFrom: WFActivity | undefined = undefined
     let activityTo: WFActivity | undefined = undefined
     let transFromItem: WFTransitionFrom | undefined = undefined
-
     template.transactions.forEach((item: WFTransition) => {
         activityFrom = getActivityById(template, item.fromId)
         if (activityFrom === undefined) throw new Error(`Activity[${item.fromId}] not found`);
@@ -59,6 +61,8 @@ export const getTransitions = (template: WFTemplate): WFTransitionFrom[] => {
             transFrom.push({fromId: activityFrom.id, from: activityFrom, tos: [activityTo]})
         }
     })
+    */
+
     return transFrom
 }
 
@@ -80,26 +84,31 @@ export const getSettings = (template: WFTemplate, settingsId: number): WFSetting
     return loFind(template.settings, {'id': settingsId});
 }
 
-export const getLastActivity = (instance: WFInstance): WFInstanceActivity | undefined => {
-    return loLast(instance.activityLogs);
+export const getLastActivity = (instance: WFInstance): WFInstanceAction | undefined => {
+    return loLast(instance.actionLogs);
 }
 
 export const canFinish = (instance: WFInstance, templates: WFTemplate[]): boolean => {
-    const last: WFInstanceActivity | undefined = getLastActivity(instance);
+    const last: WFInstanceAction | undefined = getLastActivity(instance);
     const template: WFTemplate | undefined = getTemplate(templates, instance.templateId)
-    return (last && template) ? template.endActivityIds.includes(last.activityId) : false;
+    return (last && template) ? template.endActionIds.includes(last.actionId) : false;
 }
 
 export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
-    const settings: WFSettings | undefined = getSettings(template, settingsId)
-    const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
+    // const settings: WFSettings | undefined = getSettings(template, settingsId)
+    // const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
     // console.log(settings, params)
-    return {key: 'wf_templ_' + template.code + '_constants', params: params}
+    // return {key: 'wf_templ_' + template.code + '_constants', params: params}
+    return {key: 'wf_templ_' + template.code + '_constants', params: {}}
 }
 
-export const getActionArgs = (action: WFAction, data: WFData): any => {
+export const getActivityRights = (settings: WFSettings, activity: WFActivity): DAORights[] => {
+    return settings.actionRights[activity.actionIds[0]].rights
+}
+
+export const getActionArgs = (action: WFActionCall, data: WFData): any => {
     let args: any = {proposal_id: data.proposalId}
-    switch (action.smartContractMethod) {
+    switch (action.method) {
         case 'treasury_send_near':
         case 'treasury_near_send':
             args = {
@@ -121,13 +130,14 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
 
     const data: WFData = {
         proposalId: workflow.id,
-        settings: settings.constants,
+        settings: [], //settings.constants,
         proposal: workflow.inputs,
         storageDao: [],
         storage: [],
         form: form,
     }
 
+    /*
     activity!.actions.forEach((action: WFAction) => {
         console.log('Action', action, getActionArgs(action, data))
         if (activity!.smartContractId === "") { // smart contract
@@ -155,7 +165,7 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
         console.log('signAndSendTransactions', contractId, actions)
         // nearService.signAndSendTransactions(contractId, actions)
     })
-
+    */
     //if (activity!.smartContractId === "") {
 
     //}

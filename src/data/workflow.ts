@@ -148,40 +148,30 @@ export const templateMeta: Record<string, WFMetaTemplate> = {
   'wf_send_ft': templateMetaSendFt,
 }
 
-export const actionDAOTreasurySendNear: WFAction = {
-  id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near', gas: 10, deposit: 0,
-}
+export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: 10, deposit: 0, }
 
-export const actionDAOTreasurySendNearTest: WFAction = {
-  id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near', gas: 10, deposit: 0,
-}
+export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: 10, deposit: 0, }
 
-export const actionDAOTreasurySendFt: WFAction = {
-  id: 2,  name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_ft', gas: 10, deposit: 0,
-}
-export const actionDAOCreateGroup: WFAction = {id: 3,  name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create', gas: 10, deposit: 0,}
-export const actionDAOAddMember: WFAction = {id: 4,  name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member', gas: 10, deposit: 0,}
+
+export const actionDAOGroupCreate: WFAction = {id: 3, activityId: 1, method: 'group_create', gas: 10, deposit: 0,}
+export const actionDAOGroupAddMember: WFAction = {id: 4, activityId: 1, method: 'group_add_member', gas: 10, deposit: 0,}
 
 export const actionMetas: Record<string, WFAction> = {
-  treasury_send_near: actionDAOTreasurySendNearTest,
-  treasury_near_send: actionDAOTreasurySendNearTest,
+  treasury_send_near: actionDAOTreasurySendNear,
 }
 
 export const templatePayoutSettings: WFSettings = {
   id: 1,
-  constants: [
-    { code: 'nearAmountLimit', value: '1000.0' },
-    { code: 'tokenAmountLimit', value: '10000.0' },
-  ],
   proposeRights: [rightMember, rightAnyone],
   voteRight: rightMember,
   voteLevel: votingTokenWeightedLow,
-  activities: [
-    { activityId: 1, rights: [rightTokenGroupCouncil] },
-    { activityId: 2, rights: [rightTokenGroupCouncil] },
+  actionRights: [
+    { actionId: 1, rights: [rightTokenGroupCouncil] },
+    { actionId: 2, rights: [rightTokenGroupCouncil] },
   ]
 }
 
+/*
 export const templatePayout: WFTemplate = {
     id: 1,
     name: 'Payout',
@@ -334,6 +324,7 @@ export const payoutFinished: WFInstance = {
   ],
   search: toSearch('Payout pfil.near'),
 }
+*/
 
 export const workflowTemplateWfAdd: Record<string, unknown> = {
   name:"wf_add",
