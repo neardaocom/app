@@ -3,6 +3,7 @@ import lodashFind from "lodash/find"
 import loToString from "lodash/toString"
 import loIsBoolean from "lodash/isBoolean"
 import loToInteger from "lodash/toInteger"
+import loSnakeCase from "lodash/snakeCase"
 import loNth from "lodash/nth"
 import loFind from "lodash/find"
 import loFindKey from "lodash/findKey"
@@ -17,7 +18,7 @@ import Decimal from "decimal.js";
 import moment from 'moment';
 import { CodeValue, IDValue, Translate } from '@/types/generics';
 import { yoctoNear } from '@/services/nearService/constants';
-import { WFAction, WFActivity, WFInstance, WFInstanceActivity, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
+import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceAction, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
@@ -41,72 +42,6 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
     trans.search = [toSearch(trans.id), toSearch(trans.name), toSearch(trans.description), toSearch(trans.ft_name)].concat(trans.tags.map((tag: any) => toSearch(tag))).join('-')
     return trans
 })
-
-export const getDaoActionMethod = (name: string): string => {
-    let methodName: string = ''
-    switch (name) {
-        case "GroupAdd":
-            methodName = 'group_add'
-            break;
-        case "GroupRemove":
-            methodName = 'group_remove'
-            break;
-        case "GroupUpdate":
-            methodName = 'group_update'
-            break;
-        case "GroupMemberAdd":
-            methodName = 'group_member_add'
-            break;
-        case "GroupMemberRemove":
-            methodName = 'group_member_remove'
-            break;
-        case "SettingsUpdate":
-            methodName = 'settings_update'
-            break;
-        case "MediaAdd":
-            methodName = 'media_add'
-            break;
-        case "MediaInvalidate":
-            methodName = 'media_invalidate'
-            break;
-        case "FnCall":
-            methodName = 'function_call'
-            break;
-        case "FnCallAdd":
-            methodName = 'function_call_add'
-            break;
-        case "FnCallRemove":
-            methodName = 'function_call_remove'
-            break;
-        case "TagAdd":
-            methodName = 'tag_add'
-            break;
-        case "TagEdit":
-            methodName = 'tag_edit'
-            break;
-        case "TagRemove":
-            methodName = 'tag_remove'
-            break;
-        case "FtDistribute":
-            methodName = 'ft_distribute'
-            break;
-        case "FtSend":
-            methodName = 'treasury_ft_send'
-            break;
-        case "NftSend":
-            methodName = 'treasury_nft_send'
-            break;
-        case "NearSend":
-            methodName = 'treasury_near_send'
-            break;
-        case "WorkflowAdd":
-            methodName = 'workflow_add'
-            break;
-        default:
-            throw new Error("Unsupported name: " + name)
-    }
-    return methodName
-}
 
 export const getAccountId = (accountId: string): string => accountId.split('.')[0];
 
@@ -416,104 +351,90 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     // templates
     const templates: WFTemplate[] = []
-    let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: '', gas: 10, deposit: 0}
-    let activity: WFActivity | undefined = undefined
-    // console.log("Template", dataHack[0])
+    let action: WFAction
+    let activity: WFActivity | undefined
+    console.log("Template", dataHack[0])
     dataHack[0].forEach((template) => {
-        console.log(template)
+        // console.log(template)
 
-        // activities
+        // action and activity
         const activities: WFActivity[] = []
-        const startActivityIds: number[] = []
-        const endActivityIds: number[] = []
+        const actions: WFAction[] = []
+        const startActionIds: number[] = []
+        const endActionIds: number[] = []
 
-        template[1][0].activities.forEach((actionTempl, index) => {
-            if (actionTempl !== null) {
-                action = {
-                    id: index,
-                    name: t('default.wf_templ_' + template[1][0].name + '_action_' + actionTempl.action),
-                    code: actionTempl.action,
-                    smartContractMethod: getDaoActionMethod(actionTempl.action),
-                    gas: actionTempl.tgas, // TODO: Only for functional call
-                    deposit: actionTempl.deposit, // TODO: Only for functional call
-                }
-                activity = loFind(activities, {code: action.code})
-                if (activity !== undefined) {
-                    activity.actions.push(action)
-                } else {
+        
+        template[1][0].activities.forEach((actionChain, index) => {
+            if (actionChain !== null) {
+
+                // set activity
+                activity = loFind(activities, {code: actionChain.code})
+                if (activity === undefined) {
                     activity = {
-                        id: index,
-                        name: t('default.wf_templ_' + template[1][0].name + '_activity_' + actionTempl.code),
-                        code: actionTempl.code,
-                        smartContractId: (actionTempl.fncall_id === null) ? '' : loToString(actionTempl.fncall_id),
+                        id: activities.length,
+                        code: actionChain.code,
+                        actionIds: [index - 1],
                         attributes: [],
-                        actions: [action]
                     }
                     activities.push(activity)
+                } else {
+                    activity.actionIds.push(index - 1)
                 }
 
-                // end
+                // create action
+                if (actionChain.fncall_id === null) { // actionCall
+                    action = {
+                        id: index - 1,
+                        activityId: activity.id,
+                        gas: 100, // TODO: From meta
+                        deposit: 0, // TODO: From meta
+                        method: loSnakeCase(actionChain.action),
+                    }
+                } else { // functionCall
+                    action = {
+                        id: index - 1,
+                        activityId: activity.id,
+                        gas: 100, // TODO: From meta
+                        deposit: 0, // TODO: From meta
+                        fncallId: actionChain.fncall_id,
+                        fncallGas: actionChain.tgas,
+                        fncallDeposit: actionChain.deposit,
+                    }
+                }
+                actions.push(action)
+
+                // add end
                 if (template[1][0].end.includes(index)) {
-                    endActivityIds.push(activity.id)
+                    endActionIds.push(action.id)
                 }
             }
         })
 
         // transitions
         const transitions: WFTransition[] = []
-        let activityTarget: WFActivity | undefined;
-        let activityTo: WFActivity | undefined;
-        template[1][0].transitions.forEach((transToIds, index) => {
-            if (transToIds !== null ) {
-                if (index === 0) {
-                    // start
-                    transToIds.forEach((transToId) => {
-                        activityTo = loFind(activities, {code: template[1][0].activities[transToId].code})
-                        if (activityTo) {
-                            startActivityIds.push(activityTo.id)
-                        }
-                    })
-                } else {
-                    // transitions
-                    activityTarget = loFind(activities, {code: template[1][0].activities[index].code})
-                    transToIds.forEach((transToId) => {
-                        activityTo = loFind(activities, {code: template[1][0].activities[transToId].code})
-                        if (activityTarget && activityTo) {
-                            transitions.push({
-                                id: index,
-                                fromId: activityTarget.id,
-                                toId: activityTo.id,
-                            })
-                        }
-                        // start
-                        if (index === 0 && activityTo) {
-                            startActivityIds.push(activityTo.id)
-                        }
-                    })
-                }
+        template[1][0].transitions.forEach((transactionChainToIds, index) => {
+            if (index === 0) {
+                transactionChainToIds.forEach((toId) => startActionIds.push(toId - 1))
+            } else {
+                transitions.push({ id: index - 1, toIds: transactionChainToIds.map((toId) => toId - 1) })
             }
         })
 
         // settings
         const settings: WFSettings[] = []
-        const settingsActivities: WFSettingsActivity[] = []
-        let settingsActivitiesItem: WFSettingsActivity | undefined
         template[1][1].forEach((settingsItem, index) => {
-            settingsItem.activity_rights.forEach((rightsList, index) => {
-                activityTarget = loFind(activities, {code: template[1][0].activities[index + 1].code}) // index of activity is +1
-                settingsActivitiesItem = loFind(settingsActivities, {activityId: activityTarget!.id})
-                if (settingsActivitiesItem === undefined) {
-                    settingsActivitiesItem = {activityId: activityTarget!.id, rights: []}
-                    settingsActivities.push(settingsActivitiesItem)
-                }
-                rightsList.forEach((rights) => {
-                    settingsActivitiesItem!.rights.push(rightsParse(rights))
+            const settingsActions: WFSettingsAction[] = []
+            // action rights
+            settingsItem.activity_rights.forEach((rightsChain, index) => {
+                settingsActions.push({
+                    actionId: index,
+                    rights: rightsChain.map((rightChain) => rightsParse(rightChain))
                 })
-                settingsActivitiesItem!.rights = loUniq(settingsActivitiesItem!.rights)
             })
+            // settings
             settings.push({
                 id: index,
-                constants: [],
+                // constants: [],
                 proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
                 voteRight: rightsParse(settingsItem.allowed_voters),
                 voteLevel: {
@@ -528,35 +449,37 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                       },
                     voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
                 },
-                activities: settingsActivities,
+                actionRights: settingsActions,
             })
         })
         
         templates.push({
             id: loToInteger(template[0]),
-            name: t('default.wf_templ_' + template[1][0].name),
             version: loToString(template[1][0].version),
             code: template[1][0].name,
-            constants: [],
-            attributes: [],
+            //constants: [],
+            //attributes: [],
             activities: activities,
+            actions: actions,
             transactions: transitions,
-            startActivityIds: loUniq(startActivityIds),
-            endActivityIds: loUniq(endActivityIds),
+            startActionIds: loUniq(startActionIds),
+            endActionIds: loUniq(endActionIds),
             search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
             settings: settings,
         })
     });
+    // console.log('Templates', templates)
 
     // Proposals
     const proposals: DAOProposal[] = []
     const workflows: WFInstance[] = []
+
     let workflowInstance: any
     let proposalTemplate: WFTemplate | undefined
     let proposalSettings: WFSettings | undefined
-    let proposalConstants: CodeValue[] | undefined
-    let proposalInputs: CodeValue[] | undefined
-    let activityLogs: WFInstanceActivity[]
+    let proposalConstants: CodeValue[]
+    let proposalInputs: CodeValue[]
+    let activityLogs: WFInstanceAction[]
 
     for (const proposal of dataHack[6]) {
         // console.log(proposal)
@@ -565,9 +488,10 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
         // console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
 
-        proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
-            return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
-        }) ?? []
+        proposalConstants = []
+        //proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
+        //    return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
+        //}) ?? []
 
         proposalInputs = loGet(templateMeta, [proposalTemplate!.code])?.proposalAttributes.map((attr) => {
             // console.log('Binds', Object.values(workflowInstance[1].binds[attr.bindId]))
@@ -582,11 +506,11 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             created: dateFromChain(proposal[1].Curr.created),
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
-            constants: proposalConstants,
-            inputs: proposalInputs,
             templateId: proposal[1].Curr.workflow_id,
             settingsId: proposal[1].Curr.workflow_settings_id,
             workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
+            inputs: proposalInputs,
+            constants: proposalConstants,
         })
 
         workflows.push({
@@ -594,10 +518,11 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             templateId: proposal[1].Curr.workflow_id,
             settingsId: proposal[1].Curr.workflow_settings_id,
             state: workflowInstance[0].state,
-            constants: proposalConstants,
+            storage: workflowInstance[1].storage_key,
             inputs: proposalInputs,
-            activityNextIds: (activityLogs.length == 0) ? proposalTemplate!.startActivityIds : [],
-            activityLogs: [],
+            constants: proposalConstants,
+            actionLastId: workflowInstance[0].current_activity_id,
+            actionLogs: [],
             search: '',
         })
     }

@@ -60,7 +60,7 @@
                     <td>{{ index + 1 }}</td>
                     <td class="text-start">
                       <router-link v-if="false" class="fw-bold" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
-                      <span v-else class="fw-bold">{{ template.name }}</span>
+                      <span v-else class="fw-bold">{{ t('default.wf_templ_' + template.code) }}</span>
                     </td>
                     <td class="text-start">{{ t('default.workflows') }}</td>
                     <td class="text-start">{{ creator.name }}</td>

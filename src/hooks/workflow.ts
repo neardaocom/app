@@ -9,7 +9,7 @@ import loFind from "lodash/find"
 import loToString from "lodash/toString"
 import { accounts } from "@/data/blockchain";
 import { getRandom } from '@/utils/integer'
-import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
+// import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
 import { Wallet } from '@/types/blockchain'
 import { useStore } from 'vuex'
@@ -64,15 +64,15 @@ export const useTemplateList = () => {
             r.forEach(template => {
                 list.push({
                     id: template.id,
-                    name: t('default.wf_templ_' + template.name),
                     version: loToString(template.version),
                     code: template.name,
-                    constants: [],
-                    attributes: [],
+                    //constants: [],
+                    //attributes: [],
                     activities: [],
+                    actions: [],
                     transactions: [],
-                    startActivityIds: [],
-                    endActivityIds: [],
+                    startActionIds: [],
+                    endActionIds: [],
                     search: [toSearch(t('default.wf_templ_' + template.name)), toSearch(t('default.workflow'))].join('-'),
                     settings: [],
                 })
@@ -97,17 +97,17 @@ export const useTemplate = () => {
     const template = ref<WFTemplate | undefined>(undefined)
 
     const fetch = (): WFTemplate | undefined => {
-        let template: WFTemplate | undefined = undefined
+        const template: WFTemplate | undefined = undefined
         // prototype
         switch (q_id) {
             case '1':
-                template = templatePayout
+                //template = templatePayout
                 break;
             case '2':
-                template = templateCreateGroup
+                //template = templateCreateGroup
                 break;
             case '3':
-                template = templateAddMember
+                //template = templateAddMember
                 break;
             default:
                 break;

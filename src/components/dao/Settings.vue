@@ -17,7 +17,7 @@
             <tr v-for="template in dao.templates" :key="template.id">
               <template v-for="settings in template.settings" :key="settings.id">
                 <td>
-                  <span class="fw-bold">{{ template.name }}</span><br/><span>{{ transSettingsConstants(template, settings.id) }}</span>
+                  <span class="fw-bold">{{ t('default.wf_templ_' + template.code) }}</span><br/><span>{{ transSettingsConstants(template, settings.id) }}</span>
                 </td>
                 <td><span v-html="transVoteLevel(settings.voteLevel)"></span></td>
                 <td>
@@ -27,9 +27,9 @@
                 </td>
                 <td>{{ trans(settings.voteRight) }}</td>
                 <td>
-                  <template v-for="(activity, index) in settings.activities" :key="index">
-                    {{ activityName(template, activity.activityId) }}:
-                    <template v-for="(right, index) in activity.rights" :key="index">
+                  <template v-for="(activity, index) in template.activities" :key="index">
+                    {{ t('default.wf_templ_' + template.code + '_activity_' + activity.code) }}:
+                    <template v-for="(right, index) in activityRights(settings, activity)" :key="index">
                       <span v-if="index > 0"> | </span>{{ trans(right) }}
                     </template>
                     <br/>
@@ -51,7 +51,7 @@ import { useI18n } from "vue-i18n"
 import { useRights } from "@/hooks/dao";
 import { voteLevelToTranslate } from "@/models/dao"
 import { toTranslate } from "@/models/rights";
-import { getActivityById, settingsConstantsToTranslate } from "@/models/workflow";
+import { getActivityById, settingsConstantsToTranslate, getActivityRights } from "@/models/workflow";
 import { toRefs } from 'vue';
 //import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
 //import Workflow from "@/components/dao/Workflow.vue"
@@ -91,6 +91,9 @@ export default {
     },
     activityName(template, activitiId) {
       return getActivityById(template, activitiId)?.name
+    },
+    activityRights(settings, activity) {
+      return getActivityRights(settings, activity)
     }
   }
 };
