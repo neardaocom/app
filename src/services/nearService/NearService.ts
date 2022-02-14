@@ -19,7 +19,7 @@ import { duration } from 'moment';
 import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
 import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
 import { nearToYocto, toTGas } from '@/utils/near';
-import { Action } from "@/types/blockchain";
+import { TransactionAction } from "@/types/blockchain";
 
 class NearService {
   // config of near
@@ -798,12 +798,12 @@ class NearService {
     });
   }
 
-  async signAndSendTransactions(contractId: string, actions: Action[]) {
+  async signAndSendTransactions(contractId: string, actions: TransactionAction[]) {
     const account = this.walletConnection.account();
 
     return account.signAndSendTransaction({
         receiverId: contractId,
-        actions: actions.map((action: Action) => 
+        actions: actions.map((action: TransactionAction) => 
             transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(action.gas).mul(new BN(TGas)), new BN(action.deposit))
         )
     });

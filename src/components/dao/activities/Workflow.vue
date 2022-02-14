@@ -167,7 +167,8 @@ export default {
       return Object.assign(convertArrayOfObjectToObject(inputActivity, 'code', 'value'), convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
     },
     run() {
-      runActivity(this.formNextActivity, this.template, this.nearService, this.accountId)
+      const form = {}
+      runActivity(this.formNextActivity, this.workflow, this.template, this.settings, this.nearService, this.accountId, form)
     }
   },
 };

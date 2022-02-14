@@ -1,4 +1,4 @@
-import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate } from "@/types/workflow"
+import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate, WFData } from "@/types/workflow"
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
@@ -148,11 +148,24 @@ export const templateMeta: Record<string, WFMetaTemplate> = {
   'wf_send_ft': templateMetaSendFt,
 }
 
+export const actionDAOTreasurySendNear: WFAction = {
+  id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near', gas: 10, deposit: 0,
+}
 
-export const actionDAOSendNear: WFAction = {id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near' }
-export const actionDAOSendToken: WFAction = {id: 2,  name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_token' }
-export const actionDAOCreateGroup: WFAction = {id: 3,  name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create' }
-export const actionDAOAddMember: WFAction = {id: 4,  name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member' }
+export const actionDAOTreasurySendNearTest: WFAction = {
+  id: 1, name: 'Treasury: Send NEAR', code: 'sendNear', smartContractMethod: 'treasury_send_near', gas: 10, deposit: 0,
+}
+
+export const actionDAOTreasurySendFt: WFAction = {
+  id: 2,  name: 'Treasury: Send Token', code: 'sendToken', smartContractMethod: 'treasury_send_ft', gas: 10, deposit: 0,
+}
+export const actionDAOCreateGroup: WFAction = {id: 3,  name: 'Create group', code: 'groupCreate', smartContractMethod: 'group_create', gas: 10, deposit: 0,}
+export const actionDAOAddMember: WFAction = {id: 4,  name: 'Add member to group', code: 'groupAddMember', smartContractMethod: 'group_add_member', gas: 10, deposit: 0,}
+
+export const actionMetas: Record<string, WFAction> = {
+  treasury_send_near: actionDAOTreasurySendNearTest,
+  treasury_near_send: actionDAOTreasurySendNearTest,
+}
 
 export const templatePayoutSettings: WFSettings = {
   id: 1,
@@ -184,8 +197,8 @@ export const templatePayout: WFTemplate = {
       { code: 'tokenAmount', name: 'TOKEN Amount' },
     ],
     activities: [
-      { id: 1, name: 'Payout NEAR', code: 'payoutNear', attributes: [{ code: 'amount', name: 'Amount' }], actions: [actionDAOSendNear] },
-      { id: 2, name: 'Payout TOKEN', code: 'payoutToken', attributes: [{ code: 'amount', name: 'Amount' }], actions: [actionDAOSendToken] }
+      { id: 1, name: 'Payout NEAR', code: 'payoutNear', attributes: [{ code: 'amount', name: 'Amount' }], actions: [actionDAOTreasurySendNear] },
+      { id: 2, name: 'Payout TOKEN', code: 'payoutToken', attributes: [{ code: 'amount', name: 'Amount' }], actions: [actionDAOTreasurySendFt] }
     ],
     transactions: [
       { id: 1, fromId: 1, toId: 2},
