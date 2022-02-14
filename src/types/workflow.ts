@@ -36,7 +36,8 @@ export type WFAction = {
     name: string;
     code: string;
     smartContractMethod: string;
-    args: Function;
+    gas: number; // TGas
+    deposit: number; // Near
 }
 
 export type WFActivity = {
@@ -103,4 +104,13 @@ export type WFInstance = {
     activityNextIds: number[];
     activityLogs: WFInstanceActivity[];
     search: string;
+}
+
+export type WFData = {
+    proposalId: number;
+    settings: CodeValue[];
+    proposal: CodeValue[];
+    storageDao: CodeValue[];
+    storage: CodeValue[];
+    form: CodeValue[];
 }

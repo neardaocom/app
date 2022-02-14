@@ -11,7 +11,7 @@ import loUniq from "lodash/uniq"
 import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
 import loValues from "lodash/values"
-import { templateMeta, templateMetaAddWorkflow } from "@/data/workflow"
+import { templateMeta, actionMetas } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
@@ -416,11 +416,11 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
     // templates
     const templates: WFTemplate[] = []
-    let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: ''}
+    let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: '', gas: 10, deposit: 0}
     let activity: WFActivity | undefined = undefined
     // console.log("Template", dataHack[0])
     dataHack[0].forEach((template) => {
-        // console.log(template)
+        console.log(template)
 
         // activities
         const activities: WFActivity[] = []
@@ -434,6 +434,8 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                     name: t('default.wf_templ_' + template[1][0].name + '_action_' + actionTempl.action),
                     code: actionTempl.action,
                     smartContractMethod: getDaoActionMethod(actionTempl.action),
+                    gas: actionTempl.tgas, // TODO: Only for functional call
+                    deposit: actionTempl.deposit, // TODO: Only for functional call
                 }
                 activity = loFind(activities, {code: action.code})
                 if (activity !== undefined) {

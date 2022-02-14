@@ -1,13 +1,16 @@
-import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
-import { Translate } from "@/types/generics";
+import { WFAction, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
+import { CodeValue, Translate } from "@/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
 import loGet from "lodash/get";
 import loSet from "lodash/set";
 import loLast from "lodash/last";
 import { convertArrayOfObjectToObject } from "@/utils/array";
-import { Action } from "@/types/blockchain";
+import { TransactionAction } from "@/types/blockchain";
 import { nearToYocto } from "@/utils/near";
+import { NearService } from "@/services/nearService";
+import { getValueByCode } from "@/utils/generics"
+import loToNumber from "lodash/toNumber"
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
@@ -94,29 +97,55 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
     return {key: 'wf_templ_' + template.code + '_constants', params: params}
 }
 
-export const runActivity = (activityCode: string, template: WFTemplate, nearService: any, contractId: string) => {
-    const actions: Action[] = []
+export const getActionArgs = (action: WFAction, data: WFData): any => {
+    let args: any = {proposal_id: data.proposalId}
+    switch (action.smartContractMethod) {
+        case 'treasury_send_near':
+        case 'treasury_near_send':
+            args = {
+                "proposal_id": data.proposalId,
+                "receiver_id": getValueByCode(data.proposal, 'receiverId'),
+                "amount": nearToYocto(loToNumber(getValueByCode(data.proposal, 'amount'))),
+            }
+            break;
+        default:
+            break;
+    }
+    return args
+}
+
+export const runActivity = (activityCode: string, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, form: CodeValue[]) => {
+    const actions: TransactionAction[] = []
     const activity = loFind(template.activities, {code: activityCode})
     console.log('Activity', activity?.code)
 
-    activity!.actions.forEach((action) => {
-        console.log('Action', action.smartContractMethod)
+    const data: WFData = {
+        proposalId: workflow.id,
+        settings: settings.constants,
+        proposal: workflow.inputs,
+        storageDao: [],
+        storage: [],
+        form: form,
+    }
+
+    activity!.actions.forEach((action: WFAction) => {
+        console.log('Action', action, getActionArgs(action, data))
         if (activity!.smartContractId === "") { // smart contract
             actions.push({
                 methodName: action.smartContractMethod,
-                args: {}, // TODO: Generate args
-                gas: 10, // TODO: Gas?
-                deposit: 0, // TODO: Deposit?
+                args: getActionArgs(action, data), // TODO: Generate args
+                gas: action.gas, // TODO: Gas?
+                deposit: action.deposit, // TODO: Deposit?
             })
         } else { // functional call
             actions.push({
                 methodName: 'function_call',
                 args: {
                     proposal_id: 0,
-                    action_id: action.smartContractMethod,
+                    action_id: action.id,
                     action_arguments: {},
-                    deposit: 0, // yoctoNear
-                    gas: 0,
+                    gas: action.gas,
+                    deposit: action.deposit,
                 }, // TODO: Generate args
                 gas: 10, // TODO: Gas?
                 deposit: 0, // TODO: Deposit?

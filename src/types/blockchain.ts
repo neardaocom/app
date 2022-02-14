@@ -6,9 +6,9 @@ export type Wallet = {
     img?: string;
 }
 
-export type Action = {
+export type TransactionAction = {
     methodName: string;
-    args: Record<string, unknown>;
+    args: any;
     gas: number;
     deposit: number;
 }
