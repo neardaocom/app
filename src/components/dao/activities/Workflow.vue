@@ -1,67 +1,90 @@
 <template>
   <div class="card">
     <div class="card-body">
-      <!-- header -->
-      <h5 class="card-title mt-1 mb-1">
-        <small class="me-2 text-muted">#{{ workflow.id }}</small>
-        {{ template.name }}
-      </h5>
-      <hr/>
-      <ul class="timeline-3">
-        <li v-for="(activity, index) in workflow.activityLogs" :key="index">
-          <span class="h6">{{ activity.name }}</span> {{ t('default.signed_by') }} <strong class="text-muted">{{ activity.txSigner }}</strong> {{ t('default.at') }} {{ d(activity.txSignedAt) }}
-          <span class="float-end">
-            <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
-          </span>
-          <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_templ_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
-          <span class="ms-2">{{ t('default.actions') }}:</span>
-          <dl class="row ms-3">
-            <template v-for="(action, index) in activity.actions" :key="index">
-              <dt class="col-sm-3">{{ index + 1 }}. {{ action.name }}</dt>
-              <dd class="col-sm-9">{{ activity.smartContractId }} > {{ action.smartContractMethod }}</dd>
-            </template>
-          </dl>
-        </li>
-        <li class="separator" v-if="workflow.activityLogs.length > 0">
-          <hr/>
-        </li>
-        <li
-          v-if="workflow.activityNextIds.length > 0"
-          class="last"
-        >
-            <div class="row">
-              <div class="col-8 col-md-6 col-lg-4 pe-0">
-                <MDBBtnGroup>
-                  <MDBRadio
-                    v-for="(option, index) in optionsNextActivities" :key="index"
-                    :btnCheck="true" :wrap="false" labelClass="btn btn-secondary"
-                    :label="option.text"
-                    :name="'nextActivity-' + workflow.id"
-                    :value="option.value"
-                    v-model="formNextActivity"
-                  />
-                </MDBBtnGroup>
-              </div>
-              <template v-if="activityLast !== undefined && showFinish === true">
-                <div class="col-1 ps-2 text-center">
-                  {{ t('default.or') }}
-                </div>
-                <div class="col-4 ps-2">
-                    <button  class="btn btn-info">{{ t('default.wf_finish') }}</button>
-                </div>
-              </template>
+      <div class="row">
+        <!-- left -->
+        <div class="col-1 text-center">
+          <span class="fs-4 bg-info rounded-circle p-2">#{{ workflow.id }}</span>
+        </div>
+        <!-- body -->
+        <div class="col-11">
+          <!-- HEAD -->
+          <div class="row">
+            <div class="col-10">
+              <h5>{{ template.name }}</h5>
+              <span class="fs-5" v-html="proposalTitle"></span>
             </div>
-        </li>
-        <li
-          v-else-if="activityLast !== undefined && showFinish === true"
-          class="last"
-        >
-          <button  class="btn btn-info">{{ t('default.wf_finish') }}</button>
-        </li>
-        <li v-else class="last">
-          Nothing to do
-        </li>
-      </ul>
+            <div class="col-2 text-right">
+              <!-- TODO: Voting -->
+            </div>
+          </div>
+          <!-- End HEAD -->
+          <!-- Activities -->
+          <div class="row">
+            <div class="col-12">
+              <hr class="mt-1 mb-3"/>
+              <ul class="timeline-3" v-if="workflow.activityLogs.length > 0">
+                <li v-for="(activity, index) in workflow.activityLogs" :key="index">
+                  <span class="h6">{{ activity.name }}</span> {{ t('default.signed_by') }} <strong class="text-muted">{{ activity.txSigner }}</strong> {{ t('default.at') }} {{ d(activity.txSignedAt) }}
+                  <span class="float-end">
+                    <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
+                  </span>
+                  <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_templ_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
+                  <span class="ms-2">{{ t('default.actions') }}:</span>
+                  <dl class="row ms-3">
+                    <template v-for="(action, index) in activity.actions" :key="index">
+                      <dt class="col-sm-3">{{ index + 1 }}. {{ action.name }}</dt>
+                      <dd class="col-sm-9">{{ activity.smartContractId }} > {{ action.smartContractMethod }}</dd>
+                    </template>
+                  </dl>
+                </li>
+                <li class="separator" v-if="workflow.activityLogs.length > 0">
+                  <hr/>
+                </li>
+                <li
+                  v-if="workflow.activityNextIds.length > 0"
+                  class="last"
+                >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- END Activities -->
+          <!-- NEXT Activity -->
+          <div class="row">
+            <div class="col-1">
+              <MDBBadge color="info" pill class="p-2 me-3"><i class="fas fa-check"></i></MDBBadge>
+            </div>
+            <div class="col-11">
+              <div class="row">
+                <div class="col-12">
+                  <span class="me-2">{{ t('default.activity') }}:</span>
+                  <MDBBtnGroup v-if="workflow.activityNextIds.length > 0">
+                    <MDBRadio
+                      v-for="(option, index) in optionsNextActivities" :key="index"
+                      :btnCheck="true" :wrap="false" labelClass="btn btn-light btn-sm"
+                      :label="option.text"
+                      :name="'nextActivity-' + workflow.id"
+                      :value="option.value"
+                      v-model="formNextActivity"
+                    />
+                  </MDBBtnGroup>
+                  <template v-if="activityLast !== undefined && showFinish === true">
+                    <span class="ms-3 me-3 text-uppercase">{{ t('default.or') }}</span>
+                    <button class="btn btn-info btn-sm rounded-pill">{{ t('default.wf_finish') }}</button>
+                  </template>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 mt-2" v-if="workflow.activityNextIds.length > 0">
+                  <button class="btn btn-secondary btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- NEXT Activity -->
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -69,23 +92,25 @@
 <script>
 import {
   // MDBSelect
-  // MDBProgress, MDBProgressBar, MDBBadge
+  // MDBProgress, MDBProgressBar, 
   // , MDBCollapse, MDBBtn, MDBIcon
-  MDBBtnGroup, MDBRadio
+  MDBBtnGroup, MDBRadio, MDBBadge,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { convertArrayOfObjectToObject } from '@/utils/array'
-import { ref, toRefs } from "vue";
+import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
 import lodashLast from "lodash/last";
-import { getActivities, canFinish } from "@/models/workflow";
+import { getActivities, canFinish, getSettings, runActivity } from "@/models/workflow";
+import { getArgs as getProposalArgs } from "@/models/proposal";
+import { useNearService } from '@/hooks/vuex';
 
 // import { WFInstance } from '@/types/workflow';
 
 export default {
   components: {
-    MDBBtnGroup, MDBRadio
-    // MDBProgress, MDBProgressBar, MDBBadge,
+    MDBBtnGroup, MDBRadio, MDBBadge,
+    // MDBProgress, MDBProgressBar, 
     // WFInstance
     // MDBCollapse, MDBBtn, MDBIcon,
     
@@ -95,14 +120,26 @@ export default {
       type: Object,
       required: true,
     },
+    proposal: {
+      type: Object,
+      required: true,
+    },
     template: {
       type: Object,
+      required: true,
+    },
+    accountId: {
+      type: String,
       required: true,
     }
   },
   setup(props) {
     const { t, d } = useI18n();
     const { workflow, template } = toRefs(props)
+
+    const settings = reactive(getSettings(template.value, workflow.value.settingsId))
+
+    const { nearService } = useNearService()
 
     const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
     const activityNexts = ref(getActivities(template.value, workflow.value.activityNextIds))
@@ -115,18 +152,23 @@ export default {
 
     const showFinish = ref(canFinish(workflow.value))
 
-    return { t, d, formNextActivity, optionsNextActivities, activityNexts, showFinish, activityLogs };
+    return { t, d, settings, formNextActivity, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
   },
   computed: {
     activityLast() {
       return lodashLast(this.workflow.activityLogs)
+    },
+    proposalTitle() {
+      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code))
     }
   },
   methods: {
     convertInput(inputActivity, inputInstance) {
       return Object.assign(convertArrayOfObjectToObject(inputActivity, 'code', 'value'), convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
     },
-    
+    run() {
+      runActivity(this.formNextActivity, this.template, this.nearService, this.accountId)
+    }
   },
 };
 </script>

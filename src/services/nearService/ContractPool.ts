@@ -30,7 +30,10 @@ export class ContractPool {
         'ft_balance_of',
       ],
       changeMethods: [
-        'propose'
+        'propose',
+        'vote',
+        'finish_proposal',
+        'treasury_send_near',
       ],
     });
 

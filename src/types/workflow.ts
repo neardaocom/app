@@ -1,5 +1,5 @@
 import { DAORights, DAOVoteLevel } from "@/types/dao";
-import { CodeValue } from "./generic";
+import { CodeValue } from "./generics";
 
 
 export type WFMetaAttribute = {
@@ -36,6 +36,7 @@ export type WFAction = {
     name: string;
     code: string;
     smartContractMethod: string;
+    args: Function;
 }
 
 export type WFActivity = {

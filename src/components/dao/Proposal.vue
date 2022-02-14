@@ -3,14 +3,14 @@
     <div class="card-body">
       <!-- header -->
       <h6 class="card-title mt-1 mb-1">
-        <small class="me-2 text-muted">#{{ proposal.index }}</small>
+        <small class="me-2 text-muted">#{{ proposal.id }}</small>
         {{ proposal.type }}
-        <MDBBadge v-if="proposal.stateIndex !== 'in_progress'" :color="statusMapper[proposal.stateIndex]">{{ proposal.state }}</MDBBadge>
+        <MDBBadge :color="workflowCodeMapper[workflowCode]">{{ proposal.state }}</MDBBadge>
       </h6>
       
       <!-- progress or status -->
       <MDBProgress
-        v-if="proposal.stateIndex === 'in_progress'"
+        v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
         :height="4"
       >
         <MDBProgressBar :value="progress" bg="primary" />
@@ -77,9 +77,8 @@
       <!-- Vote -->
       <div
         v-if="
-          proposal.canVote === true
-          && proposal.status === 'InProgress'
-          && proposal.isOver === false
+          workflowCode === 'in_progress'
+          && proposal.canVote === true
           && proposal.isVoted === false
         "
         class="btn-group"
@@ -96,12 +95,12 @@
         <!--</button> -->
       </div>
       <div
-        v-else-if="proposal.stateIndex === 'executing'"
+        v-else-if="workflowCode === 'finishing'"
         class="btn-group"
         role="group"
       >
         <button @click="finalize()" type="button" class="btn btn-primary">
-          <i class="fas fa-certificate me-2"></i> {{ t("default.sign_and_execute") }}
+          <i class="fas fa-certificate me-2"></i> {{ t("default.proposal_finish") }}
         </button>
       </div>
     </div>
@@ -118,7 +117,7 @@ import { ref, toRefs, onMounted, onUnmounted } from "vue";
 import _ from "lodash";
 
 import TextCollapse from '@/components/TextCollapse.vue';
-import { statusBgMapper, getProgress } from '@/models/proposal';
+import { workflowCodeBgMapper, getProgress, getWorkflowCode } from '@/models/proposal';
 
 export default {
   components: {
@@ -135,10 +134,6 @@ export default {
       type: String,
       required: true,
     },
-    accountRole: {
-      type: String,
-      required: true,
-    },
   },
   setup(props) {
     const { proposal } = toRefs(props)
@@ -146,11 +141,11 @@ export default {
     const proposalDescription = ref('')
     const proposalDescriptionLoaded = ref(false)
     const collapseDescription = ref(false)
-    const statusMapper = ref(statusBgMapper);
+    const workflowCodeMapper = ref(workflowCodeBgMapper);
 
     const progress = ref(proposal.value.progress)
     const progressCounter = () => {
-      progress.value = getProgress(proposal.value.status, proposal.value.config, proposal.value.duration.value) // TODO: Change
+      progress.value = getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration.value)
       // console.log('Progress: ' + progress.value)
     }
     const progressInterval = ref(null);
@@ -165,7 +160,7 @@ export default {
       //console.log('unmounted')
     })
 
-    return { t, collapseDescription, statusMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
   },
   computed: {
     accountId(){
@@ -177,6 +172,9 @@ export default {
     ipfsService() {
       return this.$store.getters['ipfs/getService']
     },
+    workflowCode() {
+      return getWorkflowCode(this.proposal.status, this.progress)
+    }
   },
   methods: {
     vote(choice) {
@@ -229,7 +227,7 @@ export default {
         this.$notify.flush()
         console.error(e)})
     } else {
-      this.proposalDescription = this.proposal.description
+      this.proposalDescription = '' // this.proposal.description
       this.proposalDescriptionLoaded = true
     }
   }

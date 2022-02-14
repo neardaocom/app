@@ -8,7 +8,7 @@
         <Treasury :dao="dao" :nearPrice="nearPrice" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <Share :dao="dao" :accountId="accountId" />
+        <Share :dao="dao" :walletId="walletId" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Activity :dao="dao" />
@@ -87,7 +87,7 @@ export default {
     activeProposals() {
       let results = this.proposals
       // filter
-      results = results.filter(item => _.intersection([item.stateIndex], ['in_progress']).length > 0)
+      results = results.filter(item => _.intersection([item.stateCode], ['in_progress']).length > 0)
       // order
       results = _.orderBy(results, ['id'], ['asc'])
 

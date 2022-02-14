@@ -15,12 +15,13 @@ import { templateMeta, templateMetaAddWorkflow } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { CodeValue, IDValue, Translate } from '@/types/generic';
+import { CodeValue, IDValue, Translate } from '@/types/generics';
 import { yoctoNear } from '@/services/nearService/constants';
-import { WFAction, WFActivity, WFInstance, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
+import { WFAction, WFActivity, WFInstance, WFInstanceActivity, WFSettings, WFSettingsActivity, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
+import { dateFromChain } from '@/utils/near'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -238,7 +239,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     });
 
     // console.log(data, dataHack)
-    console.log(dataHack)
+    // console.log(dataHack)
 
      // groups
 
@@ -417,7 +418,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     const templates: WFTemplate[] = []
     let action: WFAction = {id: 0, name: '', code: '', smartContractMethod: ''}
     let activity: WFActivity | undefined = undefined
-    console.log("Template", dataHack[0])
+    // console.log("Template", dataHack[0])
     dataHack[0].forEach((template) => {
         // console.log(template)
 
@@ -425,6 +426,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         const activities: WFActivity[] = []
         const startActivityIds: number[] = []
         const endActivityIds: number[] = []
+
         template[1][0].activities.forEach((actionTempl, index) => {
             if (actionTempl !== null) {
                 action = {
@@ -496,18 +498,16 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         let settingsActivitiesItem: WFSettingsActivity | undefined
         template[1][1].forEach((settingsItem, index) => {
             settingsItem.activity_rights.forEach((rightsList, index) => {
-                if (index > 0) {
-                    activityTarget = loFind(activities, {code: template[1][0].activities[index].code})
-                    settingsActivitiesItem = loFind(settingsActivities, {activityId: activityTarget!.id})
-                    if (settingsActivitiesItem === undefined) {
-                        settingsActivitiesItem = {activityId: activityTarget!.id, rights: []}
-                        settingsActivities.push(settingsActivitiesItem)
-                    }
-                    rightsList.forEach((rights) => {
-                        settingsActivitiesItem!.rights.push(rightsParse(rights))
-                    })
-                    settingsActivitiesItem!.rights = loUniq(settingsActivitiesItem!.rights)
+                activityTarget = loFind(activities, {code: template[1][0].activities[index + 1].code}) // index of activity is +1
+                settingsActivitiesItem = loFind(settingsActivities, {activityId: activityTarget!.id})
+                if (settingsActivitiesItem === undefined) {
+                    settingsActivitiesItem = {activityId: activityTarget!.id, rights: []}
+                    settingsActivities.push(settingsActivitiesItem)
                 }
+                rightsList.forEach((rights) => {
+                    settingsActivitiesItem!.rights.push(rightsParse(rights))
+                })
+                settingsActivitiesItem!.rights = loUniq(settingsActivitiesItem!.rights)
             })
             settings.push({
                 id: index,
@@ -554,13 +554,14 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     let proposalSettings: WFSettings | undefined
     let proposalConstants: CodeValue[] | undefined
     let proposalInputs: CodeValue[] | undefined
+    let activityLogs: WFInstanceActivity[]
 
     for (const proposal of dataHack[6]) {
         // console.log(proposal)
         workflowInstance = await nearService.getWfInstance(id, proposal[0])
         proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
         proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
-        console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
+        // console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
 
         proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
             return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
@@ -571,9 +572,12 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             return { code: attr.code, value: loValues(workflowInstance[1].binds[attr.bindId])[0]}
         }) ?? []
 
+        // load activity logs
+        activityLogs = []
+
         proposals.push({
             id: proposal[0],
-            created: moment(new Decimal(proposal[1].Curr.created).div(1_000_000).toNumber()).toDate(),
+            created: dateFromChain(proposal[1].Curr.created),
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
             constants: proposalConstants,
@@ -590,7 +594,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             state: workflowInstance[0].state,
             constants: proposalConstants,
             inputs: proposalInputs,
-            activityNextIds: [],
+            activityNextIds: (activityLogs.length == 0) ? proposalTemplate!.startActivityIds : [],
             activityLogs: [],
             search: '',
         })

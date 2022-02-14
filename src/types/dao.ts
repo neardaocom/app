@@ -1,5 +1,5 @@
 import { IPFSFile } from "@/types/ipfs";
-import { CodeValue, IDValue } from "@/types/generic";
+import { CodeValue, IDValue, Interval } from "@/types/generics";
 import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
 
@@ -8,18 +8,12 @@ export enum DAOVoteType {
   Democratic, TokenWeighted
 }
 
-export type DAOVoteDuration = {
-  days: number;
-  hours: number;
-  minutes: number;
-}
-
 export type DAOVoteLevel = {
   type: DAOVoteType;
   quorum: number;
   approveThreshold: number;
   spamThreshold?: number;
-  duration: DAOVoteDuration;
+  duration: Interval;
   voteOnlyOnce: boolean;
 }
 

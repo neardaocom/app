@@ -1,13 +1,15 @@
 import { WFActivity, WFAttribute, WFInstance, WFInstanceActivity, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
-import { Translate } from "@/types/generic";
-import lodashFind from "lodash/find";
-import lodashFindIndex from "lodash/findIndex";
-import lodashGet from "lodash/get";
-import lodashSet from "lodash/set";
-import lodashLast from "lodash/last";
+import { Translate } from "@/types/generics";
+import loFind from "lodash/find";
+import loFindIndex from "lodash/findIndex";
+import loGet from "lodash/get";
+import loSet from "lodash/set";
+import loLast from "lodash/last";
 import { convertArrayOfObjectToObject } from "@/utils/array";
+import { Action } from "@/types/blockchain";
+import { nearToYocto } from "@/utils/near";
 
-export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => lodashFind(template.activities, {'id': id});
+export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
 export const getStartActivities = (template: WFTemplate): WFActivity[] => {
     const activities: WFActivity[] = [];
@@ -47,7 +49,7 @@ export const getTransitions = (template: WFTemplate): WFTransitionFrom[] => {
         activityTo = getActivityById(template, item.toId)
         if (activityTo === undefined) throw new Error(`Activity[${item.toId}] not found`);
         
-        transFromItem = lodashFind(transFrom, {'fromId': activityFrom.id})
+        transFromItem = loFind(transFrom, {'fromId': activityFrom.id})
         if (transFromItem !== undefined) {
             transFromItem.tos.push(activityTo)
         } else {
@@ -68,15 +70,15 @@ export const getActivities = (template: WFTemplate, activityIds: number[]): WFAc
 }
 
 export const getTemplate = (templates: WFTemplate[], id: number): WFTemplate | undefined => {
-    return lodashFind(templates, {'id': id});
+    return loFind(templates, {'id': id});
 }
 
 export const getSettings = (template: WFTemplate, settingsId: number): WFSettings | undefined => {
-    return lodashFind(template.settings, {'id': settingsId});
+    return loFind(template.settings, {'id': settingsId});
 }
 
 export const getLastActivity = (instance: WFInstance): WFInstanceActivity | undefined => {
-    return lodashLast(instance.activityLogs);
+    return loLast(instance.activityLogs);
 }
 
 export const canFinish = (instance: WFInstance, templates: WFTemplate[]): boolean => {
@@ -90,4 +92,42 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
     const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
     // console.log(settings, params)
     return {key: 'wf_templ_' + template.code + '_constants', params: params}
+}
+
+export const runActivity = (activityCode: string, template: WFTemplate, nearService: any, contractId: string) => {
+    const actions: Action[] = []
+    const activity = loFind(template.activities, {code: activityCode})
+    console.log('Activity', activity?.code)
+
+    activity!.actions.forEach((action) => {
+        console.log('Action', action.smartContractMethod)
+        if (activity!.smartContractId === "") { // smart contract
+            actions.push({
+                methodName: action.smartContractMethod,
+                args: {}, // TODO: Generate args
+                gas: 10, // TODO: Gas?
+                deposit: 0, // TODO: Deposit?
+            })
+        } else { // functional call
+            actions.push({
+                methodName: 'function_call',
+                args: {
+                    proposal_id: 0,
+                    action_id: action.smartContractMethod,
+                    action_arguments: {},
+                    deposit: 0, // yoctoNear
+                    gas: 0,
+                }, // TODO: Generate args
+                gas: 10, // TODO: Gas?
+                deposit: 0, // TODO: Deposit?
+            })
+        }
+        
+        console.log('signAndSendTransactions', contractId, actions)
+        // nearService.signAndSendTransactions(contractId, actions)
+    })
+
+    //if (activity!.smartContractId === "") {
+
+    //}
 }
