@@ -372,7 +372,7 @@ export const workflowTemplateWfNearSend: Record<string, unknown> = {
   binds:[],
   start:[0],
   end:[1],
-  obj_validators:[[{"Primitive":0},{"Primitive":1}]],
+  obj_validators:[[{"Primitive":0},{"Primitive":0}]],
   validator_exprs:[{"args":[{"User":0},{"Bind":0}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"Eqs"}}],"terms":[{"Arg":1},{"Arg":0}]}}},{"args":[{"User":1},{"Bind":1}],"expr":{"Boolean":{"operators":[{"operands_ids":[0,1],"op_type":{"Rel":"GtE"}}],"terms":[{"Arg":1},{"Arg":0}]}}}]
 };
 
