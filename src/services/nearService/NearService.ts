@@ -20,6 +20,7 @@ import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder 
 import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
 import { nearToYocto, toTGas } from '@/utils/near';
 import { Action } from "@/types/blockchain";
+import { DAORights } from '@/types/dao';
 
 class NearService {
   // config of near
@@ -424,6 +425,7 @@ class NearService {
     const setFnCallMeta = []
     const setWfTemplate = [workflowTemplateWfAdd, workflowTemplateWfNearSend]
     const setWfSettings = worlflowTemplateSettingsBuilder(
+      [[{'transition_limit': 1, 'cond': null}]],
       rightTokenGroupCouncil,
       [rightTokenHolder],
       [[rightTokenGroupCouncilLeader]],
@@ -511,11 +513,11 @@ class NearService {
   async addWorkflow(
     contractId: string,
     templateSettingsId: number,
-    activityInputs: any,
     transitionConstraints: any,
+    canVote: DAORights,
+    canPropose: DAORights[],
+    activityRights: DAORights,
     binds: any,
-    objValidators,
-    validatorExprs,
     storageKey: string,
     approveThreshold: number,
     quorum: number,
@@ -531,9 +533,10 @@ class NearService {
     const amountYokto = amount.mul(yoctoNear).toFixed();
 
     const setWfSettings = worlflowTemplateSettingsBuilder(
-      rightTokenGroupCouncil,
-      [rightTokenHolder],
-      [[rightTokenGroupCouncilLeader]],
+      transitionConstraints,
+      canVote,//rightTokenGroupCouncil,
+      canPropose,//[rightTokenHolder],
+      [[activityRights]],//[[rightTokenGroupCouncilLeader]],
       new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
       quorum,
       approveThreshold,
@@ -547,11 +550,11 @@ class NearService {
         template_id: 1,
         template_settings_id: templateSettingsId,
         propose_settings: {
-          activity_inputs: activityInputs,
-          transition_constraints: transitionConstraints,
+          //activity_inputs: activityInputs,
+          //transition_constraints: transitionConstraints,
           binds: binds,
-          obj_validators: objValidators,
-          validator_exprs: validatorExprs,
+          //obj_validators: objValidators,
+          //validator_exprs: validatorExprs,
           storage_key: storageKey
         },
         template_settings: [setWfSettings],

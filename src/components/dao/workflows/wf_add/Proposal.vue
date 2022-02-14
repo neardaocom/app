@@ -26,7 +26,7 @@
 
     <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <Select :labelName="t('default.wf_activities_rights')" id="activities_rights" :options="voteRights" />   
+            <Select :labelName="t('default.wf_activities_rights')" id="activities_rights" :options="activitiesRights" />   
         </div>
     </div> 
 </template>
@@ -43,7 +43,9 @@ import { DAORightsType } from '@/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
-//import { useNearService } from '@/hooks/vuex';
+import { useNearService } from '@/hooks/vuex';
+import loCloneDeep from "lodash/cloneDeep";
+import loSplit from 'lodash/split'
 
 
 export default {
@@ -65,23 +67,22 @@ export default {
         },
     },
     setup (props) {
-        const {dao, daoRights} = toRefs(props)
+        const {contractId, dao, daoRights} = toRefs(props)
         const {t} = useI18n()
-        //const { nearService } = useNearService()
+        const { nearService } = useNearService()
         const workflowsToAdd = ref([])
 
         const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0])
         const proposeRights = computed(() => { 
             const rights = []
-            daoRights.value.forEach((right) => { 
+            daoRights.value.forEach((right, index) => {  
                 if(right.type === DAORightsType.Anyone || right.type === DAORightsType.Member || right.type ===  DAORightsType.TokenHolder ||  right.type === DAORightsType.Group ){
                     const trans = toTranslate(right, dao.value.groups)
-                    rights.push({text: t('default.' + trans.key, trans.params), value: right.type})
+                    rights.push({text: t('default.' + trans.key, trans.params), value: index})
                 }
             })
             return rights
         })
-
         const voteRights = computed(() => {
             const rights = []
             proposeRights.value.forEach((right) => {
@@ -97,6 +98,7 @@ export default {
             })
             return rights
         })
+        const activitiesRights =computed(() => loCloneDeep(proposeRights.value))
 
         const schema = computed(() => {
             return {
@@ -108,13 +110,11 @@ export default {
         });
         const { handleSubmit, errors, setFieldTouched } = useForm({ validationSchema: schema});
 
-        
+        // fetch template list
         const {fetch, dataResults} = useTemplateList()
-
         onMounted(() => {
             fetch()
         })
-
        watch(() => [dataResults.value], () => {
             const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'id');
             workflowsToAdd.value = workflows.map((workflow) =>({text: workflow.name, value: workflow.id}))
@@ -124,26 +124,29 @@ export default {
 
 
         const onSubmit = handleSubmit(values => {
-                console.log(values);
-                // nearService.value.addWorkflow(
-                //     contractId.value,
-                //     templateSettingsId,
-                //     activity_inputs,
-                //     transition_constraints,
-                //     binds,
-                //     obj_validators,
-                //     validator_exprs,
-                //     storage_key,
-                //     dao.value.voteLevels[0].approveThreshold,
-                //     dao.value.voteLevels[0].quorum,
-                //     dao.value.voteLevels[0].duration.days,
-                //     dao.value.voteLevels[0].duration.hours,
-                //     dao.value.voteLevels[0].minutes,
-                //     0, //depositPropose
-                //     0, //depositVote
-                //     0, //depositProposeReturn
-                //     1.0
-                // )
+            const canProposeArray = loSplit(values.can_propose, ',')
+            const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
+            const storageKey = find(workflowsToAdd.value, { 'id': values.workflow })
+            console.log(storageKey);
+            nearService.value.addWorkflow(
+                contractId.value,
+                0, //templateSettingsId,
+                [[{'transition_limit': 1, 'cond': null}]], //transition_constraints,
+                daoRights.value[values.can_vote],
+                canPropose,
+                daoRights.value[values.activities_rights],
+                [{'U16': values.workflow}], //binds
+                'bla', //storage_key: string, name wokflow, id, provider, date  
+                dao.value.voteLevels[0].approveThreshold,
+                dao.value.voteLevels[0].quorum,
+                dao.value.voteLevels[0].duration.days,
+                dao.value.voteLevels[0].duration.hours,
+                dao.value.voteLevels[0].minutes,
+                0, //depositPropose
+                0, //depositVote
+                0, //depositProposeReturn
+                1.0
+            )
         }, () => {
                 console.log(errors.value)
         });
@@ -155,6 +158,7 @@ export default {
             proposeRights,
             voteRights,
             workflowsToAdd,
+            activitiesRights,
             onSubmit
         }
     }
