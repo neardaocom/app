@@ -96,7 +96,7 @@ export const getDaoActionMethod = (name: string): string => {
         case "NftSend":
             methodName = 'treasury_nft_send'
             break;
-        case "NearSend":
+        case "TreasuryNearSend":
             methodName = 'treasury_near_send'
             break;
         case "WorkflowAdd":

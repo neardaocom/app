@@ -46,6 +46,10 @@ import loDifferenceBy from 'lodash/differenceBy'
 import { useNearService } from '@/hooks/vuex';
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
+import loFind from 'lodash/find'
+import loFill from 'lodash/fill'
+import { getRandom } from '@/utils/integer'
+import moment from 'moment'
 
 
 export default {
@@ -65,9 +69,13 @@ export default {
             type: Object,
             required: true,
         },
+        template: {
+            type: Object,
+            required: true
+        }
     },
     setup (props) {
-        const {contractId, dao, daoRights} = toRefs(props)
+        const { template, contractId, dao, daoRights} = toRefs(props)
         const {t} = useI18n()
         const { nearService } = useNearService()
         const workflowsToAdd = ref([])
@@ -117,33 +125,42 @@ export default {
         })
        watch(() => [dataResults.value], () => {
             const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'id');
+            console.log(workflows);
+            console.log(dataResults.value);
             workflowsToAdd.value = workflows.map((workflow) =>({text: workflow.name, value: workflow.id}))
             setFieldTouched('workflow', false)
         })
 
 
 
-        const onSubmit = handleSubmit(values => {
+        const onSubmit = handleSubmit(async (values) => {
             const canProposeArray = loSplit(values.can_propose, ',')
             const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
-            const storageKey = find(workflowsToAdd.value, { 'id': values.workflow })
-            console.log(storageKey);
+            const workflowName = loFind(workflowsToAdd.value, { 'value': values.workflow })
+            const storageKey = `${workflowName.text}-${values.workflow}-${getRandom(1, 999)}-${moment().valueOf()}`  
+
+            // load templete, to count number of activities
+            const loadTemplate = await nearService.value.providerGet(values.workflow) // TODO: try, catch
+
+            const numActivities = loadTemplate[0].activities.length - 1
+            const activitiesRights = loFill(Array(numActivities), [daoRights.value[values.activities_rights]])
+
             nearService.value.addWorkflow(
                 contractId.value,
-                0, //templateSettingsId,
+                template.value.settings[0].id,
                 [[{'transition_limit': 1, 'cond': null}]], //transition_constraints,
                 daoRights.value[values.can_vote],
                 canPropose,
-                daoRights.value[values.activities_rights],
+                activitiesRights,
                 [{'U16': values.workflow}], //binds
-                'bla', //storage_key: string, name wokflow, id, provider, date  
+                storageKey, //storage_key: string, name wokflow, id, provider, date  
                 dao.value.voteLevels[0].approveThreshold,
                 dao.value.voteLevels[0].quorum,
                 dao.value.voteLevels[0].duration.days,
                 dao.value.voteLevels[0].duration.hours,
                 dao.value.voteLevels[0].minutes,
-                0, //depositPropose
-                0, //depositVote
+                '0', //depositPropose
+                '0', //depositVote
                 0, //depositProposeReturn
                 1.0
             )

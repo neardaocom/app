@@ -66,7 +66,7 @@
       <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
 
-    <MDBBtn @click="modalPropOpen"> Test </MDBBtn>
+    <!-- <MDBBtn @click="modalPropOpen"> Test </MDBBtn> -->
 
     <ModalProposal title="Test" :show="modalProp" @vote="vote">
       <AddMedia/>
@@ -185,7 +185,11 @@ export default {
       this.modalTitle = templ.name
       switch (templ.code) {
         case 'wf_near_send':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.formProps = {
+            tokenName: this.dao.treasury.token.meta.name, 
+            contractId: this.dao.wallet, 
+            template: loFind(this.dao.templates, {code: templ.code}),
+          }
           this.activeForm = 'Payout'
           this.activeFormCode = templ.code
           break
@@ -195,7 +199,7 @@ export default {
           this.activeFormCode = templ.code
           break
         case 'wf_add':
-          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'AddWorkflow'
           this.activeFormCode = templ.code
           console.log('wf_add');

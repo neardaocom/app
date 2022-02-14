@@ -27,8 +27,8 @@
     <MDBAccordion v-model="formDocumentType" flush fluid class="mx-4">
         <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
             <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
-            :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
-            :removeBtn="fileUploadMsg.removeBtn"
+                :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
+                :removeBtn="fileUploadMsg.removeBtn"
             />
         </MDBAccordionItem>
 
@@ -155,11 +155,11 @@ export default {
             editor: t('default.document'),
         }))
         const fileUploadMsg = computed(() => ({
-            defautlMessage: this.t('default.file_upload_default_msg'),
-            mainError: this.t('default.file_upload_main_error'),
-            maxSizeError: this.t('default.file_upload_max_size_error'),
-            previewMsg: this.t('default.file_upload_preview_msg'),
-            removeBtn: this.t('default.file_upload_remove_btn')
+            defautlMessage: t('default.file_upload_default_msg'),
+            mainError: t('default.file_upload_main_error'),
+            maxSizeError: t('default.file_upload_max_size_error'),
+            previewMsg: t('default.file_upload_preview_msg'),
+            removeBtn: t('default.file_upload_remove_btn')
         }))
         const uploadFiles = ref([])
         const handleUpload = (files) => {

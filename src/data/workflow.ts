@@ -348,6 +348,7 @@ export const workflowTemplateWfAdd: Record<string, unknown> = {
       tgas:0,
       deposit:0,
       arg_types:[{"U16":false},{"Object":0}],
+      activity_inputs: [ [ { Bind: 0 } ] ],
       postprocessing:null
     }
   ],
@@ -367,11 +368,12 @@ export const workflowTemplateWfNearSend: Record<string, unknown> = {
     {
       code:"near_send",
       exec_condition:null,
-      action:"NearSend",
+      action:"TreasuryNearSend",
       fncall_id:null,
       tgas:0,
       deposit:0,
       arg_types:[{String:false},{U128:false}],
+      activity_inputs: [ [ 'Free', 'Free' ] ],
       postprocessing:null
     }
   ],
@@ -391,8 +393,8 @@ export const worlflowTemplateSettingsBuilder = (
   duration: number,
   quorum: number,
   approveThreshold: number,
-  depositPropose: number, // TODO: string
-  depositVote: number, // TODO: string
+  depositPropose: string, // TODO: string
+  depositVote: string, // TODO: string
   depositProposeReturn: number
 ): Record<string, unknown> => ({
     transition_constraints: transitionConstraints,
