@@ -20,7 +20,7 @@
               </li>
               <li>
                 <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-                <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.name }}
+                <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.short }}
               </li>
             </ul>
           </div>

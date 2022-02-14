@@ -29,7 +29,7 @@
     <div class="row">
       <div v-for="(workflow, index) in results" :key="index" class="col-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Workflow :workflow="workflow" :template="template(dao.templates, workflow.templateId)" />
+          <Workflow :workflow="workflow" :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" />
         </section>
       </div>
     </div>
@@ -45,6 +45,7 @@ import Workflow from "@/components/dao/activities/Workflow.vue"
 import orderBy from "lodash/orderBy"
 import { toSearch } from '@/utils/string'
 import { getTemplate } from "@/models/workflow";
+import loFind from "lodash/find";
 
 export default {
   components: {
@@ -88,6 +89,8 @@ export default {
     results() {
       let results = this.dao.workflows
       // filter
+      results = results.filter((item) => item.state === 'Running')
+
       // searching
       const searchText = toSearch(this.searchQuery)
       if (searchText.length > 2) {
@@ -110,7 +113,10 @@ export default {
   methods: {
     template(templates, templateId) {
       return getTemplate(templates, templateId)
-    }
+    },
+    proposal(id) {
+      return loFind(this.dao.proposals, {id: id})
+    },
   }
 };
 </script>

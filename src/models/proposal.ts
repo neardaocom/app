@@ -143,10 +143,11 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
 
 const getArgs = (proposal: DAOProposal, templateCode: string): Record<string, unknown> => {
   let values: Record<string, unknown> = {}
+  // console.log(proposal, templateCode)
   switch (templateCode) {
     case 'wf_near_send':
       values = {
-        receiverId: getValueByCode(proposal.inputs, 'receiverId'),
+        receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
         amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
       }
       break;
@@ -202,7 +203,7 @@ const transform = (
         id: proposal.id,
         code: template.code,
         title: t('default.wf_templ_' + template.code + '_title', args),
-        description: t('default.wf_templ_' + template.code + '_description', args),
+        description: '', // TODO: From IPFS
         typeCode: template.code,
         type: t('default.wf_templ_' + template.code),
         stateCode: stateCode,
@@ -232,5 +233,5 @@ const transform = (
 };
 
 export {
-    transform, voteMapper, workflowCodeBgMapper, getProgress, getWorkflowCode
+    transform, voteMapper, workflowCodeBgMapper, getProgress, getWorkflowCode, getArgs
 }

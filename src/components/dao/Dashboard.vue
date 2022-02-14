@@ -87,7 +87,7 @@ export default {
     activeProposals() {
       let results = this.proposals
       // filter
-      results = results.filter(item => _.intersection([item.stateIndex], ['in_progress']).length > 0)
+      results = results.filter(item => _.intersection([item.stateCode], ['in_progress']).length > 0)
       // order
       results = _.orderBy(results, ['id'], ['asc'])
 

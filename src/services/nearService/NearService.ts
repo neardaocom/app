@@ -19,6 +19,7 @@ import { duration } from 'moment';
 import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
 import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
 import { nearToYocto, toTGas } from '@/utils/near';
+import { Action } from "@/types/blockchain";
 
 class NearService {
   // config of near
@@ -794,6 +795,17 @@ class NearService {
           // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(TGas)), new BN(0)),
           transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(TGas)), new BN(0)),
        ]
+    });
+  }
+
+  async signAndSendTransactions(contractId: string, actions: Action[]) {
+    const account = this.walletConnection.account();
+
+    return account.signAndSendTransaction({
+        receiverId: contractId,
+        actions: actions.map((action: Action) => 
+            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(action.gas).mul(new BN(TGas)), new BN(action.deposit))
+        )
     });
   }
 

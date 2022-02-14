@@ -36,6 +36,7 @@ export type WFAction = {
     name: string;
     code: string;
     smartContractMethod: string;
+    args: Function;
 }
 
 export type WFActivity = {

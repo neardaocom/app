@@ -83,10 +83,6 @@ export default {
       type: Object,
       required: true,
     },
-    accountId: {
-      type: String,
-      required: true,
-    },
     walletId: {
       type: String,
       required: false,

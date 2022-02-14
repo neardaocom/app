@@ -352,6 +352,7 @@
   "wf_can_propose": "Can propose",
   "wf_can_vote": "Can vote",
   "wf_vote_level": "Vote level",
+  "wf_sign_and_execute": "Sign & execute",
   "vote_level_democratic": "Democratic <strong>{approveThreshold}%</strong> ({quorum}% quorum)",
   "vote_level_token_weighted": "Token weighted <strong>{approveThreshold}%</strong> ({quorum}% quorum)",
   "wf_activities_rights": "Activities rights",

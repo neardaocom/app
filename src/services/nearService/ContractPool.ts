@@ -33,6 +33,7 @@ export class ContractPool {
         'propose',
         'vote',
         'finish_proposal',
+        'treasury_send_near',
       ],
     });
 
