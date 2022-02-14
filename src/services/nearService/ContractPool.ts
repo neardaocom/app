@@ -18,7 +18,6 @@ export class ContractPool {
       viewMethods: [
         'wf_templates',
         'wf_instance',
-        'workflow_log',
         'wf_log',
         'groups',
         'tags',
@@ -36,7 +35,6 @@ export class ContractPool {
         'vote',
         'finish_proposal',
         'treasury_send_near',
-        'workflow_finish',
         'wf_finish',
       ],
     });

@@ -504,6 +504,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         proposals.push({
             id: proposal[0],
             created: dateFromChain(proposal[1].Curr.created),
+            createdBy: proposal[1].Curr.created_by,
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
             templateId: proposal[1].Curr.workflow_id,
