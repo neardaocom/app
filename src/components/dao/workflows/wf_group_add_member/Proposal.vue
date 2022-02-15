@@ -45,7 +45,7 @@ export default {
 
         const schema = computed(() => {
             return {
-                account_id: `required|accountExists:${accountPostfix}`,
+                account_id: `required|accountExists:${accountPostfix.value}`,
             }
         });
 
