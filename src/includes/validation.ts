@@ -3,6 +3,7 @@ import { required, numeric, max, min, alpha, url } from '@vee-validate/rules';
 import store from '@/store'
 import Decimal from 'decimal.js';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
+import moment from 'moment'
 
 const stringLocaleNumber = (value, [localeString]) => {
     if (localeString === 'en') {
@@ -51,6 +52,21 @@ const accountNotExists = async (value: string, [accountPosfix]) => {
     return !result
 }
 
+const minDate = (value, [min, format]) => {
+    const formDate = moment(value, format).toDate()
+    if (formDate.valueOf() < min.valueOf()){
+        return false
+    }
+    return true
+}
+
+const maxDate = (value, [max, format]) => {
+    const formDate = moment(value, format).toDate()
+    if (formDate.valueOf() > max.valueOf()){
+        return false
+    }
+    return true
+}
 
 export default{
     install() {
@@ -66,5 +82,7 @@ export default{
         defineRule('accountNotExists', accountNotExists)
         defineRule('localeNumber', stringLocaleNumber)
         defineRule('url', url)
+        defineRule('minDate', minDate)
+        defineRule('maxDate', maxDate)
     },
 }

@@ -351,10 +351,8 @@ export default {
         }
 
         const onSubmit = handleSubmit(values => {
-            alert(JSON.stringify(values, null, 2));
             createDao(values)
         }, () => {
-            alert(JSON.stringify(errors.value, null, 2));
             if(Object.keys(errors.value).length === 1 && errors.value['dao_council']){
                 createDao(values)
             }

@@ -101,12 +101,22 @@ export default {
             // alert(JSON.stringify(values, null, 2));
 
             if(formAsset.value === 'near'){
-                const storageKey = `${template.value.code}-${template.value.settings[0].id}-${moment().valueOf()}`
+                const storageKey = `wf_near_send-${moment().valueOf()}`
                 nearService.value.addProposal(
                     contractId.value,
-                    template.value.id,
-                    template.value.settings[0].id,
+                    2,
+                    0, //template.value.settings[0].id
                     [{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": nearToYocto(values.nearAmount)}],
+                    storageKey,
+                    1.0
+                )
+            }else{
+                const storageKey = `wf_ft_distribute-${moment().valueOf()}`
+                nearService.value.addProposal(
+                    contractId.value,
+                    4, //template.value.id
+                    0, //template.value.settings[0].id
+                    [],
                     storageKey,
                     1.0
                 )

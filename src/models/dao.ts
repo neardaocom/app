@@ -418,7 +418,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             } else {
                 transitions.push({ id: index - 1, toIds: transactionChainToIds.map((toId) => toId - 1) })
             }
-        })
+        })        
 
         // settings
         const settings: WFSettings[] = []
