@@ -59,7 +59,7 @@
                       :label="option.text"
                       :name="'nextActivity-' + workflow.id"
                       :value="option.value"
-                      v-model="formNextActivityId"
+                      v-model="formNextActivityCode"
                     />
                   </MDBBtnGroup>
                   <template v-if="workflow.actionLastId !== undefined && showFinish === true">
@@ -68,9 +68,11 @@
                   </template>
                 </div>
               </div>
-              <div class="row">
+              <!-- FORM -->
 
-              </div>
+              <component :is="componentName" v-bind="componentProps" @flush="formFlush"></component>
+
+              <!-- END FORM -->
               <div class="row">
                 <div class="col-12 mt-2" v-if="activityNexts.length > 0">
                   <button class="btn btn-secondary btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
@@ -102,12 +104,12 @@ import { convertArrayOfObjectToObject } from '@/utils/array'
 import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
 import lodashLast from "lodash/last";
-import { canFinish, getSettings, runActivity, getNextActivities, transformLogs } from "@/models/workflow";
+import { canFinish, getSettings, runActivity, getNextActivities, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNearService } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
 
-// import { WFInstance } from '@/types/workflow';
+import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
 
 export default {
   components: {
@@ -115,7 +117,7 @@ export default {
     // MDBProgress, MDBProgressBar, 
     // WFInstance
     // MDBCollapse, MDBBtn, MDBIcon,
-    
+    WfNearSendNearSend,
   },
   props: {
     workflow: {
@@ -141,6 +143,15 @@ export default {
 
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
+    const data = {
+        proposalId: workflow.value.id,
+        constants: settings.constants,
+        inputs: workflow.value.inputs,
+        storageDao: [],
+        storage: [],
+        form: {},
+    }
+
     const { nearService } = useNearService()
 
     // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
@@ -148,15 +159,16 @@ export default {
     const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
-      return { text: t('default.wf_templ_' + template.value.code + '_activity_' + activity.code), value: activity.id}
+      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code}
     }))
 
-    const formNextActivityId = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
+    const formNextActivityCode = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
     // const selectedNextActivity = ref("");
 
     const showFinish = ref(canFinish(workflow.value, template.value))
 
-    return { t, d, settings, formNextActivityId, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
+
+    return { t, d, data, settings, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
   },
   computed: {
     activityLast() {
@@ -164,6 +176,12 @@ export default {
     },
     proposalTitle() {
       return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code))
+    },
+    componentName() {
+      return metaGetActivityForm(this.template.code, this.formNextActivityCode)?.component
+    },
+    componentProps() {
+      return {schema: metaGetActivityForm(this.template.code, this.formNextActivityCode)?.schema(this.data)}
     }
   },
   methods: {
@@ -171,14 +189,17 @@ export default {
       return Object.assign(convertArrayOfObjectToObject(inputActivity, 'code', 'value'), convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
     },
     run() {
-      const form = {}
-      runActivity(this.formNextActivityId, this.workflow, this.template, this.settings, this.nearService, this.accountId, form)
+      runActivity(this.formNextActivityCode, this.workflow, this.template, this.settings, this.nearService, this.accountId, this.data)
     },
     finish() {
       this.nearService.wfFinish(this.accountId, this.proposal.id)
     },
     toTime(value) {
       return toTimeString(value)
+    },
+    formFlush(values) {
+      // console.log('fromFlush', values)
+      this.data.form = values
     }
   },
 };

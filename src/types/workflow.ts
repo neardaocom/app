@@ -13,9 +13,14 @@ export type WFMetaAction = {
     log: Function;
 }
 
+export type WFMetaForm = {
+    component: string;
+    schema: Function;
+}
+
 export type WFMetaActivity = {
-    activityCode: string;
-    form: WFMetaAttribute[];
+    code: string;
+    form?: WFMetaForm;
 }
 
 export type WFMetaTemplate = {
@@ -129,7 +134,7 @@ export type WFData = {
     inputs: CodeValue[];
     storageDao: CodeValue[];
     storage: CodeValue[];
-    form: CodeValue[];
+    form: Record<string, unknown>;
 }
 
 export type WFInstanceLogDTO = {

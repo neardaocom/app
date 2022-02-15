@@ -1,4 +1,4 @@
-import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO } from "@/types/workflow";
+import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO, WFMetaForm } from "@/types/workflow";
 import { CodeValue, Translate } from "@/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
@@ -104,6 +104,10 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
     return {key: 'wf_templ_' + template.code + '_constants', params: {}}
 }
 
+export const metaGetActivityForm = (templateCode: string, activityCode: string): WFMetaForm | undefined => {
+    return loFind(loGet(templateMeta, [templateCode])?.activities, {code: activityCode})?.form
+}
+
 export const getActivityRights = (settings: WFSettings, activity: WFActivity): DAORights[] => {
     return settings.actionRights[activity.actionIds[0]].rights
 }
@@ -131,22 +135,16 @@ export const getActionsOfActivity = (template: WFTemplate, activityId: number): 
     return actions
 }
 
-export const runActivity = (activityId: number, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, form: CodeValue[]) => {
+export const runActivity = (activityCode: string, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, data: WFData) => {
+    const activity: WFActivity | undefined = loFind(template.activities, {code: activityCode})
+
     const actions: TransactionAction[] = []
-    const data: WFData = {
-        proposalId: workflow.id,
-        constants: settings.constants,
-        inputs: workflow.inputs,
-        storageDao: [],
-        storage: [],
-        form: form,
-    }
 
     const meta: WFMetaTemplate = loGet(templateMeta, [template.code])
 
     // console.log('Activity', activityId, data)
 
-    getActionsOfActivity(template, activityId).forEach((action: WFAction) => {
+    getActionsOfActivity(template, activity!.id).forEach((action: WFAction) => {
         // console.log('Action', (action as WFActionCall))
         
         if ((action as WFActionCall).method !== undefined) { // smart contract

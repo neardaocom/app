@@ -506,7 +506,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
         if (workflowInstance[0].state !== 'Waiting') {
             workflowLog = await nearService.getWfInstanceLog(id, proposal[0])
             workflowLog?.forEach((log, index) => {
-                console.log('Log', log)
+                //console.log('Log', log)
                 actionLogs.push({
                     id: index,
                     actionId: log.action_id - 1,

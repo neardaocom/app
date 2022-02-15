@@ -1,7 +1,8 @@
 import { WFMetaTemplate, WFData } from "@/types/workflow"
 import { getValueByCode } from "@/utils/generics"
 import { first } from "@/utils/object"
-import { yoctoToNear } from "@/utils/near"
+import { nearToYocto, yoctoToNear } from "@/utils/near"
+import loToNumber from "lodash/toNumber";
 
 export const templateMetaWfSendNear: WFMetaTemplate = {
     constants: [
@@ -13,9 +14,16 @@ export const templateMetaWfSendNear: WFMetaTemplate = {
     ],
     activities: [
         {
-            activityCode: 'near_send',
-            form: [],
-        }
+            code: 'near_send',
+            form: {
+                component: 'WfNearSendNearSend',
+                schema: (data: WFData) => {
+                    return {
+                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + yoctoToNear((getValueByCode(data.inputs, 'amount')) ?? '1000000.0')
+                    }
+                },
+            },
+        },
     ],
     actions: [
         {
@@ -24,7 +32,7 @@ export const templateMetaWfSendNear: WFMetaTemplate = {
                 return {
                     "proposal_id": data.proposalId,
                     "receiver_id": getValueByCode(data.inputs, 'receiverId'),
-                    "amount": getValueByCode(data.inputs, 'amount'),
+                    "amount": nearToYocto(loToNumber(data.form.amount)),
                 }
             },
             log: (args: any) => {
@@ -32,8 +40,8 @@ export const templateMetaWfSendNear: WFMetaTemplate = {
                     "receiver_id": first(args[0][0]),
                     "amount": (first(args[0][1])) ? yoctoToNear(first(args[0][1])) : undefined,
                 }
-            }
-        }
+            },
+        },
     ],
 }
 
