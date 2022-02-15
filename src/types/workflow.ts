@@ -7,15 +7,21 @@ export type WFMetaAttribute = {
     bindId: number;
 }
 
+export type WFMetaAction = {
+    id: number;
+    args: Function;
+}
+
 export type WFMetaActivity = {
-    activityId: number;
-    attributes: WFMetaAttribute[];
+    activityCode: string;
+    form: WFMetaAttribute[];
 }
 
 export type WFMetaTemplate = {
-    settingsAttributes: WFMetaAttribute[];
-    proposalAttributes: WFMetaAttribute[];
+    constants: WFMetaAttribute[];
+    inputs: WFMetaAttribute[];
     activities: WFMetaActivity[];
+    actions: WFMetaAction[];
 };
 
 export type WFAttribute = {
@@ -93,7 +99,7 @@ export type WFSettings = {
     // constants: CodeValue[];
 }
 
-export type WFInstanceAction = {
+export type WFInstanceLog = {
     id: number;
     actionId: number;
     txHash?: string;
@@ -111,14 +117,23 @@ export type WFInstance = {
     storage: string;
     inputs: CodeValue[];
     constants: CodeValue[];
-    actionLastId: number[];
-    actionLogs: WFInstanceAction[];
+    actionLastId: number | undefined;
+    actionLogs: WFInstanceLog[];
     search: string;
 }
 
 export type WFData = {
     proposalId: number;
-    settings: CodeValue[];
+    constants: CodeValue[];
+    inputs: CodeValue[];
+    storageDao: CodeValue[];
+    storage: CodeValue[];
+    form: CodeValue[];
+}
+
+export type WFInstanceLogDTO = {
+    activity: WFActivity;
+    actions: WFAction[];
     proposal: CodeValue[];
     storageDao: CodeValue[];
     storage: CodeValue[];

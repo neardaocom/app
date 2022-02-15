@@ -1,4 +1,4 @@
-import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceAction, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
+import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
 import { CodeValue, Translate } from "@/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
@@ -12,6 +12,7 @@ import { NearService } from "@/services/nearService";
 import { getValueByCode } from "@/utils/generics"
 import loToNumber from "lodash/toNumber"
 import { DAORights } from "@/types/dao";
+import { instances } from "@firebase/logger/dist/src/logger";
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
@@ -84,14 +85,13 @@ export const getSettings = (template: WFTemplate, settingsId: number): WFSetting
     return loFind(template.settings, {'id': settingsId});
 }
 
-export const getLastActivity = (instance: WFInstance): WFInstanceAction | undefined => {
+export const getLastActivity = (instance: WFInstance): WFInstanceLog | undefined => {
     return loLast(instance.actionLogs);
 }
 
-export const canFinish = (instance: WFInstance, templates: WFTemplate[]): boolean => {
-    const last: WFInstanceAction | undefined = getLastActivity(instance);
-    const template: WFTemplate | undefined = getTemplate(templates, instance.templateId)
-    return (last && template) ? template.endActionIds.includes(last.actionId) : false;
+export const canFinish = (instance: WFInstance, template: WFTemplate): boolean => {
+    // console.log('canFinish', instance, template)
+    return instance.state === 'Running' && (instance.actionLastId !== undefined) ? template.endActionIds.includes(instance.actionLastId) : false;
 }
 
 export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
@@ -106,15 +106,53 @@ export const getActivityRights = (settings: WFSettings, activity: WFActivity): D
     return settings.actionRights[activity.actionIds[0]].rights
 }
 
-export const getActionArgs = (action: WFActionCall, data: WFData): any => {
+export const getNextActivities = (template: WFTemplate, actionLastId: number | undefined): WFActivity[] => {
+    const activities: WFActivity[] = []
+    if (actionLastId === undefined) { // at start
+        template.startActionIds.forEach((actionId) => {
+            template.activities.filter((activity) => activity.actionIds[0] === actionId).forEach((activity) => activities.push(activity))
+        })
+    } else { // transition
+        template.transactions[actionLastId]?.toIds.forEach((actionId) => {
+            template.activities.filter((activity) => activity.actionIds[0] === actionId).forEach((activity) => activities.push(activity))
+        })
+    }
+
+    return activities
+}
+
+export const getActionsOfActivity = (template: WFTemplate, activityId: number): WFAction[] => {
+    const actions: WFAction[] = []
+
+    template.actions.filter((action) => template.activities[activityId].actionIds.includes(action.id)).forEach((action) => actions.push(action))
+
+    return actions
+}
+
+export const testik = (data: WFData) => { return {
+    "proposal_id": data.proposalId,
+    "receiver_id": getValueByCode(data.inputs, 'receiverId'),
+    "amount": getValueByCode(data.inputs, 'amount'),
+}}
+
+export const mapovani = {
+    testik: testik,
+    druhej: (data: WFData) => { return {
+        "proposal_id": data.proposalId,
+        "receiver_id": getValueByCode(data.inputs, 'receiverId'),
+        "amount": getValueByCode(data.inputs, 'amount'),
+    }}
+}
+
+export const getActionCallArgs = (action: WFActionCall, data: WFData): any => {
     let args: any = {proposal_id: data.proposalId}
     switch (action.method) {
         case 'treasury_send_near':
         case 'treasury_near_send':
             args = {
                 "proposal_id": data.proposalId,
-                "receiver_id": getValueByCode(data.proposal, 'receiverId'),
-                "amount": nearToYocto(loToNumber(getValueByCode(data.proposal, 'amount'))),
+                "receiver_id": getValueByCode(data.inputs, 'receiverId'),
+                "amount": getValueByCode(data.inputs, 'amount'),
             }
             break;
         default:
@@ -123,50 +161,48 @@ export const getActionArgs = (action: WFActionCall, data: WFData): any => {
     return args
 }
 
-export const runActivity = (activityCode: string, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, form: CodeValue[]) => {
+export const runActivity = (activityId: number, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, form: CodeValue[]) => {
     const actions: TransactionAction[] = []
-    const activity = loFind(template.activities, {code: activityCode})
-    console.log('Activity', activity?.code)
-
     const data: WFData = {
         proposalId: workflow.id,
-        settings: [], //settings.constants,
-        proposal: workflow.inputs,
+        constants: [], //settings.constants,
+        inputs: workflow.inputs,
         storageDao: [],
         storage: [],
         form: form,
     }
 
-    /*
-    activity!.actions.forEach((action: WFAction) => {
-        console.log('Action', action, getActionArgs(action, data))
-        if (activity!.smartContractId === "") { // smart contract
+    console.log('Activity', activityId, data)
+
+    console.log('Mapovani', mapovani.testik(data), mapovani.druhej(data))
+
+
+    getActionsOfActivity(template, activityId).forEach((action: WFAction) => {
+        console.log('Action', (action as WFActionCall))
+        
+        if ((action as WFActionCall).method !== undefined) { // smart contract
             actions.push({
-                methodName: action.smartContractMethod,
-                args: getActionArgs(action, data), // TODO: Generate args
-                gas: action.gas, // TODO: Gas?
-                deposit: action.deposit, // TODO: Deposit?
+                methodName: (action as WFActionCall).method,
+                args: getActionCallArgs(action as WFActionCall, data),
+                gas: action.gas,
+                deposit: action.deposit,
             })
         } else { // functional call
             actions.push({
                 methodName: 'function_call',
                 args: {
-                    proposal_id: 0,
-                    action_id: action.id,
-                    action_arguments: {},
-                    gas: action.gas,
-                    deposit: action.deposit,
-                }, // TODO: Generate args
-                gas: 10, // TODO: Gas?
-                deposit: 0, // TODO: Deposit?
+                    proposal_id: data.proposalId,
+                    action_id: (action as WFActionFunctionCall).fncallId,
+                    action_arguments: {}, // TODO: Generate
+                    gas: (action as WFActionFunctionCall).fncallGas,
+                    deposit: (action as WFActionFunctionCall).fncallDeposit,
+                },
+                gas: action.gas,
+                deposit: action.deposit,
             })
         }
-        
-        console.log('signAndSendTransactions', contractId, actions)
-        // nearService.signAndSendTransactions(contractId, actions)
     })
-    */
-    //if (activity!.smartContractId === "") {
 
-    //}
+    console.log('signAndSendTransactions', contractId, actions)
+    // nearService.signAndSendTransactions(contractId, actions)
 }

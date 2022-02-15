@@ -1,139 +1,27 @@
 import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate, WFData } from "@/types/workflow"
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
+import { 
+  templateMetaWfSendNear,
+  templateMetaGroupAddMember,
+  templateMetaGroupRemoveMember,
+  templateMetaMediaAdd,
+  templateMetaMediaInvalid,
+  templateMetaFtUnlockDistribute,
+  templateMetaSkyward,
+  templateMetaGeneral,
+  templateMetaAddWorkflow,
+  templateMetaSendFt,
+ } from "@/data/workflowMeta"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
 import { DAORights } from "@/types/dao"
 import { toObject } from "@/models/rights";
-
-export const templateMetaPayout: WFMetaTemplate = {
-    settingsAttributes: [
-      { code: 'amountLimit', bindId: 0 },
-      { code: 'tokenLimit', bindId: 1 },
-    ],
-    proposalAttributes: [
-      { code: 'receiverId', bindId: 0 },
-      { code: 'nearAmount', bindId: 1 },
-      { code: 'tokenAmount', bindId: 2 },
-    ],
-    activities: [],
-}
-
-export const templateMetaSendNear: WFMetaTemplate = {
-  settingsAttributes: [
-    { code: 'amountLimit', bindId: 0 },
-  ],
-  proposalAttributes: [
-    { code: 'receiverId', bindId: 0 },
-    { code: 'amount', bindId: 1 },
-  ],
-  activities: [],
-}
-
-export const templateMetaSendFt: WFMetaTemplate = {
-  settingsAttributes: [
-    { code: 'amountLimit', bindId: 0 },
-  ],
-  proposalAttributes: [
-    { code: 'receiverId', bindId: 0 },
-    { code: 'amount', bindId: 1 },
-  ],
-  activities: [],
-}
-
-export const templateMetaGroupAddMember: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'accountId', bindId: 0 },
-    { code: 'groupId', bindId: 1 },
-    { code: 'roles', bindId: 2 },
-  ],
-  activities: [],
-}
-
-export const templateMetaGroupRemoveMember: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'accountId', bindId: 0 },
-    { code: 'groupId', bindId: 1 },
-  ],
-  activities: [],
-}
-
-export const templateMetaMediaAdd: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'name', bindId: 0 },
-    { code: 'category', bindId: 1 },
-    { code: 'type', bindId: 2 },
-    { code: 'version', bindId: 3 },
-    { code: 'tags', bindId: 4 },
-    { code: 'cid', bindId: 5 },
-    { code: 'link', bindId: 6 },
-  ],
-  activities: [],
-}
-
-export const templateMetaMediaInvalid: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'id', bindId: 0 },
-  ],
-  activities: [],
-}
-
-export const templateMetaFtUnlockDistribute: WFMetaTemplate = {
-  settingsAttributes: [
-    { code: 'groupIds', bindId: 0 },
-    { code: 'amountLimit', bindId: 1 },
-  ],
-  proposalAttributes: [
-    { code: 'groupId', bindId: 0 },
-    { code: 'amount', bindId: 1 },
-    { code: 'accountIds', bindId: 2 },
-  ],
-  activities: [],
-}
-
-export const templateMetaSkyward: WFMetaTemplate = {
-  settingsAttributes: [
-    { code: 'amountLimit', bindId: 0 },
-  ],
-  proposalAttributes: [
-    { code: 'title', bindId: 0 },
-    { code: 'amount', bindId: 1 },
-    { code: 'tokenId', bindId: 2 },
-    { code: 'startAt', bindId: 3 },
-    { code: 'duration', bindId: 4 },
-  ],
-  activities: [],
-}
-
-export const templateMetaGeneral: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'title', bindId: 0 },
-    { code: 'cid', bindId: 1 },
-  ],
-  activities: [],
-}
-
-export const templateMetaAddWorkflow: WFMetaTemplate = {
-  settingsAttributes: [
-  ],
-  proposalAttributes: [
-    { code: 'templateId', bindId: 0 },
-    { code: 'settings...', bindId: 1 },
-  ],
-  activities: [],
-}
+import { getValueByCode } from "@/utils/generics"
 
 export const templateMeta: Record<string, WFMetaTemplate> = {
-  'payout': templateMetaPayout,
+  'wf_send_near': templateMetaWfSendNear,
+  'wf_send_ft': templateMetaSendFt,
+  'wf_near_send': templateMetaWfSendNear,
   'groupAddMember': templateMetaGroupAddMember,
   'groupRemoveMember': templateMetaGroupRemoveMember,
   'mediaAdd': templateMetaMediaAdd,
@@ -143,9 +31,6 @@ export const templateMeta: Record<string, WFMetaTemplate> = {
   'general': templateMetaGeneral,
   'addWorkflow': templateMetaAddWorkflow,
   'wf_add': templateMetaAddWorkflow,
-  'wf_send_near': templateMetaSendNear,
-  'wf_near_send': templateMetaSendNear,
-  'wf_send_ft': templateMetaSendFt,
 }
 
 export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: 10, deposit: 0, }
