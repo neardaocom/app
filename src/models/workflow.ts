@@ -1,18 +1,20 @@
-import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition } from "@/types/workflow";
+import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO } from "@/types/workflow";
 import { CodeValue, Translate } from "@/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
 import loGet from "lodash/get";
 import loSet from "lodash/set";
 import loLast from "lodash/last";
+import loToNumber from "lodash/toNumber"
+import loMerge from "lodash/merge"
 import { convertArrayOfObjectToObject } from "@/utils/array";
 import { TransactionAction } from "@/types/blockchain";
 import { nearToYocto } from "@/utils/near";
 import { NearService } from "@/services/nearService";
 import { getValueByCode } from "@/utils/generics"
-import loToNumber from "lodash/toNumber"
 import { DAORights } from "@/types/dao";
 import { instances } from "@firebase/logger/dist/src/logger";
+import { templateMeta } from "@/data/workflow";
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
@@ -129,61 +131,28 @@ export const getActionsOfActivity = (template: WFTemplate, activityId: number): 
     return actions
 }
 
-export const testik = (data: WFData) => { return {
-    "proposal_id": data.proposalId,
-    "receiver_id": getValueByCode(data.inputs, 'receiverId'),
-    "amount": getValueByCode(data.inputs, 'amount'),
-}}
-
-export const mapovani = {
-    testik: testik,
-    druhej: (data: WFData) => { return {
-        "proposal_id": data.proposalId,
-        "receiver_id": getValueByCode(data.inputs, 'receiverId'),
-        "amount": getValueByCode(data.inputs, 'amount'),
-    }}
-}
-
-export const getActionCallArgs = (action: WFActionCall, data: WFData): any => {
-    let args: any = {proposal_id: data.proposalId}
-    switch (action.method) {
-        case 'treasury_send_near':
-        case 'treasury_near_send':
-            args = {
-                "proposal_id": data.proposalId,
-                "receiver_id": getValueByCode(data.inputs, 'receiverId'),
-                "amount": getValueByCode(data.inputs, 'amount'),
-            }
-            break;
-        default:
-            break;
-    }
-    return args
-}
-
 export const runActivity = (activityId: number, workflow: WFInstance, template: WFTemplate, settings: WFSettings, nearService: NearService, contractId: string, form: CodeValue[]) => {
     const actions: TransactionAction[] = []
     const data: WFData = {
         proposalId: workflow.id,
-        constants: [], //settings.constants,
+        constants: settings.constants,
         inputs: workflow.inputs,
         storageDao: [],
         storage: [],
         form: form,
     }
 
-    console.log('Activity', activityId, data)
+    const meta: WFMetaTemplate = loGet(templateMeta, [template.code])
 
-    console.log('Mapovani', mapovani.testik(data), mapovani.druhej(data))
-
+    // console.log('Activity', activityId, data)
 
     getActionsOfActivity(template, activityId).forEach((action: WFAction) => {
-        console.log('Action', (action as WFActionCall))
+        // console.log('Action', (action as WFActionCall))
         
         if ((action as WFActionCall).method !== undefined) { // smart contract
             actions.push({
                 methodName: (action as WFActionCall).method,
-                args: getActionCallArgs(action as WFActionCall, data),
+                args: meta.actions[action.id].args(data),
                 gas: action.gas,
                 deposit: action.deposit,
             })
@@ -193,7 +162,7 @@ export const runActivity = (activityId: number, workflow: WFInstance, template: 
                 args: {
                     proposal_id: data.proposalId,
                     action_id: (action as WFActionFunctionCall).fncallId,
-                    action_arguments: {}, // TODO: Generate
+                    action_arguments: meta.actions[action.id].args(data),
                     gas: (action as WFActionFunctionCall).fncallGas,
                     deposit: (action as WFActionFunctionCall).fncallDeposit,
                 },
@@ -204,5 +173,46 @@ export const runActivity = (activityId: number, workflow: WFInstance, template: 
     })
 
     console.log('signAndSendTransactions', contractId, actions)
-    // nearService.signAndSendTransactions(contractId, actions)
+    nearService.signAndSendTransactions(contractId, actions)
+}
+
+
+export const transformLogs = (logs: WFInstanceLog[], template: WFTemplate): WFInstanceLogDTO[] => {
+    const list: WFInstanceLogDTO[] = []
+    let item: WFInstanceLogDTO | undefined = undefined
+    let action: WFAction | undefined = undefined
+    let activity: WFActivity | undefined = undefined
+    logs.forEach((log) => {
+        // get action
+        action = template.actions[log.actionId]
+        activity = template.activities[action.activityId]
+
+        // detect activity change
+        if (
+            (action?.activityId ?? null) === activity.id // activityId not changed
+            &&
+            action.id !== activity.actionIds[0] // action is not the first
+            &&
+            log.txSigner === item?.txSigner // signers equal
+        ) { // add action
+            item!.actions.push(action)
+            item!.logs.push(log)
+            item!.args = loMerge(item!.args, log.args)
+        } else { // new
+            if (item !== undefined) list.push(item)
+            activity = template.activities[action.activityId]
+            item = {
+                activity: activity,
+                txSigner: log.txSigner,
+                txSignedAt: log.txSignedAt,
+                actions: [action],
+                logs: [log],
+                args: log.args
+            }
+        }
+    })
+
+    if (item !== undefined) list.push(item)
+
+    return list
 }

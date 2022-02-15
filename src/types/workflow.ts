@@ -10,6 +10,7 @@ export type WFMetaAttribute = {
 export type WFMetaAction = {
     id: number;
     args: Function;
+    log: Function;
 }
 
 export type WFMetaActivity = {
@@ -96,7 +97,7 @@ export type WFSettings = {
     voteRight: DAORights;
     voteLevel: DAOVoteLevel;
     actionRights: WFSettingsAction[];
-    // constants: CodeValue[];
+    constants: CodeValue[];
 }
 
 export type WFInstanceLog = {
@@ -106,7 +107,7 @@ export type WFInstanceLog = {
     txBlock?: string;
     txSigner: String;
     txSignedAt: Date;
-    args: CodeValue[];
+    args: Record<string, unknown>[];
 }
 
 export type WFInstance = {
@@ -133,9 +134,9 @@ export type WFData = {
 
 export type WFInstanceLogDTO = {
     activity: WFActivity;
+    txSigner: String;
+    txSignedAt: Date;
     actions: WFAction[];
-    proposal: CodeValue[];
-    storageDao: CodeValue[];
-    storage: CodeValue[];
-    form: CodeValue[];
+    logs: WFInstanceLog[];
+    args: Record<string, unknown>[];
 }

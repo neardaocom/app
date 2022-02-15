@@ -19,52 +19,30 @@
             </div>
           </div>
           <!-- End HEAD -->
+
           <!-- Activities -->
           <div class="row">
             <div class="col-12">
               <hr class="mt-1 mb-3"/>
             </div>
           </div>
-          <div class="row" v-for="(log, index) in workflow.actionLogs" :key="index">
+          <div class="row" v-for="(log, index) in activityLogs" :key="index">
             <div class="col-1 text-center">
               <span class="bg-info rounded-circle px-2 py-1">#{{ index + 1 }}</span>
             </div>
             <div class="col-10">
               <p>
                 <span class="text-muted">{{ d(log.txSignedAt) }} {{ toTime(log.txSignedAt) }}</span><br/>
-                <span class="fs-5 fw-bold">{{ t('default.wf_action_' + log.actionCode) }}</span><br/>
+                <span class="fs-5 fw-bold">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</span><br/>
                 {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
+                <span class="mx-2 text-muted">|</span><span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
               </p>
             </div>
             <div class="col-1">
             </div>
           </div>
-              <!-- 
-              <ul class="timeline-3" v-if="workflow.actionLogs.length > 0">
-                <li v-for="(action, index) in workflow.actionLogs" :key="index">
-                  <span class="h6">{{ activity.name }}</span> {{ t('default.signed_by') }} <strong class="text-muted">{{ activity.txSigner }}</strong> {{ t('default.at') }} {{ d(activity.txSignedAt) }}
-                  <span class="float-end">
-                    <a :href="'' + activity.txHash">{{ activity.txHash.substring(0, 7) }}...</a>
-                  </span>
-                  <p class="mt-2 ms-2 mb-1" v-html="t('default.wf_templ_' + template.code + '_' + activityLogs[index].code, convertInput(activity.inputs, workflow.inputs))"></p>
-                  <span class="ms-2">{{ t('default.actions') }}:</span>
-                  <dl class="row ms-3">
-                    <template v-for="(action, index) in activity.actions" :key="index">
-                      <dt class="col-sm-3">{{ index + 1 }}. {{ action.name }}</dt>
-                      <dd class="col-sm-9">{{ activity.smartContractId }} > {{ action.smartContractMethod }}</dd>
-                    </template>
-                  </dl>
-                </li>
-                <li class="separator" v-if="workflow.actionLogs.length > 0">
-                  <hr/>
-                </li>
-                <li
-                  v-if="activityNexts.length > 0"
-                  class="last"
-                >
-                </li>
-              </ul>-->
           <!-- END Activities -->
+
           <!-- NEXT Activity -->
           <div v-if="workflow.state === 'Running'" class="row">
             <div class="col-1 text-center">
@@ -89,6 +67,9 @@
                     <button class="btn btn-info btn-sm rounded-pill" @click.prevent="finish()">{{ t('default.wf_finish') }}</button>
                   </template>
                 </div>
+              </div>
+              <div class="row">
+
               </div>
               <div class="row">
                 <div class="col-12 mt-2" v-if="activityNexts.length > 0">
@@ -121,7 +102,7 @@ import { convertArrayOfObjectToObject } from '@/utils/array'
 import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
 import lodashLast from "lodash/last";
-import { canFinish, getSettings, runActivity, getNextActivities } from "@/models/workflow";
+import { canFinish, getSettings, runActivity, getNextActivities, transformLogs } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNearService } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
@@ -163,7 +144,7 @@ export default {
     const { nearService } = useNearService()
 
     // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
-    const activityLogs = ref([])
+    const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))
     const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {

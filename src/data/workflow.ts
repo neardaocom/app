@@ -50,6 +50,7 @@ export const templatePayoutSettings: WFSettings = {
   proposeRights: [rightMember, rightAnyone],
   voteRight: rightMember,
   voteLevel: votingTokenWeightedLow,
+  constants: [],
   actionRights: [
     { actionId: 1, rights: [rightTokenGroupCouncil] },
     { actionId: 2, rights: [rightTokenGroupCouncil] },

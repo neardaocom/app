@@ -1,5 +1,7 @@
 import { WFMetaTemplate, WFData } from "@/types/workflow"
 import { getValueByCode } from "@/utils/generics"
+import { first } from "@/utils/object"
+import { yoctoToNear } from "@/utils/near"
 
 export const templateMetaWfSendNear: WFMetaTemplate = {
     constants: [
@@ -23,6 +25,12 @@ export const templateMetaWfSendNear: WFMetaTemplate = {
                     "proposal_id": data.proposalId,
                     "receiver_id": getValueByCode(data.inputs, 'receiverId'),
                     "amount": getValueByCode(data.inputs, 'amount'),
+                }
+            },
+            log: (args: any) => {
+                return {
+                    "receiver_id": first(args[0][0]),
+                    "amount": (first(args[0][1])) ? yoctoToNear(first(args[0][1])) : undefined,
                 }
             }
         }
