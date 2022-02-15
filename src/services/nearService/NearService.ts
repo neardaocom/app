@@ -21,6 +21,7 @@ import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSett
 import { nearToYocto, toTGas } from '@/utils/near';
 import { DAORights } from '@/types/dao';
 import { TransactionAction } from "@/types/blockchain";
+import loFill from 'lodash/fill'
 
 class NearService {
   // config of near
@@ -423,7 +424,16 @@ class NearService {
     ]
     const setFnCalls = []
     const setFnCallMeta = []
-    const setWfTemplate = [workflowTemplateWfAdd, workflowTemplateWfNearSend] // [workflowTemplateWfAdd]
+
+    //load templates, which will be from dao create
+    const templatesNums = [1,2,3,4,5,6]
+    const loadTemplates = await Promise.all(
+      templatesNums.map((id) => this.providerGet(id))
+    ).catch((e) => {
+      throw new Error("Storage data not louded" + e);
+    });
+
+    const setWfTemplate = loadTemplates.map((temp) => temp[0])  // [workflowTemplateWfAdd]
     const setWfSettings = worlflowTemplateSettingsBuilder(
       [[{'transition_limit': 1, 'cond': null}]],
       rightTokenGroupCouncil,
@@ -447,7 +457,7 @@ class NearService {
       function_calls: setFnCalls,
       function_call_metadata: setFnCallMeta,
       workflow_templates: setWfTemplate,
-      workflow_template_settings: [[setWfSettings], [setWfSettings]] // [[setWfSettings]]
+      workflow_template_settings: loFill(Array(templatesNums.length), [setWfSettings]) // [[setWfSettings]]
     }
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
