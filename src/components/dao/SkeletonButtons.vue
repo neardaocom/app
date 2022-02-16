@@ -1,7 +1,7 @@
 <template>
-    <section class="row d-flex justify-content-between align-items-center py-1">
+    <section class="d-flex justify-content-between align-items-center buttons_nav">
       <!-- Left -->
-      <div class="col-12 col-lg-9">
+      <div class="ps-3">
         <a :class="[isActive('overview') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.dashboard') }}
         </a>
@@ -36,18 +36,13 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div class="col-12 col-lg-3">
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas text-warning fa-star"></i>
-        </button>-->
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>-->
-        <MDBDropdown btnGroup :align="['end']">
-          <MDBBtn aria-controls="modalPayout" class="btn btn-primary" data-mdb-ripple-color="dark">
-            <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
-          </MDBBtn>
-          <MDBDropdownToggle/>
+      <div>
+        <MDBDropdown btnGroup class="buttons_dropdown">
+          <MDBDropdownToggle class="buttons_dropdown" size="lg">
+            <!-- <MDBBtn aria-controls="modalPayout" class="btn btn-primary"  data-mdb-ripple-color="dark"> -->
+              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
+            <!-- </MDBBtn> -->
+          </MDBDropdownToggle>
         </MDBDropdown>
       </div>
       <!-- /Right -->
@@ -57,14 +52,16 @@
 <script>
 import { useI18n } from "vue-i18n";
 import {
-  MDBBtn,
   MDBIcon,
-  MDBDropdown, MDBDropdownToggle
+  MDBDropdown, 
+  MDBDropdownToggle
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBIcon, MDBDropdown, MDBDropdownToggle
+    MDBIcon, 
+    MDBDropdown, 
+    MDBDropdownToggle
   },
   setup() {
     const { t } = useI18n();

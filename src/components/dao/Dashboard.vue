@@ -1,17 +1,12 @@
 <template>
   <div class="container mb-2">
+    <DashboardOverview :dao="dao" :nearPrice="nearPrice" />
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <About :dao="dao" />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <Treasury :dao="dao" :nearPrice="nearPrice" />
-      </div>
-      <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Share :dao="dao" :walletId="walletId" />
-      </div>
-      <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <Activity :dao="dao" />
       </div>
       <SkywardFinance v-if="dao.storage?.skywardFinance" :dao="dao" :scenario="'active'" />
     </div>
@@ -35,21 +30,21 @@
 <script>
 import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
 import About from "@/components/dao/dashboard/About.vue";
-import Treasury from "@/components/dao/dashboard/Treasury.vue";
 import Share from "@/components/dao/dashboard/Share.vue";
-import Activity from "@/components/dao/dashboard/Activity.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import { toRefs } from "vue"
 import _ from "lodash"
 import loFind from "lodash/find"
+import DashboardOverview from '@/components/dao/DashboardOverview.vue'
 
 export default {
   components: {
     Proposal,
     About,
-    SkywardFinance, Treasury, Share, Activity,
+    SkywardFinance, Share,
+    DashboardOverview
   },
   props: {
     dao: {

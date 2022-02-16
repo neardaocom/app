@@ -1,11 +1,18 @@
 <template>
-  <section class="text-center mb-2">
-    <div class="row d-flex justify-content-center">
-      <div class="col-lg-6 mt-4">
-        <h1 class="fw-bolder">{{ dao.name }}</h1>
-        <p class="text-muted">{{ dao.purpose }}</p>
-      </div>
-    </div>
+<section>
+       <!-- Background image -->
+        <div class="bg-image title_baground_image">
+          <div class="mask title_baground_mask">
+            <div class="d-flex justify-content-center align-items-center h-100">
+              <div class="text-white">
+                <img height="35" width="140" src="/img/near_logo.svg" alt="Near logo" />
+                <h1 class="mb-2"><strong>{{dao.name}}</strong></h1>
+                <h6 class="mb-2">{{dao.purpose}}</h6>                   
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Background image -->
   </section>
 </template>
 

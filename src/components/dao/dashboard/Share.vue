@@ -1,10 +1,10 @@
 <template>
     <div class="card text-start w-auto p-2" style="width: 18rem">
-        <div class="card-body text-center">
-        <h5 class="text-muted mb-0">{{ t("default.my_share") }}</h5>
-        <h2 class="mb-0">
-            <NumberFormatter :amount="myTokensShare"/><small class="text-muted">%</small>
-        </h2>
+        <div class="card-body">
+        <h5> <i class="bi bi-pie-chart me-2"></i>{{ t("default.my_share") }}</h5>
+        <h1>
+            <NumberFormatter class="ms-4 mt-3" :amount="myTokensShare"/>%
+        </h1>
         <h5 v-if="false && myTokensAmount" class="text-muted">
             <NumberFormatter :amount="myTokensAmount"/> <small class="text-muted">{{ dao.token_name }}</small>
         </h5>

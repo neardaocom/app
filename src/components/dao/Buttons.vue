@@ -1,7 +1,7 @@
 <template>
-    <section class="row d-flex justify-content-between align-items-center py-1"> <!-- py-3 -->
+    <section class="d-flex justify-content-between align-items-center buttons_nav"> <!-- py-3 -->
       <!-- Left -->
-      <div class="col-12 col-lg-9">
+      <div class="ps-3">
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
           {{ t('default.dashboard') }}
         </router-link>
@@ -36,20 +36,18 @@
       <!-- Left -->
 
       <!-- Right -->
-      <div class="col-12 col-lg-3">
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas text-warning fa-star"></i>
-        </button>-->
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>-->
-        <MDBBtnGroup id="dropdown-target">
+      <div>
+        <!-- <MDBBtnGroup  id="dropdown-target">
           <MDBBtn
             color="primary"
             v-on:click="dropdownAction = !dropdownAction"
             class="dropdown-toggle"
-          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn>
-          <MDBDropdown v-model="dropdownAction" target="#dropdown-target">
+          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn> -->
+
+          <MDBDropdown v-model="dropdownAction" class="buttons_dropdown" >
+            <MDBDropdownToggle class="buttons_dropdown"  size="lg" @click="dropdownAction = !dropdownAction">
+              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{t('default.activities')}}
+            </MDBDropdownToggle>
             <MDBDropdownMenu>
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
@@ -58,15 +56,17 @@
               </template>
             </MDBDropdownMenu>
           </MDBDropdown>
-        </MDBBtnGroup>
+        <!-- </MDBBtnGroup> -->
+
       </div>
       <!-- /Right -->
     </section>
+
+    <!-- Modals -->
     <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
       <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
 
-    <!-- <MDBBtn @click="modalPropOpen"> Test </MDBBtn> -->
 
     <ModalProposal title="Test" :show="modalProp" @vote="vote">
       <AddMedia/>
@@ -85,7 +85,7 @@ import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn, MDBBtnGroup,
-  MDBIcon,
+  MDBIcon
 } from "mdb-vue-ui-kit";
 import { check } from "@/models/rights";
 
@@ -102,7 +102,7 @@ export default {
     Payout, 
     AddWorkflow,
     GeneralProposal,
-    AddMedia
+    AddMedia,
   },
   props: {
     dao: {
@@ -138,6 +138,8 @@ export default {
     // for tests
     const modalProp = ref(0)
 
+    const activeTabId1 = ref('ex1-1');
+
     return {
       t,
       dropdownAction, 
@@ -149,7 +151,8 @@ export default {
       formProps, 
       check, 
       form,
-      modalProp
+      modalProp,
+      activeTabId1
     };
   },
 
