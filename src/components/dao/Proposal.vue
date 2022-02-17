@@ -1,42 +1,54 @@
 <template>
   <div class="card">
     <div class="card-body">
+
       <!-- header -->
-      <h6 class="card-title mt-1 mb-1">
-        <small class="me-2 text-muted">#{{ proposal.id }}</small>
-        {{ proposal.type }}
-        <MDBBadge :color="workflowCodeMapper[workflowCode]">{{ proposal.state }}</MDBBadge>
-      </h6>
-      
+      <div class="d-flex mb-3 ">
+        <div class="align-self-center">
+            <h6 class="text-white p-2 rounded-circle bg-primary text-center">
+              #{{ proposal.id }}
+            </h6>
+        </div>
+
+        <div class="p-2">
+           <h5>{{ proposal.type }}</h5>
+            <div
+              class="mt-n2 text-dark"
+              v-html="proposal.title"
+            />
+        </div>
+
+        <div class="ms-auto p-2">
+          <MDBBadge :color="workflowCodeMapper[workflowCode]" class="text-uppercase" pill>{{ proposal.state }}</MDBBadge>
+        </div>
+      </div>
+
+      <!-- Desctiption -->
+      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription || ''"/>
+
       <!-- progress or status -->
       <MDBProgress
         v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
-        :height="4"
+        :height="3"
       >
         <MDBProgressBar :value="progress" bg="primary" />
       </MDBProgress>
-      <!-- body -->
-      <p
-        class="mt-2 mb-0 fs-5 text-dark"
-        v-html="proposal.title"
-      />
-      <hr class="my-1">
-      <!-- Desctiption -->
-      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription || ''"/>
+      <hr v-else class="my-1">
+
       <!-- about -->
       <ul class="my-2 list-unstyled text-muted list-inline">
         <li class="list-inline-item me-4">
-          <i class="far fa-calendar fa-fw me-2 mb-3"></i> {{ proposal.duration.date }}
+          <i class="bi bi-calendar4 me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
           <span class="font-weight-bold">{{ proposal.duration.time }}</span>
         </li>
-        <li class="list-inline-item me-4">
+        <li class="list-inline-item me-4">  
           <i class="far fa-handshake fa-fw me-2 mb-3"></i>
           <span class="font-weight-bold"
             >{{ proposal.quorum }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
-          <i class="fas fa-vote-yea fa-fw me-2 mb-3"></i>
+          <i class="bi bi-archive me-1"/>
           <span class="font-weight-bold text-black">{{
             proposal.choice
           }}</span>
@@ -50,7 +62,7 @@
       </ul>
 
       <!-- Voting stats. -->
-      <MDBProgress :height="20" class="rounded" style="max-width: 400px;">
+      <MDBProgress :height="20" class="rounded">
           <MDBProgressBar
             v-if="proposal.votingStats[0]"
             :value="proposal.votingStats[0].percent"
@@ -118,6 +130,7 @@ import _ from "lodash";
 
 import TextCollapse from '@/components/TextCollapse.vue';
 import { workflowCodeBgMapper, getProgress, getWorkflowCode } from '@/models/proposal';
+import moment from 'moment'
 
 export default {
   components: {
@@ -160,7 +173,7 @@ export default {
       //console.log('unmounted')
     })
 
-    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval };
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval, moment };
   },
   computed: {
     accountId(){

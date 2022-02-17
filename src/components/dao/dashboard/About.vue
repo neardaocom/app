@@ -2,7 +2,7 @@
     <div class="card text-start w-auto p-2" style="width: 18rem">
         <div class="card-body">
         <h5><i class="bi bi-people"/> {{dao.name}}</h5>
-        <ul class="list-unstyled text-muted mb-1">
+        <ul class="list-unstyled mb-1">
             <li>
                 <i class="bi bi-wallet2 me-2"/> 
                 <a

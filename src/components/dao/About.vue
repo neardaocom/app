@@ -6,7 +6,7 @@
           <div class="card-body">
             <ul class="list-unstyled text-muted mb-1">
               <li>
-                <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
+                <i class="fas fa-wallet fa-fw me-3 mb-3"/>
                 <a
                   class="text-reset font-weight-bold"
                   :href="nearWalletUrl + '/accounts/' + dao.wallet"
@@ -15,11 +15,11 @@
                 >
               </li>
               <li v-if="webLink">
-                <i class="fas fa-globe fa-fw me-3 mb-3"></i
-                ><a class="text-reset font-weight-bold" :href="web" target="_blank">{{ webLink }}</a>
+                <i class="fas fa-globe fa-fw me-3 mb-3"/>
+                <a class="text-reset font-weight-bold" :href="web" target="_blank">{{ webLink }}</a>
               </li>
               <li>
-                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
+                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"/>
                 <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.short }}
               </li>
             </ul>

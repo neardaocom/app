@@ -105,6 +105,16 @@ body {
   margin-bottom: 5px;
 }
 
+.my_filter_form .form-notch-leading{
+   border: 0px !important;
+}
+
+.my_filter_form .form-notch-trailing{
+  border-top: 0px !important;
+  border-right: 0px !important;
+  border-radius: 0px !important;
+}
+
 @keyframes shine {
   0% { 
     opacity: 1;
