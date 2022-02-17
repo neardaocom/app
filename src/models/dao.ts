@@ -18,7 +18,7 @@ import Decimal from "decimal.js";
 import moment from 'moment';
 import { CodeValue, IDValue, Translate } from '@/types/generics';
 import { yoctoNear } from '@/services/nearService/constants';
-import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceAction, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/types/workflow'
+import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceLog, WFMetaTemplate, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
@@ -353,7 +353,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     const templates: WFTemplate[] = []
     let action: WFAction
     let activity: WFActivity | undefined
-    console.log("Template", dataHack[0])
+    // console.log("Template", dataHack[0])
     dataHack[0].forEach((template) => {
         // console.log(template)
 
@@ -434,7 +434,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             // settings
             settings.push({
                 id: index,
-                // constants: [],
+                constants: [],
                 proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
                 voteRight: rightsParse(settingsItem.allowed_voters),
                 voteLevel: {
@@ -475,35 +475,52 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     const workflows: WFInstance[] = []
 
     let workflowInstance: any
+    let workflowLog: any
     let proposalTemplate: WFTemplate | undefined
     let proposalSettings: WFSettings | undefined
     let proposalConstants: CodeValue[]
     let proposalInputs: CodeValue[]
-    let activityLogs: WFInstanceAction[]
+    let proposalMeta: WFMetaTemplate | undefined
+    let actionLogs: WFInstanceLog[]
 
     for (const proposal of dataHack[6]) {
+        actionLogs = []
         // console.log(proposal)
         workflowInstance = await nearService.getWfInstance(id, proposal[0])
         proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
         proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
+        proposalMeta = loGet(templateMeta, [proposalTemplate!.code])
         // console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
 
         proposalConstants = []
-        //proposalConstants = loGet(templateMeta, [proposalTemplate!.code])?.settingsAttributes.map((attr) => {
+        //proposalConstants = proposalMeta?.constants.map((attr) => {
         //    return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
         //}) ?? []
 
-        proposalInputs = loGet(templateMeta, [proposalTemplate!.code])?.proposalAttributes.map((attr) => {
+        proposalInputs = proposalMeta?.inputs.map((attr) => {
             // console.log('Binds', Object.values(workflowInstance[1].binds[attr.bindId]))
             return { code: attr.code, value: loValues(workflowInstance[1].binds[attr.bindId])[0]}
         }) ?? []
 
-        // load activity logs
-        activityLogs = []
+        // load action logs
+        if (workflowInstance[0].state !== 'Waiting') {
+            workflowLog = await nearService.getWfInstanceLog(id, proposal[0])
+            workflowLog?.forEach((log, index) => {
+                //console.log('Log', log)
+                actionLogs.push({
+                    id: index,
+                    actionId: log.action_id - 1,
+                    txSigner: log.caller,
+                    txSignedAt: dateFromChain(log.timestamp),
+                    args: proposalMeta?.actions[log.action_id - 1].log(log.args),
+                })
+            })
+        }
 
         proposals.push({
             id: proposal[0],
             created: dateFromChain(proposal[1].Curr.created),
+            createdBy: proposal[1].Curr.created_by,
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
             templateId: proposal[1].Curr.workflow_id,
@@ -521,8 +538,8 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             storage: workflowInstance[1].storage_key,
             inputs: proposalInputs,
             constants: proposalConstants,
-            actionLastId: workflowInstance[0].current_activity_id,
-            actionLogs: [],
+            actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
+            actionLogs: actionLogs,
             search: '',
         })
     }

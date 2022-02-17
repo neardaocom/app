@@ -779,6 +779,9 @@ class NearService {
     );
   }
 
+  async wfFinish(contractId: string, proposalId: number) {
+    return this.contractPool.get(contractId).wf_finish({proposal_id: proposalId}, Decimal.mul(10, TGas).toString());
+  }
   
   async unlockTokens(contractId: string, group: string) {
     return this.contractPool.get(contractId).unlock_tokens({group: group}, Decimal.mul(10, TGas).toString());
@@ -1104,6 +1107,10 @@ class NearService {
 
   async getWfInstance(contractId: string, proposalId: number){
     return this.contractPool.get(contractId).wf_instance({proposal_id: proposalId})
+  }
+
+  async getWfInstanceLog(contractId: string, proposalId: number){
+    return this.contractPool.get(contractId).wf_log({proposal_id: proposalId})
   }
 
   async getStats(contractId: string){

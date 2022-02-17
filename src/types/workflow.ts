@@ -7,15 +7,27 @@ export type WFMetaAttribute = {
     bindId: number;
 }
 
+export type WFMetaAction = {
+    id: number;
+    args: Function;
+    log: Function;
+}
+
+export type WFMetaForm = {
+    component: string;
+    schema: Function;
+}
+
 export type WFMetaActivity = {
-    activityId: number;
-    attributes: WFMetaAttribute[];
+    code: string;
+    form?: WFMetaForm;
 }
 
 export type WFMetaTemplate = {
-    settingsAttributes: WFMetaAttribute[];
-    proposalAttributes: WFMetaAttribute[];
+    constants: WFMetaAttribute[];
+    inputs: WFMetaAttribute[];
     activities: WFMetaActivity[];
+    actions: WFMetaAction[];
 };
 
 export type WFAttribute = {
@@ -90,17 +102,17 @@ export type WFSettings = {
     voteRight: DAORights;
     voteLevel: DAOVoteLevel;
     actionRights: WFSettingsAction[];
-    // constants: CodeValue[];
+    constants: CodeValue[];
 }
 
-export type WFInstanceAction = {
+export type WFInstanceLog = {
     id: number;
     actionId: number;
     txHash?: string;
     txBlock?: string;
     txSigner: String;
     txSignedAt: Date;
-    args: CodeValue[];
+    args: Record<string, unknown>[];
 }
 
 export type WFInstance = {
@@ -111,16 +123,25 @@ export type WFInstance = {
     storage: string;
     inputs: CodeValue[];
     constants: CodeValue[];
-    actionLastId: number[];
-    actionLogs: WFInstanceAction[];
+    actionLastId: number | undefined;
+    actionLogs: WFInstanceLog[];
     search: string;
 }
 
 export type WFData = {
     proposalId: number;
-    settings: CodeValue[];
-    proposal: CodeValue[];
+    constants: CodeValue[];
+    inputs: CodeValue[];
     storageDao: CodeValue[];
     storage: CodeValue[];
-    form: CodeValue[];
+    form: Record<string, unknown>;
+}
+
+export type WFInstanceLogDTO = {
+    activity: WFActivity;
+    txSigner: String;
+    txSignedAt: Date;
+    actions: WFAction[];
+    logs: WFInstanceLog[];
+    args: Record<string, unknown>[];
 }

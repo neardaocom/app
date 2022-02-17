@@ -86,7 +86,7 @@ export default {
     results() {
       let results = this.dao.workflows
       // filter
-      results = results.filter((item) => item.state === 'Running')
+      results = results.filter((item) => item.state !== 'Waiting')
 
       // searching
       const searchText = toSearch(this.searchQuery)

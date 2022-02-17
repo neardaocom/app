@@ -155,6 +155,7 @@ export type DAOTokenHolder = {
 export type DAOProposal = {
   id: number;
   created: Date;
+  createdBy: string;
   votes: DAOVote[];
   state: string;
   templateId: number;
