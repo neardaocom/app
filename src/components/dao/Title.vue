@@ -1,8 +1,8 @@
 <template>
 <section>
        <!-- Background image -->
-        <div class="bg-image title_baground_image">
-          <div class="mask title_baground_mask">
+        <div class="bg-image title_background_image ">
+          <div class="mask gradient-background">
             <div class="d-flex justify-content-center align-items-center h-100">
               <div class="text-white">
                 <img height="35" width="140" src="/img/near_logo.svg" alt="Near logo" />

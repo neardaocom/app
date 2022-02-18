@@ -151,15 +151,11 @@ export default {
 </script>
 
 <style>
-  .title_baground_image{
+  .title_background_image{
     /*background-image:;*/ 
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }
-  .title_baground_mask{
-    background: transparent linear-gradient(90deg, #9D639B 0%, #7483B0 100%) 0% 0% no-repeat padding-box;
-  }
-
   .buttons_nav{
     background-color: white;
      border-radius: 0px 0px 8px 8px;

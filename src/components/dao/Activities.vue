@@ -1,6 +1,6 @@
 <template>
   <div class="container mb-2">
-    <div class="row my-4 mx-4">
+    <div v-if="dao.workflows.length > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput
           inputGroup
@@ -22,6 +22,11 @@
         <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
       </div>
     </div>
+
+    <section v-if="dao.workflows.length == 0">
+      <hr>
+      <h6 class="mb-0 text-start">{{ t("default.no_active_activities") }}</h6>
+    </section>
 
     <div class="row">
       <div v-for="(workflow, index) in results" :key="index" class="col-12 mb-4 mb-md-0">

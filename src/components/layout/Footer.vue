@@ -36,7 +36,7 @@
                 <!-- Brand -->
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                 <!-- Content -->
-                <h6 class="text-uppercase fw-bold mb-4">
+                <h6 class="text-uppercase fw-bold mb-4 color-primary">
                     <i class="far fa-flag me-3"></i>{{ app_brand_name }}
                 </h6>
                 <p>{{ app_brand_about }}</p>
@@ -46,7 +46,7 @@
                 <!-- Products -->
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4">{{ t('default.about') }}</h6>
+                <h6 class="text-uppercase mb-4 color-primary">{{ t('default.about') }}</h6>
                 <p>
                     <a href="https://en.wikipedia.org/wiki/The_DAO_(organization)" class="text-reset" target="_blank">{{ t('default.dao_organization') }}</a>
                 </p>
@@ -59,7 +59,7 @@
                 <!-- Links -->
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4">{{ t('default.useful_links') }}</h6>
+                <h6 class="text-uppercase mb-4 color-primary">{{ t('default.useful_links') }}</h6>
                 <p>
                     <a href="https://near.org/" class="text-reset">Near.org</a>
                 </p>
@@ -72,9 +72,9 @@
                 <!-- Contacts -->
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <!-- Links -->
-                    <h6 class="text-uppercase mb-4">{{ t('default.contacts') }}</h6>
-                    <p><i class="fas fa-home me-3"></i> {{ app_brand_address }}</p>
-                    <p><i class="fas fa-envelope me-3"></i> {{ app_brand_email }}</p>
+                    <h6 class="text-uppercase mb-4 color-primary">{{ t('default.contacts') }}</h6>
+                    <p><i class="bi bi-house color-primary me-3"/> {{ app_brand_address }}</p>
+                    <p><i class="bi bi-envelope color-primary me-3"/> {{ app_brand_email }}</p>
                 </div>
                 <!-- Contacts -->
             </div>

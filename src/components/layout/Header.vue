@@ -26,9 +26,9 @@
             </MDBDropdown>
           </MDBNavbarItem>
 
-          <MDBNavbarItem v-if="isAccountSigned" :to="{name: 'dao-create'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4" >{{ t('default.create_dao') }}</MDBNavbarItem>
+          <MDBNavbarItem v-if="isAccountSigned" :to="{name: 'dao-create'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4 gradient-background"><i class="bi bi-plus me-1"/>{{ t('default.create_dao') }}</MDBNavbarItem>
           <MDBNavbarItem v-else>
-            <MDBBtn @click="login()" block class="btn btn-black btn-rounded mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
+            <MDBBtn @click="login()" block class="btn btn-black btn-rounded mx-2 gradient-background" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
           </MDBNavbarItem>
         </MDBNavbarNav>
       </MDBCollapse>

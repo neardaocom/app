@@ -2,10 +2,10 @@
   <Header></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb :list-name="'organizations'" />
+      <Breadcrumb :list-name="'organizations'"/>
     </MDBContainer>
     <MDBContainer>
-    <h1 class="text-start">{{ t('default.organizations')}}</h1>
+    <h1 class="text-start" style="font-size: 4rem">{{ t('default.organizations')}}</h1>
     <div class="row mt-5">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput
@@ -52,7 +52,7 @@
                   <tr>
                     <td colspan="5" class="p-0">
                       <MDBProgress class="my-1">
-                        <MDBProgressBar :value="loadingProgress" />
+                        <MDBProgressBar bg="primary" :value="loadingProgress" />
                       </MDBProgress>
                     </td>
  
@@ -65,13 +65,13 @@
                     </td>-->
                     <td>{{ dao.index + 1 }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
+                      <router-link class="h6 color-dark" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
                       <br>
                       <span class="fw-light">{{dao.description}}</span>
                     </td>
                     <td class="text-start">
                       <span
-                        class="badge bg-info"
+                        class="badge bg-primary"
                         v-for="(tag, index) in dao.tags"
                         :key="index"
                         >{{ tag }}</span
@@ -79,7 +79,7 @@
                     </td>
                     <td class="text-start">
                       <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
-                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right ms-1"/>
+                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-primary ms-1"/>
                       </a>
                     </td>
                     <td class="text-end">

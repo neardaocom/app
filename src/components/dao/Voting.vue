@@ -23,8 +23,10 @@
     </div>
   </div>-->
     <!-- /Order -->
-    <!-- Proposal in progress -->
-    <div class="row my-4 mx-4">
+
+
+    <!-- Filter, checkboxes, order -->
+    <div v-if="proposals.length > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput
           inputGroup
@@ -48,6 +50,12 @@
         <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
       </div>
     </div>
+
+    <!-- Proposals -->
+    <section v-if="proposals.length == 0">
+      <hr>
+      <h6 class="mb-0 text-start">{{ t("default.no_active_proposal") }}</h6>
+    </section>
 
     <div class="row">
       <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
@@ -147,6 +155,7 @@ export default {
         default:
           break;
       }
+
       return results
     },
   },

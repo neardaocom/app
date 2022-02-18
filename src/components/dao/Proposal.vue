@@ -5,9 +5,9 @@
       <!-- header -->
       <div class="d-flex mb-3 ">
         <div class="align-self-center">
-            <h6 class="text-white p-2 rounded-circle bg-primary text-center">
+            <span class="fs-4 text-white p-2 rounded-circle bg-primary text-center background-light-gray">
               #{{ proposal.id }}
-            </h6>
+            </span>
         </div>
 
         <div class="p-2">
@@ -31,25 +31,25 @@
         v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
         :height="3"
       >
-        <MDBProgressBar :value="progress" bg="primary" />
+        <MDBProgressBar bg="primary" :value="progress" />
       </MDBProgress>
       <hr v-else class="my-1">
 
       <!-- about -->
       <ul class="my-2 list-unstyled text-muted list-inline">
-        <li class="list-inline-item me-4">
-          <i class="bi bi-calendar4 me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
-          <span class="font-weight-bold">{{ proposal.duration.time }}</span>
+        <li class="list-inline-item me-4 h6">
+          <i class="bi bi-calendar4 color-primary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
+          <span>{{ proposal.duration.time }}</span>
         </li>
         <li class="list-inline-item me-4">  
-          <i class="far fa-handshake fa-fw me-2 mb-3"></i>
-          <span class="font-weight-bold"
+          <i class="far fa-handshake fa-fw color-primary me-2 mb-3"></i>
+          <span class="h6"
             >{{ proposal.quorum }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
-          <i class="bi bi-archive me-1"/>
-          <span class="font-weight-bold text-black">{{
+          <i class="bi bi-archive me-1 color-primary"/>
+          <span class="h6 text-muted">{{
             proposal.choice
           }}</span>
         </li>
@@ -96,7 +96,7 @@
         class="btn-group"
         role="group"
       >
-        <button @click="vote(1)" type="button" class="btn btn-success">
+        <button @click="vote(1)" type="button" class="btn bg-success text-white">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
         <button @click="vote(2)" type="button" class="btn btn-danger">
@@ -111,7 +111,7 @@
         class="btn-group"
         role="group"
       >
-        <button @click="finalize()" type="button" class="btn btn-primary">
+        <button @click="finalize()" type="button" class="btn gradient-background text-white">
           <i class="fas fa-certificate me-2"></i> {{ t("default.proposal_finish") }}
         </button>
       </div>
