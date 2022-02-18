@@ -44,8 +44,12 @@ export const templateMetaWfNearSend: WFMetaTemplate = {
                     "amount": (first(args[0][1])) ? yoctoToNear(first(args[0][1])) : undefined,
                 }
             },
-            gas: 100,
-            deposit: 0,
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
     ],
 }
@@ -158,10 +162,9 @@ export const templateMetaSkyward: WFMetaTemplate = {
     id: 7,
     code: 'wf_skyward',
     constants: [
-        { code: 'amountLimit', bindId: 0 },
     ],
     inputs: [
-        { code: 'amount', bindId: 2 },
+        { code: 'amount', bindId: 0 },
     ],
     activities: [
         {
@@ -192,8 +195,12 @@ export const templateMetaSkyward: WFMetaTemplate = {
                     tokenId: first(args[0][0]),
                 }
             },
-            gas: 200,
-            deposit: 0,
+            gas: (data?: WFData): Number => {
+                return 200
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
         { // self - storage_depost
             id: 1,
@@ -206,8 +213,12 @@ export const templateMetaSkyward: WFMetaTemplate = {
             log: (args: any) => {
                 return {}
             },
-            gas: 100,
-            deposit: 0,
+            gas: (data: WFData) => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
         { // wrap.testnet - storage_depost
             id: 2,
@@ -220,8 +231,12 @@ export const templateMetaSkyward: WFMetaTemplate = {
             log: (args: any) => {
                 return {}
             },
-            gas: 100,
-            deposit: 0,
+            gas: (data: WFData) => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
         { // self - ft_transfer_call
             id: 3,
@@ -234,8 +249,12 @@ export const templateMetaSkyward: WFMetaTemplate = {
             log: (args: any) => {
                 return {}
             },
-            gas: 100,
-            deposit: 0,
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
     ],
 }
@@ -276,8 +295,12 @@ export const templateMetaAddWorkflow: WFMetaTemplate = {
                     "templateId": first(args[0][0]),
                 }
             },
-            gas: 300,
-            deposit: 0,
+            gas: (data?: WFData): Number => {
+                return 300
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
     ],
 }
@@ -289,24 +312,129 @@ export const templateMetaBounty: WFMetaTemplate = {
     ],
     inputs: [
         { code: 'amount', bindId: 0 },
+        { code: 'deposit', bindId: 1 },
     ],
     activities: [],
     actions: [
-        {
+        { // event_checkin
             id: 0,
             args: (data: WFData) => {
                 return {
                     "proposal_id": data.proposalId,
-                    "workflow_id": getValueByCode(data.inputs, 'templateId'),
+                    "code": "checkin",
+                    "args": [],
                 }
             },
             log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return yoctoToNear(getValueByCode(data?.inputs ?? [], 'deposit') ?? '0')
+            },
+        },
+        { // event_unrealized
+            id: 1,
+            args: (data: WFData) => {
                 return {
-                    "templateId": first(args[0][0]),
+                    "proposal_id": data.proposalId,
+                    "code": "unrealized",
+                    "args": [],
                 }
             },
-            gas: 200,
-            deposit: 0,
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+        { // event_approve
+            id: 2,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "code": "approve",
+                    "args": [
+                        { "Bool": true }
+                    ],
+                }
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+        { // event_done
+            id: 3,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "code": "done",
+                    "args": [
+                        { "String": "heres some link" }
+                    ],
+                }
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+        { // event_done_approve
+            id: 4,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "code": "done_approve",
+                    "args": [
+                        { "String": "All good - 5/5" }
+                    ],
+                }
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+        { // near_send
+            id: 5,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "receiver_id": first(data.storage[0]),
+                    "amount": getValueByCode(data?.inputs ?? [], 'amount') ?? '0',
+                }
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
         },
     ],
 }

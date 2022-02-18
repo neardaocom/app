@@ -22,6 +22,7 @@ import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, W
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
+import { gasDefault, depositDefault } from "@/models/workflow";
 import { dateFromChain } from '@/utils/near'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
@@ -391,16 +392,16 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
                     action = {
                         id: index - 1,
                         activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? 100,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? 0,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? depositDefault,
                         method: loSnakeCase(actionChain.action),
                     }
                 } else { // functionCall
                     action = {
                         id: index - 1,
                         activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? 100,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? 0,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? gasDefault,
                         fncallReceiver: actionChain.action_data.FnCall.id[0],
                         fncallMethod: actionChain.action_data.FnCall.id[1],
                         fncallGas: actionChain.action_data.FnCall.tgas,

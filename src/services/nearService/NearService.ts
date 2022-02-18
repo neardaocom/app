@@ -808,7 +808,7 @@ class NearService {
     return account.signAndSendTransaction({
         receiverId: contractId,
         actions: actions.map((action:  TransactionAction) => 
-            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(action.gas).mul(new BN(TGas)), new BN(action.deposit))
+            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(toTGas(action.gas)), new BN(nearToYocto(action.deposit)))
         )
     });
   }
