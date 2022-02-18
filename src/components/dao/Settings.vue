@@ -28,7 +28,7 @@
                 <td>{{ trans(settings.voteRight) }}</td>
                 <td>
                   <template v-for="(activity, index) in template.activities" :key="index">
-                    {{ t('default.wf_templ_' + template.code + '_activity_' + activity.code) }}:
+                    {{ t('default.wf_templ_' + template.code + '__' + activity.code) }}:
                     <template v-for="(right, index) in activityRights(settings, activity)" :key="index">
                       <span v-if="index > 0"> | </span>{{ trans(right) }}
                     </template>

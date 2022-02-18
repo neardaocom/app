@@ -17,6 +17,9 @@ import { instances } from "@firebase/logger/dist/src/logger";
 import { templateMetas } from "@/data/workflow";
 import { configure } from "vee-validate";
 
+export const gasDefault: Function = () => { return 100 }
+export const depositDefault: Function = () => { return 0 }
+
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
 export const getStartActivities = (template: WFTemplate): WFActivity[] => {
@@ -152,8 +155,8 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
             actions.push({
                 methodName: (action as WFActionCall).method,
                 args: meta.actions[action.id].args(data),
-                gas: action.gas,
-                deposit: action.deposit,
+                gas: action.gas(data),
+                deposit: action.deposit(data),
             })
         } else { // functional call
             actions.push({
@@ -167,8 +170,8 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
                     // gas: (action as WFActionFunctionCall).fncallGas,
                     // deposit: (action as WFActionFunctionCall).fncallDeposit,
                 },
-                gas: action.gas,
-                deposit: action.deposit,
+                gas: action.gas(data),
+                deposit: action.deposit(data),
             })
         }
     })

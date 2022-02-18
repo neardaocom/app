@@ -152,12 +152,19 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function): Reco
         amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
       }
       break;
-    case 'wf_add':
+    case 'wf_add': {
         const templateId = loToNumber(getValueByCode(proposal.inputs, 'templateId'))
         const templateMeta = loFind(templateMetas, {id: templateId})
         values = {
           templateId: templateId,
           template: t('default.wf_templ_' + templateMeta?.code),
+        }
+        break;
+    }
+    case 'wf_bounty':
+        values = {
+          amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
+          deposit: yoctoToNear(getValueByCode(proposal.inputs, 'deposit') ?? ''),
         }
         break;
     default:

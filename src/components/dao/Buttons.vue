@@ -82,6 +82,7 @@ import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
+import BountyProposal from '@/components/dao/workflows/wf_bounty/Proposal.vue'
 import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
@@ -104,7 +105,8 @@ export default {
     AddWorkflow,
     GeneralProposal,
     AddMedia,
-    SkywardProposal
+    SkywardProposal,
+    BountyProposal,
   },
   props: {
     dao: {
@@ -185,6 +187,8 @@ export default {
       this.modalProposal += 1
       this.dropdownAction = false
       this.modalTitle = this.t('default.wf_templ_' + templ.code)
+      this.activeFormCode = templ.code
+
       switch (templ.code) {
         case 'wf_near_send':
           this.formProps = {
@@ -193,33 +197,31 @@ export default {
             template: loFind(this.dao.templates, {code: templ.code}),
           }
           this.activeForm = 'Payout'
-          this.activeFormCode = templ.code
           break
         case 'wf_treasury_send_ft':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'Payout'
-          this.activeFormCode = templ.code
           break
         case 'wf_add':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'AddWorkflow'
-          this.activeFormCode = templ.code
           console.log('wf_add');
           break
         case 'wf_general':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
           this.activeForm = 'GeneralProposal'
-          this.activeFormCode = templ.code
           break
         case 'wf_media_add':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
           this.activeForm = 'AddMedia'
-          this.activeFormCode = templ.code
           break
         case 'wf_skyward':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'SkywardProposal'
-          this.activeFormCode = templ.code
+          break 
+        case 'wf_bounty':
+          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.activeForm = 'BountyProposal'
           break  
         default:
             this.formProps = {}

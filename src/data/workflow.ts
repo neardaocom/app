@@ -11,15 +11,20 @@ import {
   templateMetaGeneral,
   templateMetaAddWorkflow,
   templateMetaSendFt,
+  templateMetaBounty,
  } from "@/data/workflowMeta"
 import { toSearch } from "@/utils/string"
 import moment from "moment"
 import { DAORights } from "@/types/dao"
 import { toObject } from "@/models/rights";
 import { getValueByCode } from "@/utils/generics"
+import { gasDefault, depositDefault } from "@/models/workflow";
 
 export const templateMetas: Record<string, WFMetaTemplate> = {
+  'wf_add': templateMetaAddWorkflow,
+  'wf_skyward': templateMetaSkyward,
   'wf_send_near': templateMetaWfNearSend,
+  'wf_bounty': templateMetaBounty,
   'wf_send_ft': templateMetaSendFt,
   'wf_near_send': templateMetaWfNearSend,
   'groupAddMember': templateMetaGroupAddMember,
@@ -27,19 +32,17 @@ export const templateMetas: Record<string, WFMetaTemplate> = {
   'mediaAdd': templateMetaMediaAdd,
   'mediaInvalid': templateMetaMediaInvalid,
   'FtNulockDistribute': templateMetaFtUnlockDistribute,
-  'wf_skyward': templateMetaSkyward,
   'general': templateMetaGeneral,
   'addWorkflow': templateMetaAddWorkflow,
-  'wf_add': templateMetaAddWorkflow,
 }
 
-export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: 10, deposit: 0, }
+export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: gasDefault, deposit: depositDefault, }
 
-export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: 10, deposit: 0, }
+export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: gasDefault, deposit: depositDefault, }
 
 
-export const actionDAOGroupCreate: WFAction = {id: 3, activityId: 1, method: 'group_create', gas: 10, deposit: 0,}
-export const actionDAOGroupAddMember: WFAction = {id: 4, activityId: 1, method: 'group_add_member', gas: 10, deposit: 0,}
+export const actionDAOGroupCreate: WFAction = {id: 3, activityId: 1, method: 'group_create', gas: gasDefault, deposit: depositDefault,}
+export const actionDAOGroupAddMember: WFAction = {id: 4, activityId: 1, method: 'group_add_member', gas: gasDefault, deposit: depositDefault,}
 
 export const actionMetas: Record<string, WFAction> = {
   treasury_send_near: actionDAOTreasurySendNear,

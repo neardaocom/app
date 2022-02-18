@@ -12,8 +12,8 @@ export type WFMetaAction = {
     args: Function;
     argsCollection?: Function;
     log: Function;
-    gas: number; // TGas
-    deposit: number; // Near
+    gas: Function; // TGas
+    deposit: Function; // Near
 }
 
 export type WFMetaForm = {
@@ -52,8 +52,8 @@ export type WFExpression = {
 export type WFActionFunctionCall = {
     id: number;
     activityId: number;
-    gas: number; // TGas
-    deposit: number; // Near
+    gas: Function; // TGas
+    deposit: Function; // Near
     fncallReceiver: string;
     fncallMethod: string;
     fncallGas: number; // TGas
@@ -63,8 +63,8 @@ export type WFActionFunctionCall = {
 export type WFActionCall = {
     id: number;
     activityId: number;
-    gas: number; // TGas
-    deposit: number; // Near
+    gas: Function; // TGas
+    deposit: Function; // Near
     method: string;
 }
 

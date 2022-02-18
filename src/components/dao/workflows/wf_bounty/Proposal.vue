@@ -1,6 +1,7 @@
 <template>
     <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="tokenName"/>
+    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="'Ⓝ'"/>
+    <InputNumber :labelName=" t('default.deposit')" id="deposit" :addon="'Ⓝ'"/>
 </template>
 
 <script>
@@ -11,7 +12,7 @@ import { useForm } from 'vee-validate';
 import { useNearService } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
-//import loTemplate from "lodash/template";
+import { nearToYocto } from '@/utils/near';
 
 export default {
     components:{
@@ -21,10 +22,6 @@ export default {
         contractId: {
             type: String,
             required: false
-        },
-        tokenName: {
-            type: String,
-            required: true
         },
         template: {
             type: Object,
@@ -41,6 +38,7 @@ export default {
         const schema = computed(() => {
             return {
                 amount: 'required|strIsNumber|strNumMin:1|strNumMax:1000000000.0',
+                deposit: 'required|strIsNumber|strNumMin:0|strNumMax:1000000000.0',
             }
         });
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
@@ -51,9 +49,10 @@ export default {
                 template.value.id,
                 template.value.settings[0].id,
                 [
-                    {U128: decimal(values.amount).toFixed()},
+                    {U128: nearToYocto(decimal(values.amount).toFixed())},
+                    {U128: nearToYocto(decimal(values.deposit).toFixed())},
                 ],
-                `wf_near_send-${moment().valueOf()}`,
+                `wf_bounty-${moment().valueOf()}`,
                 1.0
             )
         }, () => {

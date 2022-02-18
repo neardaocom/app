@@ -105,7 +105,8 @@ import { useI18n } from "vue-i18n";
 import { convertArrayOfObjectToObject } from '@/utils/array'
 import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
-import lodashLast from "lodash/last";
+import loLast from "lodash/last";
+import loGet from "lodash/get";
 import { canFinish, getSettings, runActivity, getNextActivities, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNearService } from '@/hooks/vuex';
@@ -144,10 +145,14 @@ export default {
       type: Object,
       required: true,
     },
+    daoStorage: {
+      type: Object,
+      required: true,
+    },
   },
   setup(props) {
     const { t, d } = useI18n();
-    const { workflow, template } = toRefs(props)
+    const { workflow, template, daoStorage } = toRefs(props)
 
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
@@ -156,7 +161,7 @@ export default {
         constants: settings.constants,
         inputs: workflow.value.inputs,
         storageDao: [],
-        storage: [],
+        storage: loGet(daoStorage.value, [workflow.value.storage]),
         form: {},
     }
 
@@ -167,7 +172,7 @@ export default {
     const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
-      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, actionFirstId: activity.actionIds[0]}
+      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code}
     }))
 
     const formNextActivityCode = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
@@ -180,7 +185,7 @@ export default {
   },
   computed: {
     activityLast() {
-      return lodashLast(this.workflow.activityLogs)
+      return loLast(this.workflow.activityLogs)
     },
     proposalTitle() {
       return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code, this.t))
