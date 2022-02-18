@@ -1,6 +1,6 @@
 <template>
   <div class="container mb-2">
-    <div v-if="dao.workflows.length > 0" class="row my-4 mx-4">
+    <div v-if="workflowsNum > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput
           inputGroup
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <section v-if="dao.workflows.length == 0">
+    <section v-if="workflowsNum == 0">
       <hr>
       <h6 class="mb-0 text-start">{{ t("default.no_active_activities") }}</h6>
     </section>
@@ -72,7 +72,7 @@ export default {
     },
   },
   setup() {
-    //const { dao, accountId } = toRefs(props)
+    //const { dao } = toRefs(props)
     const { t } = useI18n();
 
     const searchQuery = ref('')
@@ -111,6 +111,9 @@ export default {
       }
       return results
     },
+    workflowsNum(){
+      return this.dao.workflows.filter((item) => item.state !== 'Waiting').length
+    }
   },
   methods: {
     template(templates, templateId) {

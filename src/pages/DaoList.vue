@@ -4,8 +4,9 @@
     <MDBContainer>
       <Breadcrumb :list-name="'organizations'"/>
     </MDBContainer>
+
     <MDBContainer>
-    <h1 class="text-start" style="font-size: 4rem">{{ t('default.organizations')}}</h1>
+    <h1 class="text-start" style="font-size: 3rem">{{ t('default.organizations')}}</h1>
     <div class="row mt-5">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput
@@ -29,13 +30,11 @@
         <small> <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active" class="rounded-3"/> </small>
       </div>
     </div>
+
       <div class="row mb-4">
         <MDBCard>
           <MDBCardBody>
             <MDBCardText>
-              <div class="row mt-3">
-                
-              </div>
               <MDBTable responsive borderless striped>
                 <thead>
                   <tr>
@@ -49,14 +48,15 @@
                 </thead>
                 
                 <tbody>
+
                   <tr>
                     <td colspan="5" class="p-0">
                       <MDBProgress class="my-1">
                         <MDBProgressBar bg="primary" :value="loadingProgress" />
                       </MDBProgress>
                     </td>
- 
                   </tr>
+
                   <tr v-for="(dao, index) in results" :key="index">
                     <!-- <td><a @click="favorite_switch(dao.id)" class="">
                         <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
@@ -104,10 +104,9 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/data/DAOs'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar
-  , MDBCard, MDBCardBody, MDBCardText, MDBIcon
-  , MDBInput
-  , MDBCheckbox
+  MDBContainer, MDBTable, MDBProgress, MDBProgressBar,
+   MDBCard, MDBCardBody, MDBCardText, MDBIcon, MDBInput,
+   MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
