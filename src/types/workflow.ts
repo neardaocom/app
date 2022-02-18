@@ -10,7 +10,10 @@ export type WFMetaAttribute = {
 export type WFMetaAction = {
     id: number;
     args: Function;
+    argsCollection?: Function;
     log: Function;
+    gas: number; // TGas
+    deposit: number; // Near
 }
 
 export type WFMetaForm = {
@@ -24,6 +27,8 @@ export type WFMetaActivity = {
 }
 
 export type WFMetaTemplate = {
+    id: number;
+    code: string;
     constants: WFMetaAttribute[];
     inputs: WFMetaAttribute[];
     activities: WFMetaActivity[];
@@ -49,7 +54,8 @@ export type WFActionFunctionCall = {
     activityId: number;
     gas: number; // TGas
     deposit: number; // Near
-    fncallId: number;
+    fncallReceiver: string;
+    fncallMethod: string;
     fncallGas: number; // TGas
     fncallDeposit: number; // Near
 }

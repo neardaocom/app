@@ -63,7 +63,7 @@ export default {
     setup (props) {
         const { tokenName, contractId, template } = toRefs(props)
         const {t} = useI18n()
-        const store = useStore()   
+        const store = useStore()
 
         const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
         const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))

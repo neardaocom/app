@@ -6,7 +6,7 @@ import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
 import loFind from "lodash/find";
 import loGet from "lodash/get";
-import lodashToNumber from "lodash/toNumber"
+import loToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/utils/error'
 import Auction from "@/models/auction"
 import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/types/dao';
@@ -18,6 +18,7 @@ import { accounts } from '@/data/blockchain';
 import { convertArrayOfObjectToObject } from "@/utils/array";
 import { getValueById, getValueByCode, addInterval, subtractInterval } from "@/utils/generics";
 import { yoctoToNear } from '@/utils/near';
+import { templateMetas } from "@/data/workflow";
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
 
@@ -81,13 +82,13 @@ const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], t
     Object.keys(proposal.votes).forEach((voter: string) => {
       switch (_.toInteger(proposal.votes[voter])) {
         case 0:
-          results[0] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[0] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 1:
-          results[1] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[1] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 2:
-          results[2] += lodashToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[2] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         default:
           throw new UnsupportedError('Undefined voting stat: ' + _.toInteger(proposal.votes[voter]))
@@ -141,7 +142,7 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
     return kind_to_choice;
 };
 
-const getArgs = (proposal: DAOProposal, templateCode: string): Record<string, unknown> => {
+const getArgs = (proposal: DAOProposal, templateCode: string, t: Function): Record<string, unknown> => {
   let values: Record<string, unknown> = {}
   // console.log(proposal, templateCode)
   switch (templateCode) {
@@ -151,6 +152,14 @@ const getArgs = (proposal: DAOProposal, templateCode: string): Record<string, un
         amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
       }
       break;
+    case 'wf_add':
+        const templateId = loToNumber(getValueByCode(proposal.inputs, 'templateId'))
+        const templateMeta = loFind(templateMetas, {id: templateId})
+        values = {
+          templateId: templateId,
+          template: t('default.wf_templ_' + templateMeta?.code),
+        }
+        break;
     default:
       break;
   }
@@ -187,12 +196,12 @@ const transform = (
   walletId: string,
   walletRights: DAORights[],
   daoRights: DAORights[],
-  t: any,
-  d: any
+  t: Function,
+  d: Function
 ) => {
   // console.log(template)
     const settings = loFind(template.settings, {id: proposal.settingsId})
-    const args = getArgs(proposal, template.code)
+    const args = getArgs(proposal, template.code, t)
     const stateCode = getStateCode(proposal.state)
     const durationTo = getDurationTo(proposal, settings!)
     // console.log(durationTo)
