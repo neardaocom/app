@@ -14,7 +14,8 @@ import { NearService } from "@/services/nearService";
 import { getValueByCode } from "@/utils/generics"
 import { DAORights } from "@/types/dao";
 import { instances } from "@firebase/logger/dist/src/logger";
-import { templateMeta } from "@/data/workflow";
+import { templateMetas } from "@/data/workflow";
+import { configure } from "vee-validate";
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 
@@ -105,7 +106,7 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
 }
 
 export const metaGetActivityForm = (templateCode: string, activityCode: string): WFMetaForm | undefined => {
-    return loFind(loGet(templateMeta, [templateCode])?.activities, {code: activityCode})?.form
+    return loFind(loGet(templateMetas, [templateCode])?.activities, {code: activityCode})?.form
 }
 
 export const getActivityRights = (settings: WFSettings, activity: WFActivity): DAORights[] => {
@@ -140,13 +141,13 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
 
     const actions: TransactionAction[] = []
 
-    const meta: WFMetaTemplate = loGet(templateMeta, [template.code])
+    const meta: WFMetaTemplate = loGet(templateMetas, [template.code])
 
-    // console.log('Activity', activityId, data)
+    // console.log('Activity', data)
 
     getActionsOfActivity(template, activity!.id).forEach((action: WFAction) => {
-        // console.log('Action', (action as WFActionCall))
-        
+        // console.log('Action', action, meta.actions[action.id])
+
         if ((action as WFActionCall).method !== undefined) { // smart contract
             actions.push({
                 methodName: (action as WFActionCall).method,
@@ -156,13 +157,15 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
             })
         } else { // functional call
             actions.push({
-                methodName: 'function_call',
+                methodName: 'fn_call',
                 args: {
                     proposal_id: data.proposalId,
-                    action_id: (action as WFActionFunctionCall).fncallId,
-                    action_arguments: meta.actions[action.id].args(data),
-                    gas: (action as WFActionFunctionCall).fncallGas,
-                    deposit: (action as WFActionFunctionCall).fncallDeposit,
+                    fncall_receiver: (action as WFActionFunctionCall).fncallReceiver,
+                    fncall_method: (action as WFActionFunctionCall).fncallMethod,
+                    arg_values: meta.actions[action.id].args(data),
+                    arg_values_collection: (meta.actions[action.id].argsCollection !== undefined) ? meta.actions[action.id].argsCollection!(data) : [],
+                    // gas: (action as WFActionFunctionCall).fncallGas,
+                    // deposit: (action as WFActionFunctionCall).fncallDeposit,
                 },
                 gas: action.gas,
                 deposit: action.deposit,

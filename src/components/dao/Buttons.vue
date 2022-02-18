@@ -81,6 +81,7 @@ import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
+import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
 import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
@@ -102,7 +103,8 @@ export default {
     Payout, 
     AddWorkflow,
     GeneralProposal,
-    AddMedia
+    AddMedia,
+    SkywardProposal
   },
   props: {
     dao: {
@@ -182,7 +184,7 @@ export default {
     modalOpen(templ, templSettings){
       this.modalProposal += 1
       this.dropdownAction = false
-      this.modalTitle = templ.name
+      this.modalTitle = this.t('default.wf_templ_' + templ.code)
       switch (templ.code) {
         case 'wf_near_send':
           this.formProps = {
@@ -214,6 +216,11 @@ export default {
           this.activeForm = 'AddMedia'
           this.activeFormCode = templ.code
           break
+        case 'wf_skyward':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.activeForm = 'SkywardProposal'
+          this.activeFormCode = templ.code
+          break  
         default:
             this.formProps = {}
             this.activeForm = ''

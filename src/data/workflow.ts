@@ -1,7 +1,7 @@
 import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate, WFData } from "@/types/workflow"
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { 
-  templateMetaWfSendNear,
+  templateMetaWfNearSend,
   templateMetaGroupAddMember,
   templateMetaGroupRemoveMember,
   templateMetaMediaAdd,
@@ -18,16 +18,16 @@ import { DAORights } from "@/types/dao"
 import { toObject } from "@/models/rights";
 import { getValueByCode } from "@/utils/generics"
 
-export const templateMeta: Record<string, WFMetaTemplate> = {
-  'wf_send_near': templateMetaWfSendNear,
+export const templateMetas: Record<string, WFMetaTemplate> = {
+  'wf_send_near': templateMetaWfNearSend,
   'wf_send_ft': templateMetaSendFt,
-  'wf_near_send': templateMetaWfSendNear,
+  'wf_near_send': templateMetaWfNearSend,
   'groupAddMember': templateMetaGroupAddMember,
   'groupRemoveMember': templateMetaGroupRemoveMember,
   'mediaAdd': templateMetaMediaAdd,
   'mediaInvalid': templateMetaMediaInvalid,
   'FtNulockDistribute': templateMetaFtUnlockDistribute,
-  'skyward': templateMetaSkyward,
+  'wf_skyward': templateMetaSkyward,
   'general': templateMetaGeneral,
   'addWorkflow': templateMetaAddWorkflow,
   'wf_add': templateMetaAddWorkflow,

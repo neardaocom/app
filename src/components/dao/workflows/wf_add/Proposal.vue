@@ -76,7 +76,7 @@ export default {
     },
     setup (props) {
         const { template, contractId, dao, daoRights} = toRefs(props)
-        const {t} = useI18n()
+        const { t } = useI18n()
         const { nearService } = useNearService()
         const workflowsToAdd = ref([])
 
@@ -124,14 +124,12 @@ export default {
             fetch()
         })
        watch(() => [dataResults.value], () => {
-            const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'id');
+            const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'code');
             console.log(workflows);
             console.log(dataResults.value);
-            workflowsToAdd.value = workflows.map((workflow) =>({text: workflow.name, value: workflow.id}))
+            workflowsToAdd.value = workflows.map((workflow) =>({text: t('default.wf_templ_' + workflow.code), value: workflow.id, code: workflow.code}))
             setFieldTouched('workflow', false)
         })
-
-
 
         const onSubmit = handleSubmit(async (values) => {
             const canProposeArray = loSplit(values.can_propose, ',')
@@ -144,21 +142,26 @@ export default {
 
             const numActivities = loadTemplate[0].activities.length - 1
             const activitiesRights = loFill(Array(numActivities), [daoRights.value[values.activities_rights]])
+            const transitionsConstraints = loadTemplate[0].transitions.map((trans) => {
+                return trans.map(() => {
+                    return {'transition_limit': 10, 'cond': null}
+                })
+            })
 
             nearService.value.addWorkflow(
                 contractId.value,
                 template.value.settings[0].id,
-                [[{'transition_limit': 1, 'cond': null}]], //transition_constraints,
+                transitionsConstraints, //transition_constraints,
                 daoRights.value[values.can_vote],
                 canPropose,
                 activitiesRights,
                 [{'U16': values.workflow}], //binds
                 storageKey, //storage_key: string, name wokflow, id, provider, date  
-                dao.value.voteLevels[0].approveThreshold,
+                dao.value.voteLevels[0].approveThreshold, // TODO: Resolve vote level
                 dao.value.voteLevels[0].quorum,
                 dao.value.voteLevels[0].duration.days,
                 dao.value.voteLevels[0].duration.hours,
-                dao.value.voteLevels[0].minutes,
+                dao.value.voteLevels[0].duration.minutes,
                 '0', //depositPropose
                 '0', //depositVote
                 0, //depositProposeReturn

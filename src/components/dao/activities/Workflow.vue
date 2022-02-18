@@ -53,14 +53,16 @@
                 <div class="col-12">
                   <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
                   <MDBBtnGroup v-if="activityNexts.length > 0">
-                    <MDBRadio
-                      v-for="(option, index) in optionsNextActivities" :key="index"
-                      :btnCheck="true" :wrap="false" labelClass="btn btn-light btn-sm"
-                      :label="option.text"
-                      :name="'nextActivity-' + workflow.id"
-                      :value="option.value"
-                      v-model="formNextActivityCode"
-                    />
+                    <template v-for="(option, index) in optionsNextActivities" :key="index">
+                      <MDBRadio
+                        v-if="true || check(walletRights, [])"
+                        :btnCheck="true" :wrap="false" labelClass="btn btn-light btn-sm"
+                        :label="option.text"
+                        :name="'nextActivity-' + workflow.id"
+                        :value="option.value"
+                        v-model="formNextActivityCode"
+                      />
+                    </template>
                   </MDBBtnGroup>
                   <template v-if="workflow.actionLastId !== undefined && showFinish === true">
                     <span v-if="activityNexts.length > 0" class="ms-3 me-3 text-uppercase">{{ t('default.or') }}</span>
@@ -108,8 +110,10 @@ import { canFinish, getSettings, runActivity, getNextActivities, transformLogs, 
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNearService } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
+import { check } from "@/models/rights";
 
 import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
+import WfSkywardRegisterTokens from '@/components/dao/workflows/wf_skyward/RegisterTokens.vue'
 
 export default {
   components: {
@@ -117,7 +121,7 @@ export default {
     // MDBProgress, MDBProgressBar, 
     // WFInstance
     // MDBCollapse, MDBBtn, MDBIcon,
-    WfNearSendNearSend,
+    WfNearSendNearSend, WfSkywardRegisterTokens,
   },
   props: {
     workflow: {
@@ -135,7 +139,11 @@ export default {
     accountId: {
       type: String,
       required: true,
-    }
+    },
+    walletRights: {
+      type: Object,
+      required: true,
+    },
   },
   setup(props) {
     const { t, d } = useI18n();
@@ -159,7 +167,7 @@ export default {
     const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
-      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code}
+      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, actionFirstId: activity.actionIds[0]}
     }))
 
     const formNextActivityCode = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
@@ -168,14 +176,14 @@ export default {
     const showFinish = ref(canFinish(workflow.value, template.value))
 
 
-    return { t, d, data, settings, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
+    return { t, d, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
   },
   computed: {
     activityLast() {
       return lodashLast(this.workflow.activityLogs)
     },
     proposalTitle() {
-      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code))
+      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code, this.t))
     },
     componentName() {
       return metaGetActivityForm(this.template.code, this.formNextActivityCode)?.component

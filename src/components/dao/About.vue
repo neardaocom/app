@@ -66,7 +66,7 @@
 <script>
 //import NumberFormatter from "@/components/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
-import ChartCouncilUnlocking from '@/components/dao/ChartCouncilUnlocking.vue';
+import ChartCouncilUnlocking from '@/components/dao/about/ChartCouncilUnlocking.vue';
 //import Proposal from "@/components/dao/Proposal.vue"
 //import { transform } from '@/models/proposal';
 import { ref } from "vue"

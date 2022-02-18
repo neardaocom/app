@@ -76,7 +76,7 @@ class NearService {
         'wf_templates',
         'wf_template',
         'wf_template_fncalls',
-        'fncalls_metadata',
+        'fncall_metadata',
       ],
       changeMethods: [
       ],
