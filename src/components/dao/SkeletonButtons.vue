@@ -1,53 +1,55 @@
 <template>
-    <section class="row d-flex justify-content-between align-items-center py-1">
+    <section class="d-flex justify-content-between align-items-center buttons_nav">
       <!-- Left -->
-      <div class="col-12 col-lg-9">
-        <a :class="[isActive('overview') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+      <div class="ps-3">
+        <a :class="[isActive('overview') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder " data-mdb-ripple-color="dark">
+          <i class="bi bi-columns-gap me-1"/>
           {{ t('default.dashboard') }}
         </a>
-        <a :class="[isActive('voting') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('voting') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-bar-chart me-1"/>
           {{ t('default.voting') }}
         </a>
-        <a :class="[isActive('activities') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-check2-circle me-1"/>
           {{ t('default.activities') }}
         </a>
-        <a v-if="false" :class="[isActive('treasury') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a v-if="false" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
         </a>
-        <a v-if="false" :class="[isActive('members') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a v-if="false" :class="[isActive('members') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </a>
-        <a v-if="false" :class="[isActive('tokens') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a v-if="false" :class="[isActive('tokens') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </a>
-        <a :class="[isActive('defi') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('defi') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-graph-up me-1"/>
           {{ t('default.defi') }}
         </a>
-        <a :class="[isActive('documents') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-files me-1"/>
           {{ t('default.documents') }}
         </a>
-        <a :class="[isActive('about') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('about') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
         </a>
-        <a :class="[isActive('settings') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <a :class="[isActive('settings') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
           {{ t('default.settings') }}
         </a>
       </div>
       <!-- Left -->
 
       <!-- Right -->
-      <div class="col-12 col-lg-3">
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas text-warning fa-star"></i>
-        </button>-->
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>-->
-        <MDBDropdown btnGroup :align="['end']">
-          <MDBBtn aria-controls="modalPayout" class="btn btn-primary" data-mdb-ripple-color="dark">
-            <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
-          </MDBBtn>
-          <MDBDropdownToggle/>
+      <div>
+        <MDBDropdown btnGroup class="buttons_dropdown">
+          <MDBDropdownToggle class="buttons_dropdown gradient-background" size="lg">
+            <!-- <MDBBtn aria-controls="modalPayout" class="btn btn-primary"  data-mdb-ripple-color="dark"> -->
+              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
+            <!-- </MDBBtn> -->
+          </MDBDropdownToggle>
         </MDBDropdown>
       </div>
       <!-- /Right -->
@@ -57,14 +59,16 @@
 <script>
 import { useI18n } from "vue-i18n";
 import {
-  MDBBtn,
   MDBIcon,
-  MDBDropdown, MDBDropdownToggle
+  MDBDropdown, 
+  MDBDropdownToggle
 } from "mdb-vue-ui-kit";
 
 export default {
   components: {
-    MDBBtn, MDBIcon, MDBDropdown, MDBDropdownToggle
+    MDBIcon, 
+    MDBDropdown, 
+    MDBDropdownToggle
   },
   setup() {
     const { t } = useI18n();

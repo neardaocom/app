@@ -4,23 +4,29 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <ul class="list-unstyled text-muted mb-1">
+            <h5 class="card-title">
+              <i class="bi bi-info-square color-primary me-1"/>
+              {{ t('default.information') }}
+            </h5>
+            <ul class="list-unstyled mb-1">
               <li>
-                <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
+                <i class="bi bi-wallet2 me-1"/>
                 <a
-                  class="text-reset font-weight-bold"
+                  class="text-reset"
                   :href="nearWalletUrl + '/accounts/' + dao.wallet"
                   target="_blank"
-                  >{{ t("default.wallet") }}</a
                 >
+                    {{ t("default.wallet") }}
+                    <i class="bi bi-box-arrow-up-right color-secondary ms-1"/>
+                  </a>
               </li>
               <li v-if="webLink">
-                <i class="fas fa-globe fa-fw me-3 mb-3"></i
-                ><a class="text-reset font-weight-bold" :href="web" target="_blank">{{ webLink }}</a>
+                <i class="fas fa-globe fa-fw me-3 mb-3"/>
+                <a class="text-reset" :href="web" target="_blank">{{ webLink }}</a>
               </li>
               <li>
-                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-                <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.short }}
+                <i class="bi bi-cash-coin me-1"/>
+                <span class="text-reset">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.short }}
               </li>
             </ul>
           </div>
@@ -29,31 +35,32 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
-            <ul class="list-unstyled text-muted mb-1">
+            <h5 class="card-title">
+              <i class="bi bi-people color-primary me-1"/>
+              {{ t('default.members') }}
+            </h5>
+            <ul class="list-unstyled mb-2">
               <li>
-                <i class="fas fa-users fa-fw me-3 mb-3"></i>
-                <strong>{{ t("default.council") }}</strong>
+                <i class="bi bi-pie-chart me-1"/>
                 {{ councilPercent || "0" }}%
+                {{ t("default.council") }}
               </li>
             </ul>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <div class="card text-start w-auto p-2" style="width: 18rem">
-          <div class="card-body">
-            <h6 class="text-muted text-center">{{ t("default.council") }}</h6>
-            <ul class="mb-0">
-              <li v-for="(member, index) in council.members" :key="index">{{ member.accountId }}</li>
+            <h6>{{ t("default.council") }}</h6>
+            <ul class="mt-n2 list-unstyled">
+              <li v-for="(member, index) in council.members" :key="index" class="ms-2">{{ member.accountId }}</li>
             </ul>
           </div>
         </div>
       </div>
       <!-- BEGIN: council unlocking cashflow -->
       <div v-if="council" class="col-12 col-md-6 mb-4">
-        <div class="card text-start w-auto p-2" style="width: 18rem">
+        <div class="card text-start w-auto p-2" >
           <div class="card-body">
-            <h6 class="text-muted text-center">{{ t("default.council_unlocking_token") }}</h6>
+            <h5 class="">
+              <i class="bi bi-bar-chart color-primary me-1"/>
+              {{ t("default.council_unlocking_token") }}
+            </h5>
             <ChartCouncilUnlocking :dao="dao" :group="council"/>
           </div>
         </div>

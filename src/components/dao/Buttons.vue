@@ -1,55 +1,60 @@
 <template>
-    <section class="row d-flex justify-content-between align-items-center py-1"> <!-- py-3 -->
+    <section class="d-flex justify-content-between align-items-center buttons_nav"> <!-- py-3 -->
       <!-- Left -->
-      <div class="col-12 col-lg-9">
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+      <div class="ps-3">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'border-bottom border-2 color-primary rounded-0 fw-bolder' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-columns-gap me-1"/>
           {{ t('default.dashboard') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-bar-chart me-1"/>
           {{ t('default.voting') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-check2-circle me-1"/>
           {{ t('default.activities') }}
         </router-link>
-        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
         </router-link>
-        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </router-link>
-        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}" :class="[isActive('defi') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}" :class="[isActive('defi') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-graph-up me-1"/>
           {{ t('default.defi') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-files me-1"/>
           {{ t('default.documents') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'bg-light border-bottom border-2 border-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
           {{ t('default.settings') }}
         </router-link>
       </div>
       <!-- Left -->
 
       <!-- Right -->
-      <div class="col-12 col-lg-3">
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas text-warning fa-star"></i>
-        </button>-->
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>-->
-        <MDBBtnGroup id="dropdown-target">
+      <div>
+        <!-- <MDBBtnGroup  id="dropdown-target">
           <MDBBtn
             color="primary"
             v-on:click="dropdownAction = !dropdownAction"
             class="dropdown-toggle"
-          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn>
-          <MDBDropdown v-model="dropdownAction" target="#dropdown-target">
+          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn> -->
+
+          <MDBDropdown v-model="dropdownAction" btnGroup class="buttons_dropdown" >
+            <MDBDropdownToggle class="buttons_dropdown gradient-background"  size="lg" @click="dropdownAction = !dropdownAction">
+              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{t('default.activities')}}
+            </MDBDropdownToggle>
             <MDBDropdownMenu>
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
@@ -58,15 +63,17 @@
               </template>
             </MDBDropdownMenu>
           </MDBDropdown>
-        </MDBBtnGroup>
+        <!-- </MDBBtnGroup> -->
+
       </div>
       <!-- /Right -->
     </section>
+
+    <!-- Modals -->
     <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
       <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
 
-    <!-- <MDBBtn @click="modalPropOpen"> Test </MDBBtn> -->
 
     <ModalProposal title="Test" :show="modalProp" @vote="vote">
       <AddMedia/>
@@ -86,7 +93,7 @@ import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn, MDBBtnGroup,
-  MDBIcon,
+  MDBIcon
 } from "mdb-vue-ui-kit";
 import { check } from "@/models/rights";
 
@@ -140,6 +147,8 @@ export default {
     // for tests
     const modalProp = ref(0)
 
+    const activeTabId1 = ref('ex1-1');
+
     return {
       t,
       dropdownAction, 
@@ -151,7 +160,8 @@ export default {
       formProps, 
       check, 
       form,
-      modalProp
+      modalProp,
+      activeTabId1
     };
   },
 

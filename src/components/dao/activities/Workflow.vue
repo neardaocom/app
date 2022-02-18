@@ -4,7 +4,7 @@
       <div class="row">
         <!-- left -->
         <div class="col-1 text-center">
-          <span class="fs-4 bg-info rounded-circle p-2">#{{ workflow.id }}</span>
+          <span class="text-white fs-4 rounded-circle p-2 background-light-gray">#{{ workflow.id }}</span>
         </div>
         <!-- body -->
         <div class="col-11">
@@ -12,7 +12,7 @@
           <div class="row">
             <div class="col-10">
               <h5>{{ t('default.wf_templ_' + template.code) }}</h5>
-              <span class="fs-5" v-html="proposalTitle"></span>
+              <div class="mt-n2 text-dark" v-html="proposalTitle"></div>
             </div>
             <div class="col-2 text-right">
               <!-- TODO: Voting -->
@@ -28,15 +28,15 @@
           </div>
           <div class="row" v-for="(log, index) in activityLogs" :key="index">
             <div class="col-1 text-center">
-              <span class="bg-info rounded-circle px-2 py-1">#{{ index + 1 }}</span>
+              <span class="text-white rounded-circle px-1 gradient-background lh-sm"> {{ index + 1 }} </span>
             </div>
-            <div class="col-10">
-              <p>
-                <span class="text-muted">{{ d(log.txSignedAt) }} {{ toTime(log.txSignedAt) }}</span><br/>
-                <span class="fs-5 fw-bold">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</span><br/>
-                {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
-                <span class="mx-2 text-muted">|</span><span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
-              </p>
+            <div class="col-10 mb-3">
+                <div class="text-muted">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
+                <div class="fs-5 fw-bold mt-n1">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
+                <div class="mt-n1">
+                  {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
+                  <span class="mx-2 text-muted">|</span><span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
+                </div>
             </div>
             <div class="col-1">
             </div>
@@ -46,7 +46,7 @@
           <!-- NEXT Activity -->
           <div v-if="workflow.state === 'Running'" class="row">
             <div class="col-1 text-center">
-              <MDBBadge color="info" pill class="p-2 me-3"><i class="fas fa-check"></i></MDBBadge>
+              <MDBBadge color="info" pill class="p-2 me-3c background-light-gray"><i class="fas fa-check"></i></MDBBadge>
             </div>
             <div class="col-11">
               <div class="row">
@@ -111,6 +111,7 @@ import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNearService } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
 import { check } from "@/models/rights";
+import moment from 'moment'
 
 import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
 import WfSkywardRegisterTokens from '@/components/dao/workflows/wf_skyward/RegisterTokens.vue'
@@ -176,7 +177,7 @@ export default {
     const showFinish = ref(canFinish(workflow.value, template.value))
 
 
-    return { t, d, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService };
+    return { t, d, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService, moment };
   },
   computed: {
     activityLast() {

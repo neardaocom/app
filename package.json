@@ -19,6 +19,7 @@
     "@vee-validate/rules": "^4.5.7",
     "axios": "^0.24.0",
     "bn.js": "^5.2.0",
+    "bootstrap-icons": "^1.8.1",
     "core-js": "^3.17.2",
     "crypto-js": "^4.1.1",
     "decimal.js": "^10.3.1",

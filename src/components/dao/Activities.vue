@@ -1,31 +1,33 @@
 <template>
   <div class="container mb-2">
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-6 col-md-4 col-lg-3">
-            <MDBInput
-              inputGroup
-              :formOutline="false"
-              class="rounded"
-              v-model="searchQuery"
-              aria-describedby="search-addon"
-              :aria-label="t('default.search')"
-              :placeholder="t('default.search')"
-            >
-              <template #prepend>
-                <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-              </template>
-            </MDBInput>
-          </div>
-          <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
-          </div>
-          <div class="col-6 col-md-4 col-lg-2 text-end">
-            <MDBSelect v-model:options="order.options" v-model:selected="order.selected" />
-          </div>
-        </div>
+    <div v-if="workflowsNum > 0" class="row my-4 mx-4">
+      <div class="col-6 col-md-4 col-lg-3">
+        <MDBInput
+          inputGroup
+          formOutline
+          wrapperClass="my_filter_form"
+          v-model="searchQuery"
+          size="sm"
+          aria-describedby="search-addon"
+          :aria-label="t('default.search')"
+        >
+          <template #prepend>
+            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
+          </template>
+        </MDBInput>
+      </div>
+      <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 text-end">
+        <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
       </div>
     </div>
+
+    <section v-if="workflowsNum == 0">
+      <hr>
+      <h6 class="mb-0 text-start">{{ t("default.no_active_activities") }}</h6>
+    </section>
+
     <div class="row">
       <div v-for="(workflow, index) in results" :key="index" class="col-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
@@ -70,7 +72,7 @@ export default {
     },
   },
   setup() {
-    //const { dao, accountId } = toRefs(props)
+    //const { dao } = toRefs(props)
     const { t } = useI18n();
 
     const searchQuery = ref('')
@@ -109,6 +111,9 @@ export default {
       }
       return results
     },
+    workflowsNum(){
+      return this.dao.workflows.filter((item) => item.state !== 'Waiting').length
+    }
   },
   methods: {
     template(templates, templateId) {

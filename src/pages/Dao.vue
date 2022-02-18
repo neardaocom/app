@@ -1,6 +1,5 @@
 <template>
   <Header></Header>
-
   <main>
     <!-- dashboard -->
     <!-- <section class="bg-white shadow-2 mb-3">-->
@@ -10,8 +9,10 @@
         <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'" :tags="dao.tags"/>
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
+
         <Title v-if="loaded === true" :dao="dao"/>
         <SkeletonTitle v-else />
+
 
         <!-- /Dashboard -->
         <!-- Buttons -->
@@ -60,8 +61,6 @@ import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
 import Activities from '@/components/dao/Activities.vue'
 import Settings from '@/components/dao/Settings.vue'
-// import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
-// MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import _ from 'lodash'
@@ -70,9 +69,10 @@ import { getDAORights, getWalletRights } from '@/models/rights'
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Title, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
-    SkeletonTitle, SkeletonButtons, SkeletonBody,
-    // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
+    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
+    SkeletonButtons, SkeletonBody,
+    Title,
+    SkeletonTitle,
   },
   setup() {
     const { t } = useI18n()
@@ -149,3 +149,19 @@ export default {
   }
 }
 </script>
+
+<style>
+  .title_background_image{
+    /*background-image:;*/ 
+    height: 263px;
+    border-radius: 8px 8px 0px 0px;
+  }
+  .buttons_nav{
+    background-color: white;
+     border-radius: 0px 0px 8px 8px;
+  }
+
+  .buttons_dropdown{
+    border-radius: 0px 0px 8px 0px;
+  }
+</style>

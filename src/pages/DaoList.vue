@@ -2,47 +2,40 @@
   <Header></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb :list-name="'organizations'" />
+      <Breadcrumb :list-name="'organizations'"/>
     </MDBContainer>
+
     <MDBContainer>
-      <div class="row">
-        <div class="col-12 text-center">
-          <h2>{{ t('default.organizations')}}</h2>
-          <p>{{ headerText }}</p>
-        </div>
+    <h1 class="text-start" style="font-size: 3rem">{{ t('default.organizations')}}</h1>
+    <div class="row mt-5">
+      <div class="col-6 col-md-4 col-lg-3">
+        <MDBInput
+          inputGroup
+          formOutline
+          wrapperClass="mb-3 my_filter_form"
+          v-model="searchQuery"
+          size="sm"
+          aria-describedby="search-addon"
+          :aria-label="t('default.search')"
+        >
+          <template #prepend>
+            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
+          </template>
+        </MDBInput>
       </div>
-      <div class="row mt-2 mb-4">
+      <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
+        <small> <MDBCheckbox  :label="filterTag.agency.name" inline v-model="filterTag.agency.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox :label="filterTag.club.name" inline v-model="filterTag.club.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox :label="filterTag.project.name" inline v-model="filterTag.project.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active" class="rounded-3"/> </small>
+      </div>
+    </div>
+
+      <div class="row mb-4">
         <MDBCard>
           <MDBCardBody>
             <MDBCardText>
-              <div class="row mt-3">
-                <div class="col-6 col-md-4 col-lg-3">
-                  <MDBInput
-                    inputGroup
-                    :formOutline="false"
-                    wrapperClass="mb-3"
-                    class="rounded"
-                    v-model="searchQuery"
-                    aria-describedby="search-addon"
-                    :aria-label="t('default.search')"
-                    :placeholder="t('default.search')"
-                  >
-                    <template #prepend>
-                      <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-                    </template>
-                  </MDBInput>
-                </div>
-                <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
-                  <MDBCheckbox :label="filterTag.agency.name" inline v-model="filterTag.agency.active"/>
-                  <MDBCheckbox :label="filterTag.club.name" inline v-model="filterTag.club.active"/>
-                  <MDBCheckbox :label="filterTag.project.name" inline v-model="filterTag.project.active"/>
-                  <MDBCheckbox :label="filterTag.startup.name" inline v-model="filterTag.startup.active"/>
-                </div>
-              </div>
-              <MDBProgress class="my-1">
-                <MDBProgressBar :value="loadingProgress" />
-              </MDBProgress>
-              <MDBTable responsive striped>
+              <MDBTable responsive borderless striped>
                 <thead>
                   <tr>
                     <!-- <th scope="col"></th>-->
@@ -53,7 +46,17 @@
                     <th scope="col" class="text-end">{{ t('default.dao_funds') }}</th>
                   </tr>
                 </thead>
+                
                 <tbody>
+
+                  <tr>
+                    <td colspan="5" class="p-0">
+                      <MDBProgress class="my-1">
+                        <MDBProgressBar bg="primary" :value="loadingProgress" />
+                      </MDBProgress>
+                    </td>
+                  </tr>
+
                   <tr v-for="(dao, index) in results" :key="index">
                     <!-- <td><a @click="favorite_switch(dao.id)" class="">
                         <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
@@ -62,13 +65,13 @@
                     </td>-->
                     <td>{{ dao.index + 1 }}</td>
                     <td class="text-start">
-                      <router-link class="fw-bold" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
+                      <router-link class="h6 color-dark" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
                       <br>
                       <span class="fw-light">{{dao.description}}</span>
                     </td>
                     <td class="text-start">
                       <span
-                        class="badge bg-info"
+                        class="badge bg-primary"
                         v-for="(tag, index) in dao.tags"
                         :key="index"
                         >{{ tag }}</span
@@ -76,7 +79,7 @@
                     </td>
                     <td class="text-start">
                       <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
-                        {{ dao.id + '.' + this.factoryAccount }} <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />
+                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-primary ms-1"/>
                       </a>
                     </td>
                     <td class="text-end">
@@ -101,10 +104,9 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/data/DAOs'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar
-  , MDBCard, MDBCardBody, MDBCardText, MDBIcon
-  , MDBInput
-  , MDBCheckbox
+  MDBContainer, MDBTable, MDBProgress, MDBProgressBar,
+   MDBCard, MDBCardBody, MDBCardText, MDBIcon, MDBInput,
+   MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'

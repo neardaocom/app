@@ -1,23 +1,24 @@
 <template>
     <div class="card text-start w-auto p-2" style="width: 18rem">
         <div class="card-body">
-        <ul class="list-unstyled text-muted mb-1">
+        <h5><i class="bi bi-people color-primary"/> {{dao.name}}</h5>
+        <ul class="list-unstyled mb-1">
             <li>
-                <MDBIcon class="me-3 mb-3" icon="wallet" iconStyle="fas" />
+                <i class="bi bi-wallet2 me-2"/> 
                 <a
-                    class="text-reset"
+                    class="text-reset "
                     :href="walletUrl + '/accounts/' + dao.wallet"
                     target="_blank"
                 >
-                    {{ dao.wallet }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                    {{ dao.wallet }} <i class="bi bi-box-arrow-up-right ms-1"/>
                 </a>
             </li>
             <li>
-                <MDBIcon class="me-3 mb-3" icon="users" iconStyle="fas" />
+                <i class="bi bi-people me-2"/>
                 <span class="text-reset font-weight-bold">{{ n(users) }}</span> {{ t('default.members') }}
             </li>
             <li v-if="false">
-                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
+                <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"/>
                 <span class="text-reset font-weight-bold">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.name }}
             </li>
         </ul>
