@@ -8,17 +8,10 @@
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
             <li class="breadcrumb-item">
-              <router-link :to="{ name: listRouter, query: {} }">
-                {{ t("default." + listName) }}
-              </router-link>
-            </li>
-            <li class="breadcrumb-item active"
-              v-for="(tag, index) in tags"
-              :key="index"
-              >{{ t('default.' + tag.value) }}
+              <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-              {{ account }}
+              {{ daoId }}
             </li>
           </ol>
         </nav>
@@ -32,20 +25,8 @@ import { useI18n } from "vue-i18n";
 
 export default {
   props: {
-    account: {
+    daoId: {
       type: String,
-      required: true,
-    },
-    listRouter: {
-      type: String,
-      required: true,
-    },
-    listName: {
-      type: String,
-      required: true,
-    },
-    tags: {
-      type: Array,
       required: true,
     },
   },

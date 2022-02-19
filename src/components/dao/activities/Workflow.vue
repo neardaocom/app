@@ -28,10 +28,10 @@
           </div>
           <div class="row" v-for="(log, index) in activityLogs" :key="index">
             <div class="col-1 text-center">
-              <span class="text-white rounded-circle px-1 gradient-background lh-sm"> {{ index + 1 }} </span>
+              <MDBBadge color="info" pill class="p-2 me-3c bg-primary"><i class="bi bi-box"></i></MDBBadge>
             </div>
             <div class="col-10 mb-3">
-                <div class="text-muted">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
+                <div class="text-muted">#{{ index + 1 }} {{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
                 <div class="fs-5 fw-bold mt-n1">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
                 <div class="mt-n1">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
@@ -109,7 +109,7 @@ import loLast from "lodash/last";
 import loGet from "lodash/get";
 import { canFinish, getSettings, runActivity, getNextActivities, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
-import { useNearService } from '@/hooks/vuex';
+import { useNear } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
 import { check } from "@/models/rights";
 import moment from 'moment'
@@ -166,7 +166,7 @@ export default {
         form: {},
     }
 
-    const { nearService } = useNearService()
+    const { nearService } = useNear()
 
     // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
     const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))

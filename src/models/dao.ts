@@ -370,7 +370,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
 
         template[1][0].activities.forEach((actionChain, index) => {
             if (actionChain !== null) {
-                console.log('action from chain', actionChain)
+                // console.log('action from chain', actionChain)
                 // set activity
                 activity = loFind(activities, {code: actionChain.code})
                 if (activity === undefined) {
@@ -546,7 +546,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
             constants: proposalConstants,
             actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
             actionLogs: actionLogs,
-            search: '',
+            search: proposalTemplate?.search ?? '',
         })
     }
     // console.log(proposals, workflows)

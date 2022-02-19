@@ -93,8 +93,8 @@ class NearService {
     return this.walletConnection.isSignedIn();
   }
 
-  signIn() {
-    return this.walletConnection.requestSignIn(this.config.contractName, this.config.name);
+  signIn(successUrl?: string, errorUrl?: string) {
+    return this.walletConnection.requestSignIn(this.config.contractName, this.config.name, successUrl, errorUrl);
   }
 
   /**

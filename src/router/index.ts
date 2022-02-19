@@ -26,13 +26,13 @@ const routes = [
       if (store.getters['near/isSignedIn']) {
         next()
       } else {
-        store.commit('near/signIn')
+        store.commit('near/signIn', {successUrl: window.location.origin + to.fullPath, errorUrl: window.location.origin + '/error'})
         next(false)
       }
     }
   },
   {
-    path: '/market',
+    path: '/market/:id?',
     name: 'market',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/Market.vue')
   },

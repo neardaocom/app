@@ -1,13 +1,26 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { DAO, DAORights } from "@/types/dao";
+import loGet from "lodash/get";
 import { Translate } from "@/types/generics";
 import { getGroupCouncil } from '@/models/dao'
 import { getDAORights, toTranslate, getWalletRights } from '@/models/rights'
 import Decimal from "decimal.js";
 import { getFile } from "@/models/document"
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
+export const useRouter = () => {
+    const route = useRoute()
+    const rDaoId = computed(() => loGet(route, ['params', 'id']))
+    const rPage = computed(() => loGet(route, ['query', 'page']))
+    const rSearch = computed(() => loGet(route, ['query', 'search']))
+    const rOrder = computed(() => loGet(route, ['query', 'order']))
+
+    return {
+        rDaoId, rPage, rSearch, rOrder
+    }
+}
 
 export const useLinks = (dao: DAO) => {
     const web = getFile(dao.docs, 'Web', 'Fundamental', 'url')
@@ -44,15 +57,6 @@ export const useStats = (dao: DAO) => {
 
     return {
         users
-    }
-}
-
-export const useVuex = () => {
-    const store = useStore()
-    const walletUrl = computed(() => store.getters['near/getWalletUrl'])
-
-    return {
-        walletUrl
     }
 }
 

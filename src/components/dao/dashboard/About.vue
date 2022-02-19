@@ -117,8 +117,8 @@
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem } from 'mdb-vue-ui-kit'
-import { useLinks, useStats, useVuex } from "@/hooks/dao";
-import { useIPFSService } from "@/hooks/vuex";
+import { useLinks, useStats } from "@/hooks/dao";
+import { useIPFS, useNear } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 
 export default {
@@ -135,7 +135,7 @@ export default {
     setup(props) {
         const { t, n } = useI18n()
 
-        const ipfsService = useIPFSService()
+        const { ipfsService } = useIPFS()
 
         const {
             web, whitepaper, wiki, sourceCode,
@@ -167,7 +167,7 @@ export default {
             users
         } = useStats(props.dao)
 
-        const { walletUrl } = useVuex()
+        const { walletUrl } = useNear()
 
         const kycDropdown = ref(false)
         const socialDropdown = ref(false)

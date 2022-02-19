@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n';
 //import { useStore } from 'vuex'
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useIPFSService } from "@/hooks/vuex";
+import { useIPFS } from "@/hooks/vuex";
 import { storeText } from '@/models/ipfs';
 
 export default {
@@ -34,7 +34,7 @@ export default {
     },
     setup () {
         const {t} = useI18n()
-        const ipfsService = useIPFSService()
+        const { ipfsService } = useIPFS()
         //const store = useStore()   
 
         //const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))

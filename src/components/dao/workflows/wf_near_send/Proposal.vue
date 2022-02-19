@@ -29,7 +29,7 @@ import { useStore } from 'vuex'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
-import { useNearService } from "@/hooks/vuex";
+import { useNear } from "@/hooks/vuex";
 import { nearToYocto } from "@/utils/near";
 import moment from 'moment'
 
@@ -67,7 +67,7 @@ export default {
 
         const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
         const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
-        const { nearService } = useNearService()
+        const { nearService } = useNear()
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const formAsset = ref('near')

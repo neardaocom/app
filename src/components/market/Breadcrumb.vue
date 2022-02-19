@@ -7,6 +7,12 @@
             <li class="breadcrumb-item">
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
+            <li class="breadcrumb-item">
+              <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
+            </li>
+            <li v-if="daoId" class="breadcrumb-item">
+              <router-link :to="{ name: 'dao', params: {id: daoId }}">{{ daoId }}</router-link>
+            </li>
             <li class="breadcrumb-item active">
               {{ t("default.market") }}
             </li>
@@ -24,6 +30,12 @@ export default {
   setup() {
     const { t } = useI18n();
     return { t };
+  },
+  props: {
+    daoId: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     appName() {

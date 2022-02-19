@@ -13,12 +13,12 @@
           
           <MDBNavbarItem class="mx-2" :to="{name: 'dao-list', query: {}}" :title="t('default.organizations')"><i class="bi bi-people"/> <span class="d-lg-nonee">{{ t('default.organizations') }}</span></MDBNavbarItem>
           
-          <MDBNavbarItem class="mx-2" :to="{name: 'market', query: {}}" :title="t('default.market')"><i class="bi bi-bag"/> <span class="d-lg-nonee">{{ t('default.market') }}</span></MDBNavbarItem>
+          <MDBNavbarItem class="mx-2" :to="{name: 'market', params: {id: daoId}, query: {}}" :title="t('default.market')"><i class="bi bi-bag"/> <span class="d-lg-nonee">{{ t('default.market') }}</span></MDBNavbarItem>
           
           <MDBNavbarItem  v-if="isAccountSigned" class="mx-2">
             <!-- Navbar dropdown -->
             <MDBDropdown class="nav-item" align="end" v-model="dropdown">
-              <MDBDropdownToggle tag="a" class="nav-link" @click="dropdown = !dropdown"> <i class="bi bi-wallet2"/> <span class="d-lg-nonee"> {{ accountId }} </span> </MDBDropdownToggle>
+              <MDBDropdownToggle tag="a" class="nav-link" @click="dropdown = !dropdown"> <i class="bi bi-wallet2"/> <span class="d-lg-nonee"> {{ walletId }} </span> </MDBDropdownToggle>
               <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
                 <MDBDropdownItem :href="walletUrl">{{t('default.wallet')}}</MDBDropdownItem>
                 <MDBDropdownItem tag="button" @click="logout()">{{t('default.log_out') }}</MDBDropdownItem>
@@ -64,6 +64,12 @@
       MDBDropdownMenu,
       MDBDropdownItem
     },
+    props: {
+      daoId: {
+        type: String,
+        required: false,
+      }
+    },
     setup() {
       const collapse = ref(false);
       const dropdown = ref(false);
@@ -75,7 +81,7 @@
       }
     },
     computed: {
-      accountId() {
+      walletId() {
         return this.$store.getters['near/getAccountId']
       },
       appName() {
@@ -96,7 +102,7 @@
             this.$store.commit('near/signIn')
         },
         logout() {
-          this.$logger.info('B', 'User', 'Logout', `Wallet ${this.accountId} is logged out`)
+          this.$logger.info('B', 'User', 'Logout', `Wallet ${this.walletId} is logged out`)
           this.$store.commit('near/signOut')
           if (this.$route.name === "dao-create"){
             this.$router.push({name: 'landing-page'})

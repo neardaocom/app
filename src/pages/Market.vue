@@ -1,8 +1,8 @@
 <template>
-  <Header></Header>
+  <Header :daoId="rDaoId"></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb />
+      <Breadcrumb :daoId="rDaoId" />
     </MDBContainer>
 
     <MDBContainer>
@@ -98,6 +98,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useTemplateList, useCreators } from "@/hooks/workflow";
 import { onMounted, watch } from 'vue'
+import { useRouter } from "@/hooks/dao";
 
 export default {
   components: {
@@ -112,6 +113,8 @@ export default {
     const { t, n } = useI18n()
     const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
     const { creator, provider } = useCreators()
+    
+    const { rDaoId } = useRouter()
 
     onMounted(() => {
       fetch()
@@ -121,6 +124,7 @@ export default {
 
     return {
       t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
+      rDaoId,
     }
   },
 }

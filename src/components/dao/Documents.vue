@@ -91,7 +91,7 @@ import ModalDocument from '@/components/dao/ModalDocument'
 import { transform } from "@/models/document"
 import { toSearch } from '@/utils/string'
 import _ from 'lodash'
-import { useIPFSService } from "@/hooks/vuex";
+import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 
 export default {
@@ -118,7 +118,7 @@ export default {
     const openOldVersion = ref(0)
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
-    const ipfsService = useIPFSService()
+    const { ipfsService } = useIPFS()
 
     const searchQuery = ref('')
     const filterType = reactive({

@@ -58,8 +58,8 @@ const mutations = {
   setContract(state: any, contractId: string) {
     state.service.contractPool.get(contractId)
   },
-  signIn(state: any) {
-    state.service.signIn()
+  signIn(state: any, payload: any) {
+    state.service.signIn(payload.successUrl, payload.errorUrl)
   },
   signOut(state: any) {
     state.service.signOut()

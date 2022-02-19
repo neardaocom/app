@@ -85,6 +85,7 @@ export type WFTransition = {
 export type WFTemplate = {
     id: number;
     code: string;
+    name?: string;
     version: string;
     actions: WFAction[];
     activities: WFActivity[];

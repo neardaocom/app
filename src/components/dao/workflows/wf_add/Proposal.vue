@@ -43,7 +43,7 @@ import { DAORightsType } from '@/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
-import { useNearService } from '@/hooks/vuex';
+import { useNear } from '@/hooks/vuex';
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
@@ -77,7 +77,7 @@ export default {
     setup (props) {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
-        const { nearService } = useNearService()
+        const { nearService } = useNear()
         const workflowsToAdd = ref([])
 
         const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0])

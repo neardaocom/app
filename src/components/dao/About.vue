@@ -79,7 +79,7 @@ import ChartCouncilUnlocking from '@/components/dao/about/ChartCouncilUnlocking.
 import { ref } from "vue"
 //import _ from "lodash"
 import { useLinks, useGroups } from "@/hooks/dao";
-import { useIPFSService } from "@/hooks/vuex";
+import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 
 export default {
@@ -103,7 +103,7 @@ export default {
   setup(props) {
     const { t, n } = useI18n();
 
-    const ipfsService = useIPFSService()
+    const { ipfsService }= useIPFS()
 
     const {
         web

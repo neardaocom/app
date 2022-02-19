@@ -42,6 +42,7 @@ export const useTemplateList = () => {
         }
 
         // order
+        console.log(filterOrder.value)
         switch (filterOrder.value) {
             case 'name_desc':
                 dataResults.value = loOrderBy(dataResults.value, ['name'], ['desc'])
@@ -66,6 +67,7 @@ export const useTemplateList = () => {
                     id: template.id,
                     version: loToString(template.version),
                     code: template.name,
+                    name: t('default.wf_templ_' + template.name),
                     //constants: [],
                     //attributes: [],
                     activities: [],

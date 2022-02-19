@@ -1,12 +1,12 @@
 <template>
-  <Header></Header>
+  <Header :daoId="rDaoId"></Header>
   <main>
     <!-- dashboard -->
     <!-- <section class="bg-white shadow-2 mb-3">-->
     <section class="mb-3">
       <div class="container">
         <!-- Breadcrumb -->
-        <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'" :tags="dao.tags"/>
+        <Breadcrumb :daoId="rDaoId" />
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
 
@@ -25,15 +25,15 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && this.q_page === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Voting v-if="loaded === true && this.q_page === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Activities v-if="loaded === true && this.q_page === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Treasury v-if="loaded === true && this.q_page === 'treasury'" :dao="dao" />
-        <DeFi v-if="loaded === true && this.q_page === 'defi'" :dao="dao" />
-        <Tokens v-if="loaded === true && this.q_page === 'tokens'" :dao="dao" />
-        <Documents v-if="loaded === true && this.q_page === 'documents'" :docs="dao.docs" />
-        <About v-if="loaded === true && this.q_page === 'about'" :dao="dao" />
-        <Settings v-if="loaded === true && this.q_page === 'settings'" :dao="dao" />
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && rPage === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Treasury v-if="loaded === true && rPage === 'treasury'" :dao="dao" />
+        <DeFi v-if="loaded === true && rPage === 'defi'" :dao="dao" />
+        <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
+        <Documents v-if="loaded === true && rPage === 'documents'" :docs="dao.docs" />
+        <About v-if="loaded === true && rPage === 'about'" :dao="dao" />
+        <Settings v-if="loaded === true && rPage === 'settings'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -62,10 +62,12 @@ import Documents from '@/components/dao/Documents.vue'
 import Activities from '@/components/dao/Activities.vue'
 import Settings from '@/components/dao/Settings.vue'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
-import _ from 'lodash'
+import { ref, onMounted } from 'vue'
 import { getRole, loadById } from "@/models/dao";
 import { getDAORights, getWalletRights } from '@/models/rights'
+import { useRouter } from "@/hooks/dao";
+import { useStore } from 'vuex'
+import { useNear } from "@/hooks/vuex";
 
 export default {
   components: {
@@ -76,76 +78,52 @@ export default {
   },
   setup() {
     const { t } = useI18n()
-    const q_id = null
-    const dao = ref(null)
+    const store = useStore()
+    const { nearService, wallet } = useNear()
+    const {rDaoId, rPage, rSearch, rOrder} = useRouter()
+    const dao = ref({tags: []})
     const loaded = ref(false)
     const daoRights = ref([])
     const walletRights = ref([])
 
-    return { t, dao, q_id, loaded, daoRights, walletRights }
-  },
-  created() {
-    // dao id
-    if (this.$route.params && this.$route.params.id) {
-      this.q_id = this.$route.params.id
-      console.log(this.q_id);
-    } else {
-      this.q_id = process.env.VUE_APP_DAO_DEFAULT
-    }
-    this.$store.commit('near/setContract', this.q_id)
+    // check daoId
+    if (rDaoId.value === undefined) rDaoId.value = process.env.VUE_APP_DAO_DEFAULT
+    // check page
+    if (rPage.value === undefined) rPage.value = 'overview'
 
-    // dao
-    this.dao = {
-      id: this.q_id,
-      wallet: this.q_id,
-      tags: [],
-    }
+
+    onMounted(() => {
+      store.commit('near/setContract', rDaoId.value)
+      loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
+        .then(r => {
+          // console.log('load DAO', r)
+          //this.dao_state = r
+          dao.value = r
+          loaded.value = true
+          daoRights.value = getDAORights(r)
+          walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
+          // console.log(this.walletRights)
+        })
+        .catch((e) => {
+          //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+          //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+          //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
+          //this.$notify.flush()
+          console.log(e)
+        })
+    })
+
+    return { t, rDaoId, rPage, rSearch, rOrder, dao, loaded, daoRights, wallet, walletRights }
   },
   computed: {
-    wallet() {
-      return this.$store.getters['near/getWallet']
-    },
     accountId() {
       return this.$store.getters["near/getAccountId"];
-    },
-    nearService() {
-      return this.$store.getters['near/getService']
-    },
-    q_page() {
-      return _.toString(this.$route.query.page) || 'overview'
     },
     accountRole() {
       return getRole(this.dao, this.wallet.getAccountId())
     },
   },
-  mounted() {
-    this.$store.commit('near/setContract', this.q_id)
-    this.getState()
-    // console.log(this);
-  },
   methods: {
-    getState() {
-      //console.log('getState')
-      loadById(this.nearService, this.q_id, this.t, this.wallet.getAccountId())
-      // this.nearService.getDaoById(this.q_id) // OLD VERSION
-        .then(r => {
-          // console.log(r)
-          //this.dao_state = r
-          this.dao = r
-          this.loaded = true
-          this.daoRights = getDAORights(r)
-          this.walletRights = getWalletRights(r, this.wallet?.getAccountId())
-          // console.log(this.walletRights)
-        })
-        .catch((e) => {
-          this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)
-          this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.q_id}] failed to load`)
-          this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.q_id}))
-          this.$notify.flush()
-          console.log(e)
-        })
-    },
-
   }
 }
 </script>

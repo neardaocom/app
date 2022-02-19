@@ -9,7 +9,7 @@ import InputNumber from '@/components/forms/InputNumber.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useNearService } from "@/hooks/vuex";
+import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
 import { nearToYocto } from '@/utils/near';
@@ -33,7 +33,7 @@ export default {
 
         const { contractId, template } = toRefs(props)
 
-        const { nearService } = useNearService()
+        const { nearService } = useNear()
 
         const schema = computed(() => {
             return {
