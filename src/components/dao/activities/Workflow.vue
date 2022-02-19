@@ -116,6 +116,7 @@ import moment from 'moment'
 
 import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
 import WfSkywardRegisterTokens from '@/components/dao/workflows/wf_skyward/RegisterTokens.vue'
+import WfTreasurySendFtTreasurySendFt from '@/components/dao/workflows/wf_treasury_send_ft/TreasurySendFt.vue'
 
 export default {
   components: {
@@ -123,7 +124,7 @@ export default {
     // MDBProgress, MDBProgressBar, 
     // WFInstance
     // MDBCollapse, MDBBtn, MDBIcon,
-    WfNearSendNearSend, WfSkywardRegisterTokens,
+    WfNearSendNearSend, WfSkywardRegisterTokens, WfTreasurySendFtTreasurySendFt
   },
   props: {
     workflow: {

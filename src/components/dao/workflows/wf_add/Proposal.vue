@@ -29,6 +29,12 @@
             <Select :labelName="t('default.wf_activities_rights')" id="activities_rights" :options="activitiesRights" />   
         </div>
     </div> 
+
+    <div class="text-start">
+        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+    </div>
+    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+    </MDBWysiwyg>
 </template>
 
 <script>
@@ -43,18 +49,22 @@ import { DAORightsType } from '@/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
-import { useNearService } from '@/hooks/vuex';
+import { useNearService, useIPFSService } from "@/hooks/vuex";
+import { inject } from '@vue/runtime-core';
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
 import loFill from 'lodash/fill'
 import { getRandom } from '@/utils/integer'
 import moment from 'moment'
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 
 
 export default {
     components:{
         Select,
+        MDBWysiwyg
     },
     props:{
         contractId: {
@@ -77,8 +87,14 @@ export default {
     setup (props) {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
-        const { nearService } = useNearService()
+        const { nearService, accountId } = useNearService()
+        const  ipfsService  = useIPFSService()
+
+        //const logger = inject('logger')
+        const notify = inject('notify')
+
         const workflowsToAdd = ref([])
+        const refWysiwyg = ref(null)
 
         const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0])
         const proposeRights = computed(() => { 
@@ -148,6 +164,22 @@ export default {
                 })
             })
 
+            
+            let ipfs_cid = ''
+            if(refWysiwyg.value.getCode()){
+                try {
+                    const name = `${accountId.value}-wf_add-proposal-desc-${moment().valueOf()}`
+                    ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
+                } catch(e){
+                    //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                    //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                    notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                    notify.flush()
+                    console.log(e);
+                    return
+                }
+            }
+
             nearService.value.addWorkflow(
                 contractId.value,
                 template.value.settings[0].id,
@@ -155,6 +187,7 @@ export default {
                 daoRights.value[values.can_vote],
                 canPropose,
                 activitiesRights,
+                ipfs_cid, //desc
                 [{'U16': values.workflow}], //binds
                 storageKey, //storage_key: string, name wokflow, id, provider, date  
                 dao.value.voteLevels[0].approveThreshold, // TODO: Resolve vote level
@@ -179,7 +212,8 @@ export default {
             voteRights,
             workflowsToAdd,
             activitiesRights,
-            onSubmit
+            onSubmit,
+            refWysiwyg
         }
     }
 }

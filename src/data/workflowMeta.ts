@@ -78,11 +78,46 @@ export const templateMetaSendFt: WFMetaTemplate = {
         { code: 'amountLimit', bindId: 0 },
     ],
     inputs: [
-        { code: 'receiverId', bindId: 0 },
-        { code: 'amount', bindId: 1 },
+        { code: 'ftAccountId', bindId: 0},
+        { code: 'receiverId', bindId: 1},
+        { code: 'amount', bindId: 2 },
     ],
-    activities: [],
-    actions: [],
+    activities: [
+        {
+            code: 'treasury_send_ft',
+            form: {
+                component: 'WfTreasurySendFtTreasurySendFt',
+                schema: (data: WFData) => {
+                    return {
+                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + (getValueByCode(data.inputs, 'amount') ?? '1000000.0')
+                    }
+                },
+            },
+        },
+    ],
+    actions: [
+        {
+            id: 0,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "ft_account_id": getValueByCode(data.inputs, 'ftAccountId'),
+                    "receiver_id": getValueByCode(data.inputs, 'receiverId'),
+                    "amount": data.form.amount,
+                }
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+    ],
 }
 
 export const templateMetaGroupAddMember: WFMetaTemplate = {

@@ -86,6 +86,7 @@ import { useI18n } from "vue-i18n";
 import ModalProposal from '@/components/forms/ModalProposal.vue'
 import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
+import SendToken from '@/components/dao/workflows/wf_treasury_send_ft/Proposal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
@@ -109,6 +110,7 @@ export default {
     MDBIcon,
     ModalProposal, 
     Payout, 
+    SendToken,
     AddWorkflow,
     GeneralProposal,
     AddMedia,
@@ -210,7 +212,7 @@ export default {
           break
         case 'wf_treasury_send_ft':
           this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
-          this.activeForm = 'Payout'
+          this.activeForm = 'SendToken'
           break
         case 'wf_add':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}

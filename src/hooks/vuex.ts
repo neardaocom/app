@@ -18,6 +18,9 @@ export const useNearProvider = () => {
 export const useNearService = () => {
     const store = useStore()
     const nearService = computed(() => store.getters['near/getService'])
+    const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+    const accountId = computed(() => ( store.getters['near/getAccountId']))
+    
 
-    return { nearService }
+    return { nearService, factoryAccount, accountId }
 }
