@@ -44,7 +44,7 @@
           <!-- END Activities -->
 
           <!-- NEXT Activity -->
-          <div v-if="workflow.state === 'Running' && check(walletRights, activityNextsRights)" class="row">
+          <div v-if="workflow.state === 'Running'" class="row">
             <div class="col-1 text-center">
               <MDBBadge color="info" pill class="p-2 me-3c background-light-gray"><i class="fas fa-check"></i></MDBBadge>
             </div>
@@ -52,7 +52,7 @@
               <div class="row">
                 <div class="col-12">
                   <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
-                  <MDBBtnGroup v-if="activityNexts.length > 0">
+                  <MDBBtnGroup v-if="activityNexts.length > 0 && check(walletRights, activityNextsRights)">
                     <template v-for="(option, index) in optionsNextActivities" :key="index">
                       <MDBRadio
                         v-if="check(walletRights, option.rights)"

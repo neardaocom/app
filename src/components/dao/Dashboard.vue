@@ -9,6 +9,7 @@
         <Share :dao="dao" :walletId="walletId" />
       </div>
       <SkywardFinance v-if="dao.storage?.skywardFinance" :dao="dao" :scenario="'active'" />
+      <Bounty :dao="dao" />
     </div>
 
     <hr/>
@@ -31,6 +32,7 @@
 import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
 import About from "@/components/dao/dashboard/About.vue";
 import Share from "@/components/dao/dashboard/Share.vue";
+import Bounty from "@/components/dao/dashboard/Bounty.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
@@ -43,7 +45,7 @@ export default {
   components: {
     Proposal,
     About,
-    SkywardFinance, Share,
+    SkywardFinance, Share, Bounty,
     DashboardOverview
   },
   props: {

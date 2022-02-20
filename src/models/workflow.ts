@@ -87,6 +87,10 @@ export const getTemplate = (templates: WFTemplate[], id: number): WFTemplate | u
     return loFind(templates, {'id': id});
 }
 
+export const getTemplateByCode = (templates: WFTemplate[], code: string): WFTemplate | undefined => {
+    return loFind(templates, {'code': code});
+}
+
 export const getSettings = (template: WFTemplate, settingsId: number): WFSettings | undefined => {
     return loFind(template.settings, {'id': settingsId});
 }

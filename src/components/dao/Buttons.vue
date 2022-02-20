@@ -53,7 +53,7 @@
 
           <MDBDropdown v-model="dropdownAction" btnGroup class="buttons_dropdown" >
             <MDBDropdownToggle class="buttons_dropdown gradient-background"  size="lg" @click="dropdownAction = !dropdownAction">
-              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{t('default.activities')}}
+              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
             </MDBDropdownToggle>
             <MDBDropdownMenu>
               <template v-for="templ in dao.templates" :key="templ.id">
