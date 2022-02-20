@@ -91,6 +91,7 @@ export type DAODocsFile = {
   name: string;
   type: DAODocsFileType;
   categoryId: number;
+  category: string,
   version: string;
   valid: boolean;
   value: string | IPFSFile;

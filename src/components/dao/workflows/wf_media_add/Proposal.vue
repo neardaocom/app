@@ -59,8 +59,8 @@ import { toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getIndexInFiles, transform, getCategories, getNamesOptions } from "@/models/document"
-//import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { minorUp, majorUp } from '@/utils/version'
 import {
     MDBSwitch,
@@ -70,6 +70,8 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
+import { useIPFS, useNear } from '@/hooks/vuex';
+import moment from 'moment';
 
 
 export default {
@@ -98,17 +100,21 @@ export default {
     },
     setup (props) {
         const { t } = useI18n()
-        // const { contractId, docs, template } = toRefs(props)
-        const { docs } = toRefs(props)
+        const { contractId, docs, template } = toRefs(props)
+        const { nearService } = useNear()  
+        const { ipfsService }= useIPFS()
 
-
+        console.log(docs.value);
         //const files = transform(docs.value)
-        const files = transform({categories: [], files: [], tags: []})
+        //const files = transform({categories: [], files: [], tags: []})
         //console.log(files);
         // const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
         const nameOptions = ref(getNamesOptions(docs.value, t))
-
         const categoryOptions = ref(getCategories(docs.value, t));
+
+        const refWysiwyg = ref(null)
+        const formHtml = ref('')
+
 
         const filterFormName = value => {
             return nameOptions.value.filter(item => {
@@ -127,6 +133,11 @@ export default {
             `;
         };
 
+        const uploadFiles = ref([])
+        const handleUpload = (files) => {
+            uploadFiles.value = files
+        }
+
         //form validation
         const schema = computed(() => {
             return {
@@ -137,44 +148,77 @@ export default {
                 plain: '',
             }
         });
-
         const { values, handleSubmit, errors } = useForm({ validationSchema: schema});
 
 
-        const uploadFiles = ref([])
-        const handleUpload = (files) => {
-            uploadFiles.value = files
+
+        const getExt = () => {
+            return formDocumentType.value.replace('flush-', '')
+        }
+        const getFullname = () => {
+            return values.fileName + '.' + getExt()
         }
 
-/*
         const getIpfsData = () => {
             let ipfsData = null
-            switch (this.formDocumentType) {
+            switch (formDocumentType.value) {
                 case 'flush-pdf':
                     ipfsData = uploadFiles.value
                     break;
                 case 'flush-url':
-                    ipfsData = makeFileFromString(values.url, this.getFullname())
+                    ipfsData = makeFileFromString(values.url, getFullname())
                     break;
                 case 'flush-html':
-                    ipfsData = makeFileFromString(this.$refs.refWysiwyg.getCode(), this.getFullname())
+                    ipfsData = makeFileFromString(refWysiwyg.value.getCode(), getFullname())
                     break;
                 case 'flush-plain':
-                    ipfsData = makeFileFromString(values.plain, this.getFullname())
+                    ipfsData = makeFileFromString(values.plain, getFullname())
                     break;
                 default:
                     break;
             }
             return ipfsData
         }
-*/
+
+        const getMediaType = (ipfsCidDocument) => {
+            let mediaType = ''
+            switch (formDocumentType.value) {
+                case 'flush-pdf':
+                    mediaType = {
+                        CID: {
+                        ipfs: "web3.storage.com",
+                        cid: ipfsCidDocument,
+                        mimetype: "application/pdf"
+                        }
+                    }
+                    break;
+                case 'flush-url':
+                    mediaType = {"Link": values.url}
+                    break;
+                case 'flush-html':
+                    mediaType = {
+                        CID: {
+                        ipfs: "web3.storage.com",
+                        cid: ipfsCidDocument,
+                        mimetype: "text/html"
+                        }
+                    }
+                    break;
+                case 'flush-plain':
+                    mediaType = {"Text": values.plain }
+                    break;
+                default:
+                    break;
+            }
+            return mediaType
+        }
 
 
         //switch
-        const getIndexOfFile = computed(() => (getIndexInFiles(files, values.fileName, values.formCategory))) 
+        const getIndexOfFile = computed(() => (getIndexInFiles(docs.value, values.fileName, values.formCategory))) 
         const isNewFile = computed(() => (getIndexOfFile.value == -1 )) 
         const formVersionUpgrageMajor = ref(true)
-        const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? files[getIndexOfFile.value].version : undefined)) 
+        const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? docs.value[getIndexOfFile.value].version : undefined)) 
         const getNewVersion = computed(() => {
             let version = '1.0'
             if (isNewFile.value === false) {
@@ -188,7 +232,7 @@ export default {
         })
 
         //document
-        const formDocumentType = ref('flush-plain')
+        const formDocumentType = ref('')
 
         const documentTypeDropdown = computed(() => ({
             plain: t('default.plain_text'),
@@ -205,44 +249,66 @@ export default {
         }))
 
         
-        const formHtml = ref('')
-
         
-        
-        const onSubmit = handleSubmit(values => {
+        const onSubmit = handleSubmit( async values => {
             console.log(values)
-            /*
-            let ipfs_cid = ''
-            try {
-                ipfs_cid = await ipfsService.value.storeFiles(getIpfsData(), name)
-            } catch(e){
-                //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                //notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
-                //notify.flush()
-                console.log(e);
-                return
+
+            const ipfsPromises = []
+            const ipfsSet = [false,false]
+
+            if(values.description){
+                const name = `${contractId.value}-wf_media_add-proposal-desc-${moment().valueOf()}`
+                ipfsPromises.push(ipfsService.value.storeFiles(makeFileFromString(values.description, name), name))
+                ipfsSet[0] = true
             }
             
+            if (formDocumentType.value == 'flush-pdf' || formDocumentType.value == 'flush-html'){
+                ipfsPromises.push(ipfsService.value.storeFiles(getIpfsData(), values.fileName))
+                ipfsSet[1] = true
+            }
+
+            const ipfsCids = await Promise.all(    
+                ipfsPromises
+            ).catch((e) => {
+                // logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                // logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                // notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                // notify.flush()
+                throw new Error("Ipfs not working" + e);
+            });
+
+
+            const ipfscCdDesc = ipfsSet[0] ? ipfsCids[0] : ''
+            const ipfsCidDocument = ipfsSet[1] && ipfsSet[0] ? ipfsCids[1] 
+                                        : ipfsSet[1] ? ipfsCids[0] : '' 
+                                        
+            alert(`${ipfscCdDesc}, ${ipfsCidDocument}`)
+
+            let mediaType = getMediaType(ipfsCidDocument)
+            
+            const content = {
+                Media: {
+                    name:   values.fileName,
+                    category: values.fileCategory,
+                    media_type: mediaType,
+                    tags: [],
+                    version: getNewVersion.value,
+                    valid: true
+                }
+            }
+
             nearService.value.addProposal(
+                content, 
                 contractId.value,
                 template.value.id,
                 template.value.settings[0].id,
-                null,
-                [
-                    { U128: decimal(values.amount).toFixed() },
-                    { String: values.title },
-                    { String: values.tokenId },
-                    { U128: dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() },
-                    { U128: durationToChain({days: values.durationDays, hours: values.durationHours}).toString() },
-                    { String: '' }, // url
-                ],
+                ipfscCdDesc,
+                [],
                 `wf-media-add-${moment().valueOf()}`,
                 1.0
             )
         }, () => {
                 console.log(errors.value)
-                */
         });
         
 
@@ -263,16 +329,9 @@ export default {
             handleUpload,
             formHtml,
             errors,
+            refWysiwyg,
             values,
         }
     },
-    methods: {
-        getExt() {
-            return this.formDocumentType.replace('flush-', '')
-        },
-        getFullname() {
-            return this.values.fileName + '.' + this.getExt()
-        },
-    }
 }
 </script>
