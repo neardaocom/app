@@ -493,6 +493,7 @@ class NearService {
     contractId: string,
     templateId: number,
     templateSettingsId: number,
+    desc: string,
     binds: any,
     storage_key: string,
     amountToTransfer: number
@@ -501,6 +502,7 @@ class NearService {
       {
         template_id: templateId,
         template_settings_id: templateSettingsId,
+        desc: desc,
         propose_settings: {
           binds: binds,
           storage_key: storage_key
@@ -519,6 +521,7 @@ class NearService {
     canVote: DAORights,
     canPropose: DAORights[],
     activityRights: DAORights[][],
+    desc: string,
     binds: any,
     storageKey: string,
     approveThreshold: number,
@@ -551,6 +554,7 @@ class NearService {
       {
         template_id: 1,
         template_settings_id: templateSettingsId,
+        desc: desc,
         propose_settings: {
           binds: binds,
           storage_key: storageKey

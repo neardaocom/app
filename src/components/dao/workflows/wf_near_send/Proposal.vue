@@ -2,21 +2,20 @@
     <InputString :labelName="t('default.account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
     <InputNumber :labelName="t('default.amount')" id="amount" :addon="amountPostfix"/>
 
-    <div class="text-center mt-2">
+    <!-- <div class="text-center mt-2">
         <MDBBtnGroup>
             <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" label="NEAR" name="options" value="near"
             v-model="formAsset" />
             <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" :label="tokenName" name="options" value="token"
             v-model="formAsset" />
         </MDBBtnGroup>
-    </div>
+    </div> -->
 
     <br/>
     <div class="text-start">
         <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
     </div>
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-        <section v-html="description"></section>
     </MDBWysiwyg>
 </template>
 
@@ -25,26 +24,27 @@ import InputNumber from '@/components/forms/InputNumber.vue'
 import InputString from '@/components/forms/InputString.vue'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
-import { useNear } from "@/hooks/vuex";
+import { useNear, useIPFS } from "@/hooks/vuex";
 import { nearToYocto } from "@/utils/near";
 import moment from 'moment'
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { inject } from '@vue/runtime-core';
 
-import {
-  MDBRadio,
-  MDBBtnGroup,
-} from "mdb-vue-ui-kit";
+// import {
+//   MDBRadio,
+//   MDBBtnGroup,
+// } from "mdb-vue-ui-kit";
 
 export default {
     components:{
         InputString,
         InputNumber,
         MDBWysiwyg,
-        MDBRadio,
-        MDBBtnGroup,
+        // MDBRadio,
+        // MDBBtnGroup,
     },
     props:{
         contractId: {
@@ -63,15 +63,18 @@ export default {
     setup (props) {
         const { tokenName, contractId, template } = toRefs(props)
         const {t} = useI18n()
-        const store = useStore()
 
-        const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+        const { nearService, factoryAccount, accountId } = useNearService()
+        const  ipfsService  = useIPFSService()
         const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
         const { nearService } = useNear()
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
+        //const logger = inject('logger')
+        const notify = inject('notify')
 
         const formAsset = ref('near')
-        const description = ref('')
+        const refWysiwyg = ref(null)
+
 
         const amountPostfix = computed(() => {
             let postfix = 'Ⓝ'
@@ -90,37 +93,37 @@ export default {
 
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
-        const onSubmit = handleSubmit(values => {
-            if(formAsset.value === 'near'){
-                values.nearAmount = values.amount
-            }else{
-                values.tokenAmount = values.amount
-            }
+        const onSubmit = handleSubmit(async values => {
+            // if(formAsset.value === 'near'){
+            //     values.nearAmount = values.amount
+            // }else{
+            //     values.tokenAmount = values.amount
+            // }
 
-            console.log(template.value);
-            // alert(JSON.stringify(values, null, 2));
-
-            if(formAsset.value === 'near'){
-                const storageKey = `wf_near_send-${moment().valueOf()}`
-                nearService.value.addProposal(
-                    contractId.value,
-                    2,
-                    0, //template.value.settings[0].id
-                    [{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": nearToYocto(values.nearAmount)}],
-                    storageKey,
-                    1.0
-                )
-            }else{
-                const storageKey = `wf_ft_distribute-${moment().valueOf()}`
-                nearService.value.addProposal(
-                    contractId.value,
-                    4, //template.value.id
-                    0, //template.value.settings[0].id
-                    [],
-                    storageKey,
-                    1.0
-                )
+            let ipfs_cid = ''
+            if(refWysiwyg.value.getCode()){
+                try {
+                    const name = `${accountId.value}-wf_near_send-proposal-desc-${moment().valueOf()}`
+                    ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
+                } catch(e){
+                    //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                    //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                    notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                    notify.flush()
+                    console.log(e);
+                    return
+                }
             }
+            
+            nearService.value.addProposal(
+                contractId.value,
+                template.value.id,
+                template.value.settings[0].id,
+                ipfs_cid,
+                [{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": nearToYocto(values.amount)}],
+                `wf_near_send-${moment().valueOf()}`,
+                1.0
+            )
             
         }, () => {
                 console.log(errors.value)
@@ -131,10 +134,10 @@ export default {
             t,
             formAsset,
             amountPostfix,
-            description,
             accountPostfix,
-            onSubmit
+            onSubmit,
+            refWysiwyg,
         }
-    }
+    },
 }
 </script>

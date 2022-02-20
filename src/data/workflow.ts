@@ -25,7 +25,7 @@ export const templateMetas: Record<string, WFMetaTemplate> = {
   'wf_skyward': templateMetaSkyward,
   'wf_send_near': templateMetaWfNearSend,
   'wf_bounty': templateMetaBounty,
-  'wf_send_ft': templateMetaSendFt,
+  'wf_treasury_send_ft': templateMetaSendFt,
   'wf_near_send': templateMetaWfNearSend,
   'groupAddMember': templateMetaGroupAddMember,
   'groupRemoveMember': templateMetaGroupRemoveMember,

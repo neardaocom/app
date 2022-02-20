@@ -1,7 +1,7 @@
 <template>
-    <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="'Ⓝ'"/>
-    <InputNumber :labelName=" t('default.deposit')" id="deposit" :addon="'Ⓝ'"/>
+    <InputString :labelName="t('default.account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
+    <InputNumber :labelName="t('default.amount')" id="amount" :addon="tokenName"/>
+
     <br/>
     <div class="text-start">
         <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
@@ -12,25 +12,31 @@
 
 <script>
 import InputNumber from '@/components/forms/InputNumber.vue'
+import InputString from '@/components/forms/InputString.vue'
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
+import { useNearService, useIPFSService } from "@/hooks/vuex";
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useNear } from "@/hooks/vuex";
-import decimal from "decimal.js";
+import { getAccountIdPostfix } from "@/services/nearService/utils"
 import moment from 'moment'
-import { nearToYocto } from '@/utils/near';
-import { useNearService, useIPFSService } from "@/hooks/vuex";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
 
 export default {
     components:{
+        InputString,
         InputNumber,
+        MDBWysiwyg,
     },
     props:{
         contractId: {
             type: String,
-            required: false
+            required: true
+        },
+        tokenName: {
+            type: String,
+            required: true
         },
         template: {
             type: Object,
@@ -38,32 +44,35 @@ export default {
         },
     },
     setup (props) {
+        const { contractId, template } = toRefs(props)
         const {t} = useI18n()
 
-        const { contractId, template } = toRefs(props)
+         console.log(contractId.value);
 
-        const { nearService, accountId } = useNear()
+        const { nearService, factoryAccount, accountId } = useNearService()
         const  ipfsService  = useIPFSService()
+        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
 
         //const logger = inject('logger')
         const notify = inject('notify')
 
-        const refWysiwyg = ref(null)
+        const formAsset = ref('near')
+        const refWysiwyg = ref(null)    
 
         const schema = computed(() => {
             return {
-                amount: 'required|strIsNumber|strNumMin:1|strNumMax:1000000000.0',
-                deposit: 'required|strIsNumber|strNumMin:0|strNumMax:1000000000.0',
+                account_id: `required|accountExists:${accountPostfix.value}`,
+                amount: 'required|strIsNumber|strNumMin:0|strNumMax:1000000.0'
             }
         });
+
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async values => {
-
             let ipfs_cid = ''
             if(refWysiwyg.value.getCode()){
                 try {
-                    const name = `${accountId.value}-wf_bounty-proposal-desc-${moment().valueOf()}`
+                    const name = `${accountId.value}-wf_treasury_send_ft-proposal-desc-${moment().valueOf()}`
                     ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
                 } catch(e){
                     //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
@@ -80,20 +89,20 @@ export default {
                 template.value.id,
                 template.value.settings[0].id,
                 ipfs_cid,
-                [
-                    {U128: nearToYocto(decimal(values.amount).toFixed())},
-                    {U128: nearToYocto(decimal(values.deposit).toFixed())},
-                ],
-                `wf_bounty-${moment().valueOf()}`,
+                [{"String":`${contractId.value}`},{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": values.amount}],
+                `wf_treasury_send_ft-${moment().valueOf()}`,
                 1.0
             )
+            
         }, () => {
-            console.log(errors.value)
+                console.log(errors.value)
         });
         
 
         return {
             t,
+            formAsset,
+            accountPostfix,
             onSubmit,
             refWysiwyg
         }

@@ -15,6 +15,8 @@ export const useNear = () => {
     const wallet = computed(() => store.getters['near/getWallet'])
     const walletUrl = computed(() => store.getters['near/getWalletUrl'])
     const provider = computed(() => store.getters['near/getProviderContract'])
+    const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+    const accountId = computed(() => ( store.getters['near/getAccountId']))
 
-    return { nearService, wallet, walletUrl, provider }
+    return { nearService, wallet, walletUrl, provider, factoryAccount, accountId }
 }
