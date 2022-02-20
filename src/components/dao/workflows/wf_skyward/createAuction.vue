@@ -1,5 +1,5 @@
 <template>
-        <!-- title -->
+    <!-- title -->
     <InputString :labelName="t('default.title')" id="title"/>
     <!-- TokenId -->
     <InputString :labelName="t('default.token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
