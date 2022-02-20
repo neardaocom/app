@@ -1,8 +1,8 @@
 <template>
   <div class="card text-start w-auto p-2" style="width: 18rem">
     <div class="card-body">
-      <h5 class="text-center text-muted mb-1"><img class="me-1" :src="publicPath + 'img/market/skywardFinance.jpg'" alt="" style="width: 24px; vertical-align: top"/> Skyward Finance</h5>
-      <h2 class="text-center">
+      <h5 class="mb-1"><img class="me-1" :src="publicPath + 'img/market/skywardFinance.jpg'" alt="" style="width: 24px; vertical-align: top"/> Skyward Finance</h5>
+      <h2 class="ms-2">
         ≈ <NumberFormatter :amount="rate"/> <small class="text-muted">{{ ftMeta.short }}</small>
       </h2>
     </div>

@@ -12,7 +12,7 @@
 
       <div class="d-flex justify-content-center" style="min-width: 280px;">
          <div class="align-self-end" style="padding-bottom: 8px">
-            <span class="fs-6"><NumberFormatter :amount="dao.treasury.token.free"/> {{ dao.treasury.token.meta.short }}</span>
+            <span class="fs-6"><NumberFormatter :amount="dao.treasury.token.free"/></span><span class="ms-1 color-secondary fw-bold">{{ dao.treasury.token.meta.short }}</span>
          </div>
          <div class="text-start"> 
             <h6 class="ms-2">Tokens</h6>

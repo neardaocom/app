@@ -68,7 +68,7 @@ const getWorkflowCode = (state: string, progress: number): string => {
 const workflowCodeBgMapper = {
   in_progress: {
     color: 'primary',
-    icon: 'bi bi-hammer me-2',
+    icon: 'bi bi-bar-chart me-2',
   },
   finishing: {
     color: 'danger',
@@ -170,7 +170,7 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
 
 const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Function, n: Function): Record<string, unknown> => {
   let values: Record<string, unknown> = {}
-  console.log(proposal, templateCode)
+  // console.log(proposal, templateCode)
   switch (templateCode) {
     case 'wf_near_send':
       values = {
@@ -195,7 +195,6 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
         }
         break;
     case 'wf_skyward':
-        console.log(getValueByCode(proposal.inputs, 'startAt')?.substr(0, 13))
         values = {
           amount: n(loToNumber(getValueByCode(proposal.inputs, 'amount') ?? '-amount-')),
           title: getValueByCode(proposal.inputs, 'title') ?? '-SALE-',

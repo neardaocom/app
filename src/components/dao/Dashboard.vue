@@ -8,7 +8,7 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Share :dao="dao" :walletId="walletId" />
       </div>
-      <SkywardFinance v-if="dao.storage?.skywardFinance" :dao="dao" :scenario="'active'" />
+      <SkywardFinance v-if="skywardSaleIds.length > 0" :dao="dao" :scenario="'active'" :salesIds="skywardSaleIds" />
       <Bounty :dao="dao" />
     </div>
 
@@ -36,7 +36,8 @@ import Bounty from "@/components/dao/dashboard/Bounty.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
-import { toRefs } from "vue"
+import Auction from '@/models/auction';
+import { toRefs, ref } from "vue"
 import _ from "lodash"
 import loFind from "lodash/find"
 import DashboardOverview from '@/components/dao/DashboardOverview.vue'
@@ -46,7 +47,7 @@ export default {
     Proposal,
     About,
     SkywardFinance, Share, Bounty,
-    DashboardOverview
+    DashboardOverview,
   },
   props: {
     dao: {
@@ -69,6 +70,8 @@ export default {
   setup(props) {
     const { t, n, d } = useI18n();
     const { dao, walletId, walletRights, daoRights } = toRefs(props)
+
+    const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
     // console.log(dao, walletId, walletRights, daoRights, d)
     // proposals
     const proposals = dao.value.proposals.map((proposal) => {
@@ -77,7 +80,7 @@ export default {
     // const proposals = []
 
     return {
-      t, n, proposals,
+      t, n, proposals, skywardSaleIds
     };
   },
   computed: {

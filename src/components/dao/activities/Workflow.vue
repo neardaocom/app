@@ -31,11 +31,14 @@
               <MDBBadge color="info" pill class="p-2 me-3c bg-primary"><i class="bi bi-box"></i></MDBBadge>
             </div>
             <div class="col-10 mb-3">
-                <div class="text-muted">#{{ index + 1 }} {{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
+                <div class="text-muted">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
                 <div class="fs-5 fw-bold mt-n1">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
                 <div class="mt-n1">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
-                  <span class="mx-2 text-muted">|</span><span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
+                  <template v-if="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args).length > 0">
+                    <span class="mx-2 text-muted">|</span>
+                    <span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
+                  </template>
                 </div>
             </div>
             <div class="col-1">
@@ -155,11 +158,12 @@ export default {
   },
   setup(props) {
     const { t, d, n } = useI18n();
-    const { workflow, template, daoStorage, walletRights } = toRefs(props)
+    const { workflow, template, daoStorage, walletRights, accountId } = toRefs(props)
 
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
     const data = {
+        daoId: accountId.value,
         proposalId: workflow.value.id,
         constants: settings.constants,
         inputs: workflow.value.inputs,
