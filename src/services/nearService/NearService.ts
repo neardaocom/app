@@ -490,6 +490,7 @@ class NearService {
    */
   
   async addProposal(
+    content: any,
     contractId: string,
     templateId: number,
     templateSettingsId: number,
@@ -500,6 +501,7 @@ class NearService {
   ) {
     return this.contractPool.get(contractId).propose(
       {
+        content,
         template_id: templateId,
         template_settings_id: templateSettingsId,
         desc: desc,
