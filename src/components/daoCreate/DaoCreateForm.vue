@@ -366,6 +366,10 @@ export default {
         })
 
         const createDao = (values) => {
+            const accountId = values.dao_account + '.' + factoryAccount.value
+            // set accountId to localStorage because of redirection
+            localStorage.create_dao_account = accountId
+
             const councilMembers = values.council_array.map((councilAccount) =>{ return {account_id: councilAccount, tags : [1]}})
             //create
             nearService.value.createDao(

@@ -1,8 +1,8 @@
-import { defineRule } from 'vee-validate';
+import { defineRule,  configure } from 'vee-validate';
 import { required, numeric, max, min, alpha, url } from '@vee-validate/rules';
+import { localize } from '@vee-validate/i18n';
 import store from '@/store'
 import Decimal from 'decimal.js';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
 import moment from 'moment'
 import loToNumber from "lodash/toNumber";
 
@@ -88,5 +88,30 @@ export default{
         defineRule('url', url)
         defineRule('minDate', minDate)
         defineRule('maxDate', maxDate)
+
+        configure({
+            // Generates an English message locale generator
+            generateMessage: localize('en', {
+              messages: {
+                required: 'This field is required',
+                max: 'This field is too long',
+                min: 'This field is too short',
+                alpha: 'This field may only contain alphabetic characters',
+                strIsNumber: 'This field must be a valid number',
+                strNumMin: 'This field is too low',
+                strNumMax: 'This field is too high',
+                numeric: 'This field may only contain numbers',
+                accountExists: 'Account does not exist',
+                accountNotExists: 'Account already exists',
+                localeNumber: 'This field must be a valid number',
+                url: 'This field must be a valid URL',
+                minDate: 'The date you entered is invalid',
+                maxDate: 'The date you entered is invalid',
+
+              },
+            }),
+          });
     },
+
+
 }
