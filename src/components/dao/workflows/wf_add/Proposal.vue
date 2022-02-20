@@ -59,6 +59,7 @@ import loFill from 'lodash/fill'
 import { getRandom } from '@/utils/integer'
 import moment from 'moment'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
+import { rightAnyone } from "@/data/dao";
 
 
 export default {
@@ -88,7 +89,7 @@ export default {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
         const { nearService, accountId } = useNear()
-        const  ipfsService  = useIPFSService()
+        const  ipfsService  = useIPFS()
 
         //const logger = inject('logger')
         const notify = inject('notify')
@@ -132,12 +133,12 @@ export default {
                 activities_rights: 'required',
             }
         });
-        const { handleSubmit, errors, setFieldTouched } = useForm({ validationSchema: schema});
+        const { handleSubmit, errors, setFieldTouched, values } = useForm({ validationSchema: schema});
 
         // fetch template list
         const {fetch, dataResults} = useTemplateList()
         onMounted(() => {
-            fetch()
+            fetch(dao.value.templates.map((item) => item.code))
         })
        watch(() => [dataResults.value], () => {
             const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'code');
@@ -158,6 +159,13 @@ export default {
 
             const numActivities = loadTemplate[0].activities.length - 1
             const activitiesRights = loFill(Array(numActivities), [daoRights.value[values.activities_rights]])
+            // Bounty
+            if (values.workflow === 8) { // TODO: Move to code
+                console.log('Bounty')
+                activitiesRights[0] = [rightAnyone]
+            }
+
+
             const transitionsConstraints = loadTemplate[0].transitions.map((trans) => {
                 return trans.map(() => {
                     return {'transition_limit': 10, 'cond': null}
@@ -213,6 +221,8 @@ export default {
             workflowsToAdd,
             activitiesRights,
             onSubmit,
+            values,
+            errors,
             refWysiwyg
         }
     }

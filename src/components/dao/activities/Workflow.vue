@@ -44,7 +44,7 @@
           <!-- END Activities -->
 
           <!-- NEXT Activity -->
-          <div v-if="workflow.state === 'Running'" class="row">
+          <div v-if="workflow.state === 'Running' && check(walletRights, activityNextsRights)" class="row">
             <div class="col-1 text-center">
               <MDBBadge color="info" pill class="p-2 me-3c background-light-gray"><i class="fas fa-check"></i></MDBBadge>
             </div>
@@ -55,7 +55,7 @@
                   <MDBBtnGroup v-if="activityNexts.length > 0">
                     <template v-for="(option, index) in optionsNextActivities" :key="index">
                       <MDBRadio
-                        v-if="true || check(walletRights, [])"
+                        v-if="check(walletRights, option.rights)"
                         :btnCheck="true" :wrap="false" labelClass="btn btn-light btn-sm"
                         :label="option.text"
                         :name="'nextActivity-' + workflow.id"
@@ -107,11 +107,12 @@ import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
 import loLast from "lodash/last";
 import loGet from "lodash/get";
-import { canFinish, getSettings, runActivity, getNextActivities, transformLogs, metaGetActivityForm } from "@/models/workflow";
+import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNear } from '@/hooks/vuex';
 import { toTimeString } from "@/utils/date";
 import { check } from "@/models/rights";
+import loFlatten from "lodash/flatten"
 import moment from 'moment'
 
 import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
@@ -153,8 +154,8 @@ export default {
     },
   },
   setup(props) {
-    const { t, d } = useI18n();
-    const { workflow, template, daoStorage } = toRefs(props)
+    const { t, d, n } = useI18n();
+    const { workflow, template, daoStorage, walletRights } = toRefs(props)
 
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
@@ -172,9 +173,14 @@ export default {
     // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
     const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))
     const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
+    const activityNextsRights = ref(loFlatten(activityNexts.value.map((activity) => {
+      return getActivityRights(settings, activity)
+    })))
+
+    console.log('Check rights', activityNextsRights.value, walletRights.value, check(activityNextsRights.value, walletRights.value))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
-      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code}
+      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, rights: getActivityRights(settings, activity)}
     }))
 
     const formNextActivityCode = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
@@ -183,14 +189,14 @@ export default {
     const showFinish = ref(canFinish(workflow.value, template.value))
 
 
-    return { t, d, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, showFinish, activityLogs, nearService, moment };
+    return { t, d, n, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, activityNextsRights, showFinish, activityLogs, nearService, moment };
   },
   computed: {
     activityLast() {
       return loLast(this.workflow.activityLogs)
     },
     proposalTitle() {
-      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code, this.t))
+      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code, this.t, this.d, this.n))
     },
     componentName() {
       return metaGetActivityForm(this.template.code, this.formNextActivityCode)?.component

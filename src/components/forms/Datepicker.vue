@@ -1,5 +1,5 @@
 <template>
-    <label v-if="labelName" :for="id" class="form-label float-start">
+    <label v-if="labelName" :for="id" class="form-label">
         {{ labelName }}
         <TooltipLabel v-if="tooltip" :description="tooltip"/>
     </label>

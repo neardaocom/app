@@ -4,6 +4,7 @@ import store from '@/store'
 import Decimal from 'decimal.js';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
 import moment from 'moment'
+import loToNumber from "lodash/toNumber";
 
 const stringLocaleNumber = (value, [localeString]) => {
     if (localeString === 'en') {
@@ -14,7 +15,10 @@ const stringLocaleNumber = (value, [localeString]) => {
 }
 
 const strIsNumber = (value) => {
-    return value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g)
+    if (typeof value !== 'number')
+        return value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g)
+    else
+        return true
 }
 
 const strNumMin = (value, [min]) => {
@@ -22,7 +26,6 @@ const strNumMin = (value, [min]) => {
         return new Decimal(value).gte(min)
     }
     return false
-        
 }
 
 const strNumMax = (value, [max]) => {
@@ -54,7 +57,7 @@ const accountNotExists = async (value: string, [accountPosfix]) => {
 
 const minDate = (value, [min, format]) => {
     const formDate = moment(value, format).toDate()
-    if (formDate.valueOf() < min.valueOf()){
+    if (formDate.valueOf() < loToNumber(min)){
         return false
     }
     return true
@@ -62,7 +65,8 @@ const minDate = (value, [min, format]) => {
 
 const maxDate = (value, [max, format]) => {
     const formDate = moment(value, format).toDate()
-    if (formDate.valueOf() > max.valueOf()){
+    // console.log('validatorMaxDate', formDate.valueOf(), maxDate.valueOf())
+    if (formDate.valueOf() > loToNumber(max)){
         return false
     }
     return true

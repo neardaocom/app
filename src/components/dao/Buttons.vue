@@ -224,17 +224,17 @@ export default {
           this.activeForm = 'GeneralProposal'
           break
         case 'wf_media_add':
-          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.formProps = {contractId: this.dao.wallet, docs: this.dao.docs, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'AddMedia'
           break
         case 'wf_skyward':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.short, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'SkywardProposal'
           break 
         case 'wf_bounty':
-          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'BountyProposal'
-          break  
+          break;
         default:
             this.formProps = {}
             this.activeForm = ''

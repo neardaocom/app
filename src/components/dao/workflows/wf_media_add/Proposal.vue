@@ -1,10 +1,10 @@
 <template>
     <div class="row">
         <div class="col-12 col-lg-6 mb-4">
-            <Autocomplete :labelName="t('default.name')" id="file_name" :options="nameOptions" :filtredBy="filterFormName" :valueDisplayed="nameValueDisplayed" :itemContent="nameItemTemplate"/>
+            <Autocomplete :labelName="t('default.name')" id="fileName" :options="nameOptions" :filtredBy="filterFormName" :valueDisplayed="nameValueDisplayed" :itemContent="nameItemTemplate"/>
         </div>
         <div class="col-12 col-lg-6 mb-4">
-            <Autocomplete :labelName="t('default.category')" id="file_category" :options="categoryOptions"/>
+            <Autocomplete :labelName="t('default.category')" id="fileCategory" :options="categoryOptions"/>
         </div>
     </div>    
     <div class="row">
@@ -25,11 +25,8 @@
     <MDBAlert color="danger" static v-if="formDocumentType == 'flush-html' && errors.formHtml != null">{{ errors.formHtml }}</MDBAlert> -->
 
     <MDBAccordion v-model="formDocumentType" flush fluid class="mx-4">
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
-            <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
-                :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
-                :removeBtn="fileUploadMsg.removeBtn"
-            />
+        <MDBAccordionItem :headerTitle="documentTypeDropdown.plain" collapseId="flush-plain" :class="[formDocumentType === 'flush-plain' ? 'accordition-plain-open' : '']">
+            <InputString :labelName="t('default.text')" id="plain"/>
         </MDBAccordionItem>
 
         <MDBAccordionItem :headerTitle="documentTypeDropdown.link" collapseId="flush-url" :class="[formDocumentType === 'flush-url' ? 'accordition-url-open' : '']">
@@ -37,6 +34,13 @@
             <div class="col-auto">
                 <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
             </div>
+        </MDBAccordionItem>
+
+        <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
+            <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
+                :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
+                :removeBtn="fileUploadMsg.removeBtn"
+            />
         </MDBAccordionItem>
 
         <MDBAccordionItem :headerTitle="documentTypeDropdown.editor" collapseId="flush-html">
@@ -51,10 +55,12 @@
 <script>
 import InputString from '@/components/forms/InputString.vue'
 import Autocomplete from '@/components/forms/Autocomplete.vue'
+import { toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getIndexInFiles, transform } from "@/models/document"
+import { getIndexInFiles, transform, getCategories, getNamesOptions } from "@/models/document"
+//import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { minorUp, majorUp } from '@/utils/version'
 import {
     MDBSwitch,
@@ -84,28 +90,32 @@ export default {
         docs: {
             type: Object,
             required: false
+        },
+        template: {
+            type: Object,
+            required: false
         }
     },
-    setup () {
-        const {t} = useI18n()
-        //const { docs } = toRefs(props)
+    setup (props) {
+        const { t } = useI18n()
+        // const { contractId, docs, template } = toRefs(props)
+        const { docs } = toRefs(props)
+
 
         //const files = transform(docs.value)
         const files = transform({categories: [], files: [], tags: []})
         //console.log(files);
-        //const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
+        // const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
+        const nameOptions = ref(getNamesOptions(docs.value, t))
 
-        const nameOptions = ref([ { title: 'name', category: 'category', version: 1 },
-                { title: 'name2', category: 'category2', version: 2 }
-        ])
-
-        //const categoryOptions = ref(getCategories(docs.value, t));
-        const categoryOptions = ref(['bla', 'houby']);
+        const categoryOptions = ref(getCategories(docs.value, t));
 
         const filterFormName = value => {
             return nameOptions.value.filter(item => {
                 return item.title.toLowerCase().startsWith(value.toLowerCase());
             });
+            
+            // return nameOptions
         };
         const nameValueDisplayed = value => value.title;
         const nameItemTemplate = result => {
@@ -120,18 +130,48 @@ export default {
         //form validation
         const schema = computed(() => {
             return {
-                file_name: 'required|min:3,max:80',
-                file_category: 'required|min:3,max:80',
+                fileName: 'required|min:3,max:80',
+                fileCategory: 'required|min:3,max:80',
                 description: 'min:0, max:160',
-                url: 'required|url'
+                url: 'url',
+                plain: '',
             }
         });
 
         const { values, handleSubmit, errors } = useForm({ validationSchema: schema});
 
 
+        const uploadFiles = ref([])
+        const handleUpload = (files) => {
+            uploadFiles.value = files
+        }
+
+/*
+        const getIpfsData = () => {
+            let ipfsData = null
+            switch (this.formDocumentType) {
+                case 'flush-pdf':
+                    ipfsData = uploadFiles.value
+                    break;
+                case 'flush-url':
+                    ipfsData = makeFileFromString(values.url, this.getFullname())
+                    break;
+                case 'flush-html':
+                    ipfsData = makeFileFromString(this.$refs.refWysiwyg.getCode(), this.getFullname())
+                    break;
+                case 'flush-plain':
+                    ipfsData = makeFileFromString(values.plain, this.getFullname())
+                    break;
+                default:
+                    break;
+            }
+            return ipfsData
+        }
+*/
+
+
         //switch
-        const getIndexOfFile = computed(() => (getIndexInFiles(files, values.file_name, values.formCategory))) 
+        const getIndexOfFile = computed(() => (getIndexInFiles(files, values.fileName, values.formCategory))) 
         const isNewFile = computed(() => (getIndexOfFile.value == -1 )) 
         const formVersionUpgrageMajor = ref(true)
         const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? files[getIndexOfFile.value].version : undefined)) 
@@ -148,10 +188,12 @@ export default {
         })
 
         //document
-        const formDocumentType = ref('flush-pdf')
+        const formDocumentType = ref('flush-plain')
+
         const documentTypeDropdown = computed(() => ({
-            pdf: t('default.pdf'),
+            plain: t('default.plain_text'),
             link: t('default.link'),
+            pdf: t('default.pdf'),
             editor: t('default.document'),
         }))
         const fileUploadMsg = computed(() => ({
@@ -161,20 +203,46 @@ export default {
             previewMsg: t('default.file_upload_preview_msg'),
             removeBtn: t('default.file_upload_remove_btn')
         }))
-        const uploadFiles = ref([])
-        const handleUpload = (files) => {
-            uploadFiles.value = files
-        }
+
+        
         const formHtml = ref('')
 
-
-
+        
+        
         const onSubmit = handleSubmit(values => {
-            values.groupId = 1 //council
-            values.roles = []
-            alert(JSON.stringify(values, null, 2));
+            console.log(values)
+            /*
+            let ipfs_cid = ''
+            try {
+                ipfs_cid = await ipfsService.value.storeFiles(getIpfsData(), name)
+            } catch(e){
+                //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
+                //notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                //notify.flush()
+                console.log(e);
+                return
+            }
+            
+            nearService.value.addProposal(
+                contractId.value,
+                template.value.id,
+                template.value.settings[0].id,
+                null,
+                [
+                    { U128: decimal(values.amount).toFixed() },
+                    { String: values.title },
+                    { String: values.tokenId },
+                    { U128: dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() },
+                    { U128: durationToChain({days: values.durationDays, hours: values.durationHours}).toString() },
+                    { String: '' }, // url
+                ],
+                `wf-media-add-${moment().valueOf()}`,
+                1.0
+            )
         }, () => {
                 console.log(errors.value)
+                */
         });
         
 
@@ -193,8 +261,18 @@ export default {
             documentTypeDropdown,
             fileUploadMsg,
             handleUpload,
-            formHtml
+            formHtml,
+            errors,
+            values,
         }
+    },
+    methods: {
+        getExt() {
+            return this.formDocumentType.replace('flush-', '')
+        },
+        getFullname() {
+            return this.values.fileName + '.' + this.getExt()
+        },
     }
 }
 </script>

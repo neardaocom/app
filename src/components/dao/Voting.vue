@@ -103,10 +103,10 @@ export default {
   },
   setup(props) {
     const { dao, walletId, walletRights, daoRights } = toRefs(props)
-    const { t, d } = useI18n();
+    const { t, d, n } = useI18n();
 
     const proposals = dao.value.proposals.map((proposal) => {
-      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d)
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
     })
 
     const searchQuery = ref('')

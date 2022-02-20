@@ -64,10 +64,9 @@ export default {
         const { tokenName, contractId, template } = toRefs(props)
         const {t} = useI18n()
 
-        const { nearService, factoryAccount, accountId } = useNearService()
-        const  ipfsService  = useIPFSService()
+        const { nearService, factoryAccount, accountId } = useNear()
+        const { ipfsService } = useIPFS()
         const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
-        const { nearService } = useNear()
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
         //const logger = inject('logger')
         const notify = inject('notify')

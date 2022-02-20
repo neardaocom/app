@@ -70,7 +70,7 @@ export default {
     // console.log(dao, walletId, walletRights, daoRights, d)
     // proposals
     const proposals = dao.value.proposals.map((proposal) => {
-      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d)
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
     })
     // const proposals = []
 

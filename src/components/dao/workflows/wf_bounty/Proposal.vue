@@ -1,31 +1,36 @@
 <template>
+    <!-- Title -->
+    <InputString :labelName=" t('default.title')" id="title"/>
     <!-- Amount -->
     <InputNumber :labelName=" t('default.amount')" id="amount" :addon="'Ⓝ'"/>
+    <!-- Deposit -->
     <InputNumber :labelName=" t('default.deposit')" id="deposit" :addon="'Ⓝ'"/>
     <br/>
-    <div class="text-start">
+    <div v-if="false" class="text-start">
         <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
     </div>
-    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+    <MDBWysiwyg v-if="false" :fixedOffsetTop="58" ref="refWysiwyg">
     </MDBWysiwyg>
 </template>
 
 <script>
+import InputString from '@/components/forms/InputString.vue'
 import InputNumber from '@/components/forms/InputNumber.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
-import moment from 'moment'
 import { nearToYocto } from '@/utils/near';
-import { useNearService, useIPFSService } from "@/hooks/vuex";
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
-import { inject } from '@vue/runtime-core';
+import { useNear } from "@/hooks/vuex";
+// import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+//import { inject } from '@vue/runtime-core';
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
+import { generateStorageKey } from "@/models/proposal";
 
 export default {
     components:{
-        InputNumber,
+        InputString, InputNumber,
+        MDBWysiwyg,
     },
     props:{
         contractId: {
@@ -36,17 +41,22 @@ export default {
             type: Object,
             required: true
         },
+        proposalCount: {
+            type: Number,
+            required: false
+        },
     },
     setup (props) {
         const {t} = useI18n()
 
-        const { contractId, template } = toRefs(props)
+        const { contractId, template, proposalCount } = toRefs(props)
 
-        const { nearService, accountId } = useNear()
-        const  ipfsService  = useIPFSService()
+        const { nearService } = useNear()
+        // const { nearService, accountId } = useNear()
+        //const  ipfsService  = useIPFS()
 
         //const logger = inject('logger')
-        const notify = inject('notify')
+        //const notify = inject('notify')
 
         const refWysiwyg = ref(null)
 
@@ -59,8 +69,8 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async values => {
-
             let ipfs_cid = ''
+            /*
             if(refWysiwyg.value.getCode()){
                 try {
                     const name = `${accountId.value}-wf_bounty-proposal-desc-${moment().valueOf()}`
@@ -74,6 +84,7 @@ export default {
                     return
                 }
             }
+            */
 
             nearService.value.addProposal(
                 contractId.value,
@@ -83,8 +94,9 @@ export default {
                 [
                     {U128: nearToYocto(decimal(values.amount).toFixed())},
                     {U128: nearToYocto(decimal(values.deposit).toFixed())},
+                    {String: values.title},
                 ],
-                `wf_bounty-${moment().valueOf()}`,
+                'wf_bounty-' + generateStorageKey(proposalCount.value),
                 1.0
             )
         }, () => {

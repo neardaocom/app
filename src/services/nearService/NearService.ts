@@ -471,7 +471,7 @@ class NearService {
           description: purpose,
           ft_name: ftName,
           ft_amount: ftAmount,
-          tags: []
+          tags: [0]
         },
           args: args_base64
       },

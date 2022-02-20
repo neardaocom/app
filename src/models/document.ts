@@ -9,6 +9,7 @@ import lodashOrderBy from "lodash/orderBy"
 // import lodashGet from "lodash/get"
 import lodashSet from "lodash/set"
 import lodashFirst from "lodash/first"
+import loFind from "lodash/find"
 
 const getFile = (docs: DAODocs, name: string, category?: string, type?: string, version?: string): DAODocsFile | undefined | any => { // TODO: Remove any
     const filter: object = {'name': name, 'valid': true}
@@ -65,6 +66,20 @@ const getCategories = (docs: any, t: any) => {
   const initCategory = getCategoriesInit(t)
   const others = docs.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item.value) == -1).sort()
   return initCategory.concat(others)
+}
+
+const getNamesOptions = (docs: any, t: Function) => {
+  const files = docs.files.map(item => { return { title: item.name, category: item.category, version: item.version }})
+
+  initStructure.forEach((initCategory) => {
+    initCategory.items.forEach((initFile) => {
+      if (loFind(files, {title: t('default.' + initFile.name), category: t('default.' + initCategory.category)}) === undefined) {
+        files.push({title: t('default.' + initFile.name), category: t('default.' + initCategory.category), version: '0.0'})
+      }
+    })
+  })
+
+  return files
 }
 
 const getNames = (docs: any, category: any, t: any) => {
@@ -163,4 +178,4 @@ const transform = (docs: DAODocs) => {
     return files
 }
 
-export {getCategories, getNames, transform, getIndexInFiles, initStructure, getFile}
+export {getCategories, getNamesOptions, getNames, transform, getIndexInFiles, initStructure, getFile}

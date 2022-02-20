@@ -71,10 +71,10 @@
                     </div>
                     <div class="col-10 col-md-6">
                         <label class="form-label">{{ t('default.allocation') }}</label>
-                        <MDBRange :disabled="false" v-model="ftCommunityShare" :min="0" :max="100"/>
+                        <MDBRange :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
                     </div>
                     <div class="col-2 pt-4">
-                        <label class="form-label pt-2">{{ ftCommunityShareComp }}</label>
+                        <label class="form-label pt-2">{{ ftCouncilShareComp }}</label>
                     </div>
                 </div>
 
@@ -170,7 +170,7 @@
 
                             <FormSummary :name="t('default.type')" :value="t('default.' + values.dao_type)"/>
 
-                            <FormSummary :name="t('default.dao_council')" :value="council.join(', ')"/>
+                            <FormSummary :name="t('default.founders')" :value="council.join(', ')"/>
                         </dl> 
                     </div>
                 </div>
@@ -184,7 +184,7 @@
 
                             <FormSummary :name="t('default.amount')" :value="values.dao_ft_amount"/>
 
-                            <FormSummary :name="t('default.dao_council')" :value="(ftCouncilShare ? ftCouncilShare : '0') + '%'"/>
+                            <FormSummary :name="t('default.founders_unlock')" :value="(ftCouncilShare ? ftCouncilShare : '0') + '%'"/>
                             
                             <FormSummary :name="t('default.dao_ft_init_distribution')" :value="(values.dao_ft_init_distribution ? values.dao_ft_init_distribution  : '0') + '%'"/>
                             
@@ -282,9 +282,9 @@ export default {
             return {
                 dao_name: 'required|min:3|max:64',
                 dao_account: `required|accountNotExists:${factoryAccount.value}`,
-                dao_purpose: 'max:160',
+                dao_purpose: 'required|min:3|max:160',
                 dao_type: 'required',
-                dao_council: `required|accountExists:${accountPostfix.value}`,
+                dao_council: `accountExists:${accountPostfix.value}`,
                 council_array: 'required',
                 dao_ft_name: 'required|min:3|max:64|alpha',
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
@@ -293,9 +293,6 @@ export default {
                 dao_unlocking_month:'required|strIsNumber|strNumMin:0|strNumMax:12'
             }
         });
-
-        // TODO: dao_unlocking_year = 3
-        // TODO: dao_unlocking_month = 0
 
         const { errors, handleSubmit, values, setFieldValue, setFieldTouched } = useForm({ validationSchema: schema});
 
@@ -320,7 +317,7 @@ export default {
         ]
 
 
-        watchEffect(() => {ftCouncilShare.value = 100 - ftCommunityShare.value})
+        watchEffect(() => {ftCommunityShare.value = 100 - ftCouncilShare.value})
         watchEffect(() => {disabledUnlocking.value = ftCouncilShare.value === 0 ? true : false})
 
          watch(() => [values.dao_name], () => {
@@ -329,7 +326,7 @@ export default {
         })
 
         watch(() => [values.dao_type], () => {
-            const newType = typeOptions.value.find( type => type.selected === true )
+            const newType = typeOptions.value.find( type => type.selected === true ) ?? {mdbKey: 0}
             if(newType !== undefined){
                 setFieldValue('dao_ft_amount', defaultTypeOptions[newType.mdbKey][0])
                 setFieldTouched('dao_ft_amount', false)
@@ -340,7 +337,6 @@ export default {
                 voteDurationDays.value = defaultTypeOptions[newType.mdbKey][4]
                 voteDurationHours.value = defaultTypeOptions[newType.mdbKey][5]
             }
-
         });
 
         const addCouncil = () =>{
@@ -354,12 +350,20 @@ export default {
         }
 
         const onSubmit = handleSubmit(values => {
+            console.log('onSubmit')
             createDao(values)
         }, () => {
+            console.log('onSubmit - 2')
             if(Object.keys(errors.value).length === 1 && errors.value['dao_council']){
                 createDao(values)
             }
         });
+
+        onMounted(() => {
+            values.dao_type = 'dao'
+            values.dao_unlocking_year = 3
+            values.dao_unlocking_month = 0
+        })
 
         const createDao = (values) => {
             const councilMembers = values.council_array.map((councilAccount) =>{ return {account_id: councilAccount, tags : [1]}})
@@ -398,6 +402,7 @@ export default {
         })
 
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
+        const ftCouncilShareComp = computed(() => new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
         const unlockingTime = computed(() => `${values.dao_unlocking_year ? `${values.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.dao_unlocking_month > 0 ? `${values.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
         return {
@@ -410,6 +415,7 @@ export default {
             ftCommunityShare,
             ftCommunityShareComp,
             ftCouncilShare,
+            ftCouncilShareComp,
             disabledUnlocking,
             voteQuorum,
             voteApproveThreshold,
@@ -420,7 +426,8 @@ export default {
             unlockingTime,
             addCouncil,
             removeCouncil,
-            councilErrorMessage
+            councilErrorMessage,
+            errors,
         }
     }
 }

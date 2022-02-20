@@ -59,7 +59,7 @@ const mutations = {
     state.service.contractPool.get(contractId)
   },
   signIn(state: any, payload: any) {
-    state.service.signIn(payload.successUrl, payload.errorUrl)
+    state.service.signIn(payload?.successUrl, payload?.errorUrl)
   },
   signOut(state: any) {
     state.service.signOut()

@@ -199,7 +199,12 @@ export const templateMetaSkyward: WFMetaTemplate = {
     constants: [
     ],
     inputs: [
-        { code: 'amount', bindId: 0 },
+        { code: 'tokenId', bindId: 0 },
+        { code: 'amount', bindId: 1 },
+        { code: 'title', bindId: 2 },
+        { code: 'url', bindId: 3 },
+        { code: 'startAt', bindId: 4 },
+        { code: 'duration', bindId: 5 },
     ],
     activities: [
         {
@@ -348,6 +353,7 @@ export const templateMetaBounty: WFMetaTemplate = {
     inputs: [
         { code: 'amount', bindId: 0 },
         { code: 'deposit', bindId: 1 },
+        { code: 'title', bindId: 2 },
     ],
     activities: [],
     actions: [

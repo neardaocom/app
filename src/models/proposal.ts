@@ -74,6 +74,14 @@ const workflowCodeBgMapper = {
   invalid: 'warning',
 };
 
+const generateStorageKey = (proposalCount?: number) => {
+    if (proposalCount) {
+      return proposalCount + 1
+    } else {
+      return moment().valueOf()
+    }
+}
+
 
 const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) => {
     //console.log(token_holders, token_blocked)
@@ -142,9 +150,9 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
     return kind_to_choice;
 };
 
-const getArgs = (proposal: DAOProposal, templateCode: string, t: Function): Record<string, unknown> => {
+const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Function, n: Function): Record<string, unknown> => {
   let values: Record<string, unknown> = {}
-  // console.log(proposal, templateCode)
+  console.log(proposal, templateCode)
   switch (templateCode) {
     case 'wf_near_send':
       values = {
@@ -163,8 +171,17 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function): Reco
     }
     case 'wf_bounty':
         values = {
+          title: getValueByCode(proposal.inputs, 'title') ?? '',
           amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
           deposit: yoctoToNear(getValueByCode(proposal.inputs, 'deposit') ?? ''),
+        }
+        break;
+    case 'wf_skyward':
+        values = {
+          amount: n(loToNumber(getValueByCode(proposal.inputs, 'amount') ?? '12345')),
+          title: getValueByCode(proposal.inputs, 'title') ?? '-SALE-',
+          tokenId: getValueByCode(proposal.inputs, 'tokenId') ?? '-wrap.testnet-',
+          startAt: d(moment(new Date()).toDate()), // getValueByCode(proposal.inputs, 'startAt') || 
         }
         break;
     default:
@@ -204,11 +221,12 @@ const transform = (
   walletRights: DAORights[],
   daoRights: DAORights[],
   t: Function,
-  d: Function
+  d: Function,
+  n: Function
 ) => {
   // console.log(template)
     const settings = loFind(template.settings, {id: proposal.settingsId})
-    const args = getArgs(proposal, template.code, t)
+    const args = getArgs(proposal, template.code, t, d, n)
     const stateCode = getStateCode(proposal.state)
     const durationTo = getDurationTo(proposal, settings!)
     // console.log(durationTo)
@@ -249,5 +267,5 @@ const transform = (
 };
 
 export {
-    transform, voteMapper, workflowCodeBgMapper, getProgress, getWorkflowCode, getArgs
+    transform, voteMapper, workflowCodeBgMapper, getProgress, getWorkflowCode, getArgs, generateStorageKey
 }
