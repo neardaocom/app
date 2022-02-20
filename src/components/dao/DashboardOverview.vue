@@ -28,12 +28,12 @@
          <ul class="list-inline list-unstyled mb-0">
                <li class="list-inline-item me-1">
                <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" class="text-reset">
-                  <h2><i class="bi bi-bar-chart color-primary"></i><MDBBadge color="danger" pill notification>{{ dao.proposals.length }}</MDBBadge></h2>
+                  <h2><i class="bi bi-bar-chart color-secondary"></i><MDBBadge color="danger" pill notification>{{ dao.proposals.length }}</MDBBadge></h2>
                </router-link>
                </li>
                <li class="list-inline-item ms-1">
                <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" class="text-reset">
-                  <h2><i class="bi bi-files color-primary"></i><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge></h2>
+                  <h2><i class="bi bi-files color-secondary"></i><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge></h2>
                </router-link>
                </li>
          </ul>

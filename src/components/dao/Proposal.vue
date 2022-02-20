@@ -19,7 +19,7 @@
         </div>
 
         <div class="ms-auto p-2">
-          <MDBBadge :color="workflowCodeMapper[workflowCode]" class="text-uppercase" pill>{{ proposal.state }}</MDBBadge>
+          <MDBBadge :color="workflowCodeMapper[workflowCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[workflowCode].icon"></i>{{ proposal.state }}</MDBBadge>
         </div>
       </div>
 
@@ -31,24 +31,24 @@
         v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
         :height="3"
       >
-        <MDBProgressBar bg="primary" :value="progress" />
+        <MDBProgressBar bg="secondary" :value="progress" />
       </MDBProgress>
       <hr v-else class="my-1">
 
       <!-- about -->
       <ul class="my-2 list-unstyled text-muted list-inline">
         <li class="list-inline-item me-4 h6">
-          <i class="bi bi-calendar4 color-primary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
+          <i class="bi bi-calendar4 color-secondary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
           <span>{{ proposal.duration.time }}</span>
         </li>
         <li class="list-inline-item me-4">  
-          <i class="far fa-handshake fa-fw color-primary me-2 mb-3"></i>
+          <i class="far fa-handshake fa-fw color-secondary me-2 mb-3"></i>
           <span class="h6"
             >{{ proposal.quorum }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
-          <i class="bi bi-archive me-1 color-primary"/>
+          <i class="bi bi-archive me-1 color-secondary"/>
           <span class="h6 text-muted">{{
             proposal.choice
           }}</span>
@@ -96,10 +96,10 @@
         class="btn-group"
         role="group"
       >
-        <button @click="vote(1)" type="button" class="btn bg-success text-white">
+        <button @click="vote(1)" type="button" class="btn bg-primary text-white">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
-        <button @click="vote(2)" type="button" class="btn btn-danger">
+        <button @click="vote(2)" type="button" class="btn btn-info">
           <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->

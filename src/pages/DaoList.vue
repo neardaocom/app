@@ -52,7 +52,7 @@
                   <tr>
                     <td colspan="5" class="p-0">
                       <MDBProgress class="my-1">
-                        <MDBProgressBar bg="primary" :value="loadingProgress" />
+                        <MDBProgressBar bg="secondary" :value="loadingProgress" />
                       </MDBProgress>
                     </td>
                   </tr>
@@ -71,7 +71,7 @@
                     </td>
                     <td class="text-start">
                       <span
-                        class="badge bg-primary"
+                        class="badge bg-secondary"
                         v-for="(tag, index) in dao.tags"
                         :key="index"
                         >{{ tag }}</span
@@ -79,7 +79,7 @@
                     </td>
                     <td class="text-start">
                       <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
-                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-primary ms-1"/>
+                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-secondary ms-1"/>
                       </a>
                     </td>
                     <td class="text-end">

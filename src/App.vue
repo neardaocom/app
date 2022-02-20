@@ -165,59 +165,99 @@ h6, .h6, .fs-6 {
 }
 
 .bg-primary{
-  background-color: #9D639B !important;
+  background-color: #5F8AFA !important;
 }
 
-.color-primary{
-  color: #9D639B !important;
-  border-color: #9D639B !important
+.color-primary {
+  color: #5F8AFA !important;
+  border-color: #5F8AFA !important
 }
 
-.color-primary:hover{
-  color: #956698 !important;
-  border-color: #956698 !important
+.color-primary:hover {
+  color: #6B6EF9 !important;
+  border-color: #6B6EF9 !important
+}
+
+.bg-secondary {
+  background-color: #70ADCC !important
 }
 
 .color-secondary{
-  color: #7084B4 !important;
-  border-color: #7084B4 !important
+  color: #70ADCC !important;
+  border-color: #70ADCC !important
 }
 
 .color-secondary:hover{
-  color: #7084B4 !important;
-  border-color: #7084B4 !important
+  color: #70ADCC !important;
+  border-color: #70ADCC !important
 }
 
-.color-light-gray{
+.color-light-gray {
   color: #C9C9C9 !important;
   border-color: #C9C9C9 !important
 }
 
-.color-light-gray:hover{
+.color-light-gray:hover {
   color: #C9C9C9 !important;
   border-color: #C9C9C9 !important
 }
 
-.background-light-gray{
+.background-light-gray {
   background-color: #C9C9C9 !important;
 }
 
 .color-success{
-  color: #70B470 !important;
-  border-color: #70B470 !important
+  color: #ABD055 !important;
+  border-color: #ABD055 !important
 }
 
 .bg-success{
-  background-color: #70B470 !important
+  background-color: #ABD055 !important
+}
+
+.color-danger {
+  color: #DB5555 !important;
+  border-color: #DB5555 !important
+}
+
+.bg-danger {
+  background-color: #DB5555 !important
+}
+
+.color-warning {
+  color: #FFC860 !important;
+  border-color: #FFC860 !important
+}
+
+.bg-warning {
+  background-color: #FFC860 !important
 }
 
 .color-dark{
-  color: #1A1919 !important;
-  border-color: #1A1919 !important
+  color: #262626 !important;
+  border-color: #262626 !important
 }
 
 .bg-dark{
-  background-color: #1A1919 !important;
+  background-color: #262626 !important;
+}
+
+.color-info {
+  color: #A7A7A7 !important;
+  border-color: #A7A7A7 !important
+}
+
+.bg-info {
+  background-color: #A7A7A7 !important;
+}
+
+.color-muted {
+  color: #A7A7A7 !important;
+  border-color: #A7A7A7 !important
+}
+
+.bg-muted {
+  background-color: #A7A7A7 !important;
 }
 
 

@@ -1,7 +1,7 @@
 <template>
     <div class="card text-start w-auto p-2" style="width: 18rem">
         <div class="card-body">
-        <h5> <i class="bi bi-pie-chart color-primary me-2"></i>{{ t("default.my_share") }}</h5>
+        <h5> <i class="bi bi-pie-chart color-secondary me-2"></i>{{ t("default.my_share") }}</h5>
         <h1>
             <NumberFormatter class="ms-4 mt-3" :amount="myTokensShare"/>%
         </h1>

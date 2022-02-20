@@ -21,7 +21,7 @@ export const nowDate = (): Date => {
     return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
 }
 
-export const parseNanoseconds = (nanoseconds: number): Date => {
+export const parseNanoseconds = (nanoseconds: number|string): Date => {
     return new Date(new Decimal(nanoseconds).div(1_000_000).round().toNumber());
 }
 

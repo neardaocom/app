@@ -207,6 +207,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
         { code: 'duration', bindId: 5 },
     ],
     activities: [
+        /*
         {
             code: 'register_tokens',
             form: {
@@ -218,13 +219,14 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 },
             },
         },
+        */
     ],
     actions: [
         {
             id: 0,
             args: (data: WFData) => {
                 return [
-                    [ { String: data.form.tokenId } ],
+                    [ { String: getValueByCode(data.inputs, 'tokenId') } ],
                 ]
             },
             argsCollection: (data: WFData) => {
