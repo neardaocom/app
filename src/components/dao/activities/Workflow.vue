@@ -47,7 +47,7 @@
           <!-- END Activities -->
 
           <!-- NEXT Activity -->
-          <div v-if="workflow.state === 'Running'" class="row">
+          <div v-if="workflow.state === 'Running' && check(walletRights, activityNextsRights)" class="row">
             <div class="col-1 text-center">
               <MDBBadge color="info" pill class="p-2 me-3c background-light-gray"><i class="fas fa-check"></i></MDBBadge>
             </div>
@@ -55,7 +55,7 @@
               <div class="row">
                 <div class="col-12">
                   <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
-                  <MDBBtnGroup v-if="activityNexts.length > 0 && check(walletRights, activityNextsRights)">
+                  <MDBBtnGroup v-if="activityNexts.length > 0">
                     <template v-for="(option, index) in optionsNextActivities" :key="index">
                       <MDBRadio
                         v-if="check(walletRights, option.rights)"
@@ -158,7 +158,7 @@ export default {
   },
   setup(props) {
     const { t, d, n } = useI18n();
-    const { workflow, template, daoStorage, walletRights, accountId } = toRefs(props)
+    const { workflow, template, daoStorage, accountId } = toRefs(props)
 
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
@@ -181,7 +181,7 @@ export default {
       return getActivityRights(settings, activity)
     })))
 
-    console.log('Check rights', activityNextsRights.value, walletRights.value, check(activityNextsRights.value, walletRights.value))
+    // console.log('Check rights', activityNextsRights.value, walletRights.value, check(activityNextsRights.value, walletRights.value))
 
     const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
       return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, rights: getActivityRights(settings, activity)}

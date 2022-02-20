@@ -165,7 +165,6 @@ export default {
                 activitiesRights[0] = [rightAnyone]
             }
 
-
             const transitionsConstraints = loadTemplate[0].transitions.map((trans) => {
                 return trans.map(() => {
                     return {'transition_limit': 10, 'cond': null}

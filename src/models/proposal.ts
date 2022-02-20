@@ -261,7 +261,7 @@ const transform = (
         stateCode: stateCode,
         state: t("default.proposal_state_" + stateCode),
         status: status,
-        canVote: check(walletRights, daoRights),
+        canVote: check(walletRights, [settings!.voteRight]),
         isOver: isOver(proposal, settings!),
         isVoted: isVoted(proposal, walletId),
         args: args,

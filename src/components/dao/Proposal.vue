@@ -109,7 +109,7 @@
         class="btn-group"
         role="group"
       >
-        <button @click="finalize()" type="button" class="btn gradient-background text-white">
+        <button v-if="proposal.canVote === true" @click="finalize()" type="button" class="btn gradient-background text-white">
           <i class="fas fa-certificate me-2"></i> {{ t("default.proposal_finish") }}
         </button>
       </div>
