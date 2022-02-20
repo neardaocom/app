@@ -232,7 +232,7 @@ export default {
         })
 
         //document
-        const formDocumentType = ref('flush-plain')
+        const formDocumentType = ref('')
 
         const documentTypeDropdown = computed(() => ({
             plain: t('default.plain_text'),

@@ -64,7 +64,7 @@ const getNamesInit = (t: any): string[] => {
 
 const getCategories = (docs: any, t: any) => {
   const initCategory = getCategoriesInit(t)
-  const others = docs.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item.value) == -1).sort()
+  const others = docs.categories.filter((item: any) => _.indexOf(initCategory.concat(['basic']), item.value) == -1).map((item) => item.value).sort()
   return initCategory.concat(others)
 }
 

@@ -186,12 +186,13 @@ export default {
     async open(index) {
       const doc = this.docs.files[index]
       fetch(doc, this.ipfsService).then(r => {
+        console.log(doc.type);
         switch (doc.type) {
           case 'url': {
             window.open(r, "_blank");
             break;
           }
-          case 'pdf':
+          case 'application/pdf':
           case 'html': {
             this.selectedDoc = doc;
             this.modalDocument += 1;

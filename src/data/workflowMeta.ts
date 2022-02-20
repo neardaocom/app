@@ -161,8 +161,36 @@ export const templateMetaMediaAdd: WFMetaTemplate = {
         { code: 'cid', bindId: 5 },
         { code: 'link', bindId: 6 },
     ],
-    activities: [],
-    actions: [],
+    activities: [
+        {
+            code: 'media_add',
+            form: {
+                component: '',
+                schema: (data: WFData) => {
+                    return {}
+                },
+            },
+        },
+    ],
+    actions: [
+        {
+            id: 0,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId
+                }
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 100
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+    ],
 }
 
 export const templateMetaMediaInvalid: WFMetaTemplate = {
