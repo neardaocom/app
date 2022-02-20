@@ -35,6 +35,9 @@ import {
     //MDBAlert
 } from 'mdb-vue-ui-kit';
 import { useI18n } from 'vue-i18n';
+import { inject, onMounted } from '@vue/runtime-core'
+import { useRouter } from 'vue-router'
+import { useNear } from '@/hooks/vuex';
 
 export default {
     components:{
@@ -46,7 +49,19 @@ export default {
         DaoCreateForm
     },
     setup(){
-        const { t} = useI18n();
+        const { t } = useI18n();
+        const logger = inject('logger')
+        const router = useRouter()
+        const { accountId } = useNear()
+        
+        onMounted(() => {
+            if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
+                const daoAccountId = localStorage.create_dao_account
+                localStorage.create_dao_account = ''
+                logger.notice('B', 'dao', 'create', `User [${accountId.value}] created DAO named [${daoAccountId}]`)
+                router.push({name: 'dao', params: {id: daoAccountId}})
+            }
+        })
         return {
             t
         }
