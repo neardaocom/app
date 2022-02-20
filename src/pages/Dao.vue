@@ -86,12 +86,6 @@ export default {
     const daoRights = ref([])
     const walletRights = ref([])
 
-    // check daoId
-    if (rDaoId.value === undefined) rDaoId.value = process.env.VUE_APP_DAO_DEFAULT
-    // check page
-    if (rPage.value === undefined) rPage.value = 'overview'
-
-
     onMounted(() => {
       store.commit('near/setContract', rDaoId.value)
       loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())

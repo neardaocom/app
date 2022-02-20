@@ -7,7 +7,7 @@
             <li class="breadcrumb-item">
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
-            <li class="breadcrumb-item">
+            <li v-if="daoId" class="breadcrumb-item">
               <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
             </li>
             <li v-if="daoId" class="breadcrumb-item">

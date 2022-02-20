@@ -136,7 +136,158 @@ export const getTags = (globalTags: object, validTags: number[] | boolean = fals
     return getTagsObjects(globalTags, keys)
 }
 
-export const loadById = async (nearService: any, id: string, t: any, walletId?: string): Promise<DAO> => {
+export const transVoteLevels = (templatesFromChain: any[]): DAOVoteLevel[] => {
+    const voteLevels: DAOVoteLevel[] = []
+    templatesFromChain.forEach((template) => {
+        template[1][1].forEach((settingsItem) => {
+            voteLevels.push({
+                type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
+                quorum: settingsItem.quorum,
+                approveThreshold: settingsItem.approve_threshold,
+                spamThreshold: settingsItem.spam_threshold,
+                duration: {
+                    days: moment.duration(settingsItem.duration * 1000).days(),
+                    hours: moment.duration(settingsItem.duration * 1000).hours(),
+                    minutes: moment.duration(settingsItem.duration * 1000).minutes()
+                },
+                voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
+            })
+        })
+    })
+    loUniqWith(voteLevels, loIsEqual)
+    return voteLevels
+}
+
+export const transTemplates = (templatesFromChain: any[], t: Function): WFTemplate[] => {
+    const templates: WFTemplate[] = []
+    let action: WFAction
+    let activity: WFActivity | undefined
+    let templateMeta: WFMetaTemplate | undefined
+    // console.log("Template", dataHack[0])
+    templatesFromChain.forEach((template) => {
+        // console.log(template)
+
+        // action and activity
+        const activities: WFActivity[] = []
+        const actions: WFAction[] = []
+        const startActionIds: number[] = []
+        const endActionIds: number[] = []
+
+        // load meta
+        templateMeta = loGet(templateMetas, [template[1][0].name])
+
+        template[1][0].activities.forEach((actionChain, index) => {
+            if (actionChain !== null) {
+                // console.log('action from chain', actionChain)
+                // set activity
+                activity = loFind(activities, {code: actionChain.code})
+                if (activity === undefined) {
+                    activity = {
+                        id: activities.length,
+                        code: actionChain.code,
+                        actionIds: [index - 1],
+                        attributes: [],
+                    }
+                    activities.push(activity)
+                } else {
+                    activity.actionIds.push(index - 1)
+                }
+
+                // console.log('templateMeta', templateMeta?.actions)
+
+                // create action
+                if (actionChain.action !== 'FnCall') { // actionCall
+                    action = {
+                        id: index - 1,
+                        activityId: activity.id,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? depositDefault,
+                        method: loSnakeCase(actionChain.action),
+                    }
+                } else { // functionCall
+                    action = {
+                        id: index - 1,
+                        activityId: activity.id,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? gasDefault,
+                        fncallReceiver: actionChain.action_data.FnCall.id[0],
+                        fncallMethod: actionChain.action_data.FnCall.id[1],
+                        fncallGas: actionChain.action_data.FnCall.tgas,
+                        fncallDeposit: actionChain.action_data.FnCall.deposit,
+                    }
+                }
+                actions.push(action)
+
+                // add end
+                if (template[1][0].end.includes(index)) {
+                    endActionIds.push(action.id)
+                }
+            }
+        })
+
+        // transitions
+        const transitions: WFTransition[] = []
+        template[1][0].transitions.forEach((transactionChainToIds, index) => {
+            if (index === 0) {
+                transactionChainToIds.forEach((toId) => startActionIds.push(toId - 1))
+            } else {
+                transitions.push({ id: index - 1, toIds: transactionChainToIds.map((toId) => toId - 1) })
+            }
+        })        
+
+        // settings
+        const settings: WFSettings[] = []
+        template[1][1].forEach((settingsItem, index) => {
+            const settingsActions: WFSettingsAction[] = []
+            // action rights
+            settingsItem.activity_rights.forEach((rightsChain, index) => {
+                settingsActions.push({
+                    actionId: index,
+                    rights: rightsChain.map((rightChain) => rightsParse(rightChain))
+                })
+            })
+            // settings
+            settings.push({
+                id: index,
+                constants: [],
+                proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
+                voteRight: rightsParse(settingsItem.allowed_voters),
+                voteLevel: {
+                    type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
+                    quorum: settingsItem.quorum,
+                    approveThreshold: settingsItem.approve_threshold,
+                    spamThreshold: settingsItem.spam_threshold,
+                    duration: {
+                        days: moment.duration(settingsItem.duration * 1000).days(),
+                        hours: moment.duration(settingsItem.duration * 1000).hours(),
+                        minutes: moment.duration(settingsItem.duration * 1000).minutes()
+                      },
+                    voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
+                },
+                actionRights: settingsActions,
+            })
+        })
+        
+        templates.push({
+            id: loToInteger(template[0]),
+            version: loToString(template[1][0].version),
+            code: template[1][0].name,
+            //constants: [],
+            //attributes: [],
+            activities: activities,
+            actions: actions,
+            transactions: transitions,
+            startActionIds: loUniq(startActionIds),
+            endActionIds: loUniq(endActionIds),
+            search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
+            settings: settings,
+        })
+    });
+
+    return templates;
+}
+
+export const loadById = async (nearService: any, id: string, t: Function, walletId?: string): Promise<DAO> => {
     const daoId = getAccountId(id)
 
     // console.log(walletId)
@@ -323,25 +474,7 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
     //     voteOnlyOnce: true,
     // }
 
-    const voteLevels: DAOVoteLevel[] = []
-    dataHack[0].forEach((template) => {
-        template[1][1].forEach((settingsItem) => {
-            voteLevels.push({
-                type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
-                quorum: settingsItem.quorum,
-                approveThreshold: settingsItem.approve_threshold,
-                spamThreshold: settingsItem.spam_threshold,
-                duration: {
-                    days: moment.duration(settingsItem.duration * 1000).days(),
-                    hours: moment.duration(settingsItem.duration * 1000).hours(),
-                    minutes: moment.duration(settingsItem.duration * 1000).minutes()
-                  },
-                voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
-            })
-        })
-    })
-    loUniqWith(voteLevels, loIsEqual)
-    
+    const voteLevels: DAOVoteLevel[] = transVoteLevels(dataHack[0])
 
     // tags
     //const tags: IDValue[] = data[1].tags.map((tag: number) => { return { id: tag, value: data[7][tag] }})
@@ -351,130 +484,8 @@ export const loadById = async (nearService: any, id: string, t: any, walletId?: 
    
 
     // templates
-    const templates: WFTemplate[] = []
-    let action: WFAction
-    let activity: WFActivity | undefined
+    const templates: WFTemplate[] = transTemplates(dataHack[0], t)
     let templateMeta: WFMetaTemplate | undefined
-    // console.log("Template", dataHack[0])
-    dataHack[0].forEach((template) => {
-        // console.log(template)
-
-        // action and activity
-        const activities: WFActivity[] = []
-        const actions: WFAction[] = []
-        const startActionIds: number[] = []
-        const endActionIds: number[] = []
-
-        // load meta
-        templateMeta = loGet(templateMetas, [template[1][0].name])
-
-        template[1][0].activities.forEach((actionChain, index) => {
-            if (actionChain !== null) {
-                // console.log('action from chain', actionChain)
-                // set activity
-                activity = loFind(activities, {code: actionChain.code})
-                if (activity === undefined) {
-                    activity = {
-                        id: activities.length,
-                        code: actionChain.code,
-                        actionIds: [index - 1],
-                        attributes: [],
-                    }
-                    activities.push(activity)
-                } else {
-                    activity.actionIds.push(index - 1)
-                }
-
-                // console.log('templateMeta', templateMeta?.actions)
-
-                // create action
-                if (actionChain.action !== 'FnCall') { // actionCall
-                    action = {
-                        id: index - 1,
-                        activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? depositDefault,
-                        method: loSnakeCase(actionChain.action),
-                    }
-                } else { // functionCall
-                    action = {
-                        id: index - 1,
-                        activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? gasDefault,
-                        fncallReceiver: actionChain.action_data.FnCall.id[0],
-                        fncallMethod: actionChain.action_data.FnCall.id[1],
-                        fncallGas: actionChain.action_data.FnCall.tgas,
-                        fncallDeposit: actionChain.action_data.FnCall.deposit,
-                    }
-                }
-                actions.push(action)
-
-                // add end
-                if (template[1][0].end.includes(index)) {
-                    endActionIds.push(action.id)
-                }
-            }
-        })
-
-        // transitions
-        const transitions: WFTransition[] = []
-        template[1][0].transitions.forEach((transactionChainToIds, index) => {
-            if (index === 0) {
-                transactionChainToIds.forEach((toId) => startActionIds.push(toId - 1))
-            } else {
-                transitions.push({ id: index - 1, toIds: transactionChainToIds.map((toId) => toId - 1) })
-            }
-        })        
-
-        // settings
-        const settings: WFSettings[] = []
-        template[1][1].forEach((settingsItem, index) => {
-            const settingsActions: WFSettingsAction[] = []
-            // action rights
-            settingsItem.activity_rights.forEach((rightsChain, index) => {
-                settingsActions.push({
-                    actionId: index,
-                    rights: rightsChain.map((rightChain) => rightsParse(rightChain))
-                })
-            })
-            // settings
-            settings.push({
-                id: index,
-                constants: [],
-                proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
-                voteRight: rightsParse(settingsItem.allowed_voters),
-                voteLevel: {
-                    type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
-                    quorum: settingsItem.quorum,
-                    approveThreshold: settingsItem.approve_threshold,
-                    spamThreshold: settingsItem.spam_threshold,
-                    duration: {
-                        days: moment.duration(settingsItem.duration * 1000).days(),
-                        hours: moment.duration(settingsItem.duration * 1000).hours(),
-                        minutes: moment.duration(settingsItem.duration * 1000).minutes()
-                      },
-                    voteOnlyOnce: loIsBoolean(settingsItem.vote_only_once) ? settingsItem.vote_only_once : true,
-                },
-                actionRights: settingsActions,
-            })
-        })
-        
-        templates.push({
-            id: loToInteger(template[0]),
-            version: loToString(template[1][0].version),
-            code: template[1][0].name,
-            //constants: [],
-            //attributes: [],
-            activities: activities,
-            actions: actions,
-            transactions: transitions,
-            startActionIds: loUniq(startActionIds),
-            endActionIds: loUniq(endActionIds),
-            search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
-            settings: settings,
-        })
-    });
     // console.log('Templates', templates)
 
     // Proposals

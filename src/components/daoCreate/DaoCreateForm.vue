@@ -21,7 +21,7 @@
                     </div>
 
                     <!-- Type -->
-                    <div class="col-12 col-md-6  mb-4">
+                    <div v-if="false" class="col-12 col-md-6  mb-4">
                         <Select :labelName="t('default.type')" id="dao_type" :options="typeOptions" :filter="true"/>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('default.purpose_short')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 col-md-7 mb-4 mt-2">
@@ -63,30 +63,11 @@
                     <div class="col-12 col-md-4">
                         <InputNumber :labelName="t('default.amount')" id="dao_ft_amount" :tooltip="t('default.ft_amount_tooltip')" />
                     </div>
-                </div>    
-
-                <div class="row">
-                    <div class="col-12">
-                        <h5>{{ t('default.dao_council') }}</h5>
-                    </div>
-                    <div class="col-12 col-md-7">
-                        <div class="row">
-                            <div class="col-4">
-                                <InputNumber :labelName="t('default.dao_ft_init_distribution')" id="dao_ft_init_distribution" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_init_tooltip')" addon="%" />
-                            </div>
-                            <div class="col-4">
-                                <InputNumber :labelName="t('default.unlocking')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_unlocking_tooltip')" :addon="t('default.year')" />
-                            </div>
-                            <div class="col-4">
-                                <InputNumber labelName="&nbsp;" id="dao_unlocking_month" :disabled="disabledUnlocking" :addon="t('default.month')" />
-                            </div>
-                        </div>
-                    </div>
-                </div>     
+                </div>
 
                 <div class="row">
                     <div class="mt-4 col-12">
-                        <h5>{{ t('default.community_fund') }}</h5>
+                        <h5>{{ t('default.founders_vs_community') }}</h5> <!-- TODO: Otocit tahotko: protoze kopu za founder a ne za council -->
                     </div>
                     <div class="col-10 col-md-6">
                         <label class="form-label">{{ t('default.allocation') }}</label>
@@ -101,11 +82,30 @@
                 <div class="row mt-4">
                     <div class="col-12 col-md-7">
                         <MDBProgress :height="20" class="rounded">
-                            <MDBProgressBar :value="ftCouncilShare" >{{ t('default.council') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                            <MDBProgressBar :value="ftCouncilShare" >{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
                             <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
                         </MDBProgress>
                     </div>
-                </div>   
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>{{ t('default.founders_unlock') }}</h5>
+                    </div>
+                    <div class="col-12 col-md-7">
+                        <div class="row">
+                            <div class="col-4">
+                                <InputNumber :labelName="t('default.dao_ft_init_distribution')" id="dao_ft_init_distribution" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_init_tooltip')" addon="%" />
+                            </div>
+                            <div class="col-4">
+                                <InputNumber :labelName="t('default.unlocking')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_unlocking_tooltip')" :addon="t('default.year')" />
+                            </div>
+                            <div class="col-4">
+                                <InputNumber labelName="&nbsp;" id="dao_unlocking_month" :disabled="disabledUnlocking" :addon="t('default.month')" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </MDBStepperContent>
         </MDBStepperStep>
         <MDBStepperStep>
@@ -117,7 +117,7 @@
                 <!-- voteApproveThreshold -->
                 <label class="form-label col-md-6 col-3">
                     {{ t('default.dao_vote_approve_threshold') }}
-                    <TooltipLabel description="Hi! I'm tooltip"/>
+                    <TooltipLabel description="Percent of vouters agreeing with notion"/>
                 </label>
                 <div class="row mb-4">
                     <MDBRange wrapperClass="col-md-6 col-9" v-model="voteApproveThreshold" :min="1" :max="100" />
@@ -127,7 +127,7 @@
                 <!-- voteQuorum -->
                 <label class="form-label col-md-6 col-3">
                     {{ t('default.dao_vote_quorum') }}
-                    <TooltipLabel description="Hi! I'm tooltip"/>
+                    <TooltipLabel description="Minimum precent of voter's voting"/>
                 </label>
                 <div class="row mb-4">
                     <MDBRange wrapperClass="col-md-6 col-9" v-model="voteQuorum" :min="1" :max="100" />
@@ -146,7 +146,7 @@
                     <label class="form-label col-md-6 col-3">{{ voteDurationHours }}h</label>
                 </div>
 
-                <!-- voteDurationHours TODO: Delete or to rights -->
+                <!-- voteDurationMinutes TODO: Delete in production mode -->
                 <div class="row mb-4"> 
                     <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_minutes')" v-model="voteDurationMinutes" :min="0" :max="60" />
                     <label class="form-label col-md-6 col-3">{{ voteDurationMinutes }}m</label>
@@ -211,8 +211,8 @@
                     </div>
                 </div> 
 
-                <MDBBtn wrapperClass="mt-10 mb-2" @click="onSubmit" color="primary">{{ t('default.create_dao') }}</MDBBtn>
-
+                <MDBBtn wrapperClass="mt-10 mb-2" @click="onSubmit" size="lg" color="success">{{ t('default.create_dao') }}</MDBBtn>
+                <!-- TODO: Change button to big like landing page -->
             </MDBStepperContent>
         </MDBStepperStep>
     </MDBStepper>
@@ -290,9 +290,12 @@ export default {
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
                 dao_ft_init_distribution: 'required|strIsNumber|strNumMin:0|strNumMax:100',
                 dao_unlocking_year:'required|strIsNumber|strNumMin:0|strNumMax:20',
-                dao_unlocking_month:'required|strIsNumber|strNumMin:0|strNumMax:20'
+                dao_unlocking_month:'required|strIsNumber|strNumMin:0|strNumMax:12'
             }
         });
+
+        // TODO: dao_unlocking_year = 3
+        // TODO: dao_unlocking_month = 0
 
         const { errors, handleSubmit, values, setFieldValue, setFieldTouched } = useForm({ validationSchema: schema});
 

@@ -6,7 +6,7 @@
     </MDBContainer>
 
     <MDBContainer>
-    <h1 class="text-start" style="font-size: 3rem">{{ t('default.organizations')}}</h1>
+    <h1 class="text-start">{{ t('default.organizations')}}</h1>
     <div class="row mt-5">
       <div class="col-6 col-md-4 col-lg-3">
         <MDBInput

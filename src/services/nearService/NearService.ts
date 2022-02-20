@@ -411,15 +411,15 @@ class NearService {
     const setTags = [
       {
         category:"global",
-        values:["test dao", "new", "top"]
+        values:[]
       },
       {
         category:"group",
-        values:["CEO", "CTO", "no idea", "good guy"]
+        values:[]
       },
       {
         category:"media",
-        values:["very important", "probably virus"]
+        values:[]
       }
     ]
     const setFnCalls = []
@@ -471,7 +471,7 @@ class NearService {
           description: purpose,
           ft_name: ftName,
           ft_amount: ftAmount,
-          tags: [0,1,2]
+          tags: []
         },
           args: args_base64
       },

@@ -86,6 +86,7 @@ export type WFTemplate = {
     id: number;
     code: string;
     name?: string;
+    status?: string;
     version: string;
     actions: WFAction[];
     activities: WFActivity[];

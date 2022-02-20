@@ -36,6 +36,41 @@ export const templateMetas: Record<string, WFMetaTemplate> = {
   'addWorkflow': templateMetaAddWorkflow,
 }
 
+export const market: Record<string, unknown> = {
+  'wf_add': {
+    price: 0,
+    
+  },
+  'wf_near_send': {
+    price: 0,
+    
+  },
+  'wf_treasury_send_ft': {
+    price: 0,
+    
+  },
+  'wf_group_members_add': {
+    price: 0,
+    
+  },
+  'wf_ft_distribute': {
+    price: 0,
+    
+  },
+  'wf_media_add': {
+    price: 0,
+    
+  },
+  'wf_skyward': {
+    price: 2.5,
+    
+  },
+  'wf_bounty' : {
+    price: 1.0,
+    
+  }
+}
+
 export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: gasDefault, deposit: depositDefault, }
 
 export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: gasDefault, deposit: depositDefault, }

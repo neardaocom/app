@@ -127,37 +127,41 @@ body {
   }
 }
 
-h1, .h1, .fs-1{
+h1, .h1, .fs-1 {
  font-weight: 800 !important;
 }
 
-h2, .h2, .fs-2{
+h2, .h2, .fs-2 {
   font-weight: 800 !important;
 }
 
 
-h3, .h3, .fs-3{
+h3, .h3, .fs-3 {
   font-weight: 700 !important;
 }
 
-h4, .h4, .fs-4{
+h4, .h4, .fs-4 {
   font-weight: 700 !important;
 }
 
-h5, .h5, .fs-5{
+h5, .h5, .fs-5 {
   font-weight: 700 !important;
 }
 
-h6, .h6, .fs-6{
+h6, .h6, .fs-6 {
   font-weight: 600 !important;
 }
 
-.gradient-background{
-  background: transparent linear-gradient(90deg, #9D639B 0%, #7483B0 100%) 0% 0% no-repeat padding-box !important; 
+.gradient-background {
+  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
+  font: normal normal normal 18px/24px Manrope;
+  text-transform: uppercase;
 }
 
-.gradient-background:hover{
-  background: transparent linear-gradient(90deg, #9D639B 0%, #7483B0 100%) 0% 0% no-repeat padding-box !important; 
+.gradient-background:hover {
+  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
+  font: normal normal normal 18px/24px Manrope;
+  text-transform: uppercase;
 }
 
 .bg-primary{

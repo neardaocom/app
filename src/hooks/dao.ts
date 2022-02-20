@@ -12,8 +12,8 @@ import { useRoute } from "vue-router";
 
 export const useRouter = () => {
     const route = useRoute()
-    const rDaoId = computed(() => loGet(route, ['params', 'id']))
-    const rPage = computed(() => loGet(route, ['query', 'page']))
+    const rDaoId = computed(() => loGet(route, ['params', 'id']) ?? process.env.VUE_APP_DAO_DEFAULT)
+    const rPage = computed(() => loGet(route, ['query', 'page']) ?? 'overview')
     const rSearch = computed(() => loGet(route, ['query', 'search']))
     const rOrder = computed(() => loGet(route, ['query', 'order']))
 

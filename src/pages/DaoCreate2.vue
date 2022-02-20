@@ -7,8 +7,9 @@
         <section class="mb-3">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 text-center">
-                    <h2>{{ t('default.create_dao')}} {{ t('default.form')}}</h2>
+                    <div class="col-12">
+                        <h2>{{ t('default.create_your_dao')}}</h2>
+                        <h6>{{ t('default.create_your_dao_sub')}}</h6>
                     </div>
                 </div>
                 <div class="card text-start w-auto p-2 mt-4">
