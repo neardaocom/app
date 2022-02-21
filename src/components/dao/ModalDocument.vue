@@ -10,8 +10,9 @@
       <MDBModalTitle class="ms-3" id="modalDocumentLabel">{{ doc.name }} <small class="ms-4">{{ doc.category }} | v{{ doc.version }}</small></MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-      <pdf class="m-3" v-if="doc.ext == 'pdf'" :src="content" :page="1"></pdf>
-      <section class="m-3" v-else-if="doc.ext == 'html'" v-html="content"></section>
+      <pdf class="m-3" v-if="doc.type == 'application/pdf'" :src="content" :page="1"></pdf>
+      <section class="m-3" v-else-if="doc.type == 'text/html'" v-html="content"></section>
+      <section class="m-3" v-else-if="doc.type == 'text/plain'">{{content}}</section>
       <p class="m-3 text-center" v-else-if="doc.ext == 'url'"><a :href="content" target="_blank"> <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />{{ content }}</a></p>
     </MDBModalBody>
   </MDBModal>
@@ -42,40 +43,25 @@ export default {
     doc: {
       type: Object,
       required: true
+    },
+    data:{
+      type: [Object, String],
+      required: false
     }
   },
   setup(props) {
     const { t } = useI18n();
 
-    const { show, doc } = toRefs(props)
+    const { show, doc, data } = toRefs(props)
 
     const active = ref(false)
     const content = ref('')
     
     const openModal = () => { active.value = true }
     const changeDoc = async () => { 
-      console.log('Change doc')
-      if (props.doc.name) {
-        try {
-          // console.log(props.doc.ext)
-          switch (props.doc.ext) {
-            case 'html':
-              content.value = await props.doc.data.text()
-              break;
-            case 'pdf':
-              content.value = URL.createObjectURL(props.doc.data)
-              break;
-            case 'link':
-              content.value = await props.doc.data.text()
-              break;
-            default:
-              break;
-          }
-        } catch (error) {
-          alert("Storage doesn't work")
+      if (doc.value.name) {
+        content.value = data.value
         }
-        // console.log(content.value)
-      }
     }
 
     watch(show, openModal)

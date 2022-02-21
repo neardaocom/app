@@ -435,13 +435,25 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
     
 
     dataHack[4].forEach((element) => {
+        console.log();
+        
         const mediaTypeKey = Object.keys(element.media_type)[0]
-        const value = mediaTypeKey === 'Link' ? 
+        const value = mediaTypeKey === 'Link' || mediaTypeKey === 'Text' ? 
             element.media_type[mediaTypeKey] : 
             { source: element.media_type[mediaTypeKey].ipfs, cid: element.media_type[mediaTypeKey].cid }
-        const type = mediaTypeKey === 'Link' ?
-            DAODocsFileType.url :
-            DAODocsFileType[loFindKey(DAODocsFileType, value => value === element.media_type[mediaTypeKey].mimetype ) || '']            
+
+        let type = DAODocsFileType.plain
+        switch (mediaTypeKey) {
+            case 'Link':
+                type = DAODocsFileType.url
+                break
+            case 'Text':
+                type = DAODocsFileType.plain
+                break
+            default:
+                type = DAODocsFileType[loFindKey(DAODocsFileType, value => value === element.media_type[mediaTypeKey].mimetype ) || ''];
+            }  
+            
 
         docs.files.push({
           name: element.name,

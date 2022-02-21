@@ -1,19 +1,17 @@
 <template>
   <div class="container mb-2 text-start">
-    <MDBCard v-if="docs.files.length > 0">
-      <MDBCardBody>
-        <div>
-          <div class="row mt-1">
+
+          <div class="row my-4 mx-4">
             <div class="col-6 col-md-4 col-lg-3">
               <MDBInput
                 inputGroup
-                :formOutline="false"
-                wrapperClass="mb-3"
+                formOutline
+                wrapperClass="mb-3 my_filter_form"
                 class="rounded"
                 v-model="searchQuery"
+                size="sm"
                 aria-describedby="search-addon"
                 :aria-label="t('default.search')"
-                :placeholder="t('default.search')"
               >
                 <template #prepend>
                   <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
@@ -29,9 +27,10 @@
               
             </div>
           </div>
-          <MDBProgress class="my-1">
-            <MDBProgressBar :value="100" />
-          </MDBProgress>
+
+    <MDBCard v-if="docs.files.length > 0">
+      <MDBCardBody>
+        <div>
           <MDBTable sm responsive striped>
             <thead>
               <tr>
@@ -46,6 +45,15 @@
               </tr>
             </thead>
             <tbody>
+
+            <tr>
+              <td colspan="7" class="p-0">
+                <MDBProgress class="my-1">
+                  <MDBProgressBar bg="primary" :value="100" />
+                </MDBProgress>
+              </td>
+            </tr>
+
               <tr v-for="(doc, index) in results" :key="index">
                 <td>{{ doc.index + 1 }}</td>
                 <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
@@ -58,7 +66,7 @@
                     <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                     <MDBBtnGroup size="sm" role="toolbar">
                       <MDBBtn color="primary" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
-                      <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn>
+                      <!-- <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn> -->
                     </MDBBtnGroup>
                 </td>
                 </tr>
@@ -72,7 +80,7 @@
       <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
     </section>
   </div>
-  <ModalDocument :show="modalDocument" :doc="selectedDoc"/>
+  <ModalDocument :show="modalDocument" :doc="selectedDoc" :data="docData"/>
 </template>
 
 <script>
@@ -93,6 +101,7 @@ import { toSearch } from '@/utils/string'
 import _ from 'lodash'
 import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
+import { DAODocsFileType } from '@/types/dao';
 
 export default {
   components: {
@@ -116,6 +125,7 @@ export default {
     const { t } = useI18n();
     const modalDocument = ref(0)
     const openOldVersion = ref(0)
+    const docData = ref(null)
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
     const { ipfsService } = useIPFS()
@@ -141,7 +151,7 @@ export default {
     return {
       t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
       searchQuery, filterType,
-      ipfsService
+      ipfsService, docData
     };
   },
   computed: {
@@ -169,13 +179,14 @@ export default {
     getIcon(type) {
       let icon = ''
       switch (type) {
-        case 'pdf':
+        case DAODocsFileType.binaryPdf:
           icon = 'file-pdf'
           break;
-        case 'html':
+        case DAODocsFileType.plain:
+        case DAODocsFileType.html:
           icon = 'file-alt'
           break;
-        case 'url':
+        case DAODocsFileType.url:
           icon = 'link'
           break;
         default:
@@ -186,15 +197,17 @@ export default {
     async open(index) {
       const doc = this.docs.files[index]
       fetch(doc, this.ipfsService).then(r => {
-        console.log(doc.type);
+        console.log(doc);
         switch (doc.type) {
-          case 'url': {
+          case DAODocsFileType.url: {
             window.open(r, "_blank");
             break;
           }
-          case 'application/pdf':
-          case 'html': {
+          case DAODocsFileType.plain: 
+          case DAODocsFileType.binaryPdf:
+          case DAODocsFileType.html: {
             this.selectedDoc = doc;
+            this.docData = r
             this.modalDocument += 1;
             break;
           }
@@ -222,6 +235,7 @@ export default {
       }
 
       doc.data = this.fetchedDocs[doc.ipfs_cid][0]
+      console.log(doc.dat);
 
       switch (doc.type) {
         case 'url': {

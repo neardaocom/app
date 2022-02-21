@@ -251,7 +251,6 @@ export default {
         
         
         const onSubmit = handleSubmit( async values => {
-            console.log(values)
 
             const ipfsPromises = []
             const ipfsSet = [false,false]
@@ -281,8 +280,6 @@ export default {
             const ipfscCdDesc = ipfsSet[0] ? ipfsCids[0] : ''
             const ipfsCidDocument = ipfsSet[1] && ipfsSet[0] ? ipfsCids[1] 
                                         : ipfsSet[1] ? ipfsCids[0] : '' 
-                                        
-            alert(`${ipfscCdDesc}, ${ipfsCidDocument}`)
 
             let mediaType = getMediaType(ipfsCidDocument)
             

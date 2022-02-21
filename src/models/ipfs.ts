@@ -1,3 +1,4 @@
+import logger from "@/logger";
 import { IpfsService } from "@/services/ipfsService/IpfsService";
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { DAODocsFile, DAODocsFileType } from "@/types/dao";
@@ -5,18 +6,16 @@ import lodashToString from "lodash/toString";
 
 export const fetch = async (file: DAODocsFile, service?: IpfsService): Promise<string | undefined> => {
     let value: string | undefined = undefined
-
-    console.log(file.type)
-    console.log(DAODocsFileType.binaryPdf);
+    
     
     // console.log(DAODocsFileType[DAODocsFileType.url])
     switch (lodashToString(file.type)) {
+        case lodashToString(DAODocsFileType.url): // TODO: move to plain after refact smart contract
         case lodashToString(DAODocsFileType.plain): {
             if (typeof file.value !== 'string') throw new Error("Unexpected type of attribure");
             value = file.value
             break;
         }
-        case lodashToString(DAODocsFileType.url): // TODO: move to plain after refact smart contract
         case lodashToString(DAODocsFileType.html): {
             if (service === undefined) throw new Error("service is undefined");
             if (typeof file.value === 'string') throw new Error("Unexpected type of attribure");
