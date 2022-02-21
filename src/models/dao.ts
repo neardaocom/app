@@ -558,6 +558,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
             workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
             inputs: proposalInputs,
             constants: proposalConstants,
+            content: proposal[1].Curr.content ?? {},
         })
 
         workflows.push({

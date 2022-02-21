@@ -193,6 +193,16 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
         }
         break;
     }
+    case 'wf_media_add': {
+      values = proposal.content.Media as Record<string, unknown> ?? {}
+      if (loGet(proposal, ['content', 'Media', 'media_type', 'Link']) !== undefined) {
+        values.source = loGet(proposal, ['content', 'Media', 'media_type', 'Link'])
+      }
+      if (loGet(proposal, ['content', 'Media', 'media_type', 'Text']) !== undefined) {
+        values.source = loGet(proposal, ['content', 'Media', 'media_type', 'Text'])
+      }
+      break;
+    }
     case 'wf_bounty':
         values = {
           title: getValueByCode(proposal.inputs, 'title') ?? '',

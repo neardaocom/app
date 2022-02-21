@@ -164,6 +164,7 @@ export type DAOProposal = {
   workflowAddSettingsId: number;
   inputs: CodeValue[];
   constants: CodeValue[];
+  content: Record<string, unknown>;
 }
 
 export type DAO = {

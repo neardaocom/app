@@ -49,7 +49,7 @@
             <tr>
               <td colspan="7" class="p-0">
                 <MDBProgress class="my-1">
-                  <MDBProgressBar bg="primary" :value="100" />
+                  <MDBProgressBar bg="secondary" :value="100" />
                 </MDBProgress>
               </td>
             </tr>

@@ -3,7 +3,39 @@ import { getValueByCode } from "@/utils/generics"
 import { first } from "@/utils/object"
 import { nearToYocto, yoctoToNear } from "@/utils/near"
 import loToNumber from "lodash/toNumber";
-import { templateMetas } from "@/data/workflow";
+
+export const templateMetaAddWorkflow: WFMetaTemplate = {
+    id: 1,
+    code: 'wf_add',
+    constants: [
+    ],
+    inputs: [
+        { code: 'templateId', bindId: 0 },
+    ],
+    activities: [],
+    actions: [
+        {
+            id: 0,
+            args: (data: WFData) => {
+                return {
+                    "proposal_id": data.proposalId,
+                    "workflow_id": getValueByCode(data.inputs, 'templateId'),
+                }
+            },
+            log: (args: any) => {
+                return {
+                    "templateId": first(args[0][0]),
+                }
+            },
+            gas: (data?: WFData): Number => {
+                return 300
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+    ],
+}
 
 export const templateMetaWfNearSend: WFMetaTemplate = {
     id: 2,
@@ -54,22 +86,6 @@ export const templateMetaWfNearSend: WFMetaTemplate = {
     ],
 }
 
-
-export const templateMetaPayout: WFMetaTemplate = {
-    id: 0,
-    code: 'payout',
-    constants: [
-        { code: 'amountLimit', bindId: 0 },
-        { code: 'tokenLimit', bindId: 1 },
-    ],
-    inputs: [
-        { code: 'receiverId', bindId: 0 },
-        { code: 'nearAmount', bindId: 1 },
-        { code: 'tokenAmount', bindId: 2 },
-    ],
-    activities: [],
-    actions: []
-}
 
 export const templateMetaSendFt: WFMetaTemplate = {
     id: 3,
@@ -134,14 +150,17 @@ export const templateMetaGroupAddMember: WFMetaTemplate = {
     actions: [],
 }
 
-export const templateMetaGroupRemoveMember: WFMetaTemplate = {
-    id: 0,
-    code: '',
+export const templateMetaFtUnlockDistribute: WFMetaTemplate = {
+    id: 5,
+    code: 'wf_ft_distribute',
     constants: [
+        { code: 'groupIds', bindId: 0 },
+        { code: 'amountLimit', bindId: 1 },
     ],
     inputs: [
-        { code: 'accountId', bindId: 0 },
-        { code: 'groupId', bindId: 1 },
+        { code: 'groupId', bindId: 0 },
+        { code: 'amount', bindId: 1 },
+        { code: 'accountIds', bindId: 2 },
     ],
     activities: [],
     actions: [],
@@ -191,34 +210,6 @@ export const templateMetaMediaAdd: WFMetaTemplate = {
             },
         },
     ],
-}
-
-export const templateMetaMediaInvalid: WFMetaTemplate = {
-    id: 0,
-    code: '',
-    constants: [
-    ],
-    inputs: [
-        { code: 'id', bindId: 0 },
-    ],
-    activities: [],
-    actions: [],
-}
-
-export const templateMetaFtUnlockDistribute: WFMetaTemplate = {
-    id: 5,
-    code: 'wf_ft_distribute',
-    constants: [
-        { code: 'groupIds', bindId: 0 },
-        { code: 'amountLimit', bindId: 1 },
-    ],
-    inputs: [
-        { code: 'groupId', bindId: 0 },
-        { code: 'amount', bindId: 1 },
-        { code: 'accountIds', bindId: 2 },
-    ],
-    activities: [],
-    actions: [],
 }
 
 export const templateMetaSkyward: WFMetaTemplate = {
@@ -366,51 +357,6 @@ export const templateMetaSkyward: WFMetaTemplate = {
     ],
 }
 
-export const templateMetaGeneral: WFMetaTemplate = {
-    id: 0,
-    code: '',
-    constants: [
-    ],
-    inputs: [
-        { code: 'title', bindId: 0 },
-        { code: 'cid', bindId: 1 },
-    ],
-    activities: [],
-    actions: [],
-}
-
-export const templateMetaAddWorkflow: WFMetaTemplate = {
-    id: 1,
-    code: 'wf_add',
-    constants: [
-    ],
-    inputs: [
-        { code: 'templateId', bindId: 0 },
-    ],
-    activities: [],
-    actions: [
-        {
-            id: 0,
-            args: (data: WFData) => {
-                return {
-                    "proposal_id": data.proposalId,
-                    "workflow_id": getValueByCode(data.inputs, 'templateId'),
-                }
-            },
-            log: (args: any) => {
-                return {
-                    "templateId": first(args[0][0]),
-                }
-            },
-            gas: (data?: WFData): Number => {
-                return 300
-            },
-            deposit: (data?: WFData): Number => {
-                return 0
-            },
-        },
-    ],
-}
 
 export const templateMetaBounty: WFMetaTemplate = {
     id: 8,
@@ -545,4 +491,60 @@ export const templateMetaBounty: WFMetaTemplate = {
             },
         },
     ],
+}
+
+
+
+export const templateMetaGeneral: WFMetaTemplate = {
+    id: 0,
+    code: '',
+    constants: [
+    ],
+    inputs: [
+        { code: 'title', bindId: 0 },
+        { code: 'cid', bindId: 1 },
+    ],
+    activities: [],
+    actions: [],
+}
+
+export const templateMetaPayout: WFMetaTemplate = {
+    id: 0,
+    code: 'payout',
+    constants: [
+        { code: 'amountLimit', bindId: 0 },
+        { code: 'tokenLimit', bindId: 1 },
+    ],
+    inputs: [
+        { code: 'receiverId', bindId: 0 },
+        { code: 'nearAmount', bindId: 1 },
+        { code: 'tokenAmount', bindId: 2 },
+    ],
+    activities: [],
+    actions: []
+}
+
+export const templateMetaGroupRemoveMember: WFMetaTemplate = {
+    id: 0,
+    code: '',
+    constants: [
+    ],
+    inputs: [
+        { code: 'accountId', bindId: 0 },
+        { code: 'groupId', bindId: 1 },
+    ],
+    activities: [],
+    actions: [],
+}
+
+export const templateMetaMediaInvalid: WFMetaTemplate = {
+    id: 0,
+    code: '',
+    constants: [
+    ],
+    inputs: [
+        { code: 'id', bindId: 0 },
+    ],
+    activities: [],
+    actions: [],
 }

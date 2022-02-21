@@ -80,7 +80,7 @@
               <!-- END FORM -->
               <div class="row">
                 <div class="col-12 mt-2" v-if="activityNexts.length > 0">
-                  <button class="btn btn-secondary btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
+                  <button class="btn btn-outline-secondary btn-rounded btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
                 </div>
               </div>
             </div>

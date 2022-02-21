@@ -46,7 +46,7 @@
                     <th scope="col" class="text-start">{{ t('default.description') }}</th>
                     <th scope="col" class="text-start">{{ t('default.creator') }}</th>
                     <th scope="col" class="text-start">{{ t('default.version') }}</th>
-                    <th v-if="rDaoId" scope="col" class="text-start"></th>
+                    <th scope="col" class="text-start"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -68,7 +68,7 @@
                     <td class="text-start">{{ t('default.wf_templ_' + template.code + '_description') }}</td>
                     <td class="text-start">{{ creator.name }}</td>
                     <td class="text-start">v{{ template.version }}.0</td>
-                    <td v-if="rDaoId" class="text-start">
+                    <td class="text-start">
                       <button
                         v-if="template.status === t('default.buy')"
                         type="button" class="btn btn-rounded px-4 py-1 btn-buy fw-bold"
@@ -99,6 +99,10 @@
     <AddWorkflow ref="form" v-bind="modalProps" />
   </ModalProposal>
 
+  <ModalMessage :title="t('default.market')" :show="modalMessage">
+    <h6 class="text-center my-4">{{ t('default.market_create_or_sign') }}.</h6>
+  </ModalMessage>
+
   <Footer></Footer>
 </template>
 
@@ -126,6 +130,7 @@ import { check, getDAORights, getWalletRights } from '@/models/rights'
 // import { getDAORights } from '@/models/rights'
 import ModalProposal from '@/components/forms/ModalProposal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
+import ModalMessage from '@/components/forms/ModalMessage.vue'
 
 export default {
   components: {
@@ -135,7 +140,7 @@ export default {
     , MDBIcon
     , MDBInput
     , MDBSelect
-    , ModalProposal, AddWorkflow,
+    , ModalProposal, ModalMessage, AddWorkflow,
   },
   setup() {
     const { t, n } = useI18n()
@@ -152,6 +157,7 @@ export default {
     const modalProposal = ref(0)
     const modalTitle = t('default.wf_templ_wf_add')
     const modalProps = ref({})
+    const modalMessage = ref(0)
 
     onMounted(() => {
       if (rDaoId.value) {
@@ -188,7 +194,7 @@ export default {
 
     return {
       t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
-      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, dao, daoRights, walletRights,
+      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights,
     }
   },
   methods: {
@@ -197,19 +203,23 @@ export default {
       return (price == 0) ? this.t('default.free') : this.n(price) + ' N';
     },
     open(template){
-      const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
-      if (check(this.walletRights, rights)) {
-        this.modalProposal += 1
-        this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
-        this.modalProps = {
-          template: template,
-          contractId: this.rDaoId,
-          dao: this.dao,
-          daoRights: this.daoRights,
-          price: loGet(market, [template.code])?.price ?? 0,
+      if (this.rDaoId) {
+        const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
+        if (check(this.walletRights, rights)) {
+          this.modalProposal += 1
+          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
+          this.modalProps = {
+            template: template,
+            contractId: this.rDaoId,
+            dao: this.dao,
+            daoRights: this.daoRights,
+            price: loGet(market, [template.code])?.price ?? 0,
+          }
+        } else {
+          console.log('no rights')
         }
       } else {
-        console.log('no rights')
+        this.modalMessage += 1
       }
     },
     vote(){

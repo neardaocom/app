@@ -1,21 +1,20 @@
 <template>
   <MDBModal
-    id="modalProposal"
+    id="modalMessage"
     tabindex="-1"
-    labelledby="modalProposalLabel"
+    labelledby="modalMessageLabel"
     v-model="active"
     size="lg"
   >
   <MDBModalHeader>
-      <MDBModalTitle id="modalProposalLabel"> {{ title }} </MDBModalTitle>
+      <MDBModalTitle id="modalMessageLabel">{{ title }}</MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
         <slot></slot>
     </MDBModalBody>
     <MDBModalFooter>
       <MDBBtn outline="secondary" rounded @click="close()">{{ t('default.close') }}</MDBBtn>
-      <MDBBtn outline="primary" rounded @click="vote()">{{ t('default.vote') }}</MDBBtn>
-    </MDBModalFooter>
+      </MDBModalFooter>
   </MDBModal>
 </template>
 
@@ -51,10 +50,11 @@ export default {
       required: true
     }
   },
-  emits: ['vote'],
-  setup (props, {emit}) {
+  setup (props) {
     const { show } = toRefs(props)
-    const {t} = useI18n()
+
+    const { t } = useI18n()
+
     const active = ref(false)
     
     const openModal = () => { active.value = true }
@@ -65,14 +65,8 @@ export default {
       active.value = false
     }
     
-    const vote = () => {
-      emit('vote')
-    }
     return {
-      t,
-      active,
-      vote,
-      close
+      t, active, close,
     }
   }
 }
