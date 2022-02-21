@@ -115,6 +115,7 @@ export default {
             }
             
             nearService.value.addProposal(
+                null,
                 contractId.value,
                 template.value.id,
                 template.value.settings[0].id,

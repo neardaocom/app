@@ -178,6 +178,12 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
         amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
       }
       break;
+    case 'wf_treasury_send_ft':
+      values = {
+        receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
+        amount: getValueByCode(proposal.inputs, 'amount') ?? '',
+      }
+      break;
     case 'wf_add': {
         const templateId = loToNumber(getValueByCode(proposal.inputs, 'templateId'))
         const templateMeta = loFind(templateMetas, {id: templateId})

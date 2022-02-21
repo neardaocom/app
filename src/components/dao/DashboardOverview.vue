@@ -4,7 +4,6 @@
       <div v-if="nearPrice" style="min-width: 280px;">
          <div class="d-inline-block text-start" > 
          <h6> {{ t("default.dao_funds") }} </h6>
-         
             <span class="fs-2"><NumberFormatter :amount="dao.treasury.near * nearPrice"/></span> <span class="fs-5 color-secondary" style="font-weight: 800 !important;">USD</span>
          </div>
       </div>

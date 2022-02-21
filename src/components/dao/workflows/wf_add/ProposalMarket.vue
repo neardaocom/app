@@ -30,7 +30,7 @@
   <div class="row mb-4">
     <div class="col-12 col-md-7">
       <Select
-        :labelName="t('default.wf_activities_rights')"
+        :labelName="t('default.wf_can_execute')"
         id="activities_rights"
         :options="activitiesRights"
       />

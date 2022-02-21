@@ -108,6 +108,7 @@ export default {
         const onSubmit = handleSubmit(values => {
             console.log('Skyward submit')
             nearService.value.addProposal(
+                null,
                 contractId.value,
                 template.value.id,
                 template.value.settings[0].id,

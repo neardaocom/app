@@ -28,7 +28,7 @@
           We are Introducing NearDAO - a digital, immutable and first-time truly agile platform to launch, develop and grow your own Decentralised Autonomous Organisation (DAO) on <a href="https://www.near.org>" target="_blank">Near Protocol</a> - a truly user-friendly, scalable blockchain - just few steps away.
         </p>
         <p class="text-muted">
-          Join us, we are Near.
+          Join us, we are near.
         </p>
         <div class="d-flex flex-wrap justify-content-center mb-8" >
           <MDBBtn @click="organizations" rounded size="lg" class="text-white gradient-background m-2 fw-normal" style="width:228px">{{ t('default.organizations') }}</MDBBtn>

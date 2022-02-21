@@ -78,7 +78,7 @@
                         v-else-if="template.status === t('default.installed')"
                         type="button" class="btn btn-rounded px-4 py-1 btn-installed fw-bold"
                         @click.prevent=""
-                      ><i class="bi bi-cart me-2 fa-lg"></i>{{ template.status }}</button>
+                      ><i class="bi bi-check-circle me-2 fa-lg"></i>{{ template.status }}</button>
                       <button
                         v-else
                         type="button" class="btn btn-rounded px-4 py-1 btn-in-progress fw-bold"
@@ -200,7 +200,7 @@ export default {
       const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
       if (check(this.walletRights, rights)) {
         this.modalProposal += 1
-        this.modalTitle = this.t('default.buy') + ' - ' + this.t('default.wf_templ_' + template.code)
+        this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
         this.modalProps = {
           template: template,
           contractId: this.rDaoId,
@@ -230,14 +230,15 @@ export default {
     color: #FFFFFF;
     text-transform: none;
     /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #95e3e8 0%, #95e3e8 100%) 0% 0% no-repeat padding-box;
+    background: transparent linear-gradient(297deg, #ABD085 0%, #ABD085 100%) 0% 0% no-repeat padding-box;
+    /*ABD085  */
     width: 90%;
 }
 .btn-in-progress {
     color: #FFFFFF;
     text-transform: none;
     /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #a7a7a7 0%, #a7a7a7 100%) 0% 0% no-repeat padding-box;
+    background: transparent linear-gradient(297deg, #FFC870 0%, #FFC870 100%) 0% 0% no-repeat padding-box;
     width: 90%;
 }
 </style>

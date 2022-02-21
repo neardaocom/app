@@ -67,7 +67,7 @@
 
                 <div class="row">
                     <div class="mt-4 col-12">
-                        <h5>{{ t('default.founders_vs_community') }}</h5> <!-- TODO: Otocit tahotko: protoze kopu za founder a ne za council -->
+                        <h5>{{ t('default.founders_vs_community') }}</h5>
                     </div>
                     <div class="col-10 col-md-6">
                         <label class="form-label">{{ t('default.allocation') }}</label>
@@ -342,6 +342,7 @@ export default {
         const addCouncil = () =>{
             if (!errors.value.dao_council && values.dao_council){
                 council.value.push(`${values.dao_council}.${accountPostfix.value}`)
+                values.dao_council = ''
             }
         }
 

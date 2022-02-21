@@ -12,7 +12,7 @@
         </a>
         <a :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-check2-circle me-1"/>
-          {{ t('default.activities') }}
+          {{ t('default.in_progress') }}
         </a>
         <a v-if="false" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
@@ -25,7 +25,7 @@
         </a>
         <a :class="[isActive('defi') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-graph-up me-1"/>
-          {{ t('default.defi') }}
+          {{ t('default.dApps') }}
         </a>
         <a :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-files me-1"/>

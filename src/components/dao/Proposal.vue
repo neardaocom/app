@@ -106,11 +106,10 @@
       </div>
       <div
         v-else-if="workflowCode === 'finishing'"
-        class="btn-group"
         role="group"
       >
-        <button v-if="proposal.canVote === true" @click="finalize()" type="button" class="btn gradient-background text-white">
-          <i class="fas fa-certificate me-2"></i> {{ t("default.proposal_finish") }}
+        <button v-if="proposal.canVote === true" @click="finalize()" type="button" class="btn btn-outline-primary btn-rounded">
+          <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
         </button>
       </div>
     </div>

@@ -124,7 +124,7 @@ export default {
 
 <style>
   .title_background_image{
-    /*background-image:;*/ 
+    background-image: url("/img/cover.png");
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }
