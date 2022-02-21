@@ -31,8 +31,10 @@
           Join us, we are near.
         </p>
         <div class="d-flex flex-wrap justify-content-center mb-8" >
+          <MDBBtn @click="neardao" rounded size="lg" class="text-white gradient-background m-2 fw-normal" style="width:228px">{{app_brand_name}}</MDBBtn>
           <MDBBtn @click="organizations" rounded size="lg" class="text-white gradient-background m-2 fw-normal" style="width:228px">{{ t('default.organizations') }}</MDBBtn>
-          <MDBBtn @click="createDao" rounded size="lg" class="fs-6 text-white gradient-background m-2 fw-bold" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.create_dao')+"   " }}</MDBBtn>
+          <MDBBtn @click="createDao" rounded size="lg" class="fs-6 text-white gradient-background m-2 fw-bold" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.create_a_dao') }}</MDBBtn>
+          
         </div>
 
         <div class="mb-5">
@@ -83,6 +85,10 @@ export default {
       router.push({ name: 'dao-create'})
     }
 
+    const neardao = () => {
+      router.push({name: 'dao', params: {id: `${process.env.VUE_APP_BRAND}.${process.env.VUE_APP_NEAR_CONTRACT_NAME}`}})
+    }
+
     const app_brand_name = process.env.VUE_APP_BRAND_NAME;
     const app_brand_web = process.env.VUE_APP_BRAND_WEB;
     const app_brand_twitter = process.env.VUE_APP_BRAND_TWITTER;
@@ -96,6 +102,7 @@ export default {
       daoDefault,
       organizations,
       createDao,
+      neardao,
       app_brand_name,
       app_brand_web,
       app_brand_twitter,

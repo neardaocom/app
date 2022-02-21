@@ -1,8 +1,8 @@
 <template>
     <MDBStepper vertical class="text-start pb-4">
         <MDBStepperStep active>
-            <MDBStepperHead icon="1">
-                {{ t('default.basic') }}
+            <MDBStepperHead class="h4" icon="1">
+                {{ t('default.create') }}
             </MDBStepperHead>
             <MDBStepperContent>
                 <div class="row" >
@@ -29,17 +29,17 @@
         </MDBStepperStep>
 
          <MDBStepperStep>
-            <MDBStepperHead icon="2">
-                {{ t('default.founders') }}
+            <MDBStepperHead class="h4" icon="2">
+                {{ t('default.add_founders') }}
             </MDBStepperHead>
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" color="bg-primary" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 col-md-7 mb-4 mt-2">
-                        <MDBBtn v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
+                        <MDBBtn class="bg-primary" v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
                             {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
                         </MDBBtn>
                     </div>
@@ -49,8 +49,8 @@
         </MDBStepperStep>
 
         <MDBStepperStep>
-            <MDBStepperHead icon="3">
-                {{ t('default.tokens') }}
+            <MDBStepperHead class="h4" icon="3">
+                {{ t('default.issue_tokens') }}
             </MDBStepperHead>
             <MDBStepperContent class="pb-4 mb-2">
                 <div class = "row">
@@ -61,7 +61,7 @@
                 
                     <!-- ftAmount -->
                     <div class="col-12 col-md-4">
-                        <InputNumber :labelName="t('default.amount')" id="dao_ft_amount" :tooltip="t('default.ft_amount_tooltip')" />
+                        <InputNumber :labelName="t('default.total_supply')" id="dao_ft_amount" :tooltip="t('default.ft_amount_tooltip')" />
                     </div>
                 </div>
 
@@ -70,11 +70,11 @@
                         <h5>{{ t('default.founders_vs_community') }}</h5>
                     </div>
                     <div class="col-10 col-md-6">
-                        <label class="form-label">{{ t('default.allocation') }}</label>
-                        <MDBRange :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
+                        <!-- <label class="form-label">{{ t('default.allocation') }}</label> -->
+                        <MDBRange thumbClass="bg-secondary" :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
                     </div>
-                    <div class="col-2 pt-4">
-                        <label class="form-label pt-2">{{ ftCouncilShareComp }}</label>
+                    <div class="col-2">
+                        <label class="form-label">{{ ftCouncilShareComp }}</label>
                     </div>
                 </div>
 
@@ -82,7 +82,7 @@
                 <div class="row mt-4">
                     <div class="col-12 col-md-7">
                         <MDBProgress :height="20" class="rounded">
-                            <MDBProgressBar :value="ftCouncilShare" >{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                            <MDBProgressBar class="bg-primary" :value="ftCouncilShare" >{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
                             <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
                         </MDBProgress>
                     </div>
@@ -98,7 +98,7 @@
                                 <InputNumber :labelName="t('default.dao_ft_init_distribution')" id="dao_ft_init_distribution" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_init_tooltip')" addon="%" />
                             </div>
                             <div class="col-4">
-                                <InputNumber :labelName="t('default.unlocking')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_unlocking_tooltip')" :addon="t('default.year')" />
+                                <InputNumber :labelName="t('default.lenght_founders_vesting')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_unlocking_tooltip')" :addon="t('default.year')" />
                             </div>
                             <div class="col-4">
                                 <InputNumber labelName="&nbsp;" id="dao_unlocking_month" :disabled="disabledUnlocking" :addon="t('default.month')" />
@@ -109,8 +109,8 @@
             </MDBStepperContent>
         </MDBStepperStep>
         <MDBStepperStep>
-            <MDBStepperHead icon="4">
-                {{ t('default.voting') }}
+            <MDBStepperHead class="h4" icon="4">
+                {{ t('default.set_up_voting') }}
             </MDBStepperHead>
             <MDBStepperContent>
 
@@ -155,7 +155,7 @@
         </MDBStepperStep>
             
         <MDBStepperStep>
-            <MDBStepperHead icon="5">
+            <MDBStepperHead class="h4" icon="5">
                 {{ t('default.summary') }}
             </MDBStepperHead>
             <MDBStepperContent>
@@ -188,7 +188,7 @@
                             
                             <FormSummary :name="t('default.dao_ft_init_distribution')" :value="(values.dao_ft_init_distribution ? values.dao_ft_init_distribution  : '0') + '%'"/>
                             
-                            <FormSummary :name="t('default.unlocking')" :value="unlockingTime"/>
+                            <FormSummary :name="t('default.lenght_founders_vesting')" :value="unlockingTime"/>
 
                             <FormSummary :name="t('default.community_fund')" :value="(ftCommunityShare ? ftCommunityShare : '0') + '%'"/>
                         </dl>
@@ -239,7 +239,7 @@ import TooltipLabel from '@/components/forms/TooltipLabel.vue'
 import FormSummary from '@/components/forms/FormSummary.vue'
 import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
 import moment from 'moment'
-
+import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useStore } from 'vuex'
@@ -321,7 +321,7 @@ export default {
         watchEffect(() => {disabledUnlocking.value = ftCouncilShare.value === 0 ? true : false})
 
          watch(() => [values.dao_name], () => {
-            setFieldValue('dao_account', values.dao_name)
+            setFieldValue('dao_account', loLowerCase(values.dao_name).replace(/\s/g, '') )
             setFieldTouched('dao_account', true)
         })
 
@@ -437,3 +437,16 @@ export default {
     }
 }
 </script>
+<style scoped>
+    .stepper-active .stepper-head-icon {
+        color: #ABD055 !important;
+    border-color: #ABD055 !important
+    }
+
+    .stepper-active .stepper-head-icon{
+    color: #6B6EF9 !important;
+    border-color: #6B6EF9 !important
+    }
+
+
+</style>
