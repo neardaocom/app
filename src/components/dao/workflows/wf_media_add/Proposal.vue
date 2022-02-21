@@ -285,7 +285,8 @@ export default {
             
             const content = {
                 Media: {
-                    name:   values.fileName,
+                    name: values.fileName,
+                    proposal_id: 0,
                     category: values.fileCategory,
                     media_type: mediaType,
                     tags: [],

@@ -38,11 +38,11 @@
         </div>
 
         <div class="mb-5">
-          <h6 class="text-muted me-3">{{ t('default.get_connected_with_us') }}</h6>
-          <a :href="app_brand_twitter" class="me-3 text-reset">
+          <h6 class="text-muted me-3">{{ t('default.connect_with_us') }}</h6>
+          <a :href="app_brand_twitter" target="_brank" class="me-3 text-reset">
               <i class="fab fa-twitter fa-2x"></i>
           </a>
-          <a :href="app_brand_discord" class="me-3 text-reset">
+          <a :href="app_brand_discord" target="_blank" class="me-3 text-reset">
               <i class="fab fa-discord fa-2x"></i>
           </a>
         </div>

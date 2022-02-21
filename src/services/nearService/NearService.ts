@@ -426,7 +426,7 @@ class NearService {
     const setFnCallMeta = []
 
     //load templates, which will be from dao create
-    const templatesNums = [1,2,3,4,5,6]
+    const templatesNums = [1,2,3,6]
     const loadTemplates = await Promise.all(
       templatesNums.map((id) => this.providerGet(id))
     ).catch((e) => {
@@ -462,19 +462,21 @@ class NearService {
 
     const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
-    return this.factoryContract.create(
-      {
-        acc_name: account, 
-        dao_info: {
-          founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
-          name: name,
-          description: purpose,
-          ft_name: ftName,
-          ft_amount: ftAmount,
-          tags: [0]
-        },
-          args: args_base64
+    const callArgs = {
+      acc_name: account, 
+      dao_info: {
+        founded_s: new Decimal(Date.now()).dividedBy(1000).round().toNumber(),
+        name: name,
+        description: purpose,
+        ft_name: ftName,
+        ft_amount: ftAmount,
+        tags: [0]
       },
+      args: args_base64
+    };
+
+    return this.factoryContract.create(
+      callArgs,
       toTGas(300),
       nearToYocto(amountToTransfer)
     );

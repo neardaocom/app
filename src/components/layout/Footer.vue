@@ -16,11 +16,11 @@
 
             <!-- Right -->
             <div>
-            <span class="me-3">{{ t('default.get_connected_with_us') }}:</span>
-            <a :href="app_brand_twitter" class="me-3 text-reset">
+            <span class="me-3">{{ t('default.connect_with_us') }}:</span>
+            <a :href="app_brand_twitter" target="_blank" class="me-3 text-reset">
                 <i class="fab fa-twitter"></i>
             </a>
-            <a :href="app_brand_discord" class="me-3 text-reset">
+            <a :href="app_brand_discord" target="_blank" class="me-3 text-reset">
                 <i class="fab fa-discord"></i>
             </a>
             </div>
