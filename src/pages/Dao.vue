@@ -1,20 +1,22 @@
 <template>
-  <Header></Header>
-
+  <Header :daoId="rDaoId"></Header>
   <main>
     <!-- dashboard -->
-    <section class="bg-white shadow-2 mb-3">
+    <!-- <section class="bg-white shadow-2 mb-3">-->
+    <section class="mb-3">
       <div class="container">
         <!-- Breadcrumb -->
-        <Breadcrumb :account="q_id" :list-router="'dao-list'" :list-name="'organizations'"/>
+        <Breadcrumb :daoId="rDaoId" />
         <!-- /Breadcrumb -->
         <!-- Dashboard -->
-        <Dashboard v-if="loaded === true" :dao="dao"/>
-        <SkeletonDashboard v-else />
+
+        <Title v-if="loaded === true" :dao="dao"/>
+        <SkeletonTitle v-else />
+
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao"/>
+        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -23,14 +25,15 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Overview v-if="loaded === true && this.$route.query.page === 'overview' && this.$route.query.page === undefined" :dao="dao"/>
-        <Voting v-if="loaded === true && (this.$route.query.page === 'overview' || this.$route.query.page === undefined)" :dao="dao"/>
-        <Voting v-if="loaded === true && this.$route.query.page === 'voting'" :dao="dao"/>
-        <Treasury v-if="loaded === true && this.$route.query.page === 'treasury'" :dao="dao"/>
-        <Members v-if="loaded === true && this.$route.query.page === 'members'" :dao="dao"/>
-        <Tokens v-if="loaded === true && this.$route.query.page === 'tokens'" :dao="dao"/>
-        <Organization v-if="loaded === true && this.$route.query.page === 'organization'" :dao="dao"/>
-        <Documents v-if="loaded === true && this.$route.query.page === 'documents'" :docs="dao.docs"/>
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && rPage === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Treasury v-if="loaded === true && rPage === 'treasury'" :dao="dao" />
+        <DeFi v-if="loaded === true && rPage === 'defi'" :dao="dao" />
+        <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
+        <Documents v-if="loaded === true && rPage === 'documents'" :docs="dao.docs" />
+        <About v-if="loaded === true && rPage === 'about'" :dao="dao" />
+        <Settings v-if="loaded === true && rPage === 'settings'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -41,117 +44,96 @@
 </template>
 
 <script>
+import About from '@/components/dao/About.vue'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/dao/Breadcrumb.vue'
 import SkeletonBody from '@/components/dao/SkeletonBody.vue'
 import Buttons from '@/components/dao/Buttons.vue'
+import Title from '@/components/dao/Title.vue'
+import DeFi from '@/components/dao/DeFi.vue'
 import Dashboard from '@/components/dao/Dashboard.vue'
-import Members from '@/components/dao/Members.vue'
-import Organization from '@/components/dao/Organization.vue'
-import Overview from '@/components/dao/Overview.vue'
 import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
-import SkeletonDashboard from '@/components/dao/SkeletonDashboard.vue'
+import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
 import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
 import Documents from '@/components/dao/Documents.vue'
-// import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
-// MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
+import Activities from '@/components/dao/Activities.vue'
+import Settings from '@/components/dao/Settings.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, reactive } from 'vue'
-import _ from 'lodash'
-import DAO from '@/types/DAO'
-import DAOs from '@/types/DAOs'
-//import * as nearAPI from "near-api-js"
+import { ref, onMounted } from 'vue'
+import { getRole, loadById } from "@/models/dao";
+import { getDAORights, getWalletRights } from '@/models/rights'
+import { useRouter } from "@/hooks/dao";
+import { useStore } from 'vuex'
+import { useNear } from "@/hooks/vuex";
 
 export default {
   components: {
-    Header, Footer, Breadcrumb, Dashboard, Buttons, Overview, Voting, Treasury, Members, Tokens, Organization, Documents
-    , SkeletonDashboard, SkeletonButtons, SkeletonBody
-    // , MDBProgress, MDBProgressBar //MDBChart //, MDBContainer, MDBTable, MDBBreadcrumb, MDBBreadcrumbItem, MDBInput, MDBBtn, MDBBtnGroup
+    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
+    SkeletonButtons, SkeletonBody,
+    Title,
+    SkeletonTitle,
   },
   setup() {
     const { t } = useI18n()
-    const daos = ref(DAOs.data().daos)
-    const search = ref('')
-    const filter = reactive({})
-    const favorites = [1]
-    const q_id = null
-    const q_page = null
-    const dao = ref(DAO.data)
-    const dao_data = ref(DAO.data)
-    const proposals = null
-    const statistics_ft = null
+    const store = useStore()
+    const { nearService, wallet } = useNear()
+    const {rDaoId, rPage, rSearch, rOrder} = useRouter()
+    const dao = ref({tags: []})
     const loaded = ref(false)
+    const daoRights = ref([])
+    const walletRights = ref([])
 
-    return { t, dao, daos, q_id, q_page, search, filter, favorites, proposals, statistics_ft, loaded, dao_data}
-  },
-  created() {
-    console.log(process.env.VUE_APP_DAO_DEFAULT)
-    // dao id
-    if (this.$route.params && this.$route.params.id) {
-      this.q_id = this.$route.params.id
-    } else {
-      this.q_id = process.env.VUE_APP_DAO_DEFAULT
-    }
-    this.$store.commit('near/setContract', this.q_id)
-
-    // page
-    if (this.$route.query.page !== undefined) {
-      this.q_page = this.$route.query.page
-    } else {
-      this.q_page = 'overview'
-    }
-
-    // dao
-    this.dao.id = this.q_id
-    this.dao.wallet = this.q_id
-  },
-  computed: {
-    wallet() {
-      return this.$store.getters['near/getWallet']
-    },
-    nearService() {
-      return this.$store.getters['near/getService']
-    },
-  },
-  mounted() {
-    this.$store.commit('near/setContract', this.q_id)
-    this.getState()
-  },
-  methods: {
-    getState() {
-      console.log('getState')
-      this.nearService.getDaoById(this.q_id)
+    onMounted(() => {
+      store.commit('near/setContract', rDaoId.value)
+      loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
         .then(r => {
-          console.log(r)
+          // console.log('load DAO', r)
           //this.dao_state = r
-          this.dao = r
-          this.loaded = true
+          dao.value = r
+          loaded.value = true
+          daoRights.value = getDAORights(r)
+          walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
+          // console.log(this.walletRights)
         })
         .catch((e) => {
+          //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+          //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+          //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
+          //this.$notify.flush()
           console.log(e)
         })
+    })
+
+    return { t, rDaoId, rPage, rSearch, rOrder, dao, loaded, daoRights, wallet, walletRights }
+  },
+  computed: {
+    accountId() {
+      return this.$store.getters["near/getAccountId"];
     },
-    favorite_switch: function (id) {
-      // console.log(this.favorites);
-      // console.log(_.indexOf(this.favorites, id));
-
-      if (_.indexOf(this.favorites, id) >= 0) {
-        _.pull(this.favorites, id)
-        console.log('Favorites REMOVE: ' + id)
-      } else {
-        this.favorites.push(id)
-        console.log('Favorites ADD: ' + id)
-      }
-
-      // console.log(this.favorites);
+    accountRole() {
+      return getRole(this.dao, this.wallet.getAccountId())
     },
-    favorite_is(id) {
-      return _.indexOf(this.favorites, id) >= 0
-    }
-
+  },
+  methods: {
   }
 }
 </script>
+
+<style>
+  .title_background_image{
+    background-image: url("/img/cover.png");
+    height: 263px;
+    border-radius: 8px 8px 0px 0px;
+  }
+  .buttons_nav{
+    background-color: white;
+     border-radius: 0px 0px 8px 8px;
+  }
+
+  .buttons_dropdown{
+    border-radius: 0px 0px 8px 0px;
+  }
+</style>

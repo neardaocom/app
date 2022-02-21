@@ -1,96 +1,180 @@
 <template>
-    <section class="row d-flex justify-content-between align-items-center py-3">
+    <section class="d-flex justify-content-between align-items-center buttons_nav"> <!-- py-3 -->
       <!-- Left -->
-      <div class="col-12 col-lg-10">
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
-          {{ t('default.overview') }}
+      <div class="ps-3">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'border-bottom border-2 color-primary rounded-0 fw-bolder' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-columns-gap me-1"/>
+          {{ t('default.dashboard') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-bar-chart me-1"/>
           {{ t('default.voting') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-check2-circle me-1"/>
+          {{ t('default.in_progress') }}
+        </router-link>
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'organization' }}" :class="[isActive('organization') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
-          {{ t('default.organization') }}
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}" :class="[isActive('defi') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-graph-up me-1"/>
+          {{ t('default.dApps') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'bg-light' : 'text-reset']" class="btn btn-link btn-lg px-3" data-mdb-ripple-color="dark">
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-files me-1"/>
           {{ t('default.documents') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-info-square me-1"/>
+          {{ t('default.about') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
+          {{ t('default.settings') }}
         </router-link>
       </div>
       <!-- Left -->
 
       <!-- Right -->
-      <div v-if="canVote === true" class="col-12 col-lg-3">
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas text-warning fa-star"></i>
-        </button>-->
-        <!--<button type="button" class="btn btn-light bg-light px-3 me-2" data-mdb-ripple-color="dark">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>-->
-        <MDBDropdown btnGroup :align="['end']" v-model="dropdownAction">
-          <MDBBtn aria-controls="modalPayout" @click="modalPayoutOpen()" class="btn btn-primary" data-mdb-ripple-color="dark">
-            <MDBIcon icon="paper-plane" class="pe-2"/>{{ t('default.payout')}}
-          </MDBBtn>
-          <MDBDropdownToggle split @click="dropdownAction = !dropdownAction" />
-          <MDBDropdownMenu>
-            <MDBDropdownItem href="#" @click.self.prevent="modalAddMemberOpen()"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.add_member')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalRemoveMemberOpen()"><MDBIcon icon="user-minus" class="pe-2"/>{{ t('default.remove_member')}}</MDBDropdownItem>
-            <MDBDropdownItem href="#" @click.prevent="modalGeneralOpen()"><MDBIcon icon="comments" class="pe-2"/>{{ t('default.general_proposal')}}</MDBDropdownItem>
-          </MDBDropdownMenu>
-        </MDBDropdown>
+      <div>
+        <!-- <MDBBtnGroup  id="dropdown-target">
+          <MDBBtn
+            color="primary"
+            v-on:click="dropdownAction = !dropdownAction"
+            class="dropdown-toggle"
+          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn> -->
+
+          <MDBDropdown v-model="dropdownAction" btnGroup class="buttons_dropdown" >
+            <MDBDropdownToggle class="buttons_dropdown gradient-background"  size="lg" @click="dropdownAction = !dropdownAction">
+              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
+            </MDBDropdownToggle>
+            <MDBDropdownMenu>
+              <template v-for="templ in dao.templates" :key="templ.id">
+                <template v-for="templSettings in templ.settings" :key="templSettings.id">
+                  <template v-if="[''].includes(templ.code) === false">
+                    <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' " tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
+                  </template>
+                </template>
+              </template>
+            </MDBDropdownMenu>
+          </MDBDropdown>
+        <!-- </MDBBtnGroup> -->
+
       </div>
       <!-- /Right -->
     </section>
 
-    <ModalPayout :show="modalPayout" :contractId="dao.wallet" />
-    <ModalAddMember :show="modalAddMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalRemoveMember :show="modalRemoveMember" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
-    <ModalGeneral :show="modalGeneral" :contractId="dao.wallet" :groups="dao.groups" :tokenHolders="dao.token_holders" />
+    <!-- Modals -->
+    <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
+      <component ref="form" :is="activeForm" v-bind="formProps"></component>
+    </ModalProposal>
+
+
+    <ModalProposal title="Test" :show="modalProp" @vote="vote">
+      <AddMedia/>
+    </ModalProposal>
 </template>
 
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import ModalPayout from '@/components/dao/ModalPayout'
-import ModalAddMember from '@/components/dao/ModalAddMember'
-import ModalRemoveMember from '@/components/dao/ModalRemoveMember'
-import ModalGeneral from '@/components/dao/ModalGeneral'
+import ModalProposal from '@/components/forms/ModalProposal.vue'
+import loFind from "lodash/find";
+import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
+import SendToken from '@/components/dao/workflows/wf_treasury_send_ft/Proposal.vue'
+import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
+import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
+import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
+import BountyProposal from '@/components/dao/workflows/wf_bounty/Proposal.vue'
+import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-  MDBBtn,
-  MDBIcon,
+  MDBBtn, MDBBtnGroup,
+  MDBIcon
 } from "mdb-vue-ui-kit";
+import { check } from "@/models/rights";
 
 export default {
   components: {
-    MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
-    MDBBtn, MDBIcon, ModalPayout, ModalAddMember, ModalRemoveMember, ModalGeneral
+    MDBDropdown,
+    MDBDropdownToggle,
+    MDBDropdownMenu,
+    MDBDropdownItem,
+    MDBBtn,
+    MDBBtnGroup,
+    MDBIcon,
+    ModalProposal, 
+    Payout, 
+    SendToken,
+    AddWorkflow,
+    GeneralProposal,
+    AddMedia,
+    SkywardProposal,
+    BountyProposal,
   },
   props: {
     dao: {
       type: Object,
       required: true
-    }
+    },
+    accountRole: {
+      type: String,
+      required: true,
+    },
+    walletRights: {
+      type: Object,
+      required: true,
+    },
+    daoRights: {
+      type: Object,
+      required: true,
+    },
   },
   setup() {
     const { t } = useI18n();
-    const modalPayout = ref(0)
-    const modalAddMember = ref(0)
-    const modalRemoveMember = ref(0)
-    const modalGeneral = ref(0)
     const dropdownAction = ref(false);
+    const latestDaoVersion = ref(0)
+
+    const form = ref()
+
+    const modalProposal = ref(0)
+    const modalTitle = ref('')
+    const activeForm = ref('')
+    const activeFormCode = ref('')
+    const formProps = ref({})
+
+    // for tests
+    const modalProp = ref(0)
+
+    const activeTabId1 = ref('ex1-1');
 
     return {
-      t, modalPayout, modalAddMember, modalRemoveMember, modalGeneral, dropdownAction
+      t,
+      dropdownAction, 
+      latestDaoVersion,  
+      modalProposal,
+      modalTitle, 
+      activeForm, 
+      activeFormCode, 
+      formProps, 
+      check, 
+      form,
+      modalProp,
+      activeTabId1
     };
   },
+
+  mounted() {
+    this.getLatestDaoVersion()
+  },
+
   computed: {
     accountId() {
       return this.$store.getters['near/getAccountId']
@@ -98,22 +182,123 @@ export default {
     canVote() {
       return Object.keys(this.dao.token_holders).includes(this.accountId)
     },
+    nearService() {
+      return this.$store.getters['near/getService']
+    },
+    possibleUpgrade(){
+      return this.dao.version < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
+    }
   },
+
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalPayoutOpen() {
-      this.modalPayout += 1
+    modalPropOpen(){
+      this.modalProp += 1 
     },
-    modalAddMemberOpen() {
-      this.modalAddMember += 1
+    modalOpen(templ, templSettings){
+      this.modalProposal += 1
+      this.dropdownAction = false
+      this.modalTitle = this.t('default.wf_templ_' + templ.code)
+      this.activeFormCode = templ.code
+
+      switch (templ.code) {
+        case 'wf_near_send':
+          this.formProps = {
+            tokenName: this.dao.treasury.token.meta.name, 
+            contractId: this.dao.wallet, 
+            template: loFind(this.dao.templates, {code: templ.code}),
+          }
+          this.activeForm = 'Payout'
+          break
+        case 'wf_treasury_send_ft':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.activeForm = 'SendToken'
+          break
+        case 'wf_add':
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}
+          this.activeForm = 'AddWorkflow'
+          console.log('wf_add');
+          break
+        case 'wf_general':
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
+          this.activeForm = 'GeneralProposal'
+          break
+        case 'wf_media_add':
+          this.formProps = {contractId: this.dao.wallet, docs: this.dao.docs, template: loFind(this.dao.templates, {code: templ.code})}
+          this.activeForm = 'AddMedia'
+          break
+        case 'wf_skyward':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.short, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
+          this.activeForm = 'SkywardProposal'
+          break 
+        case 'wf_bounty':
+          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
+          this.activeForm = 'BountyProposal'
+          break;
+        default:
+            this.formProps = {}
+            this.activeForm = ''
+            this.activeFormCode = ''
+      }
+      console.log(templ);
+      console.log(templSettings);
     },
-    modalRemoveMemberOpen() {
-      this.modalRemoveMember += 1
+
+    vote(){
+      switch (this.activeFormCode) {
+        case 'wf_near_send':
+          console.log('wf_near_send');
+          break
+        case 'wf_add':
+          console.log('add_wf');
+          break
+        case 'wf_general':
+          console.log('add_wf');
+          break
+        case 'wf_media_add':
+          console.log('wf_media_add');
+          break
+        default:
+          console.log('invalid code');
+      }
+      this.$refs.form?.onSubmit()
     },
-    modalGeneralOpen() {
-      this.modalGeneral += 1
+    getLatestDaoVersion(){
+      this.nearService.getDaoStats()
+       .then(r => {
+          this.latestDaoVersion = r.latest_dao_version
+        })
+        .catch((e) => {
+          this.$logger.error('D', 'app@components/dao/Buttons', 'getLatestDaoVersion-blockchain', `Failed to load latest DAO version`)
+          console.log(e)
+        })
+    },
+    unlockTokens(group) {
+      console.log(group)
+      this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
+      // this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
+        console.log(r)
+      }).catch((e) => {
+        console.log(e)
+      });
+      this.dropdownAction = false
+    },
+    distributeToCouncilTokens() {
+      this.nearService.distributeFt(
+        this.dao.wallet,
+        this.dao.token_stats.council.free,
+        'Council',
+        this.dao.groups.council.wallets,
+        null,
+        0.5
+      ).then((r) => {
+        console.log(r)
+      }).catch((e) => {
+        console.log(e)
+      });
+      this.dropdownAction = false
     },
   }
 };

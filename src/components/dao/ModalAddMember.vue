@@ -1,38 +1,38 @@
 <template>
-    <MDBModal
-        id="modalAddMember"
-        tabindex="-1"
-        labelledby="modalAddMemberLabel"
-        v-model="active"
-    >
-        <MDBModalHeader>
-          <MDBModalTitle id="modalAddMemberLabel"> {{ t('default.add_member') }} </MDBModalTitle>
-        </MDBModalHeader>
-        <MDBModalBody class="text-start">
-          <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-          <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-              @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-          >
-              <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
-          </MDBInput>
-          <br/>
-          <label for="group-input" class="form-label">{{ t('default.group') }}</label>
-          <MDBSelect class="text-left" id="group-input" inputGroup :formOutline="false" aria-describedby="group-addon" v-model:options="groupsDropdown" v-model:selected="formGroup"
-              @keyup="validateGroup()" @blur="validateGroup()" :isValid="!errors.formGroup" :isValidated="isValidated.formGroup" :invalidFeedback="errors.formGroup"
-          />
-          <br/>
-          <label for="note-input" class="form-label">{{ t('default.note') }}</label>
-          <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
-              @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
-          >
-          </MDBInput>
-          
-        </MDBModalBody>
-        <MDBModalFooter>
-          <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-          <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
-        </MDBModalFooter>
-    </MDBModal>
+  <MDBModal
+    id="modalAddMember"
+    tabindex="-1"
+    labelledby="modalAddMemberLabel"
+    v-model="active"
+  >
+    <MDBModalHeader>
+      <MDBModalTitle id="modalAddMemberLabel"> {{ t('default.add_member') }} </MDBModalTitle>
+    </MDBModalHeader>
+    <MDBModalBody class="text-start">
+      <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
+      <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
+          @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+      >
+          <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
+      </MDBInput>
+      <br/>
+      <label for="group-input" class="form-label">{{ t('default.group') }}</label>
+      <MDBSelect class="text-left" id="group-input" inputGroup :formOutline="false" aria-describedby="group-addon" v-model:options="groupsDropdown" v-model:selected="formGroup"
+          @keyup="validateGroup()" @blur="validateGroup()" :isValid="!errors.formGroup" :isValidated="isValidated.formGroup" :invalidFeedback="errors.formGroup"
+      />
+      <br/>
+      <label for="note-input" class="form-label">{{ t('default.note') }}</label>
+      <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
+          @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
+      >
+      </MDBInput>
+      
+    </MDBModalBody>
+    <MDBModalFooter>
+      <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
+      <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+      </MDBModalFooter>
+  </MDBModal>
 </template>
 
 <script>
@@ -70,10 +70,6 @@ export default {
       type: Object,
       required: true
     },
-    tokenHolders: {
-      type: Object,
-      required: true
-    }
   },
   setup(props) {
     const { t } = useI18n();
@@ -87,7 +83,7 @@ export default {
     watch(show, openModal)
 
     const formAccount = ref('')
-    const formGroup = ref('Community')
+    const formGroup = ref('Council')
     const formNote = ref('')
 
     const isValidated = ref({
@@ -116,7 +112,7 @@ export default {
     },
     groupsDropdown() {
       return [
-        {value: 'Insiders', text: this.t('default.council')},
+        {value: 'Council', text: this.t('default.council')},
         {value: 'Community', text: this.t('default.community')},
         {value: 'Foundation', text: this.t('default.investor')},
       ]
@@ -185,6 +181,11 @@ export default {
             this.formNote = ''
             this.active = false
         }).catch((e) => {
+            const member = this.formAccount + '.' + this.factoryAccount.split('.')[1]
+            this.$logger.error('D', 'app@components/dao/ModalAddMember', 'AddProposal-blockchain', `Failed to add member [${member}]`)
+            this.$logger.error('B', 'app@components/dao/ModalAddMember', 'AddProposal-blockchain', `Failed to add member [${member}]`)
+            this.$notify.danger(this.t('default.notify_add_member_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_add_member_fail_message', {member: member}))
+            this.$notify.flush()
             console.log(e)
         })
       }

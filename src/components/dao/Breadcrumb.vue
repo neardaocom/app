@@ -5,17 +5,13 @@
         <nav aria-label="breadcrumb navbar-light bg-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'landing-page' }">{{
-                t("default.landing_page")
-              }}</router-link>
+              <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
             <li class="breadcrumb-item">
-              <router-link :to="{ name: listRouter, query: {} }">
-                {{ t("default." + listName) }}
-              </router-link>
+              <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-              {{ account }}
+              {{ daoId }}
             </li>
           </ol>
         </nav>
@@ -29,15 +25,7 @@ import { useI18n } from "vue-i18n";
 
 export default {
   props: {
-    account: {
-      type: String,
-      required: true,
-    },
-    listRouter: {
-      type: String,
-      required: true,
-    },
-    listName: {
+    daoId: {
       type: String,
       required: true,
     },
@@ -46,5 +34,10 @@ export default {
     const { t } = useI18n();
     return { t };
   },
+  computed: {
+    appName() {
+      return process.env.VUE_APP_BRAND_NAME
+    }
+  }
 };
 </script>

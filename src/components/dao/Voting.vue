@@ -23,11 +23,44 @@
     </div>
   </div>-->
     <!-- /Order -->
-    <!-- Proposal in progress -->
+
+
+    <!-- Filter, checkboxes, order -->
+    <div v-if="proposals.length > 0" class="row my-4 mx-4">
+      <div class="col-6 col-md-4 col-lg-3">
+        <MDBInput
+          inputGroup
+          formOutline
+          wrapperClass=" my_filter_form"
+          v-model="searchQuery"
+          size="sm"
+          aria-describedby="search-addon"
+          :aria-label="t('default.search')"
+        >
+          <template #prepend>
+            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
+          </template>
+        </MDBInput>
+      </div>
+      <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
+        <small> <MDBCheckbox  :label="filterState.inProgress.name" inline v-model="filterState.inProgress.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterState.accepted.name" inline v-model="filterState.accepted.active" class="rounded-3"/> </small>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 text-end">
+        <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
+      </div>
+    </div>
+
+    <!-- Proposals -->
+    <section v-if="proposals.length == 0">
+      <hr>
+      <h6 class="mb-0 text-start">{{ t("default.no_active_proposal") }}</h6>
+    </section>
+
     <div class="row">
-      <div v-for="(proposal, index) in dao.proposals" :key="index" class="col-md-6 mb-4 mb-md-0">
+      <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal[1]" :proposalId="proposal[0]" :contractId="dao.wallet" :token_holders="dao.token_holders" :token_blocked="dao.token_released - dao.token_free" :docs="dao.docs"/>
+          <Proposal :proposal="proposal" :contractId="dao.wallet" />
         </section>
       </div>
     </div>
@@ -35,37 +68,96 @@
 </template>
 
 <script>
-//import { MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
-import { ref, toRefs, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import Proposal from "@/components/dao/Proposal.vue";
+import { MDBInput, MDBCheckbox, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
+import { ref, toRefs } from "vue"
+import { reactive } from "@vue/reactivity"
+import { useI18n } from "vue-i18n"
+import Proposal from "@/components/dao/Proposal.vue"
+import { transform } from '@/models/proposal';
+import _ from "lodash"
+import loFind from "lodash/find"
+import { toSearch } from '@/utils/string'
 
 export default {
   components: {
-    // MDBProgress, MDBProgressBar,
-    Proposal
+    MDBInput, MDBCheckbox, MDBIcon, MDBSelect
+    , Proposal
   },
   props: {
     dao: {
       type: Object,
       required: true,
     },
+    walletId: {
+      type: String,
+      required: false,
+    },
+    walletRights: {
+      type: Object,
+      required: true,
+    },
+    daoRights: {
+      type: Object,
+      required: true,
+    },
   },
   setup(props) {
-    const { dao } = toRefs(props)
-    let orderedProposals = ref({})
+    const { dao, walletId, walletRights, daoRights } = toRefs(props)
+    const { t, d, n } = useI18n();
 
-    const orderProposal = () => { orderedProposals = dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid) }
+    const proposals = dao.value.proposals.map((proposal) => {
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
+    })
 
-    watch(orderedProposals, orderProposal)
-
-    const { t } = useI18n();
-    return { t, orderedProposals };
+    const searchQuery = ref('')
+    const filterState = reactive({
+      inProgress: {
+        name: t('default.proposal_state_in_progress'),
+        state: 'in_progress',
+        active: false,
+      },
+      accepted: {
+        name: t('default.proposal_state_accepted'),
+        state: 'accepted',
+        active: false,
+      },
+    })
+    const order = reactive({
+      selected: 'created_desc',
+      options: [
+        { text: t('default.order_created_desc'), value: 'created_desc' },
+        { text: t('default.order_created_asc'), value: 'created_asc' }
+      ],
+    })
+    return { t, proposals, searchQuery, filterState, order };
   },
   computed: {
-    //listOrderDesc() {
-    //  return this.dao.proposals.sort((a, b) => b[1].uuid - a[1].uuid)
-    //},
+    results() {
+      let results = this.proposals
+      // filter
+      const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
+      if (filterStates.length > 0) {
+        results = results.filter(item => _.intersection([item.stateCode], filterStates).length > 0)
+      }
+      // searching
+      const searchText = toSearch(this.searchQuery)
+      if (searchText.length > 2) {
+        results = results.filter(item => item.search.includes(searchText))
+      }
+      // order
+      switch (this.order.selected) {
+        case 'created_desc':
+          results = _.orderBy(results, ['id'], ['desc'])
+          break;
+        case 'created_asc':
+          results = _.orderBy(results, ['id'], ['asc'])
+          break;
+        default:
+          break;
+      }
+
+      return results
+    },
   },
   methods: {
   }

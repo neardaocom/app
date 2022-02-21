@@ -1,5 +1,6 @@
 <template>
-    <footer class="text-center text-lg-start text-muted" style="background-color: hsl(213, 44%, 97%)">
+    <!-- <footer class="text-center text-lg-start text-muted" >-->
+    <MDBFooter :text="['center', 'lg-start']" style="background-color: hsl(213, 44%, 97%)">
         <!-- Section: Social media -->
         <section class="
                         d-flex
@@ -15,11 +16,11 @@
 
             <!-- Right -->
             <div>
-            <span class="me-3">{{ t('default.get_connected_with_us') }}:</span>
-            <a :href="app_brand_twitter" class="me-3 text-reset">
+            <span class="me-3">{{ t('default.connect_with_us') }}:</span>
+            <a :href="app_brand_twitter" target="_blank" class="me-3 text-reset">
                 <i class="fab fa-twitter"></i>
             </a>
-            <a :href="app_brand_discord" class="me-3 text-reset">
+            <a :href="app_brand_discord" target="_blank" class="me-3 text-reset">
                 <i class="fab fa-discord"></i>
             </a>
             </div>
@@ -35,7 +36,7 @@
                 <!-- Brand -->
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                 <!-- Content -->
-                <h6 class="text-uppercase fw-bold mb-4">
+                <h6 class="text-uppercase fw-bold mb-4 color-primary">
                     <i class="far fa-flag me-3"></i>{{ app_brand_name }}
                 </h6>
                 <p>{{ app_brand_about }}</p>
@@ -45,7 +46,7 @@
                 <!-- Products -->
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4">{{ t('default.about') }}</h6>
+                <h6 class="text-uppercase mb-4 color-primary">{{ t('default.about') }}</h6>
                 <p>
                     <a href="https://en.wikipedia.org/wiki/The_DAO_(organization)" class="text-reset" target="_blank">{{ t('default.dao_organization') }}</a>
                 </p>
@@ -58,7 +59,7 @@
                 <!-- Links -->
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4">{{ t('default.useful_links') }}</h6>
+                <h6 class="text-uppercase mb-4 color-primary">{{ t('default.useful_links') }}</h6>
                 <p>
                     <a href="https://near.org/" class="text-reset">Near.org</a>
                 </p>
@@ -71,9 +72,9 @@
                 <!-- Contacts -->
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <!-- Links -->
-                    <h6 class="text-uppercase mb-4">{{ t('default.contacts') }}</h6>
-                    <p><i class="fas fa-home me-3"></i> {{ app_brand_address }}</p>
-                    <p><i class="fas fa-envelope me-3"></i> {{ app_brand_email }}</p>
+                    <h6 class="text-uppercase mb-4 color-primary">{{ t('default.contacts') }}</h6>
+                    <p><i class="bi bi-house color-primary me-3"/> {{ app_brand_address }}</p>
+                    <p><i class="bi bi-envelope color-primary me-3"/> {{ app_brand_email }}</p>
                 </div>
                 <!-- Contacts -->
             </div>
@@ -82,19 +83,27 @@
         </section>
         <!-- Section: Links  -->
 
+        <section class="text-center">
+            <img class="me-1" :src="publicPath + 'img/logo_neardao.png'" alt="" style="width: 80px;"/>
+            <h6>NearDAO</h6>
+        </section>
+
         <!-- Copyright -->
         <div class="text-center p-4" style="background-color: hsla(0, 0%, 17%, 0.04)">
             © {{ today_year }} <a class="text-reset fw-bold" :href="app_brand_web">{{ app_brand_name }}</a> {{ t('default.all_rights_reserved') }}
+            <span class="ms-4 me-1">{{ t('default.powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="publicPath + 'img/near.svg'" alt="" style="width: 70px;"/></a>
         </div>
     <!-- Copyright -->
-    </footer>
+    </MDBFooter>
 </template>
 
 <script>
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { MDBFooter } from "mdb-vue-ui-kit"
 export default {
     components: {
-        
+        MDBFooter
     },
     setup() {
         const app_brand_name = process.env.VUE_APP_BRAND_NAME;
@@ -110,9 +119,11 @@ export default {
         const today = new Date();
         const today_year = today.getFullYear();
 
+        const publicPath = computed(() => process.env.BASE_URL)
+
         return {
             app_brand_name, app_brand_about, app_brand_web, app_brand_address, app_brand_email, app_brand_twitter, app_brand_discord
-            , today_year, t
+            , today_year, t, publicPath,
         };
     }
 }

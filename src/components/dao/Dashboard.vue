@@ -1,143 +1,102 @@
 <template>
-  <section class="text-center border-bottom mb-2">
-    <div class="row d-flex justify-content-center">
-      <div class="col-lg-6">
-        <h1>{{ dao.name }}</h1>
-        <p class="text-muted">{{ dao.about }}</p>
-      </div>
-    </div>
-  </section>
-  <section class="mb-0 text-start">
+  <div class="container mb-2">
+    <DashboardOverview :dao="dao" :nearPrice="nearPrice" />
     <div class="row">
-      <div class="col-12 col-md-4">
-        <ul class="list-unstyled text-muted">
-          <li v-if="dao.address">
-            <i class="fas fa-home fa-fw me-3 mb-3"></i>
-            <a class="text-reset font-weight-bold" href="">{{ dao.address }}</a>
-          </li>
-          <li>
-            <i class="fas fa-wallet fa-fw me-3 mb-3"></i>
-            <a
-              class="text-reset font-weight-bold"
-              :href="nearWalletUrl + '/accounts/' + dao.wallet"
-              target="_blank"
-              >{{ t("default.wallet") }}</a
-            >
-          </li>
-          <li v-if="dao.web">
-            <i class="fas fa-globe fa-fw me-3 mb-3"></i
-            ><a class="text-reset font-weight-bold" :href="dao.web">{{ dao.domain }}</a>
-          </li>
-          <li>
-            <i class="fas fa-money-bill-wave-alt fa-fw me-3 mb-3"></i>
-            <span class="text-reset font-weight-bold">{{ n(dao.token) }}</span> {{ dao.token_name }}
-          </li>
-          <li>
-            <i class="fas fa-users fa-fw me-3 mb-3"></i
-            ><strong>{{ t("default.council") }}</strong>
-            {{ dao.groups.council.amount || "0" }}% |
-            <strong>{{ t("default.community") }}</strong>
-            {{ dao.groups.community.amount || "0" }}%
-          </li>
-          <li>
-            <i class="fas fa-chart-line fa-fw me-3 mb-3"></i
-            ><strong>{{ t("default.investor") }}</strong>
-            {{ dao.groups.investor.amount || "0" }}% |
-            <strong>{{ t("default.public_sale") }}</strong>
-            {{ dao.groups.public_sale.amount || "0" }}%
-          </li>
-        </ul>
-        <p>
-          {{ t("default.marks") }}:<br />
-          <span
-            class="badge bg-info"
-            v-for="(tag, index) in dao.tags"
-            :key="index"
-            >{{ tag }}</span
-          >
-        </p>
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <About :dao="dao" />
       </div>
-      <div class="col-12 col-md-4">
-        <h5 class="text-center">{{ t("default.treasury") }}</h5>
-        <h2>
-          <NumberFormatter :amount="dao.treasury.near"/> <span title="NEAR">Ⓝ </span>
-          <BadgePercent :amount="dao.treasury.w_delta"/>
-        </h2>
-        <p>≈ <NumberFormatter :amount="dao.treasury.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>
-        <!-- <hr class="d-none d-md-block" /> -->
+      <div class="col-12 col-md-6 col-lg-4 mb-4">
+        <Share :dao="dao" :walletId="walletId" />
       </div>
-      <div class="col-12 col-md-4">
-        <h5 class="text-center mt-1">{{ t('default.token_unlocked') }}</h5>
-        <ul class="list-unstyled text-muted">
-          <li class="mb-2">
-            <strong>{{ t('default.council') }}</strong> {{ dao.token_unlocked.council }}%
-            <MDBProgress :height="5">
-              <MDBProgressBar :value="dao.token_unlocked.council" bg="success" />
-            </MDBProgress>
-          </li>
-          <li class="mb-2">
-            <strong>{{ t('default.community') }}</strong> {{ dao.token_unlocked.community }}%
-            <MDBProgress :height="5">
-              <MDBProgressBar :value="dao.token_unlocked.community" bg="primary" />
-            </MDBProgress>
-          </li>
-          <li class="mb-2">
-            <strong>{{ t('default.investor') }}</strong> {{ dao.token_unlocked.investor }}%
-            <MDBProgress :height="5">
-              <MDBProgressBar :value="dao.token_unlocked.investor" bg="warning" />
-            </MDBProgress>
-          </li>
-          <li>
-            <strong>{{ t('default.public_sale') }}</strong> {{ dao.token_unlocked.public_sale }}%
-            <MDBProgress :height="5">
-              <MDBProgressBar :value="dao.token_unlocked.public_sale" bg="warning" />
-            </MDBProgress>
-          </li>
-        </ul>
-        <!--<h5 class="text-center">{{ t('default.market') }}</h5>-->
-        <!--<h2>-->
-        <!--  <NumberFormatter :amount="dao.market.near"/> Ⓝ-->
-        <!--  <BadgePercent :amount="dao.market.w_delta"/>-->
-        <!--</h2>-->
-        <!--<p>≈ <NumberFormatter :amount="dao.market.eth"/> ETH | <NumberFormatter :amount="dao.market.btc"/> BTC | <NumberFormatter :amount="dao.market.currency_amount"/> {{ t('default.currency_' + dao.treasury.currency) }}</p>-->
+      <SkywardFinance v-if="skywardSaleIds.length > 0" :dao="dao" :scenario="'active'" :salesIds="skywardSaleIds" />
+      <Bounty :dao="dao" />
+    </div>
+
+    <hr/>
+    <div class="row mt-2">
+      <!-- Novy clen -->
+      <div class="col-12 col-md-6 text-start">
+        <h5 v-if="activeProposals.length > 0" >{{ t("default.active_proposals") }}</h5>
+        <h6 v-else>{{ t("default.no_active_proposal") }}</h6>
+      </div>
+      <div v-for="(proposal, index) in activeProposals" :key="index" class="col-12 col-md-12 mb-4 mb-md-0">
+        <section class="mb-4 text-start">
+          <Proposal :proposal="proposal" :contractId="dao.wallet"/>
+        </section>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
+import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
+import About from "@/components/dao/dashboard/About.vue";
+import Share from "@/components/dao/dashboard/Share.vue";
+import Bounty from "@/components/dao/dashboard/Bounty.vue";
 import { useI18n } from "vue-i18n";
-import {MDBProgress, MDBProgressBar} from "mdb-vue-ui-kit"
-import NumberFormatter from "@/components/NumberFormatter.vue"
-import BadgePercent from '@/components/BadgePercent.vue'
-import { ref } from 'vue'
-//import {utils} from "near-api-js"
+import Proposal from "@/components/dao/Proposal.vue"
+import { transform } from '@/models/proposal';
+import Auction from '@/models/auction';
+import { toRefs, ref } from "vue"
+import _ from "lodash"
+import loFind from "lodash/find"
+import DashboardOverview from '@/components/dao/DashboardOverview.vue'
 
 export default {
   components: {
-    MDBProgress, MDBProgressBar, NumberFormatter, BadgePercent
+    Proposal,
+    About,
+    SkywardFinance, Share, Bounty,
+    DashboardOverview,
   },
   props: {
     dao: {
       type: Object,
       required: true,
     },
-  },
-  computed: {
-    nearWalletUrl() {
-      return this.$store.getters['near/getWalletUrl']
+    walletId: {
+      type: String,
+      required: false,
+    },
+    walletRights: {
+      type: Object,
+      required: true,
+    },
+    daoRights: {
+      type: Object,
+      required: true,
     },
   },
-  setup() {
-    const { t, n } = useI18n()
-    const api = undefined
-    const balance = ref()
-    return { t, n, api, balance };
-  },
-  created() {
-    
-  },
+  setup(props) {
+    const { t, n, d } = useI18n();
+    const { dao, walletId, walletRights, daoRights } = toRefs(props)
 
-  
+    const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
+    // console.log(dao, walletId, walletRights, daoRights, d)
+    // proposals
+    const proposals = dao.value.proposals.map((proposal) => {
+      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
+    })
+    // const proposals = []
+
+    return {
+      t, n, proposals, skywardSaleIds
+    };
+  },
+  computed: {
+    activeProposals() {
+      let results = this.proposals
+      // filter
+      results = results.filter(item => _.intersection([item.stateCode], ['in_progress']).length > 0)
+      // order
+      results = _.orderBy(results, ['id'], ['asc'])
+
+      return results
+    },
+    
+    nearPrice() {
+      return this.$root.near_price
+    },
+  },
 };
 </script>

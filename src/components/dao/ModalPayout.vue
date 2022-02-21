@@ -4,35 +4,42 @@
         tabindex="-1"
         labelledby="modalPayoutLabel"
         v-model="active"
+        size="lg"
     >
         <MDBModalHeader>
-        <MDBModalTitle id="modalPayoutLabel"> {{ t('default.payout') }} </MDBModalTitle>
+          <MDBModalTitle id="modalPayoutLabel"> {{ t('default.payout') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
-        <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
-        <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
-            @keyup="validateAccount()" @blur="validateAccount()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
-        >
-            <span class="input-group-text" id="account-addon">.{{ factoryAccount.split('.')[1] }}</span>
-        </MDBInput>
-        <br/>
-        <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
-        <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
-            @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
-        >
-            <span class="input-group-text" id="amount-addon">Ⓝ</span>
-        </MDBInput>
-        <br/>
-        <label for="note-input" class="form-label">{{ t('default.note') }}</label>
-        <MDBInput class="text-left" id="note-input" min="0.00" inputGroup :formOutline="false" aria-describedby="note-addon" v-model.number="formNote"
-            @keyup="validateNote()" @blur="validateNote()" :isValid="!errors.formNote" :isValidated="isValidated.formNote" :invalidFeedback="errors.formNote"
-        >
-        </MDBInput>
-        
+          <label for="account-id-input" class="form-label">{{ t('default.account_id') }}</label>
+          <MDBInput id="account-id-input" inputGroup :formOutline="false" aria-describedby="account-addon" v-model="formAccount" data-mdb-showcounter="true" maxlength="100"
+              @keyup="validateAccount()" @blur="validateAccountExists()" :isValid="!errors.formAccount" :isValidated="isValidated.formAccount" :invalidFeedback="errors.formAccount"
+          >
+              <span class="input-group-text" id="account-addon">.{{ getAccountPostfix() }}</span>
+          </MDBInput>
+          <br/>
+          <label for="amount-input" class="form-label">{{ t('default.amount') }}</label>
+          <MDBInput class="text-left" id="amount-input" min="0.00" inputGroup :formOutline="false" aria-describedby="amount-addon" type="number" v-model.number="formAmount"
+              @keyup="validateAmount()" @blur="validateAmount()" :isValid="!errors.formAmount" :isValidated="isValidated.formAmount" :invalidFeedback="errors.formAmount"
+          >
+              <span class="input-group-text" id="amount-addon">{{ amountPostfix }}</span>
+          </MDBInput>
+          <div class="text-center mt-2">
+            <MDBBtnGroup>
+              <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" label="NEAR" name="options" value="near"
+                v-model="formAsset" />
+              <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" :label="tokenName" name="options" value="token"
+                v-model="formAsset" />
+            </MDBBtnGroup>
+          </div>
+          <br/>
+          <label for="description-id-input" class="form-label">{{ t('default.description') }}</label>
+          <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
+            <section v-html="formDescription"></section>
+          </MDBWysiwyg>
         </MDBModalBody>
         <MDBModalFooter>
-        <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-        <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
+          <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
+          <MDBBtn color="primary" @click="vote()">{{ t('default.vote') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -41,7 +48,10 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber, maxLength} from '@/utils/validators'
+import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber} from '@/utils/validators'
+import { getRandom } from '@/utils/integer'
+import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
   MDBBtn,
   MDBInput,
@@ -49,16 +59,21 @@ import {
   MDBModalHeader,
   MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter
+  MDBModalFooter,
+  MDBRadio,
+  MDBBtnGroup,
 } from "mdb-vue-ui-kit";
 import { yoctoNear } from "@/services/nearService/constants"
 import Decimal from 'decimal.js';
+import _ from "lodash"
 
 export default {
   components: {
     MDBBtn
     , MDBInput
     , MDBModal, MDBModalHeader, MDBModalTitle, MDBModalBody, MDBModalFooter
+    , MDBRadio, MDBBtnGroup
+    , MDBWysiwyg,
   },
   props: {
     show: {
@@ -66,6 +81,10 @@ export default {
       required: true
     },
     contractId: {
+      type: String,
+      required: true
+    },
+    tokenName: {
       type: String,
       required: true
     }
@@ -83,19 +102,20 @@ export default {
 
     const formAccount = ref('')
     const formAmount = ref(0)
-    const formNote = ref('')
+    const formAsset = ref('near')
+    const formDescription = ref('')
 
     const isValidated = ref({
         formAccount: false,
         formAmount: false,
-        formNote: false,
+        formDescription: false,
     })
 
     const errors = reactive({});
 
     return {
       t, active
-      , formAccount, formAmount, formNote
+      , formAccount, formAmount, formAsset, formDescription
       , isValidated, errors
     };
   },
@@ -109,8 +129,21 @@ export default {
     nearService() {
       return this.$store.getters['near/getService']
     },
+    ipfsService() {
+      return this.$store.getters['ipfs/getService']
+    },
+    amountPostfix() {
+      let postfix = 'Ⓝ'
+      if (this.formAsset == 'token') {
+        postfix = this.tokenName
+      }
+      return postfix
+    }
   },
   methods: {
+    getAccountPostfix() {
+      return _.last(this.factoryAccount.split('.'))
+    },
     validateAccount(){
       const field = "formAccount"
       const requiredVal = requiredValidator(this.formAccount)
@@ -122,6 +155,19 @@ export default {
       } else {
         this.errors[field] = null
       }
+      this.isValidated.formAccount = true
+    },
+    validateAccountExists() {
+      const field = "formAccount"
+      const accountId = this.formAccount.trim() + '.' + this.getAccountPostfix()
+      this.errors[field] = this.t('default.validating')
+      this.nearService.getAccountState(accountId)
+          .then(() => {
+              this.errors[field] = null
+          })
+          .catch(() => {
+              this.errors[field] = this.t('default.validator_near_account_not_found')
+          })
       this.isValidated.formAccount = true
     },
     validateAmount(){
@@ -143,46 +189,94 @@ export default {
       }
       this.isValidated.formAmount = true
     },
-    validateNote(){
-      const field = "formNote"
-      const maxLengthVal = maxLength(this.formNote, 100)
-      if (maxLengthVal.valid === false) {
-        this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
+    validateDescription(){
+      const field = "formDescription"
+      this.formDescription = ref(this.$refs.refWysiwyg.getCode())
+      const requiredVal = requiredValidator(this.formDescription)
+      if (requiredVal.valid === false) {
+        this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
         this.errors[field] = null
       }
-      this.isValidated.formNote = true
+      this.isValidated.formDescription = true
     },
     validate(){
       this.validateAccount()
       this.validateAmount()
-      this.validateNote()
+      this.validateDescription()
     },
-    vote() {
+    async vote() {
       this.validate()
       if (isValid(this.errors) === true) {
-          console.log(this.formAmount)
-          console.log(yoctoNear)
-        this.nearService.addProposal(
-            this.contractId
-            , this.formNote
-            , [this.t('default.payout')]
-            , {
-                'Pay': {
-                    amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
-                    account_id: (this.formAccount + '.' + this.factoryAccount.split('.')[1])
+        // IPFS
+        let ipfs_cid = null
+        try {
+          const name = this.accountId + '-payout-' + this.formTitle + '-' + getRandom(1, 999)
+          ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
+        } catch(e){
+          this.$logger.error('D', 'app@components/dao/ModalPayout', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$logger.error('B', 'app@components/dao/ModalPayout', 'StoreFile-ipfs', 'File saving to ipfs failed')
+          this.$notify.danger(this.t('default.notify_save_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_save_file_ipfs_fail_message'))
+          this.$notify.flush()
+          console.log(e);
+          return
+        }
+        // Blockchain
+        switch (this.formAsset) {
+          case 'near':
+            this.nearService.addProposal(
+                this.contractId
+                , ipfs_cid
+                , [this.t('default.payout')]
+                , {
+                    'SendNear': {
+                        amount_near: Decimal.set({ toExpPos: 30 }).mul(this.formAmount, yoctoNear).toFixed(),
+                        account_id: (this.formAccount + '.' +  this.getAccountPostfix())
+                    }
                 }
-            }
-            , 1
-            , this.accountId
-        ).then(r => {
-            console.log(r)
-            this.formAccount = ''
-            this.formAmount = 0
-            this.active = false
-        }).catch((e) => {
+                , 0.5
+                , this.accountId
+            ).then(r => {
+                console.log(r)
+                this.formAccount = ''
+                this.formAmount = 0
+                this.formDescription = ''
+                this.active = false
+            }).catch((e) => {
+            const account =  this.formAccount + '.' + this.factoryAccount.split('.')[1]
+            this.$logger.error('D', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
+            this.$logger.error('B', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
+            this.$notify.danger(this.t('default.notify_payout_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_payout_fail_message', {account : account}))
+            this.$notify.flush()
             console.log(e)
-        })
+            })
+            break;
+          case 'token':
+            this.nearService.distributeFt(
+                this.contractId
+                , this.formAmount
+                , 'Community'
+                , [(this.formAccount + '.' +  this.getAccountPostfix())]
+                , ipfs_cid
+                , 0.5
+            ).then(r => {
+                console.log(r)
+                this.formAccount = ''
+                this.formAmount = 0
+                this.formDescription = ''
+                this.active = false
+            }).catch((e) => {
+                const account =  this.formAccount + '.' + this.factoryAccount.split('.')[1]
+                this.$logger.error('D', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
+                this.$logger.error('B', 'app@components/dao/ModalPayout', 'AddProposal-blockchain', `Payout to [${account}] failed`)
+                this.$notify.danger(this.t('default.notify_payout_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_payout_fail_message', {account : account}))
+                this.$notify.flush()
+                console.log(e)
+            })
+            break;
+          default:
+            throw new Error('Unsupported asset: ' + this.formAsset)
+        }
       }
     },
     close() {
