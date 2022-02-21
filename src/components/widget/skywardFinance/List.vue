@@ -1,6 +1,5 @@
 <template>
     <section v-if="sales.length > 0">
-        <h5 class="text-start">{{ t('default.ft_auction') }}</h5>
         <div class="row">
             <div class="col-12 col-md-6 mb-4" v-for="auction in sales" :key="auction.id">
                 <Auction :auction="auction" />
@@ -11,11 +10,12 @@
 
 <script>
 import Auction from "@/components/widget/skywardFinance/Auction.vue"
-import { onMounted, onUnmounted, toRefs, computed } from "vue"
+import { onMounted, onUnmounted, toRefs, computed, ref } from "vue"
 import { useStore } from "vuex"
 // import { testDataset } from "@/services/skywardFinanceService/types"
 import { useSkywardFinanace } from "@/hooks/auction"
 import { useI18n } from 'vue-i18n'
+import AuctionModel from '@/models/auction';
 
 export default {
     components: {
@@ -40,6 +40,7 @@ export default {
         const store = useStore()
 
         const account = computed(() => store.getters['near/getAccount'])
+        const skywardSaleIds = ref(AuctionModel.getSkywardSaleIds(dao.value.storage))
 
         const {
             service: skywardService,
@@ -50,7 +51,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, 'supertest.testnet', dao.value.storage.skywardFinance) // TODO: process.env (process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT)
+        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, skywardSaleIds.value)
 
         skywardFetch()
 

@@ -12,7 +12,7 @@
         </a>
         <a :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-check2-circle me-1"/>
-          {{ t('default.activities') }}
+          {{ t('default.in_progress') }}
         </a>
         <a v-if="false" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.treasury') }}
@@ -25,7 +25,7 @@
         </a>
         <a :class="[isActive('defi') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-graph-up me-1"/>
-          {{ t('default.defi') }}
+          {{ t('default.dApps') }}
         </a>
         <a :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-files me-1"/>
@@ -47,7 +47,7 @@
         <MDBDropdown btnGroup class="buttons_dropdown">
           <MDBDropdownToggle class="buttons_dropdown gradient-background" size="lg">
             <!-- <MDBBtn aria-controls="modalPayout" class="btn btn-primary"  data-mdb-ripple-color="dark"> -->
-              <MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities')}}
+              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
             <!-- </MDBBtn> -->
           </MDBDropdownToggle>
         </MDBDropdown>

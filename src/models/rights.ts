@@ -125,7 +125,7 @@ export const getWalletRights = (dao: DAO, walletId: string | undefined): DAORigh
 
     list.push({type: DAORightsType.Anyone})
 
-    if (walletId !== undefined) {
+    if (walletId !== undefined && walletId !== '') {
         // token holders
         const holder: DAOTokenHolder | undefined = loFind(dao.tokenHolders, {accountId: walletId})
         if (holder !== undefined) list.push({type: DAORightsType.TokenHolder})

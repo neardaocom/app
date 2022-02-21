@@ -87,6 +87,10 @@ export const getTemplate = (templates: WFTemplate[], id: number): WFTemplate | u
     return loFind(templates, {'id': id});
 }
 
+export const getTemplateByCode = (templates: WFTemplate[], code: string): WFTemplate | undefined => {
+    return loFind(templates, {'code': code});
+}
+
 export const getSettings = (template: WFTemplate, settingsId: number): WFSettings | undefined => {
     return loFind(template.settings, {'id': settingsId});
 }
@@ -105,7 +109,7 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
     // const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
     // console.log(settings, params)
     // return {key: 'wf_templ_' + template.code + '_constants', params: params}
-    return {key: 'wf_templ_' + template.code + '_constants', params: {}}
+    return {key: 'wf_templ_' + template.code + '_description', params: {}}
 }
 
 export const metaGetActivityForm = (templateCode: string, activityCode: string): WFMetaForm | undefined => {

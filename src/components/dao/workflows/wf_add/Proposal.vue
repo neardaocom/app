@@ -152,7 +152,7 @@ export default {
             const canProposeArray = loSplit(values.can_propose, ',')
             const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
             const workflowName = loFind(workflowsToAdd.value, { 'value': values.workflow })
-            const storageKey = `${workflowName.text}-${values.workflow}-${getRandom(1, 999)}-${moment().valueOf()}`  
+            const storageKey = `${workflowName.text}-${values.workflow}-${getRandom(1, 999)}-${moment().valueOf()}`
 
             // load templete, to count number of activities
             const loadTemplate = await nearService.value.providerGet(values.workflow) // TODO: try, catch
@@ -164,7 +164,6 @@ export default {
                 console.log('Bounty')
                 activitiesRights[0] = [rightAnyone]
             }
-
 
             const transitionsConstraints = loadTemplate[0].transitions.map((trans) => {
                 return trans.map(() => {

@@ -76,8 +76,7 @@
       </MDBCardBody>
     </MDBCard>
   </div>
-    <section v-if="docs.files.length == 0">
-      <hr>
+    <section class="text-center my-4" v-if="docs.files.length == 0">
       <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
     </section>
   </div>

@@ -10,11 +10,11 @@
               <th>{{ t('default.wf_vote_level') }}</th>
               <th>{{ t('default.wf_can_propose') }}</th>
               <th>{{ t('default.wf_can_vote') }}</th>
-              <th>{{ t('default.wf_activities_rights') }}</th>
+              <th>{{ t('default.wf_can_execute') }}</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="template in dao.templates" :key="template.id">
+            <tr v-for="template in data" :key="template.id">
               <template v-for="settings in template.settings" :key="settings.id">
                 <td>
                   <span class="fw-bold">{{ t('default.wf_templ_' + template.code) }}</span><br/><span>{{ transSettingsConstants(template, settings.id) }}</span>
@@ -55,7 +55,7 @@ import { getActivityById, settingsConstantsToTranslate, getActivityRights } from
 import { toRefs } from 'vue';
 //import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
 //import Workflow from "@/components/dao/Workflow.vue"
-///import orderBy from "lodash/orderBy"
+import loOrderBy from "lodash/orderBy"
 //import { toSearch } from '@/utils/string'
 
 export default {
@@ -72,9 +72,11 @@ export default {
     const { dao } = toRefs(props)
     const { t } = useI18n();
 
+    const data = loOrderBy(dao.value.templates, ['id'], ['desc'])
+
     const { daoRights, daoRightsOptions } = useRights(dao.value);
 
-    return { t, daoRights, daoRightsOptions };
+    return { t, daoRights, daoRightsOptions, data };
   },
   methods: {
     transVoteLevel(voteLevel) {

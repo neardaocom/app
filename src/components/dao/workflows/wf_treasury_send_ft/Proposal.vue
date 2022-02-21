@@ -15,7 +15,7 @@ import InputNumber from '@/components/forms/InputNumber.vue'
 import InputString from '@/components/forms/InputString.vue'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
-import { useNearService, useIPFSService } from "@/hooks/vuex";
+import { useNear, useIPFS } from "@/hooks/vuex";
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getAccountIdPostfix } from "@/services/nearService/utils"
@@ -49,8 +49,8 @@ export default {
 
          console.log(contractId.value);
 
-        const { nearService, factoryAccount, accountId } = useNearService()
-        const  ipfsService  = useIPFSService()
+        const { nearService, factoryAccount, accountId } = useNear()
+        const  ipfsService  = useIPFS()
         const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
 
         //const logger = inject('logger')
@@ -85,6 +85,7 @@ export default {
             }
 
             nearService.value.addProposal(
+                null,
                 contractId.value,
                 template.value.id,
                 template.value.settings[0].id,

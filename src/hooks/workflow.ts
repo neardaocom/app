@@ -71,22 +71,24 @@ export const useTemplateList = () => {
 
         nearService.value.providerList().then( r => {
             r.forEach(template => {
-                list.push({
-                    id: template.id,
-                    version: loToString(template.version),
-                    code: template.name,
-                    name: t('default.wf_templ_' + template.name),
-                    status: t('default.' + (installedTemplateCodes.includes(template.name) ? 'installed' : 'buy')),
-                    //constants: [],
-                    //attributes: [],
-                    activities: [],
-                    actions: [],
-                    transactions: [],
-                    startActionIds: [],
-                    endActionIds: [],
-                    search: [toSearch(t('default.wf_templ_' + template.name)), toSearch(t('default.workflow'))].join('-'),
-                    settings: [],
-                })
+                if (['wf_add', 'wf_near_send'].includes(template.name) === false) {
+                    list.push({
+                        id: template.id,
+                        version: loToString(template.version),
+                        code: template.name,
+                        name: t('default.wf_templ_' + template.name),
+                        status: t('default.' + (installedTemplateCodes.includes(template.name) ? 'installed' : 'buy')),
+                        //constants: [],
+                        //attributes: [],
+                        activities: [],
+                        actions: [],
+                        transactions: [],
+                        startActionIds: [],
+                        endActionIds: [],
+                        search: [toSearch(t('default.wf_templ_' + template.name)), toSearch(t('default.workflow'))].join('-'),
+                        settings: [],
+                    })
+                }
             });
 
             list.push({

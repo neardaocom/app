@@ -24,10 +24,14 @@ export default {
         dao: {
             type: Object,
             required: true,
+        },
+        salesIds: {
+            type: Array,
+            required: true,
         }
     },
     setup(props) {
-        const { dao, scenario } = toRefs(props)
+        const { scenario, salesIds } = toRefs(props)
 
         const store = useStore()
 
@@ -42,7 +46,7 @@ export default {
             filter: skywardFilter,
             reloadUp: skywardReloadUp,
             reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, dao.value.storage.skywardFinance) // TODO: 
+        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, salesIds.value) // TODO: 
 
         skywardFetch()
 

@@ -3,11 +3,14 @@ import { UnsupportedError } from "@/utils/error"
 import Decimal from "decimal.js"
 import { parseNanoseconds } from "@/utils/date"
 import { parseNumber } from "@/utils/number"
+import loMin from "lodash/min"
+import loStartsWith from "lodash/startsWith"
+import loGet from "lodash/get"
 
 const getProgress = (start: Date, finish: Date, now?: Date): number | undefined => {
     let progress: number | undefined;
     
-    const begin: number = start.valueOf()
+    const begin: number = loMin([start.valueOf(), new Date().valueOf()]) ?? start.valueOf()
     const end: number = finish.valueOf();
     const target: number = (now) ? now.valueOf() : new Date().valueOf();
     
@@ -113,4 +116,15 @@ const rateToken = (sale: Sale): Decimal | undefined => {
     return rate
 }
 
-export default { transform, getProgress, getTranslateKey, rate, rateToken }
+const getSkywardSaleIds = (storage: Record<string, unknown>): number[] => {
+    const saleIds: number[] = []
+    Object.keys(storage).forEach((key) => {
+        if (loStartsWith(key, 'wf_skyward')) {
+            // console.log(loGet(storage, [key, 0, 'U32']))
+            saleIds.push(loGet(storage, [key, 0, 'U32']))
+        }
+    })
+    return saleIds
+}
+
+export default { transform, getProgress, getTranslateKey, rate, rateToken, getSkywardSaleIds }

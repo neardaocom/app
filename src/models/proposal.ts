@@ -66,12 +66,30 @@ const getWorkflowCode = (state: string, progress: number): string => {
 }
 
 const workflowCodeBgMapper = {
-  in_progress: 'primary',
-  finishing: 'danger',
-  accepted: 'success',
-  rejected: 'danger',
-  spam: 'dark',
-  invalid: 'warning',
+  in_progress: {
+    color: 'primary',
+    icon: 'bi bi-bar-chart me-2',
+  },
+  finishing: {
+    color: 'danger',
+    icon: 'bi bi-play-circle me-2',
+  },
+  accepted: {
+    color: 'success',
+    icon: 'bi bi-check-circle me-2',
+  },
+  rejected: {
+    color: 'danger',
+    icon: 'bi bi-x-circle me-2',
+  },
+  spam: {
+    color: 'dark',
+    icon: 'bi bi-trash-2 me-2',
+  },
+  invalid: {
+    color: 'warning',
+    icon: '',
+  },
 };
 
 const generateStorageKey = (proposalCount?: number) => {
@@ -108,13 +126,13 @@ const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], t
             choice: "yes",
             percent: new Decimal(results[1]).div(tokenBlocked).times(100).round().toNumber(),
             amount: new Decimal(results[1]).toNumber(),
-            bg: "success",
+            bg: "primary",
         },
         {
             choice: "no",
             percent: new Decimal(results[2]).div(tokenBlocked).times(100).round().toNumber(),
             amount: new Decimal(results[2]).toNumber(),
-            bg: "danger",
+            bg: "muted",
         },
     // {choice: 'spam', percent: new Decimal(results[0]).div(this.token_blocked).times(100).round().toNumber(), bg: 'black'}
     // {choice: this.choice(), percent: 20}
@@ -152,12 +170,18 @@ const getChoice = (proposal: DAOProposal, accountId: string): string => {
 
 const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Function, n: Function): Record<string, unknown> => {
   let values: Record<string, unknown> = {}
-  console.log(proposal, templateCode)
+  // console.log(proposal, templateCode)
   switch (templateCode) {
     case 'wf_near_send':
       values = {
         receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
         amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
+      }
+      break;
+    case 'wf_treasury_send_ft':
+      values = {
+        receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
+        amount: getValueByCode(proposal.inputs, 'amount') ?? '',
       }
       break;
     case 'wf_add': {
@@ -178,10 +202,10 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
         break;
     case 'wf_skyward':
         values = {
-          amount: n(loToNumber(getValueByCode(proposal.inputs, 'amount') ?? '12345')),
+          amount: n(loToNumber(getValueByCode(proposal.inputs, 'amount') ?? '-amount-')),
           title: getValueByCode(proposal.inputs, 'title') ?? '-SALE-',
-          tokenId: getValueByCode(proposal.inputs, 'tokenId') ?? '-wrap.testnet-',
-          startAt: d(moment(new Date()).toDate()), // getValueByCode(proposal.inputs, 'startAt') || 
+          tokenId: getValueByCode(proposal.inputs, 'tokenId') ?? '-tokenId-',
+          startAt: d(parseNanoseconds(getValueByCode(proposal.inputs, 'startAt') ?? 0)),
         }
         break;
     default:
@@ -243,7 +267,7 @@ const transform = (
         stateCode: stateCode,
         state: t("default.proposal_state_" + stateCode),
         status: status,
-        canVote: check(walletRights, daoRights),
+        canVote: check(walletRights, [settings!.voteRight]),
         isOver: isOver(proposal, settings!),
         isVoted: isVoted(proposal, walletId),
         args: args,

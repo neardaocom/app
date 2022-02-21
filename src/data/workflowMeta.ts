@@ -235,6 +235,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
         { code: 'duration', bindId: 5 },
     ],
     activities: [
+        /*
         {
             code: 'register_tokens',
             form: {
@@ -246,13 +247,14 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 },
             },
         },
+        */
     ],
     actions: [
         {
             id: 0,
             args: (data: WFData) => {
                 return [
-                    [ { String: data.form.tokenId } ],
+                    [ { String: getValueByCode(data.inputs, 'tokenId') } ],
                 ]
             },
             argsCollection: (data: WFData) => {
@@ -282,7 +284,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 return {}
             },
             gas: (data: WFData) => {
-                return 100
+                return 140
             },
             deposit: (data?: WFData): Number => {
                 return 0
@@ -300,7 +302,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 return {}
             },
             gas: (data: WFData) => {
-                return 100
+                return 140
             },
             deposit: (data?: WFData): Number => {
                 return 0
@@ -309,7 +311,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
         { // self - ft_transfer_call
             id: 3,
             args: (data: WFData) => {
-                return [[{String: "test"}]]
+                return [[{String: "unknown"}]]
             },
             argsCollection: (data: WFData) => {
                 return []
@@ -318,7 +320,44 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 return {}
             },
             gas: (data?: WFData): Number => {
-                return 100
+                return 200
+            },
+            deposit: (data?: WFData): Number => {
+                return 0
+            },
+        },
+        { // sale_create
+            id: 4,
+            args: (data: WFData) => {
+                return [
+                    [
+                      "Null"
+                    ],
+                    [
+                      { String: getValueByCode(data.inputs, 'title') },
+                      { String: getValueByCode(data.inputs, 'url') },
+                      { String: data.daoId },
+                      "Null",
+                      { String: getValueByCode(data.inputs, 'tokenId') },
+                      { U64: getValueByCode(data.inputs, 'startAt') },
+                      { U64: getValueByCode(data.inputs, 'duration') },
+                    ]
+                ]
+            },
+            argsCollection: (data: WFData) => {
+                return [
+                    [
+                        { String: data.daoId },
+                        { U128: getValueByCode(data.inputs, 'amount') },
+                        "Null",
+                    ]
+                ]
+            },
+            log: (args: any) => {
+                return {}
+            },
+            gas: (data?: WFData): Number => {
+                return 200
             },
             deposit: (data?: WFData): Number => {
                 return 0
