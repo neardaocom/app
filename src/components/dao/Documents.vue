@@ -1,6 +1,6 @@
 <template>
   <div class="container mb-2 text-start">
-
+  <div v-if="docs.files.length > 0" >
           <div class="row my-4 mx-4">
             <div class="col-6 col-md-4 col-lg-3">
               <MDBInput
@@ -28,7 +28,7 @@
             </div>
           </div>
 
-    <MDBCard v-if="docs.files.length > 0">
+    <MDBCard>
       <MDBCardBody>
         <div>
           <MDBTable sm responsive striped>
@@ -75,6 +75,7 @@
         </div>
       </MDBCardBody>
     </MDBCard>
+  </div>
     <section v-if="docs.files.length == 0">
       <hr>
       <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
@@ -121,6 +122,7 @@ export default {
   },
   setup(props) {
     const { docs } = toRefs(props)
+    console.log(docs.value);
     const files = transform(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
     const { t } = useI18n();
     const modalDocument = ref(0)
