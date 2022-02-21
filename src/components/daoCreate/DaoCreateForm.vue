@@ -38,8 +38,8 @@
                     <InputString :labelName="t('default.add_founding_members')" id="dao_council" color="bg-primary" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
-                    <div class="col-12 col-md-7 mb-4 mt-2">
-                        <MDBBtn class="bg-primary" v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
+                    <div class="col-12 mb-4 mt-2">
+                        <MDBBtn class="bg-primary mb-1" v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
                             {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
                         </MDBBtn>
                     </div>
@@ -71,7 +71,7 @@
                     </div>
                     <div class="col-10 col-md-6">
                         <!-- <label class="form-label">{{ t('default.allocation') }}</label> -->
-                        <MDBRange thumbClass="bg-secondary" :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
+                        <MDBRange  :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
                     </div>
                     <div class="col-2">
                         <label class="form-label">{{ ftCouncilShareComp }}</label>
@@ -211,7 +211,7 @@
                     </div>
                 </div> 
 
-                <MDBBtn wrapperClass="mt-10 mb-2" @click="onSubmit" size="lg" color="success">{{ t('default.create_dao') }}</MDBBtn>
+                <MDBBtn wrapperClass="mt-10 mb-2" class="bg-success text-white" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn>
                 <!-- TODO: Change button to big like landing page -->
             </MDBStepperContent>
         </MDBStepperStep>
@@ -437,16 +437,23 @@ export default {
     }
 }
 </script>
-<style scoped>
-    .stepper-active .stepper-head-icon {
-        color: #ABD055 !important;
-    border-color: #ABD055 !important
+<style>
+    .stepper-completed .stepper-head-icon {
+        background-color: #ABD055 !important
     }
 
     .stepper-active .stepper-head-icon{
-    color: #6B6EF9 !important;
-    border-color: #6B6EF9 !important
+        background-color: #5F8AFA !important
     }
+
+    .stepper-active .h4 .stepper-head-text {
+        font-weight: 700 !important;
+    }
+
+    .range .thumb:after{
+         background-color: #5F8AFA !important
+    }
+
 
 
 </style>
