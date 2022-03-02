@@ -48,6 +48,7 @@ import orderBy from "lodash/orderBy"
 import { toSearch } from '@/utils/string'
 import { getTemplate } from "@/models/workflow";
 import loFind from "lodash/find";
+import { useRouter } from "@/hooks/dao";
 
 export default {
   components: {
@@ -74,8 +75,9 @@ export default {
   setup() {
     //const { dao } = toRefs(props)
     const { t } = useI18n();
+    const { rSearch } = useRouter()
 
-    const searchQuery = ref('')
+    const searchQuery = ref(rSearch.value)
     const filterState = reactive({
     })
     const order = reactive({
@@ -95,7 +97,7 @@ export default {
 
       // searching
       const searchText = toSearch(this.searchQuery)
-      if (searchText.length > 2) {
+      if (searchText.length > 0) {
         results = results.filter(item => item.search.includes(searchText))
       }
       // order

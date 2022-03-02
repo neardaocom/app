@@ -571,7 +571,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
             constants: proposalConstants,
             actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
             actionLogs: actionLogs,
-            search: proposalTemplate?.search ?? '',
+            search: [toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
         })
     }
     // console.log(proposals, workflows)

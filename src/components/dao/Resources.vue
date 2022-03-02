@@ -106,6 +106,7 @@ import _ from 'lodash'
 import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 import { DAODocsFileType } from '@/types/dao';
+import { useRouter } from "@/hooks/dao";
 
 export default {
   components: {
@@ -135,7 +136,9 @@ export default {
     const selectedDoc = ref({})
     const { ipfsService } = useIPFS()
 
-    const searchQuery = ref('')
+    const { rSearch } = useRouter()
+
+    const searchQuery = ref(rSearch.value)
     const filterType = reactive({
       link: {
         name: t('default.link'),
@@ -156,7 +159,8 @@ export default {
     return {
       t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
       searchQuery, filterType,
-      ipfsService, docData
+      ipfsService, docData,
+      rSearch,
     };
   },
   computed: {

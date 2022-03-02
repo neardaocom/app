@@ -4,7 +4,10 @@
             <div class="card-body">
                 <h5> <i class="bi bi-cash-coin color-primary me-2"></i>{{ t("default.wf_templ_wf_bounty") }}</h5>
                 <ul v-for="(title, index) in titles" :key="index">
-                    <li v-html="title" />
+                    <li>
+                        <span v-html="title"></span>
+                        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities', search: '#' + proposals[index].id }}" class="btn btn-outline-secondary btn-rounded btn-sm ms-1">{{ t('default.apply') }}</router-link>
+                    </li>
                 </ul>
             </div>
         </div>
