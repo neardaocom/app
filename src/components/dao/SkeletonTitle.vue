@@ -1,6 +1,6 @@
 <template>
   <section>
-        <div class="bg-image title_background_image ">
+        <div class="bg-image title-background-image">
           <div class="mask">
             <div class=" row d-flex justify-content-center align-items-center h-100">
               <div class="col-lg-6 mt-4">

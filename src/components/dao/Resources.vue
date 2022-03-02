@@ -57,7 +57,11 @@
               <tr v-for="(doc, index) in results" :key="index">
                 <td>{{ doc.index + 1 }}</td>
                 <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
-                <td class="fw-bold text-start"><a href="#" class="color-primary"  @click.prevent="open(doc.index)">{{ doc.name }} <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" /></a></td>
+                <td class="fw-bold text-start"><a href="#" class="color-primary"  @click.prevent="open(doc.index)">
+                  {{ doc.name }}&nbsp;
+                  <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
+                  <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
+                </a></td>
                 <td class="text-start">{{ doc.category }}</td>
                 <td v-if="false" class="text-truncate">{{ doc.description }}</td>
                 <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>

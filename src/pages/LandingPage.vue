@@ -9,7 +9,7 @@
   <MDBContainer style="max-width: 630px;">
     <div class="row">
       <div class="col-12">
-        <img :src="'/img/logo_with_text.png'" alt="" class="logo-style mb-4"/>
+        <img :src="'/img/logo_with_text_cropt.png'" alt="" class="logo-style mb-4"/>
         <h1 class="mb-0 mt-4">NearDAO</h1>
         <p class="fs-5 text-center">Launch a DAO in 5 minutes</p>
       </div>

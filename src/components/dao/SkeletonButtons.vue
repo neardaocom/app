@@ -27,9 +27,9 @@
           <i class="bi bi-graph-up me-1"/>
           {{ t('default.dApps') }}
         </a>
-        <a :class="[isActive('documents') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <a :class="[isActive('resources') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-files me-1"/>
-          {{ t('default.documents') }}
+          {{ t('default.resources') }}
         </a>
         <a :class="[isActive('about') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>

@@ -1,7 +1,7 @@
 <template>
 <section>
        <!-- Background image -->
-        <div class="bg-image title_background_image ">
+        <div class="bg-image title-background-image">
           <div class="mask">
             <div class="d-flex justify-content-center align-items-center h-100">
               <div class="">

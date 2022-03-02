@@ -1,7 +1,7 @@
 <template>
   <header style="margin-top: 58px">
     <MDBNavbar expand="lg" light bg="white" position="top" container>
-      <MDBNavbarBrand href="/"><img :src="'/img/logo_neardao.png'" alt="" class="logo_style"/> <span class="navbar_logo_text">{{appName}}</span></MDBNavbarBrand>
+      <MDBNavbarBrand href="/"><img :src="'/img/logo_neardao.png'" alt="" class="navbar-logo-image"/> <span class="navbar-logo-text">{{appName}}</span></MDBNavbarBrand>
       <MDBNavbarToggler
         @click="collapse = !collapse"
         target="#sidenav"
@@ -113,13 +113,14 @@
 </script>
 
 <style>
-.logo_style{
+.navbar-logo-image {
   width: 32px;
-  vertical-align: top
+  vertical-align: top;
 }
 
-.navbar_logo_text{
-  letter-spacing: 2.35px
+.navbar-logo-text {
+  letter-spacing: 0.0px;
+  font-weight: 600;
 }
 
 </style>

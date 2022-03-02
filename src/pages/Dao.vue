@@ -31,7 +31,7 @@
         <Treasury v-if="loaded === true && rPage === 'treasury'" :dao="dao" />
         <DeFi v-if="loaded === true && rPage === 'defi'" :dao="dao" />
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
-        <Documents v-if="loaded === true && rPage === 'documents'" :docs="dao.docs" />
+        <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
         <About v-if="loaded === true && rPage === 'about'" :dao="dao" />
         <Settings v-if="loaded === true && rPage === 'settings'" :dao="dao" />
         <SkeletonBody v-if="loaded === false" />
@@ -58,7 +58,7 @@ import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
 import Treasury from '@/components/dao/Treasury.vue'
 import Tokens from '@/components/dao/Tokens.vue'
 import Voting from '@/components/dao/Voting.vue'
-import Documents from '@/components/dao/Documents.vue'
+import Resources from '@/components/dao/Resources.vue'
 import Activities from '@/components/dao/Activities.vue'
 import Settings from '@/components/dao/Settings.vue'
 import { useI18n } from 'vue-i18n'
@@ -71,7 +71,7 @@ import { useNear } from "@/hooks/vuex";
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
+    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Resources, DeFi, Settings,
     SkeletonButtons, SkeletonBody,
     Title,
     SkeletonTitle,
@@ -123,17 +123,17 @@ export default {
 </script>
 
 <style>
-  .title_background_image{
-    background-image: url("/img/cover.png");
+  .title-background-image {
+    background-image: url("/img/cover_cropt.png");
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }
-  .buttons_nav{
+  .buttons_nav {
     background-color: white;
      border-radius: 0px 0px 8px 8px;
   }
 
-  .buttons_dropdown{
+  .buttons_dropdown {
     border-radius: 0px 0px 8px 0px;
   }
 </style>
