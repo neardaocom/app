@@ -202,7 +202,7 @@ export default {
                 dao.value.voteLevels[0].duration.days,
                 dao.value.voteLevels[0].duration.hours,
                 dao.value.voteLevels[0].duration.minutes,
-                '0', //depositPropose
+                '1', //depositPropose
                 '0', //depositVote
                 0, //depositProposeReturn
                 1.0

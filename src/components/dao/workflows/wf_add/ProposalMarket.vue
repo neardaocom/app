@@ -52,7 +52,7 @@ import loCloneDeep from "lodash/cloneDeep";
 import loSplit from "lodash/split";
 //import loFind from "lodash/find";
 import loFill from "lodash/fill";
-import loMin from "lodash/min";
+import loMax from "lodash/max";
 import { getRandom } from "@/utils/integer";
 import moment from "moment";
 import { rightAnyone } from "@/data/dao";
@@ -183,10 +183,10 @@ export default {
           dao.value.voteLevels[0].duration.days,
           dao.value.voteLevels[0].duration.hours,
           dao.value.voteLevels[0].duration.minutes,
-          "0", //depositPropose
+          "1", //depositPropose
           "0", //depositVote
           0, //depositProposeReturn
-          loMin([price.value, 1.0])
+          loMax([price.value, 1.0])
         );
       },
       () => {
