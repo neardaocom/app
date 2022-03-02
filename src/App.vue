@@ -127,28 +127,28 @@ body {
   }
 }
 
-h1, .h1, .fs-1 {
+h1, .h1 {
  font-weight: 800 !important;
 }
 
-h2, .h2, .fs-2 {
+h2, .h2 {
   font-weight: 800 !important;
 }
 
 
-h3, .h3, .fs-3 {
+h3, .h3 {
   font-weight: 700 !important;
 }
 
-h4, .h4, .fs-4 {
+h4, .h4 {
   font-weight: 700 !important;
 }
 
-h5, .h5, .fs-5 {
+h5, .h5 {
   font-weight: 700 !important;
 }
 
-h6, .h6, .fs-6 {
+h6, .h6 {
   font-weight: 600 !important;
 }
 

@@ -4,15 +4,15 @@
       <div class="row">
         <!-- left -->
         <div class="col-1 text-center">
-          <span class="text-white fs-4 rounded-circle p-2 background-light-gray">#{{ workflow.id }}</span>
+          <span class="text-white fs-6 rounded-circle p-2 background-light-gray">#{{ workflow.id }}</span>
         </div>
         <!-- body -->
         <div class="col-11">
           <!-- HEAD -->
           <div class="row">
             <div class="col-10">
-              <h5>{{ t('default.wf_templ_' + template.code) }}</h5>
-              <div class="mt-n2 text-dark" v-html="proposalTitle"></div>
+              <h6>{{ t('default.wf_templ_' + template.code) }}</h6>
+              <div class="mt-n2 text-dark fs-5" v-html="proposalTitle"></div>
             </div>
             <div class="col-2 text-right">
               <!-- TODO: Voting -->

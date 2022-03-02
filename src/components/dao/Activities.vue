@@ -29,7 +29,7 @@
     </section>
 
     <div class="row">
-      <div v-for="(workflow, index) in results" :key="index" class="col-12 mb-4 mb-md-0">
+      <div v-for="workflow in results" :key="workflow.id" class="col-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
           <Workflow :workflow="workflow" :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" :walletRights="walletRights" :daoStorage="dao.storage" />
         </section>

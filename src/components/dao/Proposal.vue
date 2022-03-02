@@ -5,15 +5,15 @@
       <!-- header -->
       <div class="d-flex mb-3 ">
         <div class="align-self-center">
-            <span class="fs-4 text-white p-2 rounded-circle bg-primary text-center background-light-gray">
+            <span class="fs-6 text-white p-2 rounded-circle bg-primary text-center background-light-gray">
               #{{ proposal.id }}
             </span>
         </div>
 
         <div class="p-2">
-           <h5>{{ proposal.type }}</h5>
+           <h6>{{ proposal.type }}</h6>
             <div
-              class="mt-n2 text-dark"
+              class="mt-n2 text-dark fs-5"
               v-html="proposal.title"
             />
         </div>

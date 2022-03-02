@@ -8,8 +8,8 @@
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <Share :dao="dao" :walletId="walletId" />
       </div>
-      <SkywardFinance v-if="skywardSaleIds.length > 0" :dao="dao" :scenario="'active'" :salesIds="skywardSaleIds" />
       <Bounty :dao="dao" />
+      <SkywardFinance v-if="skywardSaleIds.length > 0" :dao="dao" :scenario="'active'" :salesIds="skywardSaleIds" />
     </div>
 
     <hr/>
