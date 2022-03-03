@@ -417,7 +417,7 @@
   "wf_templ_wf_ft_distribute_description": "Vest team's insentives",
   "wf_templ_wf_ft_distribute__ft_distribute": "Distribute",
   "wf_templ_wf_ft_distribute__ft_distribute_title": "",
-  "wf_templ_wf_media_add": "Add document",
+  "wf_templ_wf_media_add": "Add resource",
   "wf_templ_wf_media_add_title": "New <strong>{name}</strong> to <strong>{category}</strong> {source}",
   "wf_templ_wf_media_add_description": "Publish your DAO constitution",
   "wf_templ_wf_media_add__media_add": "Save to IPFS",

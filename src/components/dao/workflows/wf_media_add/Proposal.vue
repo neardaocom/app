@@ -186,7 +186,7 @@ export default {
                 case 'flush-pdf':
                     mediaType = {
                         CID: {
-                        ipfs: "web3.storage.com",
+                        ipfs: "web3.storage",
                         cid: ipfsCidDocument,
                         mimetype: "application/pdf"
                         }
@@ -198,7 +198,7 @@ export default {
                 case 'flush-html':
                     mediaType = {
                         CID: {
-                        ipfs: "web3.storage.com",
+                        ipfs: "web3.storage",
                         cid: ipfsCidDocument,
                         mimetype: "text/html"
                         }
