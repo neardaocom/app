@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, provide} from "vue";
 import { coinGeckoExchange } from "@/services/exchangeService"
 
 export default {
@@ -24,6 +24,8 @@ export default {
       near_price.value = response
       // console.log('NEAR price USD: ' + near_price.value)
     })
+
+    provide('nearPrice', near_price)
 
     onMounted(() => {
       near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1_000) // 5 minutes

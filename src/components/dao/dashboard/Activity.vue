@@ -9,7 +9,7 @@
             </router-link>
             </li>
             <li class="list-inline-item ms-3">
-            <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" class="text-reset">
+            <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'resources' }}" class="text-reset">
                 <MDBIcon icon="file-alt" size="2x"></MDBIcon><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge>
             </router-link>
             </li>

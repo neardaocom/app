@@ -410,6 +410,13 @@ export default {
         const ftCouncilShareComp = computed(() => new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
         const unlockingTime = computed(() => `${values.dao_unlocking_year ? `${values.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.dao_unlocking_month > 0 ? `${values.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
+
+        // const step = ref(null)
+        // watchEffect(() => {
+        //     console.log(step.value?.className);
+        // })
+        
+
         return {
             t,
             factoryAccount,
@@ -432,7 +439,7 @@ export default {
             addCouncil,
             removeCouncil,
             councilErrorMessage,
-            errors,
+            errors
         }
     }
 }
@@ -453,6 +460,10 @@ export default {
     .range .thumb:after{
          background-color: #5F8AFA !important
     }
+
+    /* .stepper-active +.stepper-step .stepper-head-icon{
+        background-color: #E3935B !important
+    } */
 
 
 

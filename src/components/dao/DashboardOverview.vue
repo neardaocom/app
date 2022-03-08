@@ -31,7 +31,7 @@
                </router-link>
                </li>
                <li class="list-inline-item ms-1">
-               <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'documents' }}" class="text-reset">
+               <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'resources' }}" class="text-reset">
                   <h2><i class="bi bi-files color-secondary"></i><MDBBadge color="danger" pill notification>{{ dao.docs.files.length }}</MDBBadge></h2>
                </router-link>
                </li>
