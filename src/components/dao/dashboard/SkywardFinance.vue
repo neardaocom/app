@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import Widget from "@/components/widget/skywardFinance/Widget.vue"
+import Widget from "@/components/skywardFinance/Widget.vue"
 import { onMounted, onUnmounted, toRefs, computed } from "vue"
 import { useStore } from "vuex"
 import { useSkywardFinanace } from "@/hooks/auction"

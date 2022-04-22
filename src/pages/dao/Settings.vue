@@ -54,7 +54,7 @@ import { toTranslate } from "@/models/rights";
 import { getActivityById, settingsConstantsToTranslate, getActivityRights } from "@/models/workflow";
 import { toRefs } from 'vue';
 //import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
-//import Workflow from "@/components/dao/Workflow.vue"
+//import Workflow from "./Workflow.vue"
 import loOrderBy from "lodash/orderBy"
 //import { toSearch } from '@/utils/string'
 

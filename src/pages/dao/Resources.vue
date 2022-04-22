@@ -98,8 +98,8 @@ import {
   , MDBProgress, MDBProgressBar
 } from 'mdb-vue-ui-kit'
 import { useI18n } from "vue-i18n";
-// import DocumentVersion from '@/components/dao/DocumentVersion'
-import ModalDocument from '@/components/dao/ModalDocument'
+// import DocumentVersion from './DocumentVersion'
+import ModalDocument from './modals/ModalDocument.vue'
 import { transform } from "@/models/document"
 import { toSearch } from '@/utils/string'
 import _ from 'lodash'

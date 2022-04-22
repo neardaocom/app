@@ -29,7 +29,7 @@
 
 <script>
 import { ref, toRefs, watch } from "vue";
-import Sale from "@/components/dao/Sale.vue"
+import Sale from "../../../components/dao/defi/Sale.vue"
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'

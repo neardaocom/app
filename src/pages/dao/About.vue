@@ -71,7 +71,7 @@
 </template>
 
 <script>
-//import NumberFormatter from "@/components/NumberFormatter.vue"
+//import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { useI18n } from "vue-i18n";
 import ChartCouncilUnlocking from '@/components/dao/about/ChartCouncilUnlocking.vue';
 //import Proposal from "@/components/dao/Proposal.vue"

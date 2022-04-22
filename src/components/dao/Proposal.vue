@@ -125,7 +125,7 @@ import { useI18n } from "vue-i18n";
 import { ref, toRefs, onMounted, onUnmounted } from "vue";
 import _ from "lodash";
 
-import TextCollapse from '@/components/TextCollapse.vue';
+import TextCollapse from '@/components/ui/TextCollapse.vue';
 import { workflowCodeBgMapper, getProgress, getWorkflowCode } from '@/models/proposal';
 import moment from 'moment'
 

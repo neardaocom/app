@@ -43,7 +43,7 @@ import { MDBInput, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
 import { ref } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
-import Workflow from "@/components/dao/activities/Workflow.vue"
+import Workflow from "@/components/dao/Workflow.vue"
 import orderBy from "lodash/orderBy"
 import { toSearch } from '@/utils/string'
 import { getTemplate } from "@/models/workflow";

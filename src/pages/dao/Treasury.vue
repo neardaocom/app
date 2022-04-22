@@ -21,7 +21,7 @@
 
 <script>
 // import { MDBProgress, MDBProgressBar } from 'mdb-vue-ui-kit'
-import NumberFormatter from "@/components/NumberFormatter.vue";
+import NumberFormatter from "@/components/ui/NumberFormatter.vue";
 import { useI18n } from "vue-i18n";
 
 export default {

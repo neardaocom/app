@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Auction from "@/components/widget/skywardFinance/Auction.vue"
+import Auction from "@/components/skywardFinance/Auction.vue"
 import { onMounted, onUnmounted, toRefs, computed, ref } from "vue"
 import { useStore } from "vuex"
 // import { testDataset } from "@/services/skywardFinanceService/types"

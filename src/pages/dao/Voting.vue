@@ -28,19 +28,7 @@
     <!-- Filter, checkboxes, order -->
     <div v-if="proposals.length > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
-        <MDBInput
-          inputGroup
-          formOutline
-          wrapperClass=" my_filter_form"
-          v-model="searchQuery"
-          size="sm"
-          aria-describedby="search-addon"
-          :aria-label="t('default.search')"
-        >
-          <template #prepend>
-            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-          </template>
-        </MDBInput>
+        <Search v-model="searchQuery" />
       </div>
       <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
         <small> <MDBCheckbox  :label="filterState.inProgress.name" inline v-model="filterState.inProgress.active" class="rounded-3"/> </small>
@@ -68,7 +56,7 @@
 </template>
 
 <script>
-import { MDBInput, MDBCheckbox, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
+import { MDBCheckbox, MDBSelect } from "mdb-vue-ui-kit";
 import { ref, toRefs } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
@@ -77,11 +65,12 @@ import { transform } from '@/models/proposal';
 import _ from "lodash"
 import loFind from "lodash/find"
 import { toSearch } from '@/utils/string'
+import Search from "@/components/ui/Search.vue";
 
 export default {
   components: {
-    MDBInput, MDBCheckbox, MDBIcon, MDBSelect
-    , Proposal
+    MDBCheckbox, MDBSelect
+    , Proposal, Search
   },
   props: {
     dao: {
@@ -141,6 +130,7 @@ export default {
       }
       // searching
       const searchText = toSearch(this.searchQuery)
+      
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }

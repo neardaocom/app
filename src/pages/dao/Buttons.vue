@@ -85,7 +85,7 @@
 <script>
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
-import ModalProposal from '@/components/forms/ModalProposal.vue'
+import ModalProposal from '@/components/proposal/Modal.vue'
 import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
 import SendToken from '@/components/dao/workflows/wf_treasury_send_ft/Proposal.vue'

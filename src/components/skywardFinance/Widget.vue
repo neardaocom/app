@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import NumberFormatter from "@/components/NumberFormatter.vue";
+import NumberFormatter from "@/components/ui/NumberFormatter.vue";
 import { useI18n } from 'vue-i18n';
 import { toRefs, computed, unref } from 'vue';
 import Auction from "@/models/auction";

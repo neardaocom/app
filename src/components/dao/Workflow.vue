@@ -118,9 +118,9 @@ import { check } from "@/models/rights";
 import loFlatten from "lodash/flatten"
 import moment from 'moment'
 
-import WfNearSendNearSend from '@/components/dao/workflows/wf_near_send/NearSend.vue'
-import WfSkywardRegisterTokens from '@/components/dao/workflows/wf_skyward/RegisterTokens.vue'
-import WfTreasurySendFtTreasurySendFt from '@/components/dao/workflows/wf_treasury_send_ft/TreasurySendFt.vue'
+import WfNearSendNearSend from './workflows/wf_near_send/NearSend.vue'
+import WfSkywardRegisterTokens from './workflows/wf_skyward/RegisterTokens.vue'
+import WfTreasurySendFtTreasurySendFt from './workflows/wf_treasury_send_ft/TreasurySendFt.vue'
 
 export default {
   components: {

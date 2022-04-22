@@ -40,7 +40,7 @@ import Auction from '@/models/auction';
 import { toRefs, ref } from "vue"
 import _ from "lodash"
 import loFind from "lodash/find"
-import DashboardOverview from '@/components/dao/DashboardOverview.vue'
+import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 
 export default {
   components: {

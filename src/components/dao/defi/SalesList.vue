@@ -11,7 +11,7 @@
 <script>
 import { RefFinanceService } from '@/services/refFinanceService'
 import { onMounted, toRefs, ref } from "vue"
-import Sale from "@/components/dao/Sale.vue"
+import Sale from "@/components/dao/defi/Sale.vue"
 import { transformSale } from "@/models/sales"
 
 export default {

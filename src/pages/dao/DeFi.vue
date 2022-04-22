@@ -41,13 +41,13 @@ import { MDBBtn } from "mdb-vue-ui-kit";
 import { ref, toRefs, computed, onMounted } from "vue"
 // import { ref, computed } from "vue"
 // import { reactive } from "@vue/reactivity"
-import AuctionList from "@/components/widget/skywardFinance/List.vue"
-import SalesList from "@/components/dao/SalesList.vue"
-import NumberFormatter from "@/components/NumberFormatter.vue"
+import AuctionList from "@/components/skywardFinance/List.vue"
+import SalesList from "@/components/dao/defi/SalesList.vue"
+import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { useI18n } from "vue-i18n"
 import { useStore } from "vuex";
-import ModalRefWithdrawDaoToken from '@/components/dao/ModalRefWithdrawDaoToken.vue'
-import ModalRefWithdrawNear from '@/components/dao/ModalRefWithdrawNear.vue'
+import ModalRefWithdrawDaoToken from './modals/ModalRefWithdrawDaoToken.vue'
+import ModalRefWithdrawNear from './modals/ModalRefWithdrawNear.vue'
 import Decimal from 'decimal.js'
 import { useRefFinance } from "@/hooks/market";
 

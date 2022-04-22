@@ -128,8 +128,8 @@ import loFind from "lodash/find";
 import { loadById } from "@/models/dao";
 import { check, getDAORights, getWalletRights } from '@/models/rights'
 // import { getDAORights } from '@/models/rights'
-import ModalProposal from '@/components/forms/ModalProposal.vue'
-import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
+import ModalProposal from '@/components/proposal/Modal.vue'
+import AddWorkflow from './dao/activities/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
 
 export default {

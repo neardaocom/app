@@ -45,7 +45,7 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import { MDBBadge } from 'mdb-vue-ui-kit'
-import NumberFormatter from "@/components/NumberFormatter.vue"
+import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 
 export default {
    components:{

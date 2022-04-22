@@ -45,7 +45,7 @@
     import { useI18n } from "vue-i18n";
     import { yoctoNear } from '@/services/nearService'
     import Decimal from 'decimal.js'
-    import Sale from "@/components/dao/Sale.vue"
+    import Sale from "./Sale.vue"
     import { MDBCard,
         MDBCardHeader,
         MDBCardBody,
@@ -54,8 +54,8 @@
         MDBBtn,
         MDBCardFooter
     } from "mdb-vue-ui-kit";
-    import ModalAddLiquidity from "@/components/dao/ModalAddLiquidity.vue";
-    import ModalRemoveLiquidity from "@/components/dao/ModalRemoveLiquidity.vue";
+    import ModalAddLiquidity from "../modals/ModalAddLiquidity.vue";
+    import ModalRemoveLiquidity from "../modals/ModalRemoveLiquidity.vue";
     import { GeneralTokenService } from '@/services/generalTokenService';
 
     export default {

@@ -17,7 +17,7 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import NumberFormatter from "@/components/NumberFormatter.vue"
+import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { ref, computed, toRefs, onMounted, onUnmounted } from 'vue'
 import Decimal from 'decimal.js'
 // import Analytics from "@/models/analytics"
