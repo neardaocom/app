@@ -244,10 +244,10 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useStore } from 'vuex'
 import { inject, onMounted, watch, watchEffect } from '@vue/runtime-core';
-import { compareByText } from '@/utils/object'
+import ObjectHelper from '@/models/utils/ObjectHelper'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
+import NearUtils from "@/models/nearBlockchain/Utils";
 
 export default {
     components: {
@@ -274,7 +274,7 @@ export default {
         const store = useStore()   
 
         const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))
 
@@ -395,7 +395,7 @@ export default {
         // type loading
         onMounted(() => {
             nearService.value.getTags().then((tags) => {
-                typeOptions.value = tags.map(tag => { return {text: t('default.' + tag), value: tag}}).sort(compareByText)
+                typeOptions.value = tags.map(tag => { return {text: t('default.' + tag), value: tag}}).sort(ObjectHelper.compareByText)
                 setFieldTouched('dao_type', false)
             }).catch((e) => {
                 logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)

@@ -34,7 +34,7 @@ import InputNumber from '@/components/forms/InputNumber.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
+import NearUtils from "@/models/nearBlockchain/Utils";
 import moment from 'moment'
 import { useNear } from '@/hooks/vuex';
 
@@ -57,7 +57,7 @@ export default {
 
         const {factoryAccount} = useNear()
 
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         //const nearService = computed(() => (store.getters['near/getService']))
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
 

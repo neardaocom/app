@@ -33,9 +33,9 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, nearAccountValidator, isValid } from '@/utils/validators'
-import { getAccountIdPostfix } from "@/services/nearService/utils"
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import NearUtils from "@/models/nearBlockchain/Utils";
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import {
   MDBBtn,
@@ -114,12 +114,12 @@ export default {
   },
   methods: {
     getAccountPostfix() {
-      return getAccountIdPostfix(this.factoryAccount)
+      return NearUtils.getAccountIdPostfix(this.factoryAccount)
     },
     validateAccount(){
       const field = "formAccount"
-      const requiredVal = requiredValidator(this.formAccount)
-      const nearAccountVal = nearAccountValidator(this.formAccount)
+      const requiredVal = Validator.requiredValidator(this.formAccount)
+      const nearAccountVal = Validator.nearAccountValidator(this.formAccount)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (nearAccountVal.valid === false) {
@@ -144,7 +144,7 @@ export default {
     },
     validateGroup(){
       const field = "formGroup"
-      const requiredVal = requiredValidator(this.formGroup)
+      const requiredVal = Validator.requiredValidator(this.formGroup)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -171,7 +171,7 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-addCouncil-' + getRandom(1, 999)
+          const name = this.accountId + '-addCouncil-' + IntegerHelper.getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalAddCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')

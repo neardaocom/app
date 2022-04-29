@@ -1,23 +1,19 @@
-import { toSearch } from '@/utils/string'
-import { parseNanoseconds, toTimeString } from "@/utils/date";
+import StringHelper from '@/models/utils/StringHelper'
+import DateHelper from "@/models/utils/DateHelper";
 import Decimal from "decimal.js";
-import { yoctoNear } from "@/services/nearService/constants";
-import { trans as groupTrans } from "@/models/group";
 import _ from "lodash"
 import loFind from "lodash/find";
 import loGet from "lodash/get";
 import loToNumber from "lodash/toNumber"
-import { UnsupportedError } from '@/utils/error'
+import { UnsupportedError } from '@/models/utils/errors'
 import Auction from "@/models/auction"
 import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/types/dao';
-import { findParam } from '@/utils/collection'
+import CollectionHelper from '@/models/utils/CollectionHelper'
 import { WFSettings, WFTemplate } from '@/types/workflow';
 import { check } from './rights';
 import moment from 'moment';
-import { accounts } from '@/data/blockchain';
-import { convertArrayOfObjectToObject } from "@/utils/array";
-import { getValueById, getValueByCode, addInterval, subtractInterval } from "@/utils/generics";
-import { yoctoToNear } from '@/utils/near';
+import GenericsHelper from "@/models/utils/GenericsHelper";
+import Utils from '@/models/nearBlockchain/Utils';
 import { templateMetas } from "@/data/workflow";
 
 const voteMapper = { 0: 0, 1: 0, 2: 0 };
@@ -108,13 +104,13 @@ const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], t
     Object.keys(proposal.votes).forEach((voter: string) => {
       switch (_.toInteger(proposal.votes[voter])) {
         case 0:
-          results[0] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[0] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 1:
-          results[1] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[1] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         case 2:
-          results[2] += loToNumber(findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+          results[2] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
           break;
         default:
           throw new UnsupportedError('Undefined voting stat: ' + _.toInteger(proposal.votes[voter]))
@@ -139,7 +135,7 @@ const getVotingStats = (proposal: DAOProposal, tokenHolders: DAOTokenHolder[], t
     ];
 }
 
-const getDurationTo = (proposal: DAOProposal, settings: WFSettings): Date => addInterval(proposal.created, settings.voteLevel.duration);
+const getDurationTo = (proposal: DAOProposal, settings: WFSettings): Date => GenericsHelper.addInterval(proposal.created, settings.voteLevel.duration);
 
 const isOver = (proposal: DAOProposal, settings: WFSettings): boolean => {
     if (proposal.state === "InProgress") {
@@ -174,18 +170,18 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
   switch (templateCode) {
     case 'wf_near_send':
       values = {
-        receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
-        amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
+        receiverId: GenericsHelper.getValueByCode(proposal.inputs, 'receiverId') ?? '',
+        amount: Utils.yoctoToNear(GenericsHelper.getValueByCode(proposal.inputs, 'amount') ?? ''),
       }
       break;
     case 'wf_treasury_send_ft':
       values = {
-        receiverId: getValueByCode(proposal.inputs, 'receiverId') ?? '',
-        amount: getValueByCode(proposal.inputs, 'amount') ?? '',
+        receiverId: GenericsHelper.getValueByCode(proposal.inputs, 'receiverId') ?? '',
+        amount: GenericsHelper.getValueByCode(proposal.inputs, 'amount') ?? '',
       }
       break;
     case 'wf_add': {
-        const templateId = loToNumber(getValueByCode(proposal.inputs, 'templateId'))
+        const templateId = loToNumber(GenericsHelper.getValueByCode(proposal.inputs, 'templateId'))
         const templateMeta = loFind(templateMetas, {id: templateId})
         values = {
           templateId: templateId,
@@ -205,17 +201,17 @@ const getArgs = (proposal: DAOProposal, templateCode: string, t: Function, d: Fu
     }
     case 'wf_bounty':
         values = {
-          title: getValueByCode(proposal.inputs, 'title') ?? '',
-          amount: yoctoToNear(getValueByCode(proposal.inputs, 'amount') ?? ''),
-          deposit: yoctoToNear(getValueByCode(proposal.inputs, 'deposit') ?? ''),
+          title: GenericsHelper.getValueByCode(proposal.inputs, 'title') ?? '',
+          amount: Utils.yoctoToNear(GenericsHelper.getValueByCode(proposal.inputs, 'amount') ?? ''),
+          deposit: Utils.yoctoToNear(GenericsHelper.getValueByCode(proposal.inputs, 'deposit') ?? ''),
         }
         break;
     case 'wf_skyward':
         values = {
-          amount: n(loToNumber(getValueByCode(proposal.inputs, 'amount') ?? '-amount-')),
-          title: getValueByCode(proposal.inputs, 'title') ?? '-SALE-',
-          tokenId: getValueByCode(proposal.inputs, 'tokenId') ?? '-tokenId-',
-          startAt: d(parseNanoseconds(getValueByCode(proposal.inputs, 'startAt') ?? 0)),
+          amount: n(loToNumber(GenericsHelper.getValueByCode(proposal.inputs, 'amount') ?? '-amount-')),
+          title: GenericsHelper.getValueByCode(proposal.inputs, 'title') ?? '-SALE-',
+          tokenId: GenericsHelper.getValueByCode(proposal.inputs, 'tokenId') ?? '-tokenId-',
+          startAt: d(DateHelper.parseNanoseconds(GenericsHelper.getValueByCode(proposal.inputs, 'startAt') ?? 0)),
         }
         break;
     default:
@@ -229,7 +225,7 @@ const getProgress = (status: string, settings: WFSettings, durationTo: Date): nu
     if (status === "InProgress") {
       const end = durationTo.valueOf();
       const now = new Date().valueOf();
-      const begin = subtractInterval(durationTo, settings.voteLevel.duration).valueOf()
+      const begin = GenericsHelper.subtractInterval(durationTo, settings.voteLevel.duration).valueOf()
       const nowFromBegin = now - begin;
       const endFromBegin = end - begin;
       // console.log('Progress values:', begin, now, end);
@@ -285,7 +281,7 @@ const transform = (
         duration: {
             value: durationTo, // TODO: Rewrite to END
             date: d(durationTo),
-            time: toTimeString(durationTo),
+            time: DateHelper.toTimeString(durationTo),
         },
         config: config,
         choiceIndex: choiceIndex,
@@ -295,7 +291,7 @@ const transform = (
         search: '',
         templateSettings: settings,
     }
-    trans.search = [toSearch(trans.title), toSearch(trans.description), toSearch(trans.duration.date), toSearch(trans.duration.time), toSearch(trans.type), toSearch(trans.state)].join('-')
+    trans.search = [StringHelper.toSearch(trans.title), StringHelper.toSearch(trans.description), StringHelper.toSearch(trans.duration.date), StringHelper.toSearch(trans.duration.time), StringHelper.toSearch(trans.type), StringHelper.toSearch(trans.state)].join('-')
     // console.log(trans)
     return trans
 };

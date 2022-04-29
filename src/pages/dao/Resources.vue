@@ -101,7 +101,7 @@ import { useI18n } from "vue-i18n";
 // import DocumentVersion from './DocumentVersion'
 import ModalDocument from './modals/ModalDocument.vue'
 import { transform } from "@/models/document"
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import _ from 'lodash'
 import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
@@ -172,7 +172,7 @@ export default {
         results = results.filter(item => _.intersection([item.ext], filterTypes).length > 0)
       }
       // searching
-      const searchText = toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(this.searchQuery)
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }

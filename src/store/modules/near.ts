@@ -1,5 +1,5 @@
 import {getConfig} from "@/config/near"
-import { NearService } from "@/services/nearService"
+import NearService from "@/services/nearService/NearService"
 //import { signTransaction } from "near-api-js/lib/transaction"
 import { Commit } from "vuex"
 

@@ -32,8 +32,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, minLength, maxLength } from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
@@ -107,9 +107,9 @@ export default {
   methods: {
     validateTitle(){
       const field = "formTitle"
-      const requiredVal = requiredValidator(this.formTitle)
-      const maxLengthVal = maxLength(this.formTitle, 40)
-      const minLengthVal = minLength(this.formTitle, 5)
+      const requiredVal = Validator.requiredValidator(this.formTitle)
+      const maxLengthVal = Validator.maxLength(this.formTitle, 40)
+      const minLengthVal = Validator.minLength(this.formTitle, 5)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (maxLengthVal.valid === false) {
@@ -124,7 +124,7 @@ export default {
     validateDescription(){
       const field = "formDescription"
       this.formDescription = ref(this.$refs.refWysiwyg.getCode())
-      const requiredVal = requiredValidator(this.formDescription)
+      const requiredVal = Validator.requiredValidator(this.formDescription)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -142,7 +142,7 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-general-' + this.formTitle + '-' + getRandom(1, 999)
+          const name = this.accountId + '-general-' + this.formTitle + '-' + IntegerHelper.getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')

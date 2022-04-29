@@ -32,7 +32,7 @@ import { ref, toRefs, watch } from "vue";
 import Sale from "../defi/Sale.vue"
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import Decimal from 'decimal.js'
 import {
   MDBBtn,
@@ -146,10 +146,10 @@ export default {
         console.log(this.amount);
         console.log(new Decimal(this.amount).toFixed().toString());
         const field = "amount"
-        const requiredVal = requiredValidator(this.amount)
-        const isNumberVal = isNumber(new Decimal(this.amount).toFixed())
-        const minNumberVal = minNumber(this.amount, {min: 1})
-        const maxNumberVal = maxNumber(this.amount, {max: this.maxShares})
+        const requiredVal = Validator.requiredValidator(this.amount)
+        const isNumberVal = Validator.isNumber(new Decimal(this.amount).toFixed())
+        const minNumberVal = Validator.minNumber(this.amount, {min: 1})
+        const maxNumberVal = Validator.maxNumber(this.amount, {max: this.maxShares})
         if (isNumberVal.valid === false) {
             this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {

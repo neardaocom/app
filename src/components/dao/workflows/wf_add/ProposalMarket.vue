@@ -53,7 +53,7 @@ import loSplit from "lodash/split";
 //import loFind from "lodash/find";
 import loFill from "lodash/fill";
 import loMax from "lodash/max";
-import { getRandom } from "@/utils/integer";
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import moment from "moment";
 import { rightAnyone } from "@/data/dao";
 
@@ -144,7 +144,7 @@ export default {
         const canPropose = canProposeArray.map(
           (right) => daoRights.value[right]
         );
-        const storageKey = `${template.value.name}-${template.value.id}-${getRandom(
+        const storageKey = `${template.value.name}-${template.value.id}-${IntegerHelper.getRandom(
           1,
           999
         )}-${moment().valueOf()}`;

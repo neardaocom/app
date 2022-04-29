@@ -31,7 +31,7 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import Decimal from 'decimal.js'
 import {
   MDBBtn,
@@ -108,7 +108,7 @@ export default {
   methods: {
     withdrawDaoToken(){
         this.validate()
-        if (isValid(this.errors) === true) {
+        if (Validator.isValid(this.errors) === true) {
             const amount = new Decimal(this.amount).mul(10 ** this.tokenDecimals).toFixed();
             this.nearService.executePrivilegedAction(
                 this.contractId,
@@ -143,10 +143,10 @@ export default {
     
     validateAmount(){
         const field = "amount"
-        const requiredVal = requiredValidator(this.amount)
-        const isNumberVal = isNumber(this.amount)
-        const minNumberVal = minNumber(this.amount, {min: 1})
-        const maxNumberVal = maxNumber(this.amount, {max: this.balance})
+        const requiredVal = Validator.requiredValidator(this.amount)
+        const isNumberVal = Validator.isNumber(this.amount)
+        const minNumberVal = Validator.minNumber(this.amount, {min: 1})
+        const maxNumberVal = Validator.maxNumber(this.amount, {max: this.balance})
         if (isNumberVal.valid === false) {
             this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {

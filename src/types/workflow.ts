@@ -1,5 +1,5 @@
 import { DAORights, DAOVoteLevel } from "@/types/dao";
-import { CodeValue } from "./generics";
+import { CodeValue } from "../models/utils/types/generics";
 
 
 export type WFMetaAttribute = {

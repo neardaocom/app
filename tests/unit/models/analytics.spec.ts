@@ -1,5 +1,5 @@
 import Analytics from '@/models/analytics'
-import { nowToSeconds, toSeconds, nowDate } from '@/utils/date'
+import { nowToSeconds, toSeconds, nowDate } from '@/models/utils/datetime'
 import moment from 'moment'
 
 test('Parsing Algorithm', () => {

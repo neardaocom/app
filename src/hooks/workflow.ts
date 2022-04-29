@@ -1,6 +1,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import { useI18n } from 'vue-i18n'
 import { WFTemplate } from '@/types/workflow'
 import loOrderBy from "lodash/orderBy"
@@ -8,10 +8,10 @@ import loGet from "lodash/get"
 import loFind from "lodash/find"
 import loToString from "lodash/toString"
 import { accounts } from "@/data/blockchain";
-import { getRandom } from '@/utils/integer'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 // import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
-import { Wallet } from '@/types/blockchain'
+import { Wallet } from '@/models/nearBlockchain/types/blockchain'
 import { useStore } from 'vuex'
 
 export const useTemplateList = () => {
@@ -38,7 +38,7 @@ export const useTemplateList = () => {
         // filter
 
         // searching
-        const searchText = toSearch(filterSearch.value)
+        const searchText = StringHelper.toSearch(filterSearch.value)
         if (searchText.length > 2) {
             dataResults.value = dataResults.value.filter((item: WFTemplate) => item.search.includes(searchText))
         }
@@ -67,7 +67,7 @@ export const useTemplateList = () => {
 
     const fetch = (installedTemplateCodes: string[]): void => {
         const list: WFTemplate[] = [];
-        fetchProgress.value = getRandom(5, 15)
+        fetchProgress.value = IntegerHelper.getRandom(5, 15)
 
         nearService.value.providerList().then( r => {
             r.forEach(template => {
@@ -85,7 +85,7 @@ export const useTemplateList = () => {
                         transactions: [],
                         startActionIds: [],
                         endActionIds: [],
-                        search: [toSearch(t('default.wf_templ_' + template.name)), toSearch(t('default.workflow'))].join('-'),
+                        search: [StringHelper.toSearch(t('default.wf_templ_' + template.name)), StringHelper.toSearch(t('default.workflow'))].join('-'),
                         settings: [],
                     })
                 }
@@ -104,7 +104,7 @@ export const useTemplateList = () => {
                 transactions: [],
                 startActionIds: [],
                 endActionIds: [],
-                search: [toSearch(t('default.wf_templ_wf_ref_finanace')), toSearch(t('default.workflow'))].join('-'),
+                search: [StringHelper.toSearch(t('default.wf_templ_wf_ref_finanace')), StringHelper.toSearch(t('default.workflow'))].join('-'),
                 settings: [],
             })
 

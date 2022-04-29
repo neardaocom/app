@@ -56,7 +56,7 @@ import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
 import loFill from 'lodash/fill'
-import { getRandom } from '@/utils/integer'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import moment from 'moment'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { rightAnyone } from "@/data/dao";
@@ -152,7 +152,7 @@ export default {
             const canProposeArray = loSplit(values.can_propose, ',')
             const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
             const workflowName = loFind(workflowsToAdd.value, { 'value': values.workflow })
-            const storageKey = `${workflowName.text}-${values.workflow}-${getRandom(1, 999)}-${moment().valueOf()}`
+            const storageKey = `${workflowName.text}-${values.workflow}-${IntegerHelper.getRandom(1, 999)}-${moment().valueOf()}`
 
             // load templete, to count number of activities
             const loadTemplate = await nearService.value.providerGet(values.workflow) // TODO: try, catch

@@ -21,7 +21,6 @@ import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { ref, computed, toRefs, onMounted, onUnmounted } from 'vue'
 import Decimal from 'decimal.js'
 // import Analytics from "@/models/analytics"
-// import { nowToSeconds } from '@/utils/date'
 import { isWalletInCouncil } from '@/models/dao'
 
 export default {

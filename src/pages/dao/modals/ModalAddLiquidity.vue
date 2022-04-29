@@ -44,7 +44,7 @@ import Sale from "../../../components/dao/defi/Sale.vue"
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import { useStore } from 'vuex'
-import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import { yoctoNear } from "@/services/nearService/constants";
 import Decimal from 'decimal.js'
 import {
@@ -161,14 +161,14 @@ export default {
 
     const validateAmount = (fieldName, amount) => {
         const field = fieldName
-        const requiredVal = requiredValidator(amount)
-        const isNumberVal = isNumber(amount)
-        const minNumberVal = minNumber(amount, {min: 1})
+        const requiredVal = Validator.requiredValidator(amount)
+        const isNumberVal = Validator.isNumber(amount)
+        const minNumberVal = Validator.minNumber(amount, {min: 1})
         let maxNumberVal
         if(fieldName === "amount1" ){
-            maxNumberVal = maxNumber(amount, {max: maxToken.value})
+            maxNumberVal = Validator.maxNumber(amount, {max: maxToken.value})
         }else{
-            maxNumberVal = maxNumber(amount, {max: maxNear.value})
+            maxNumberVal = Validator.maxNumber(amount, {max: maxNear.value})
         }
         if (isNumberVal.valid === false) {
             errors[field] = t('default.' + isNumberVal.message, isNumberVal.params)

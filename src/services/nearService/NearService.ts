@@ -5,33 +5,34 @@ import {
   keyStores,
   WalletConnection
 } from 'near-api-js';
-import { toNanoseconds } from '@/utils/date';
+import DateHelper from '@/models/utils/DateHelper';
 
 import Decimal from 'decimal.js';
 import BN from 'bn.js';
 
-import { yoctoNear, TGas } from './constants';
-import { ContractPool } from './ContractPool';
-import { getPublicSalePercent } from './utils';
-import _ from "lodash"
+import NearUtils from '@/models/nearBlockchain/Utils';
+import FactoryContract from '@/models/nearBlockchain/services/FactoryContract';
+import ProviderContract from '@/models/nearBlockchain/services/ProviderContract';
+import DaoContractPool from '@/models/nearBlockchain/DaoContractPool';
 import loSet from "lodash/set"
+import loToString from "lodash/toString"
 import { duration } from 'moment';
 import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
 import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
-import { nearToYocto, toTGas } from '@/utils/near';
 import { DAORights } from '@/types/dao';
-import { TransactionAction } from "@/types/blockchain";
+import { TransactionAction } from "@/models/nearBlockchain/types/blockchain";
 import loFill from 'lodash/fill'
+import DeprecatedError from "@/models/utils/errors/DeprecatedError";
 
 class NearService {
   // config of near
   config: any;
 
   // factory contract
-  factoryContract!: Contract & any;
+  factoryContract!: FactoryContract;
 
   // provider contract
-  providerContract!: Contract & any;
+  providerContract!: ProviderContract;
 
   // wallet
   walletConnection!: WalletConnection & any;
@@ -40,7 +41,7 @@ class NearService {
   near!: any;
 
   // contracts
-  contractPool!: ContractPool;
+  contractPool!: DaoContractPool;
 
   constructor(config: any) {
     this.config = config;
@@ -57,32 +58,11 @@ class NearService {
 
     const account = this.walletConnection.account();
 
-    this.factoryContract = new Contract(account, this.config.contractName, {
-      viewMethods: [
-        'get_dao_list',
-        'get_dao_info',
-        'get_tags',
-        'get_stats',
-        'version_hash'
-      ],
-      changeMethods: [
-        'create',
-        'add_tags',
-      ],
-    });
+    this.factoryContract = new FactoryContract(account, this.config.contractName);
 
-    this.providerContract = new Contract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME, {
-      viewMethods: [
-        'wf_templates',
-        'wf_template',
-        'wf_template_fncalls',
-        'fncall_metadata',
-      ],
-      changeMethods: [
-      ],
-    });
+    this.providerContract = new ProviderContract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME);
 
-    this.contractPool = new ContractPool(account);
+    this.contractPool = new DaoContractPool(account);
   }
 
   isInitialized() {
@@ -118,14 +98,14 @@ class NearService {
    * Provider: List
    */
   async providerList() {
-    return this.providerContract.wf_templates();
+    return this.providerContract.list();
   }
 
   /**
    * Provider: Get
    */
    async providerGet(id: number) {
-    return this.providerContract.wf_template({id: id});
+    return this.providerContract.get(id);
   }
 
   /**
@@ -146,7 +126,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoList() {
-    return this.factoryContract.get_dao_list({from_index: 0, limit: 100});
+    return this.factoryContract.getDaoList(0, 100);
   }
 
   /**
@@ -154,7 +134,7 @@ class NearService {
    * @returns
    */
   async getTags() {
-    return this.factoryContract.get_tags();
+    return this.factoryContract.getTags();
   }
 
   /**
@@ -163,7 +143,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoInfo(daoId: string) {
-    return this.factoryContract.get_dao_info({account: daoId});
+    return this.factoryContract.getDaoInfo(daoId);
   }
 
   /**
@@ -172,7 +152,7 @@ class NearService {
    * @returns Promise
    */
   async getDaoStats() {
-    return this.factoryContract.get_stats();
+    return this.factoryContract.getDaoStats();
   }
 
   /**
@@ -181,7 +161,7 @@ class NearService {
    * @returns Promise
    */
   async getNewestVersionHash() {
-    return this.factoryContract.version_hash({version:0});
+    return this.factoryContract.getNewestVersionHash(0);
   }
 
 
@@ -268,7 +248,7 @@ class NearService {
   //     vote_policy_configs: [
   //       {
   //         proposal_kind: 'Pay',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -276,7 +256,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'AddMember',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -284,7 +264,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'RemoveMember',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -292,7 +272,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'GeneralProposal',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -300,7 +280,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'AddDocFile',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -308,7 +288,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'InvalidateFile',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -316,7 +296,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'DistributeFT',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -324,7 +304,7 @@ class NearService {
   //       },
   //       {
   //         proposal_kind: 'RightForActionCall',
-  //         duration: toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
+  //         duration: DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, 0, 0),
   //         quorum: voteQuorum,
   //         approve_threshold: voteApproveThreshold,
   //         vote_only_once: voteOnlyOnce,
@@ -338,7 +318,7 @@ class NearService {
   //   const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64')
 
   //   const amount = new Decimal(amountToTransfer);
-  //   const amountYokto = amount.mul(yoctoNear).toFixed();
+  //   const amountYokto = amount.mul(NearUtils.yoctoNear).toFixed();
 
   //   return this.factoryContract.create(
   //     {
@@ -347,7 +327,7 @@ class NearService {
   //       dao_info: info,
   //       args: args_base64
   //     },
-  //     Decimal.mul(300, TGas).toString(),
+  //     Decimal.mul(300, NearUtils.tGas).toString(),
   //     amountYokto.toString()
   //   );
   // }
@@ -439,11 +419,11 @@ class NearService {
       rightTokenGroupCouncil,
       [rightTokenHolder],
       [[rightTokenGroupCouncilLeader]],
-      new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
+      new Decimal(DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
       quorum,
       approveThreshold,
-      nearToYocto(0.000001), // TODO: nearToYocto(1.0),
-      nearToYocto(0.0000000001), // TODO: nearToYocto(0.0001),
+      NearUtils.nearToYocto(0.000001), // TODO: NearUtils.nearToYocto(1.0),
+      NearUtils.nearToYocto(0.0000000001), // TODO: NearUtils.nearToYocto(0.0001),
       0
     )
 
@@ -477,8 +457,8 @@ class NearService {
 
     return this.factoryContract.create(
       callArgs,
-      toTGas(300),
-      nearToYocto(amountToTransfer)
+      NearUtils.toTGas(300),
+      NearUtils.nearToYocto(amountToTransfer)
     );
   }  
 
@@ -513,8 +493,8 @@ class NearService {
         },
         template_settings: null,
       },
-      toTGas(100),
-      nearToYocto(amountToTransfer)
+      NearUtils.toTGas(100),
+      NearUtils.nearToYocto(amountToTransfer)
     );
   }
 
@@ -539,14 +519,14 @@ class NearService {
     amountToTransfer: number
   ) {
     const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoctoNear).toFixed();
+    const amountYokto = amount.mul(NearUtils.yoctoNear).toFixed();
 
     const setWfSettings = worlflowTemplateSettingsBuilder(
       transitionConstraints,
       canVote,//rightTokenGroupCouncil,
       canPropose,//[rightTokenHolder],
       activityRights,//[[rightTokenGroupCouncilLeader]],
-      new Decimal(toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
+      new Decimal(DateHelper.toNanoseconds(voteDurationDays, voteDurationHours, voteDurationMinutes, 0)).div(1000000000).toNumber(),
       quorum,
       approveThreshold,
       depositPropose, // TODO: .toString(),
@@ -565,7 +545,7 @@ class NearService {
         },
         template_settings: [setWfSettings],
       },
-      Decimal.mul(100, TGas).toString(),
+      Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
   }
@@ -586,7 +566,7 @@ class NearService {
     , accountId: string
   ) {
     const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoctoNear).toFixed();
+    const amountYokto = amount.mul(NearUtils.yoctoNear).toFixed();
 
     const args = {
       proposal_input: {
@@ -617,7 +597,7 @@ class NearService {
 
     //console.log(args)
 
-    return this.contractPool.get(contractId).add_proposal(args, Decimal.mul(100, TGas).toString(), amountYokto.toString());
+    return this.contractPool.get(contractId).propose(args, Decimal.mul(100, NearUtils.tGas).toString(), amountYokto.toString());
   }
 
   async invalideDoc(
@@ -628,9 +608,9 @@ class NearService {
     , accountId: string
   ) {
     const amount = new Decimal(amountToTransfer);
-    const amountYokto = amount.mul(yoctoNear).toFixed();
+    const amountYokto = amount.mul(NearUtils.yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_proposal(
+    return this.contractPool.get(contractId).propose(
       {
         proposal_input: {
           description: null,
@@ -644,7 +624,7 @@ class NearService {
         },
         account_id: accountId
       },
-      Decimal.mul(100, TGas).toString(),
+      Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
   }
@@ -658,9 +638,9 @@ class NearService {
     , amountToTransfer: number
   ) {
     const amountToTransferDecimal = new Decimal(amountToTransfer);
-    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+    const amountYokto = amountToTransferDecimal.mul(NearUtils.yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_proposal(
+    return this.contractPool.get(contractId).propose(
       {
         proposal_input: {
           description: description,
@@ -675,7 +655,7 @@ class NearService {
           },
         },
       },
-      Decimal.mul(100, TGas).toString(),
+      Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
   }
@@ -702,9 +682,9 @@ class NearService {
     amountToTransfer: number
   ) {
     const amountToTransferDecimal = new Decimal(amountToTransfer);
-    const amountYokto = amountToTransferDecimal.mul(yoctoNear).toFixed();
+    const amountYokto = amountToTransferDecimal.mul(NearUtils.yoctoNear).toFixed();
 
-    return this.contractPool.get(contractId).add_proposal(
+    return this.contractPool.get(contractId).propose(
       {
         proposal_input: {
           description: null,
@@ -724,7 +704,7 @@ class NearService {
           },
         },
       },
-      Decimal.mul(100, TGas).toString(),
+      Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
   }
@@ -743,15 +723,16 @@ class NearService {
     action: string,
     params: object,
   ) {
-
-    const actionBody = params !== null ? _.set({}, action, params) : action
-    
+    throw new DeprecatedError('executeProvilegedAction moved to Workflow');
+    /*
+    const actionBody = params !== null ? loSet({}, action, params) : action
     return this.contractPool.get(contractId).execute_privileged_action(
       {
         action: actionBody
       },
-      Decimal.mul(300, TGas).toString()
+      Decimal.mul(300, NearUtils.tGas).toString()
     );
+    */
   }
 
   /**
@@ -762,14 +743,7 @@ class NearService {
     proposalId: number,
     vote: number
   ) {
-    return this.contractPool.get(contractId).vote(
-      {
-        proposal_id: proposalId,
-        vote_kind: vote,
-      },
-      toTGas(10),
-      nearToYocto(0.00125) // TODO: Get from template settings
-    );
+    return this.contractPool.get(contractId).vote(proposalId, vote, NearUtils.toTGas(10), NearUtils.nearToYocto(0.00125));
   }
 
   /**
@@ -779,20 +753,16 @@ class NearService {
     contractId: string,
     proposalId: number
   ) {
-    return this.contractPool.get(contractId).finish_proposal(
-      {
-        proposal_id: proposalId,
-      },
-      toTGas(100)
-    );
+    return this.contractPool.get(contractId).finishProposal(proposalId, NearUtils.toTGas(100));
   }
 
   async wfFinish(contractId: string, proposalId: number) {
-    return this.contractPool.get(contractId).wf_finish({proposal_id: proposalId}, Decimal.mul(10, TGas).toString());
+    return this.contractPool.get(contractId).wfFinish(proposalId, NearUtils.toTGas(10));
   }
   
   async unlockTokens(contractId: string, group: string) {
-    return this.contractPool.get(contractId).unlock_tokens({group: group}, Decimal.mul(10, TGas).toString());
+    throw new DeprecatedError('executeProvilegedAction moved to Workflow');
+    // return this.contractPool.get(contractId).unlock_tokens({group: group}, Decimal.mul(10, NearUtils.tGas).toString());
   }
 
   
@@ -802,10 +772,10 @@ class NearService {
     return account.signAndSendTransaction({
        receiverId: contractId,
        actions: [
-          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Council'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Community'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(TGas)), new BN(0)),
-          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(TGas)), new BN(0)),
+          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Council'})), new BN(10).mul(new BN(NearUtils.tGas)), new BN(0)),
+          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Community'})), new BN(10).mul(new BN(NearUtils.tGas)), new BN(0)),
+          // transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Foundation'})), new BN(10).mul(new BN(NearUtils.tGas)), new BN(0)),
+          transactions.functionCall('unlock_tokens', Buffer.from(JSON.stringify({group: 'Public'})), new BN(10).mul(new BN(NearUtils.tGas)), new BN(0)),
        ]
     });
   }
@@ -816,27 +786,17 @@ class NearService {
     return account.signAndSendTransaction({
         receiverId: contractId,
         actions: actions.map((action:  TransactionAction) => 
-            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(toTGas(action.gas)), new BN(nearToYocto(action.deposit)))
+            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(NearUtils.toTGas(action.gas)), new BN(NearUtils.nearToYocto(action.deposit)))
         )
     });
   }
 
   async downloadNewVersion(contractId: string){
-    return this.contractPool.get(contractId).download_new_version(
-      {
-        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
-      },
-      Decimal.mul(300, TGas).toString()
-    );
+    return this.contractPool.get(contractId).upgradeDownload((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
   }
 
   async upgrade(contractId: string){
-    return this.contractPool.get(contractId).upgrade_self(
-      {
-        account_id: (this.walletConnection) ? this.walletConnection.getAccountId() : null
-      },
-      Decimal.mul(300, TGas).toString()
-    );
+    return this.contractPool.get(contractId).upgradeMigrate((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
   }
 
   ///////////////
@@ -873,7 +833,7 @@ class NearService {
     console.log(data)
 
     const amount = new Decimal(data[0])
-    const amountDeposit = new Decimal(data[3].storage_locked_near).div(yoctoNear).mul(100).round().div(100)
+    const amountDeposit = new Decimal(data[3].storage_locked_near).div(NearUtils.yoctoNear).mul(100).round().div(100)
     const ft_council_free = new Decimal(data[3].council_ft_stats.unlocked).minus(data[3].council_ft_stats.distributed).toNumber()
     //const ft_community_free = new Decimal(data[3].community_ft_stats.unlocked).minus(data[3].community_ft_stats.distributed).toNumber()
     //const ft_foundation_free = new Decimal(data[3].foundation_ft_stats.unlocked).minus(data[3].foundation_ft_stats.distributed).toNumber()
@@ -921,7 +881,7 @@ class NearService {
       }
       for (const [i, val] of elementData.tags.entries()) {
         //doc.tags[i] = data[5].map["Doc"].tags[val]
-        doc.tags.push(_.toString(data[5].map["Doc"].tags[val]))
+        doc.tags.push(loToString(data[5].map["Doc"].tags[val]))
       }
       file_list.push(doc)
     });    
@@ -929,7 +889,7 @@ class NearService {
     // vote policies
     const vote_policies: any = {}
     data[8].forEach(element => {
-      _.set(vote_policies, element[0], element[1])
+      loSet(vote_policies, element[0], element[1])
     });
 
       
@@ -981,7 +941,7 @@ class NearService {
             rights: council_rights,
           },
           public: {
-            amount: getPublicSalePercent(data[2].council_share_percent, 0, 0),
+            amount: NearUtils.getPublicSalePercent(data[2].council_share_percent, 0, 0),
             wallets: [],
             rights: [],
           },
@@ -1022,7 +982,7 @@ class NearService {
     const state = await this.getDaoState(contractId);
     const amountYokto = new Decimal(state.amount);
 
-    return amountYokto.div(yoctoNear).toFixed(2);
+    return amountYokto.div(NearUtils.yoctoNear).toFixed(2);
   }
 
   async getDaosAmount(contractIds: string[]) {
@@ -1040,102 +1000,103 @@ class NearService {
 
     contractIds.forEach((accountId: string, index: number) => {
       const amountYokto = new Decimal(states[index].amount)
-      _.set(result, [index], amountYokto.div(yoctoNear).toFixed(2))
+      loSet(result, [index], amountYokto.div(NearUtils.yoctoNear).toFixed(2))
     })
 
     return result
   }
 
   async getStatisticsMembers(contractId: string) {
-    return this.contractPool.get(contractId).statistics_members();
+    return this.contractPool.get(contractId).getStatisticsMembers();
   }
 
   async getStatisticsFt(contractId: string) {
-    return this.contractPool.get(contractId).statistics_ft();
+    return this.contractPool.get(contractId).getStatisticsFt();
   }
 
   async getProposals(contractId: string, fromIndex: number, limit: number) {
-    return this.contractPool.get(contractId).proposals({
-      from_index: fromIndex ?? 0,
-      limit: limit ?? 1000
-    });
+    return this.contractPool.get(contractId).getProposals(fromIndex ?? 0, limit ?? 1000);
   }
 
   async getDocFiles(contractId: string) {
-    return this.contractPool.get(contractId).doc_files();
+    return this.contractPool.get(contractId).getDocFiles();
   }
 
   async getFtBalanceOf(contractId: string, accountId: string) {
-    return this.contractPool.get(contractId).ft_balance_of({account_id: accountId});
+    return this.contractPool.get(contractId).getFtBalanceOf(accountId);
   }
 
   async getDaoConfig(contractId: string) {
-    return this.contractPool.get(contractId).dao_config();
+    return this.contractPool.get(contractId).getDaoConfig();
   }
 
   async getVotePolicies(contractId: string) {
-    return this.contractPool.get(contractId).vote_policies();
+    return this.contractPool.get(contractId).getVotePolicies();
   }
 
   async getDaoVersionHash(contractId: string) {
-    return this.contractPool.get(contractId).version_hash();
+    return this.contractPool.get(contractId).getDaoVersionHash();
   }
 
   async getSkywardAuctions(contractId: string) {
-    return this.contractPool.get(contractId).skyward_auctions();
+    return this.contractPool.get(contractId).getSkywardAuctions();
   }
 
   async getRefPools(contractId: string) {
-    return this.contractPool.get(contractId).ref_pools();
+    return this.contractPool.get(contractId).getRefPools();
   }
 
   async getWfTemplates(contractId: string) {
-    return this.contractPool.get(contractId).wf_templates();
+    return this.contractPool.get(contractId).getWfTemplates();
   }
 
   async getGroups(contractId: string) {
-    return this.contractPool.get(contractId).groups();
+    return this.contractPool.get(contractId).getGroups();
   }
+
   async getGroupTags(contractId: string) {
-    return this.contractPool.get(contractId).tags({category: "group"});
+    return this.contractPool.get(contractId).getTags('group');
   }
+
   async getMediaTags(contractId: string) {
-    return this.contractPool.get(contractId).tags({category: "media"});
+    return this.contractPool.get(contractId).getTags('media');
   }
+
   async getGlobalTags(contractId: string){
-    return this.contractPool.get(contractId).tags({category: "global"});
+    return this.contractPool.get(contractId).getTags('global');
   }
+
   async getMediaList(contractId: string) {
-    return this.contractPool.get(contractId).media_list();
+    return this.contractPool.get(contractId).getMediaList();
   }
 
   async getDaoSettings(contractId: string){
-    return this.contractPool.get(contractId).dao_settings()
+    return this.contractPool.get(contractId).getDaoSettings()
   }
 
   async getWfInstance(contractId: string, proposalId: number){
-    return this.contractPool.get(contractId).wf_instance({proposal_id: proposalId})
+    return this.contractPool.get(contractId).getWfInstance(proposalId);
   }
 
   async getWfInstanceLog(contractId: string, proposalId: number){
-    return this.contractPool.get(contractId).wf_log({proposal_id: proposalId})
+    return this.contractPool.get(contractId).getWfInstanceLog(proposalId);
   }
 
   async getStats(contractId: string){
-    return this.contractPool.get(contractId).stats()
+    return this.contractPool.get(contractId).getStats();
   }
 
   async getFtMetadata(contractId: string){
-    return this.contractPool.get(contractId).ft_metadata()
+    return this.contractPool.get(contractId).getFtMetadata();
   }
 
   async getStorage(contractId: string) {
-    // get keys
-    const storageKeys: string[] = await this.contractPool.get(contractId).storage_buckets()
+    // getStorage keys
+    const storageKeys: string[] = await this.contractPool.get(contractId).getStorage()
   
     // load data
     const data = await Promise.all(
-      storageKeys.map((key: string) => this.contractPool.get(contractId).storage_bucket_data_all({bucket_id: key}))
+      storageKeys.map((key: string) => this.contractPool.get(contractId).getStorageData(key))
     ).catch((e) => {
       throw new Error("Storage data not louded" + e);
     });
@@ -1145,8 +1106,6 @@ class NearService {
     
     return result
   }
-
-
 }
 
 export default NearService;

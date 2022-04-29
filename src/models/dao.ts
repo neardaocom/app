@@ -1,4 +1,4 @@
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import lodashFind from "lodash/find"
 import loToString from "lodash/toString"
 import loIsBoolean from "lodash/isBoolean"
@@ -16,14 +16,13 @@ import { templateMetas, actionMetas } from "@/data/workflow"
 import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
-import { CodeValue, IDValue, Translate } from '@/types/generics';
-import { yoctoNear } from '@/services/nearService/constants';
+import { CodeValue, IDValue, Translate } from '@/models/utils/types/generics';
 import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceLog, WFMetaTemplate, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/types/workflow'
 import { parse as rightsParse } from "@/models/rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
 import { gasDefault, depositDefault } from "@/models/workflow";
-import { dateFromChain } from '@/utils/near'
+import NearUtils from '@/models/nearBlockchain/Utils'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -40,7 +39,7 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
         search: '',
         amount: null,
     }
-    trans.search = [toSearch(trans.id), toSearch(trans.name), toSearch(trans.description), toSearch(trans.ft_name)].concat(trans.tags.map((tag: any) => toSearch(tag))).join('-')
+    trans.search = [StringHelper.toSearch(trans.id), StringHelper.toSearch(trans.name), StringHelper.toSearch(trans.description), StringHelper.toSearch(trans.ft_name)].concat(trans.tags.map((tag: any) => StringHelper.toSearch(tag))).join('-')
     return trans
 })
 
@@ -279,7 +278,7 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
             transactions: transitions,
             startActionIds: loUniq(startActionIds),
             endActionIds: loUniq(endActionIds),
-            search: [toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
+            search: [StringHelper.toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
             settings: settings,
         })
     });
@@ -541,7 +540,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
                     id: index,
                     actionId: log.action_id - 1,
                     txSigner: log.caller,
-                    txSignedAt: dateFromChain(log.timestamp),
+                    txSignedAt: NearUtils.dateFromChain(log.timestamp),
                     args: templateMeta?.actions[log.action_id - 1]?.log(log.args),
                 })
             })
@@ -549,7 +548,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
 
         proposals.push({
             id: proposal[0],
-            created: dateFromChain(proposal[1].Curr.created),
+            created: NearUtils.dateFromChain(proposal[1].Curr.created),
             createdBy: proposal[1].Curr.created_by,
             votes: proposal[1].Curr.votes,
             state: proposal[1].Curr.state,
@@ -571,7 +570,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
             constants: proposalConstants,
             actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
             actionLogs: actionLogs,
-            search: [toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
+            search: [StringHelper.toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
         })
     }
     // console.log(proposals, workflows)

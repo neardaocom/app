@@ -40,8 +40,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid } from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import Auction from "@/models/auction"
 import {
@@ -127,7 +127,7 @@ export default {
   methods: {
     validateGroup(){
       const field = "formGroup"
-      const requiredVal = requiredValidator(this.formGroup)
+      const requiredVal = Validator.requiredValidator(this.formGroup)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -137,7 +137,7 @@ export default {
     },
     validateRights(){
       const field = "formRights"
-      const requiredVal = requiredValidator(this.formRights)
+      const requiredVal = Validator.requiredValidator(this.formRights)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -164,7 +164,7 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-addRightsForAction-' + getRandom(1, 999)
+          const name = this.accountId + '-addRightsForAction-' + IntegerHelper.getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalAddRightsForAction', 'StoreFile-ipfs', 'File saving to ipfs failed')

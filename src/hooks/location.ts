@@ -1,6 +1,6 @@
 import { states } from '@/data/states'
-import { compareByText } from '@/utils/object'
-import { SelectOption } from '@/utils/formSelectOption'
+import ObjectHelper from '@/models/utils/ObjectHelper'
+import { SelectOption } from '@/models/utils/types/SelectOption'
 import _ from "lodash"
 
 export const locationList = (t: any): SelectOption[] => {
@@ -16,7 +16,7 @@ export const locationList = (t: any): SelectOption[] => {
         {text: t('default.south_america'), value: 'sam'},
         {text: t('default.australia'), value: 'aus'},
     ]
-    listContinents.sort(compareByText)
+    listContinents.sort(ObjectHelper.compareByText)
     // states
     const listStates = Object.keys(states).map((x, index) => { return { text: _.get(states, index) + ' (' + x.toUpperCase() + ')', value: x}})
 

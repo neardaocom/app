@@ -112,8 +112,8 @@ import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { reactive } from "@vue/reactivity";
 import { transform, transTags } from '@/models/dao'
-import { getRandom } from '@/utils/integer'
-import { toSearch } from '@/utils/string'
+import IntegerHelper from '@/models/utils/IntegerHelper'
+import StringHelper from '@/models/utils/StringHelper'
 import _ from "lodash"
 import Decimal from 'decimal.js';
 
@@ -176,7 +176,7 @@ export default {
         results = results.filter(item => _.intersection(item.tags, filterTags).length > 0)
       }
       // searching
-      const searchText = toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(this.searchQuery)
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }
@@ -188,7 +188,7 @@ export default {
     }
   },
   mounted() {
-    this.loadingProgress = getRandom(5, 15)
+    this.loadingProgress = IntegerHelper.getRandom(5, 15)
     this.fetchList()
   },
   methods: {
@@ -218,7 +218,7 @@ export default {
         this.$notify.flush()
         console.log(e)
       })
-      this.loadingProgress = getRandom(25, 50)
+      this.loadingProgress = IntegerHelper.getRandom(25, 50)
     }
   }
 }

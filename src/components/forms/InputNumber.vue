@@ -35,7 +35,7 @@
 import { useI18n } from "vue-i18n";
 import { computed, ref, toRefs } from '@vue/reactivity'
 import { useField } from 'vee-validate';
-import { stringNumberToLocale } from '@/utils/locale' 
+import LocaleHelper from '@/models/utils/LocaleHelper'
 import TooltipLabel from '@/components/forms/TooltipLabel.vue'
 import {
   MDBInput,
@@ -119,7 +119,7 @@ export default {
         //         //         return value.value.replace(/[^0-9]/g,'')
         //         //     }
                 
-        //          return stringNumberToLocale(value.value, locale.value)
+        //          return LocaleHelper.stringNumberToLocale(value.value, locale.value)
 
         //     },
         //     set: (v) => {
@@ -132,13 +132,13 @@ export default {
         //             console.log('set', result);
         //         }
         //         console.log(result);
-        //         //input.value.inputValue = stringNumberToLocale(result, locale.value)
+        //         //input.value.inputValue = LocaleHelper.stringNumberToLocale(result, locale.value)
         //         value.value = result
         //     }
         // })
 
         const valueToMax = () => displayValue.value = max.value.toFixed()
-        const balanceLocale = computed(() => stringNumberToLocale(balance.value.toFixed(), locale.value))
+        const balanceLocale = computed(() => LocaleHelper.stringNumberToLocale(balance.value.toFixed(), locale.value))
 
         return{
             t,

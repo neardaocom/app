@@ -593,12 +593,9 @@ import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import _ from "lodash"
 import Decimal from 'decimal.js';
-import {
-    requiredValidator, nearRootAccountValidator, nearAccountExistsValidator, minLength, maxLength,
-    isAlphanumericUpperecase, isNumber, minNumber, maxNumber, sharesValidator, isValid, requiredArrayValidator
-} from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import { locationList } from '@/hooks/location'
-import { compareByText } from '@/utils/object'
+import ObjectHelper from '@/models/utils/ObjectHelper'
 import moment from 'moment'
 import {
     MDBContainer,
@@ -840,8 +837,8 @@ export default({
 
         validateAccount(){
             const field = "account"
-            const required = requiredValidator(this.account)
-            const rootAccount = nearRootAccountValidator(this.account)
+            const required = Validator.requiredValidator(this.account)
+            const rootAccount = Validator.nearRootAccountValidator(this.account)
             if (required.valid === false) {
                 this.errors[field] = this.t('default.' + required.message, required.params)
             } else if (rootAccount.valid === false) {
@@ -858,7 +855,7 @@ export default({
             this.errors[field] = this.t('default.validating')
             this.nearService.getAccountState(this.account + '.' + this.factoryAccount)
                 .then(accountState => {
-                    const existsAccount = nearAccountExistsValidator(accountState)
+                    const existsAccount = Validator.nearAccountExistsValidator(accountState)
                     if (existsAccount.valid === false) {
                         this.errors[field] = this.t('default.' + existsAccount.message, existsAccount.params)
                     } else {
@@ -873,9 +870,9 @@ export default({
 
         validateName(){ //TODO
             const field = "name"
-            const required = requiredValidator(this.name)
-            const minLengthVal = minLength(this.name, 3)
-            const maxLengthVal = maxLength(this.name, 64)
+            const required = Validator.requiredValidator(this.name)
+            const minLengthVal = Validator.minLength(this.name, 3)
+            const maxLengthVal = Validator.maxLength(this.name, 64)
             if (required.valid === false) {
                 this.errors[field] = this.t('default.' + required.message, required.params)
             } else if (minLengthVal.valid === false) {
@@ -890,7 +887,7 @@ export default({
 
         validateSlogan(){
             const field = "slogan"
-            const maxLengthVal = maxLength(this.slogan, 160)
+            const maxLengthVal = Validator.maxLength(this.slogan, 160)
             if (maxLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
             }else {
@@ -901,8 +898,8 @@ export default({
 
         validatePurpose(){
             const field = "purpose"
-            const minLengthVal = minLength(this.purpose, 1)
-            const maxLengthVal = maxLength(this.purpose, 100000)
+            const minLengthVal = Validator.minLength(this.purpose, 1)
+            const maxLengthVal = Validator.maxLength(this.purpose, 100000)
             if (minLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
             } else if (maxLengthVal.valid === false){
@@ -915,8 +912,8 @@ export default({
 
         validateLocation(){
             const field = "location"
-            const minLengthVal = minLength(this.location, 2)
-            const maxLengthVal = maxLength(this.location, 3)
+            const minLengthVal = Validator.minLength(this.location, 2)
+            const maxLengthVal = Validator.maxLength(this.location, 3)
             if (minLengthVal.valid === false){
                 this.errors[field] = this.t('default.' + minLengthVal.message, minLengthVal.params)
             } else if (maxLengthVal.valid === false){
@@ -929,7 +926,7 @@ export default({
 
         validateType(){
             const field = "type"
-            const required = requiredValidator(this.type)
+            const required = Validator.requiredValidator(this.type)
             if (required.valid === false){
                 this.errors[field] = this.t('default.' + required.message, required.params)
             } else {
@@ -940,7 +937,7 @@ export default({
 
         validateCouncil(){
             const field = "council"
-            const requiredVal = requiredArrayValidator(this.council)
+            const requiredVal = Validator.requiredArrayValidator(this.council)
 
             if (requiredVal.valid === false){
                 this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
@@ -953,10 +950,10 @@ export default({
 
         validateFtName(){ // TODO
             const field = "ftName"
-            const required = requiredValidator(this.ftName)
-            const minLengthVal = minLength(this.ftName, 3)
-            const maxLengthVal = maxLength(this.ftName, 64)
-            const alphaUpper = isAlphanumericUpperecase(this.ftName)
+            const required = Validator.requiredValidator(this.ftName)
+            const minLengthVal = Validator.minLength(this.ftName, 3)
+            const maxLengthVal = Validator.maxLength(this.ftName, 64)
+            const alphaUpper = Validator.isAlphanumericUpperecase(this.ftName)
             if (required.valid === false){
                 this.errors[field] = this.t('default.' + required.message, required.params)
             }else if( minLengthVal.valid === false){
@@ -973,10 +970,10 @@ export default({
 
         validateFtAmount(){
             const field = "ftAmount"
-            const requiredVal = requiredValidator(this.ftAmount)
-            const isNumberVal = isNumber(this.ftAmount)
-            const minNumberVal = minNumber(this.ftAmount, 1.0)
-            const maxNumberVal = maxNumber(this.ftAmount, 1_000_000_000.0)
+            const requiredVal = Validator.requiredValidator(this.ftAmount)
+            const isNumberVal = Validator.isNumber(this.ftAmount)
+            const minNumberVal = Validator.minNumber(this.ftAmount, 1.0)
+            const maxNumberVal = Validator.maxNumber(this.ftAmount, 1_000_000_000.0)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -999,10 +996,10 @@ export default({
 
         validateFtCouncilInitDistribution(isValidated = true){
             const field = "ftCouncilInitDistribution"
-            const requiredVal = requiredValidator(this.ftCouncilInitDistribution)
-            const isNumberVal = isNumber(this.ftCouncilInitDistribution)
-            const minNumberVal = minNumber(this.ftCouncilInitDistribution, 1)
-            const maxNumberVal = maxNumber(this.ftCouncilInitDistribution, this.ftAmount)
+            const requiredVal = Validator.requiredValidator(this.ftCouncilInitDistribution)
+            const isNumberVal = Validator.isNumber(this.ftCouncilInitDistribution)
+            const minNumberVal = Validator.minNumber(this.ftCouncilInitDistribution, 1)
+            const maxNumberVal = Validator.maxNumber(this.ftCouncilInitDistribution, this.ftAmount)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1021,7 +1018,7 @@ export default({
 
         validateFtCouncilUnlockingFrom() {
             const field = "ftCouncilUnlockingFrom"
-            const requiredVal = requiredValidator(this.ftCouncilUnlockingFrom)
+            const requiredVal = Validator.requiredValidator(this.ftCouncilUnlockingFrom)
             // const isDateVal = true // TODO: add date validator
             if (this.ftCouncilShare > 0) {
                 if (requiredVal.valid === false) {
@@ -1037,7 +1034,7 @@ export default({
 
         validateFtCommunityUnlockingFrom() {
             const field = "ftCommunityUnlockingFrom"
-            const requiredVal = requiredValidator(this.ftCommunityUnlockingFrom)
+            const requiredVal = Validator.requiredValidator(this.ftCommunityUnlockingFrom)
             // const isDateVal = true // TODO: add date validator
             if (this.ftCommunityShare > 0) {
                 if (requiredVal.valid === false) {
@@ -1053,7 +1050,7 @@ export default({
 
         validateFtFoundationUnlockingFrom() {
             const field = "ftFoundationUnlockingFrom"
-            const requiredVal = requiredValidator(this.ftFoundationUnlockingFrom)
+            const requiredVal = Validator.requiredValidator(this.ftFoundationUnlockingFrom)
             // const isDateVal = true // TODO: add date validator
             if (this.ftFoundationShare > 0) {
                 if (requiredVal.valid === false) {
@@ -1069,7 +1066,7 @@ export default({
 
         validateFtPublicUnlockingFrom() {
             const field = "ftPublicUnlockingFrom"
-            const requiredVal = requiredValidator(this.ftPublicUnlockingFrom)
+            const requiredVal = Validator.requiredValidator(this.ftPublicUnlockingFrom)
             // const isDateVal = true // TODO: add date validator
             if (this.ftPublicShare > 0) {
                 if (requiredVal.valid === false) {
@@ -1090,7 +1087,7 @@ export default({
 
         validateFtShares(){
             const field = "ftShares"
-            const maxNumberVal = sharesValidator(this.ftPublicShare + this.ftFoundationShare + this.ftCommunityShare)
+            const maxNumberVal = Validator.sharesValidator(this.ftPublicShare + this.ftFoundationShare + this.ftCommunityShare)
             if (maxNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
                 this.$refs.refFtShares.classList.remove('invisible')
@@ -1108,9 +1105,9 @@ export default({
 
         validateVoteSpamThreshold(){
             const field = "voteSpamThreshold"
-            const requiredVal = requiredValidator(this.voteSpamThreshold)
-            const isNumberVal = isNumber(this.voteSpamThreshold)
-            const maxNumberVal = maxNumber(this.voteSpamThreshold, 100.0)
+            const requiredVal = Validator.requiredValidator(this.voteSpamThreshold)
+            const isNumberVal = Validator.isNumber(this.voteSpamThreshold)
+            const maxNumberVal = Validator.maxNumber(this.voteSpamThreshold, 100.0)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1125,8 +1122,8 @@ export default({
 
         validateVoteDurationDays(){
             const field = "voteDurationDays"
-            const requiredVal = requiredValidator(this.voteDurationDays)
-            const isNumberVal = isNumber(this.voteDurationDays)
+            const requiredVal = Validator.requiredValidator(this.voteDurationDays)
+            const isNumberVal = Validator.isNumber(this.voteDurationDays)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1139,8 +1136,8 @@ export default({
 
         validateVoteDurationHours(){
             const field = "voteDurationHours"
-            const requiredVal = requiredValidator(this.voteDurationHours)
-            const isNumberVal = isNumber(this.voteDurationHours)
+            const requiredVal = Validator.requiredValidator(this.voteDurationHours)
+            const isNumberVal = Validator.isNumber(this.voteDurationHours)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1153,9 +1150,9 @@ export default({
 
         validateVoteQuorum(){
             const field = "voteQuorum"
-            const requiredVal = requiredValidator(this.voteQuorum)
-            const isNumberVal = isNumber(this.voteQuorum)
-            const maxNumberVal = maxNumber(this.voteQuorum, 100.0)
+            const requiredVal = Validator.requiredValidator(this.voteQuorum)
+            const isNumberVal = Validator.isNumber(this.voteQuorum)
+            const maxNumberVal = Validator.maxNumber(this.voteQuorum, 100.0)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1170,9 +1167,9 @@ export default({
 
         validateVoteApproveThreshold(){
             const field = "voteApproveThreshold"
-            const requiredVal = requiredValidator(this.voteApproveThreshold)
-            const isNumberVal = isNumber(this.voteApproveThreshold)
-            const maxNumberVal = maxNumber(this.voteApproveThreshold, 100.0)
+            const requiredVal = Validator.requiredValidator(this.voteApproveThreshold)
+            const isNumberVal = Validator.isNumber(this.voteApproveThreshold)
+            const maxNumberVal = Validator.maxNumber(this.voteApproveThreshold, 100.0)
             if (isNumberVal.valid === false) {
                 this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
             }else if (requiredVal.valid === false) {
@@ -1349,7 +1346,7 @@ export default({
         // type loading
         this.nearService.getTags().then((tags) => {
             this.nearTags.value = tags
-            this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(compareByText)
+            this.typeOptions = tags.map(tag => { return {text: this.t('default.' + tag), value: tag}}).sort(ObjectHelper.compareByText)
             // this.$refs.refDaoType.setValue('corporation')
         }).catch((e) => {
             this.$logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
