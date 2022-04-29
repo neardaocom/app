@@ -1,11 +1,15 @@
-import { Account, Contract } from 'near-api-js';
-import DaoContract from "./services/DaoContract";
+import { Account, Near } from 'near-api-js';
+import DaoContract from "./services/DaoContractService";
+import NearAccount from "./services/NearAccountService";
 
 export default class DaoContractPool {
+    private near: Near;
     private account: Account;
     private pool: { [key: string]: DaoContract } = {};
+    private accounts: { [key: string]: NearAccount } = {};
 
-    constructor(account: Account) {
+    constructor(near: Near, account: Account) {
+        this.near = near;
         this.account = account;
     }
 
@@ -18,5 +22,17 @@ export default class DaoContractPool {
         this.pool[contractId] = contract;
 
         return contract;
+    }
+
+    async getAccount(contractId: string): Promise<NearAccount> {
+        if (this.accounts[contractId]) {
+            return this.accounts[contractId];
+        }
+
+        const account = await this.near.account(contractId);
+        const nearAccount = new NearAccount(account);
+        this.accounts[contractId] = nearAccount;
+
+        return nearAccount;
     }
 }

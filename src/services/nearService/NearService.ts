@@ -11,8 +11,8 @@ import Decimal from 'decimal.js';
 import BN from 'bn.js';
 
 import NearUtils from '@/models/nearBlockchain/Utils';
-import FactoryContract from '@/models/nearBlockchain/services/FactoryContract';
-import ProviderContract from '@/models/nearBlockchain/services/ProviderContract';
+import FactoryContract from '@/models/nearBlockchain/services/FactoryContractService';
+import ProviderContract from '@/models/nearBlockchain/services/ProviderContractService';
 import DaoContractPool from '@/models/nearBlockchain/DaoContractPool';
 import loSet from "lodash/set"
 import loToString from "lodash/toString"
@@ -62,7 +62,7 @@ class NearService {
 
     this.providerContract = new ProviderContract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME);
 
-    this.contractPool = new DaoContractPool(account);
+    this.contractPool = new DaoContractPool(this.near, account);
   }
 
   isInitialized() {
