@@ -196,6 +196,7 @@
   "create_a_dao": "Create a DAO",
   "strat_a_dao": "Start a DAO",
   "create": "Create",
+  "created_by": "Created by",
   "dao_name": "Your DAO name",
   "purpose": "Purpose",
   "settings": "Settings",
@@ -456,5 +457,6 @@
   "rights_group": "Group: {group}",
   "rights_group_member": "Account: {accountId} in Group: {group}",
   "rights_group_leader": "Leader in Group: {group}",
-  "rights_group_role": "Tole: {role} in Group: {group}"
+  "rights_group_role": "Tole: {role} in Group: {group}",
+  "service": "Service"
 }

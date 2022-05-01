@@ -2,7 +2,7 @@
   <section class="pt-3">
     <div class="row d-flex justify-content-center">
       <div class="col-lg-12">
-        <nav aria-label="breadcrumb navbar-light bg-light">
+        <nav aria-label="breadcrumb navbar-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>

@@ -25,12 +25,9 @@
               </MDBDropdownMenu>
             </MDBDropdown>
           </MDBNavbarItem>
-
-          <MDBNavbarItem v-if="isAccountSigned" :to="{name: 'dao-create'}" linkClass="btn btn-black btn-rounded mx-2 text-light px-4 gradient-background"><i class="bi bi-plus me-1"/>{{ t('default.create_dao') }}</MDBNavbarItem>
-          <MDBNavbarItem v-else>
-            <MDBBtn @click="login()" block class="btn btn-black btn-rounded mx-2 gradient-background" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
-          </MDBNavbarItem>
         </MDBNavbarNav>
+          <MDBBtn v-if="isAccountSigned" @click="createDaoPage"  color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2"><i class="bi bi-plus me-1"/>{{ t('default.create_dao') }}</MDBBtn>
+          <MDBBtn v-else @click="login" color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
       </MDBCollapse>
     </MDBNavbar>
   </header>
@@ -107,6 +104,9 @@
           if (this.$route.name === "dao-create"){
             this.$router.push({name: 'landing-page'})
           }
+        },
+        createDaoPage() {
+          this.$router.push({name: 'dao-create'})
         }
     }
   };

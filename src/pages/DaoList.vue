@@ -31,67 +31,16 @@
       </div>
     </div>
 
-      <div class="row mb-4">
-        <MDBCard>
-          <MDBCardBody>
-            <MDBCardText>
-              <MDBTable responsive borderless striped>
-                <thead>
-                  <tr>
-                    <!-- <th scope="col"></th>-->
-                    <th scope="col">#</th>
-                    <th scope="col" class="text-start">{{ t('default.organization') }}</th>
-                    <th scope="col" class="text-start"></th>
-                    <th scope="col" class="text-start">{{ t('default.wallet') }}</th>
-                    <th scope="col" class="text-end">{{ t('default.dao_funds') }}</th>
-                  </tr>
-                </thead>
-                
-                <tbody>
+    <MDBProgress class="my-1">
+      <MDBProgressBar bg="secondary" :value="loadingProgress" />
+    </MDBProgress>
 
-                  <tr>
-                    <td colspan="5" class="p-0">
-                      <MDBProgress class="my-1">
-                        <MDBProgressBar bg="secondary" :value="loadingProgress" />
-                      </MDBProgress>
-                    </td>
-                  </tr>
-
-                  <tr v-for="(dao, index) in results" :key="index">
-                    <!-- <td><a @click="favorite_switch(dao.id)" class="">
-                        <i v-if="favorites.indexOf(dao.id) >= 0" class="fas text-warning fa-star fa-xs pe-1"></i>
-                        <i v-else class="far fa-star fa-xs pe-1" ></i>
-                      </a>
-                    </td>-->
-                    <td>{{ dao.index + 1 }}</td>
-                    <td class="text-start">
-                      <router-link class="h6 color-dark" :to="{ name: 'dao', params: {id: dao.id + '.' + this.factoryAccount}}">{{ dao.name }} <MDBIcon v-if="dao.location != null" :flag="dao.location"/></router-link>
-                      <br>
-                      <span class="fw-light">{{dao.description}}</span>
-                    </td>
-                    <td class="text-start">
-                      <span
-                        class="badge bg-secondary"
-                        v-for="(tag, index) in dao.tags"
-                        :key="index"
-                        >{{ tag }}</span
-                      >
-                    </td>
-                    <td class="text-start">
-                      <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
-                        {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-secondary ms-1"/>
-                      </a>
-                    </td>
-                    <td class="text-end">
-                      <span class="fw-bold me-1">{{ dao.amount }}</span><span v-if="dao.amount" class="text-muted">USD</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </MDBTable>
-            </MDBCardText>
-          </MDBCardBody>
-        </MDBCard>
+    <div class="row gx-5 mt-3">
+      <div class="col-md-6" v-for="(dao, index) in results" :key="index">
+        <DaoCard :dao="dao" />
       </div>
+    </div> 
+
     </MDBContainer>
   </main>
 
@@ -104,9 +53,12 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
 import DAOs from '@/data/DAOs'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar,
-   MDBCard, MDBCardBody, MDBCardText, MDBIcon, MDBInput,
-   MDBCheckbox
+  MDBContainer,
+  MDBProgress,
+  MDBProgressBar,
+  MDBIcon,
+  MDBInput,
+  MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
@@ -116,15 +68,20 @@ import { getRandom } from '@/utils/integer'
 import { toSearch } from '@/utils/string'
 import _ from "lodash"
 import Decimal from 'decimal.js';
+import DaoCard from '@/components/daoList/DaoCard.vue'
 
 export default {
   components: {
-    Header, Breadcrumb, Footer, MDBContainer, MDBTable
-    , MDBProgress, MDBProgressBar
-    , MDBCard, MDBCardBody, MDBCardText
-    , MDBIcon
-    , MDBInput
-    , MDBCheckbox
+    Header,
+    Breadcrumb, 
+    Footer, 
+    MDBContainer,
+    MDBProgress, 
+    MDBProgressBar,
+    MDBIcon,
+    MDBInput,
+    MDBCheckbox,
+    DaoCard
   },
   setup() {
     const { t, n } = useI18n()

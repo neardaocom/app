@@ -2,7 +2,7 @@
     <div v-if="bounties.length > 0" class="col-12 col-md-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
             <div class="card-body">
-                <h5> <i class="bi bi-cash-coin color-primary me-2"></i>{{ t("default.wf_templ_wf_bounty") }}</h5>
+                <h5> <i class="bi bi-cash-coin text-primary me-2"></i>{{ t("default.wf_templ_wf_bounty") }}</h5>
                 <ul v-for="(title, index) in titles" :key="index">
                     <li>
                         <span v-html="title"></span>

@@ -33,64 +33,24 @@
         </div>
 
 
-      <div class="row mb-4">
-        <MDBCard>
-          <MDBCardBody>
-            <MDBCardText>
-              <MDBTable responsive borderless striped>
-                <thead>
-                  <tr>
-                    <!-- <th scope="col"></th>-->
-                    <th scope="col">#</th>
-                    <th scope="col" class="text-start">{{ t('default.name') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.description') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.creator') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.version') }}</th>
-                    <th scope="col" class="text-start"></th>
-                  </tr>
-                </thead>
-                <tbody>
+        <MDBProgress>
+          <MDBProgressBar bg="secondary" :value="fetchProgress" />
+        </MDBProgress>
 
-                  <tr>
-                    <td colspan="7" class="p-0">
-                      <MDBProgress class="my-1">
-                        <MDBProgressBar bg="secondary" :value="fetchProgress" />
-                      </MDBProgress>
-                    </td>
-                  </tr>
+        <h5 class="text-start mt-5">Owned sevices</h5>
+        <div class="row gx-5 mt-3">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status === t('default.installed'))" :key="index">
+            <TemplateCard :template="template" @btn-click="open" />
+          </div>
+        </div> 
 
-                  <tr v-for="(template, index) in dataResults" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td class="text-start">
-                      <router-link v-if="false" class="h6" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
-                      <span v-else class="h6">{{ t('default.wf_templ_' + template.code) }}</span>
-                    </td>
-                    <td class="text-start">{{ t('default.wf_templ_' + template.code + '_description') }}</td>
-                    <td class="text-start">{{ creator.name }}</td>
-                    <td class="text-start">v{{ template.version }}.0</td>
-                    <td class="text-start">
-                      <button
-                        v-if="template.status === t('default.buy')"
-                        type="button" class="btn btn-rounded px-4 py-1 btn-buy fw-bold"
-                        @click.prevent="open(template)"
-                      ><i class="bi bi-cart me-2 fa-lg"></i>{{ template.status }} {{ getPrice(template.code) }}</button>
-                      <button
-                        v-else-if="template.status === t('default.installed')"
-                        type="button" class="btn btn-rounded px-4 py-1 btn-installed fw-bold"
-                        @click.prevent=""
-                      ><i class="bi bi-check-circle me-2 fa-lg"></i>{{ template.status }}</button>
-                      <button
-                        v-else
-                        type="button" class="btn btn-rounded px-4 py-1 btn-in-progress fw-bold"
-                      ><i class="bi bi-clock me-2 fa-lg"></i>{{ template.status }}</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </MDBTable>
-            </MDBCardText>
-          </MDBCardBody>
-        </MDBCard>
-      </div>
+        <h5 class="text-start mt-5">Services to buy</h5>
+        <div class="row gx-5 mt-3">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status !== t('default.installed'))" :key="index">
+            <TemplateCard :template="template" @btn-click="open"/>
+          </div>
+        </div>
+
     </MDBContainer>
   </main>
 
@@ -111,8 +71,10 @@ import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/market/Breadcrumb.vue'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar,
-  MDBCard, MDBCardBody, MDBCardText, MDBInput,
+  MDBContainer,
+  MDBProgress, 
+  MDBProgressBar,
+  MDBInput,
   MDBIcon,
   MDBSelect,
 } from 'mdb-vue-ui-kit'
@@ -129,18 +91,19 @@ import { loadById } from "@/models/dao";
 import { check, getDAORights, getWalletRights } from '@/models/rights'
 // import { getDAORights } from '@/models/rights'
 import ModalProposal from '@/components/proposal/Modal.vue'
-import AddWorkflow from './dao/activities/workflows/wf_add/ProposalMarket.vue'
+import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
+import TemplateCard from '@/components/market/TemplateCard.vue'
 
 export default {
   components: {
-    Header, Breadcrumb, Footer, MDBContainer, MDBTable
-    , MDBProgress, MDBProgressBar
-    , MDBCard, MDBCardBody, MDBCardText
-    , MDBIcon
-    , MDBInput
-    , MDBSelect
-    , ModalProposal, ModalMessage, AddWorkflow,
+    Header, Breadcrumb, Footer, MDBContainer,
+    MDBProgress, MDBProgressBar,
+    MDBIcon,
+    MDBInput,
+    MDBSelect,
+    ModalProposal, ModalMessage, AddWorkflow,
+    TemplateCard
   },
   setup() {
     const { t, n } = useI18n()
@@ -228,27 +191,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.btn-buy {
-    color: #FFFFFF;
-    text-transform: none;
-    background: transparent linear-gradient(112deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box;
-    width: 90%;
-}
-.btn-installed {
-    color: #FFFFFF;
-    text-transform: none;
-    /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #ABD085 0%, #ABD085 100%) 0% 0% no-repeat padding-box;
-    /*ABD085  */
-    width: 90%;
-}
-.btn-in-progress {
-    color: #FFFFFF;
-    text-transform: none;
-    /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #FFC870 0%, #FFC870 100%) 0% 0% no-repeat padding-box;
-    width: 90%;
-}
-</style>

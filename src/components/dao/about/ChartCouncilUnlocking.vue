@@ -48,7 +48,7 @@
             labels,
             datasets: [
               {
-                backgroundColor: ["#9D639B"],
+                backgroundColor: ["#6B6EF9"],
                 data: dataset,
                 label: t('default.amount'),
               }

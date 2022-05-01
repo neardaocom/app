@@ -4,7 +4,7 @@
     <!-- TokenId -->
     <InputString :labelName="t('default.token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
     <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="{tokenName}"/>
+    <InputNumber :labelName="t('default.amount')" id="amount" :addon="{tokenName}"/>
 
     <!-- From -->
     <div class="row">
@@ -29,8 +29,9 @@
 </template>
 
 <script>
-import InputString from '@/components/forms/InputString.vue'
+// eslint-disable-next-line no-unused-vars
 import InputNumber from '@/components/forms/InputNumber.vue'
+import InputString from '@/components/forms/InputString.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';

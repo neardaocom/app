@@ -3,17 +3,15 @@
     <div class="card-body">
 
       <!-- header -->
-      <div class="d-flex mb-3 ">
-        <div class="align-self-center">
-            <span class="fs-6 text-white p-2 rounded-circle bg-primary text-center background-light-gray">
-              #{{ proposal.id }}
-            </span>
-        </div>
-
+      <div class="d-flex mb-2">
+        <span class="fs-6 text-muted p-2 text-center">
+          #{{ proposal.id }}
+        </span>
+        
         <div class="p-2">
-           <h6>{{ proposal.type }}</h6>
+           <h5>{{ proposal.type }}</h5>
             <div
-              class="mt-n2 text-dark fs-5"
+              class="mt-n2 small"
               v-html="proposal.title"
             />
         </div>
@@ -36,20 +34,20 @@
       <hr v-else class="my-1">
 
       <!-- about -->
-      <ul class="my-2 list-unstyled text-muted list-inline">
+      <ul class="my-2 list-unstyled list-inline">
         <li class="list-inline-item me-4 h6">
-          <i class="bi bi-calendar4 color-secondary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
+          <i class="bi bi-calendar4 text-secondary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
           <span>{{ proposal.duration.time }}</span>
         </li>
         <li class="list-inline-item me-4">  
-          <i class="far fa-handshake fa-fw color-secondary me-2 mb-3"></i>
+          <i class="far fa-handshake fa-fw text-secondary me-2 mb-3"></i>
           <span class="h6"
             >{{ proposal.quorum }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
-          <i class="bi bi-archive me-1 color-secondary"/>
-          <span class="h6 text-muted">{{
+          <i class="bi bi-archive me-1 text-secondary"/>
+          <span class="h6">{{
             proposal.choice
           }}</span>
         </li>

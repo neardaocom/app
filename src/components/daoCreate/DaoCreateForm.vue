@@ -35,11 +35,11 @@
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" color="bg-primary" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-4 mt-2">
-                        <MDBBtn class="bg-primary mb-1" v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
+                        <MDBBtn class="mb-1" v-for="(c, i) in council" :key="i" @click="removeCouncil(c)" color="primary" size="sm">
                             {{c}}<span class="ms-2"><MDBIcon icon="times" size="sm"/></span>
                         </MDBBtn>
                     </div>
@@ -82,8 +82,8 @@
                 <div class="row mt-4">
                     <div class="col-12 col-md-7">
                         <MDBProgress :height="20" class="rounded">
-                            <MDBProgressBar class="bg-primary" :value="ftCouncilShare" >{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
-                            <MDBProgressBar :value="ftCommunityShare" bg="info" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
+                            <MDBProgressBar :value="ftCouncilShare" bg="primary">{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                            <MDBProgressBar :value="ftCommunityShare" bg="warning" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
                         </MDBProgress>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                     </div>
                 </div> 
 
-                <MDBBtn wrapperClass="mt-10 mb-2" class="bg-success text-white" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn>
+                <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn>
                 <!-- TODO: Change button to big like landing page -->
             </MDBStepperContent>
         </MDBStepperStep>

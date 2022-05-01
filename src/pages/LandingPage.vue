@@ -16,7 +16,7 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <MDBBtn @click="createDao" rounded size="lg" class="fs-6 text-white gradient-background m-2 fw-bold mb-5" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.strat_a_dao') }}</MDBBtn>
+        <MDBBtn @click="createDao" color="primary" rounded size="lg" class="fs-6 fw-bold bg-gradient-100 m-2 mb-5" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.strat_a_dao') }}</MDBBtn>
         
         <h3 class="mb-3"> Top 3 DAOs </h3>
         
@@ -25,7 +25,7 @@
             <MDBCard >
               <MDBCardBody>
                 <h5>{{index+1}}.</h5>
-                <h5 class="color-primary"> {{dao[1].name}} </h5>
+                <h5 class="text-primary"> {{dao[1].name}} </h5>
                 <p class="fst-italic"><small>"{{dao[1].description}}"</small></p>
                 <span class="fw-bold">{{dao.amount.toFixed(2)}}</span> USD
               </MDBCardBody>
@@ -33,21 +33,21 @@
           </router-link>
         </div> -->
 
-        <div v-if="topDaos" class="row g-1 justify-content-center mb-2" >
-          <router-link v-for="(dao, index) in topDaos" :key="index" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset mb-2" > 
+        <div v-if="topDaos" class="row  justify-content-center g-1 mb-4" >
+          <router-link v-for="(dao, index) in topDaos" :key="index" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset" > 
             <MDBCard class="h-100">
               <MDBCardBody>
-                <h5>{{index+1}}.</h5>
-                <h5 class="color-primary"> {{dao[1].name}} </h5>
-                <p class="fst-italic"><small>"{{dao[1].description}}"</small></p>
-                <span class="fw-bold">{{dao.amount.toFixed(2)}}</span> USD
+                <!-- <h5 style="height: 15%">{{index+1}}.</h5> -->
+                <MDBBadge color="black" class="mb-1 p-2"><img width="20" height="20" :src="'/img/near_logo.svg'"/></MDBBadge>
+                <h5 class="text-primary h-25"> {{ (dao[1].name.length > 37) ? dao[1].name.substring(0, 37) + "..." : dao[1].name }} </h5>
+                <p class="fst-italic h-25"><small>"{{ (dao[1].description.length > 65) ? dao[1].description.substring(0, 65) + "..." : dao[1].description}}"</small></p>
+                <div class="h-25"> <span class="fw-bold">{{dao.amount.toFixed(2)}}</span> USD </div>
               </MDBCardBody>
             </MDBCard>
           </router-link>
         </div>
 
-
-        <MDBBtn @click="organizations" rounded size="lg" class="text-white gradient-background m-2 fw-normal mb-5" style="width:228px">{{ t('default.see_organizations') }}</MDBBtn>
+        <MDBBtn @click="organizations"  color="primary" rounded size="lg" class="fs-6 bg-gradient-100 m-2 mb-5" style="width:228px">{{ t('default.see_organizations') }}</MDBBtn>
         <div class="row  justify-content-center">
           <div class="col-10"> 
             <p class="text-muted">
@@ -67,7 +67,7 @@
           </div>
         </div>
 
-        <MDBBtn @click="neardao" rounded size="lg" class="text-white gradient-background m-2 fw-normal mb-8" style="width:228px">Join {{app_brand_name}}</MDBBtn>
+        <MDBBtn @click="neardao" color="primary" rounded size="lg" class="fs-6 bg-gradient-100 m-2 mb-8" style="width:228px">Join {{app_brand_name}}</MDBBtn>
 
         <div class="mb-5">
           <h6 class="text-muted me-3">{{ t('default.connect_with_us') }}</h6>
@@ -99,7 +99,8 @@ import {
   MDBContainer,
   MDBBtn, 
   MDBCard, 
-  MDBCardBody 
+  MDBCardBody,
+  MDBBadge
 } from 'mdb-vue-ui-kit';
 import { useRouter} from 'vue-router'
 import { useNear } from '@/hooks/vuex';
@@ -112,7 +113,8 @@ export default {
     MDBContainer,
     MDBBtn,
     MDBCard,
-    MDBCardBody
+    MDBCardBody,
+    MDBBadge
   },
   setup() {
     const { t } = useI18n();

@@ -57,7 +57,7 @@
               <tr v-for="(doc, index) in results" :key="index">
                 <td>{{ doc.index + 1 }}</td>
                 <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
-                <td class="fw-bold text-start"><a href="#" class="color-primary"  @click.prevent="open(doc.index)">
+                <td class="fw-bold text-start"><a href="#"  @click.prevent="open(doc.index)">
                   {{ doc.name }}&nbsp;
                   <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
                   <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
@@ -65,11 +65,11 @@
                 <td class="text-start">{{ doc.category }}</td>
                 <td v-if="false" class="text-truncate">{{ doc.description }}</td>
                 <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
-                <td class="text-start" ><MDBIcon :class="doc.valid ? 'color-success' : 'color-danger'" style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
+                <td class="text-start" ><MDBIcon :class="doc.valid ? 'text-success' : 'text-danger'" style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
                 <td>
                     <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                     <MDBBtnGroup size="sm" role="toolbar">
-                      <MDBBtn class="bg-secondary text-white" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
+                      <MDBBtn color="secondary" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
                       <!-- <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn> -->
                     </MDBBtnGroup>
                 </td>

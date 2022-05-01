@@ -48,13 +48,59 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+
+// Could be used before $theme-color
+$primary: #5F8AFA;
+$secondary: #70ADCC;
+$success: #ABD055;
+$info: #5F8AFA;
+$warning: #FFC860;
+$danger: #DB5555;
+$dark: #262626;
+$light: #f0f2f5;
+$white: #fff;
+$black: #000;
+$muted: #A7A7A7;
+
+
+// because I add colors muted, gradiend
+$theme-colors: (
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark,
+  'white': $white,
+  'black': $black,
+  'muted': $muted,
+);
+
+@import '~@/../mdb/scss/index.pro.scss';
+
+@for $i from 1 through 20 {
+  .bg-gradient-#{$i * 10} {
+    background: transparent linear-gradient($i * 10deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
+  }
+  .text-gradient-#{$i * 10}{
+    background: -webkit-linear-gradient($i * 10deg, #5F8AFA 0%, #6B6EF9 100%);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+  }
+}
+
 #app {
   font-family: Manrope, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #262626;
 }
 
 #nav {
@@ -65,9 +111,6 @@ body {
   background-color: #f0f2f5;
 }
 
-.bg-light {
-  background-color: #f0f2f5 !important;
-}
 .container {
   max-width: 1140px;
 }
@@ -153,114 +196,5 @@ h5, .h5 {
 h6, .h6 {
   font-weight: 600 !important;
 }
-
-.gradient-background {
-  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
-  font: normal normal normal 18px/24px Manrope;
-  text-transform: uppercase;
-}
-
-.gradient-background:hover {
-  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
-  font: normal normal normal 18px/24px Manrope;
-  text-transform: uppercase;
-}
-
-.bg-primary{
-  background-color: #5F8AFA !important;
-}
-
-.color-primary {
-  color: #5F8AFA !important;
-  border-color: #5F8AFA !important
-}
-
-.color-primary:hover {
-  color: #6B6EF9 !important;
-  border-color: #6B6EF9 !important
-}
-
-.bg-secondary {
-  background-color: #70ADCC !important
-}
-
-.color-secondary{
-  color: #70ADCC !important;
-  border-color: #70ADCC !important
-}
-
-.color-secondary:hover{
-  color: #70ADCC !important;
-  border-color: #70ADCC !important
-}
-
-.color-light-gray {
-  color: #C9C9C9 !important;
-  border-color: #C9C9C9 !important
-}
-
-.color-light-gray:hover {
-  color: #C9C9C9 !important;
-  border-color: #C9C9C9 !important
-}
-
-.background-light-gray {
-  background-color: #C9C9C9 !important;
-}
-
-.color-success{
-  color: #ABD055 !important;
-  border-color: #ABD055 !important
-}
-
-.bg-success{
-  background-color: #ABD055 !important
-}
-
-.color-danger {
-  color: #DB5555 !important;
-  border-color: #DB5555 !important
-}
-
-.bg-danger {
-  background-color: #DB5555 !important
-}
-
-.color-warning {
-  color: #FFC860 !important;
-  border-color: #FFC860 !important
-}
-
-.bg-warning {
-  background-color: #FFC860 !important
-}
-
-.color-dark{
-  color: #262626 !important;
-  border-color: #262626 !important
-}
-
-.bg-dark{
-  background-color: #262626 !important;
-}
-
-.color-info {
-  color: #A7A7A7 !important;
-  border-color: #A7A7A7 !important
-}
-
-.bg-info {
-  background-color: #A7A7A7 !important;
-}
-
-.color-muted {
-  color: #A7A7A7 !important;
-  border-color: #A7A7A7 !important
-}
-
-.bg-muted {
-  background-color: #A7A7A7 !important;
-}
-
 
 </style>

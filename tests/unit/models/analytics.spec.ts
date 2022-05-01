@@ -28,7 +28,7 @@ test('Compute actual value for "Linear"', () => {
     const duration: number = 60 * 60 * 24 // 1 day
     let target: number = nowToSeconds() // now in seconds
 
-    let release_end = new Date()
+    const release_end = new Date()
     release_end.setDate(release_end.getDate() + 1)
 
     // start
@@ -62,7 +62,7 @@ test('Compute actual value for "None"', () => {
 });
 
 test('Period Step', () => {
-    let release_end = new Date()
+    const release_end = new Date()
     release_end.setMilliseconds(0)
 
     expect(Analytics.getPeriodStep(release_end, Analytics.Period.Day)).toStrictEqual(moment().milliseconds(0).add(1, 'd').toDate())
@@ -73,9 +73,9 @@ test('Period Step', () => {
 });
 
 test('Unlocking cashflow for "None"', () => {
-    let now: Date = nowDate()
+    const now: Date = nowDate()
     // console.log(now)
-    let release_end = new Date()
+    const release_end = new Date()
     release_end.setFullYear(release_end.getFullYear() + 1)
 
     const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.None, {total: 1000, init: 0, release_end: toSeconds(release_end)}, Analytics.Period.Day, now)
@@ -89,9 +89,9 @@ test('Unlocking cashflow for "None"', () => {
 test('Unlocking cashflow for "Linear"', () => {
     const duration: number = 60 * 60 * 24 * 365// 1 year
 
-    let now: Date = nowDate()
+    const now: Date = nowDate()
     // console.log(now)
-    let release_end = new Date()
+    const release_end = new Date()
     release_end.setFullYear(release_end.getFullYear() + 1)
 
     const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.Linear, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)}, Analytics.Period.Month, now)

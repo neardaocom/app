@@ -21,7 +21,7 @@
             <span class="input-group-text" id="id">{{ prepend }}</span>
         </template>
         <span v-if="addon" class="input-group-text" :id="id">{{ addon }}</span>
-        <MDBBtn v-if="buttonText" :class="color" :id="`${id}-add`" @click="emit('buttonClick')" color="primary">
+        <MDBBtn v-if="buttonText" :id="`${id}-add`" @click="emit('buttonClick')" :color="color">
             {{ buttonText}}
         </MDBBtn>
     </MDBInput>
@@ -76,7 +76,8 @@ export default {
         },
         color:{
             type: String,
-            required: false
+            required: false,
+            default: 'primary'
         }
     },
     emits: ['buttonClick'],

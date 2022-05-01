@@ -4,15 +4,15 @@
       <div class="row">
         <!-- left -->
         <div class="col-1 text-center">
-          <span class="text-white fs-6 rounded-circle p-2 background-light-gray">#{{ workflow.id }}</span>
+          <span class="fs-6 text-muted text-center">#{{ workflow.id }}</span>
         </div>
         <!-- body -->
         <div class="col-11">
           <!-- HEAD -->
           <div class="row">
             <div class="col-10">
-              <h6>{{ t('default.wf_templ_' + template.code) }}</h6>
-              <div class="mt-n2 text-dark fs-5" v-html="proposalTitle"></div>
+              <h5>{{ t('default.wf_templ_' + template.code) }}</h5>
+              <div class="mt-n2 " v-html="proposalTitle"></div>
             </div>
             <div class="col-2 text-right">
               <!-- TODO: Voting -->
@@ -28,12 +28,12 @@
           </div>
           <div class="row" v-for="(log, index) in activityLogs" :key="index">
             <div class="col-1 text-center">
-              <MDBBadge color="info" pill class="p-2 me-3c bg-primary"><i class="bi bi-box"></i></MDBBadge>
+              <MDBBadge color="info" pill class="p-2 me-3c"><i class="bi bi-box"></i></MDBBadge>
             </div>
             <div class="col-10 mb-3">
-                <div class="text-muted">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
-                <div class="fs-5 fw-bold mt-n1">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
-                <div class="mt-n1">
+                <div class="text-muted small">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
+                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
+                <div class="mt-n1 small">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
                   <template v-if="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args).length > 0">
                     <span class="mx-2 text-muted">|</span>
@@ -49,7 +49,7 @@
           <!-- NEXT Activity -->
           <div v-if="workflow.state === 'Running' && check(walletRights, activityNextsRights)" class="row">
             <div class="col-1 text-center">
-              <MDBBadge color="info" pill class="p-2 me-3c background-light-gray"><i class="fas fa-check"></i></MDBBadge>
+              <MDBBadge color="muted" pill class="p-2 me-3c"><i class="fas fa-check"></i></MDBBadge>
             </div>
             <div class="col-11">
               <div class="row">
@@ -59,7 +59,7 @@
                     <template v-for="(option, index) in optionsNextActivities" :key="index">
                       <MDBRadio
                         v-if="check(walletRights, option.rights)"
-                        :btnCheck="true" :wrap="false" labelClass="btn btn-light btn-sm"
+                        :btnCheck="true" :wrap="false" labelClass="btn btn-secondary btn-sm"
                         :label="option.text"
                         :name="'nextActivity-' + workflow.id"
                         :value="option.value"

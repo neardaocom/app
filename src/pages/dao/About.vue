@@ -5,7 +5,7 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h5 class="card-title">
-              <i class="bi bi-info-square color-secondary me-1"/>
+              <i class="bi bi-info-square text-gradient-180 me-1"/>
               {{ t('default.information') }}
             </h5>
             <ul class="list-unstyled mb-1">
@@ -17,7 +17,7 @@
                   target="_blank"
                 >
                     {{ t("default.wallet") }}
-                    <i class="bi bi-box-arrow-up-right color-secondary ms-1"/>
+                    <i class="bi bi-box-arrow-up-right text-gradient-180 ms-1"/>
                   </a>
               </li>
               <li v-if="webLink">
@@ -36,7 +36,7 @@
         <div class="card text-start w-auto p-2" style="width: 18rem">
           <div class="card-body">
             <h5 class="card-title">
-              <i class="bi bi-people color-secondary me-1"/>
+              <i class="bi bi-people text-gradient-180 me-1"/>
               {{ t('default.members') }}
             </h5>
             <ul class="list-unstyled mb-2">
@@ -58,7 +58,7 @@
         <div class="card text-start w-auto p-2" >
           <div class="card-body">
             <h5 class="">
-              <i class="bi bi-bar-chart color-secondary me-1"/>
+              <i class="bi bi-bar-chart text-gradient-180 me-1"/>
               {{ t("default.council_unlocking_token") }}
             </h5>
             <ChartCouncilUnlocking :dao="dao" :group="council"/>

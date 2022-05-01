@@ -153,6 +153,7 @@
   "order_created_desc": "Od nejnovějšího",
   "create_dao": "Vytvořit DAO",
   "create": "Vytvořit",
+  "created_by": "Vytvořil",
   "dao_name": "Název",
   "purpose": "Účel",
   "purpose_short": "Účel v jedné větě",
@@ -291,5 +292,6 @@
   "ref_finance_funds": "Ref Finance fondy",
   "withdraw": "Vybrat",
   "max": "Max",
-  "balance": "Zůstatek"
+  "balance": "Zůstatek",
+  "service": "Služba"
 }
