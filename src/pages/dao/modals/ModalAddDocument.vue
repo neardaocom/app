@@ -99,9 +99,9 @@ import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
-import { requiredValidator, requiredArrayValidator, isValid, minLength, maxLength, urlValidator } from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
-import { minorUp, majorUp } from '@/utils/version'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
+import VersionHelper from '@/models/utils/VersionHelper'
 import {
   MDBBtn,
   MDBInput, //, MDBSelect,
@@ -172,10 +172,10 @@ export default {
     watch(show, openModal)
 
     const formName = ref("")
-    const formNameId = getRandom(1000, 9999)
+    const formNameId = IntegerHelper.getRandom(1000, 9999)
     let formNameOptions = ref(nameOptions)
     const formCategory = ref("")
-    const formCategoryId = getRandom(1000, 9999)
+    const formCategoryId = IntegerHelper.getRandom(1000, 9999)
     const formCategoryOptions = ref(categoryOptions)
     const formDescription = ref('')
     const formTagsNew = ref([])
@@ -299,9 +299,9 @@ export default {
       let version = '1.0'
       if (this.isNewFile === false) {
         if (this.formVersionUpgrageMajor === true) {
-          version = majorUp(this.getVersionOfFile)
+          version = VersionHelper.majorUp(this.getVersionOfFile)
         } else {
-          version = minorUp(this.getVersionOfFile)
+          version = VersionHelper.minorUp(this.getVersionOfFile)
         }
       }
       return version
@@ -321,9 +321,9 @@ export default {
     },
     validateName(){
       const field = "formName"
-      const requiredVal = requiredValidator(this.formName)
-      const minLengthVal = minLength(this.formName, 3)
-      const maxLengthVal = maxLength(this.formName, 80)
+      const requiredVal = Validator.requiredValidator(this.formName)
+      const minLengthVal = Validator.minLength(this.formName, 3)
+      const maxLengthVal = Validator.maxLength(this.formName, 80)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minLengthVal.valid === false) {
@@ -337,9 +337,9 @@ export default {
     },
     validateCategory(){
       const field = "formCategory"
-      const requiredVal = requiredValidator(this.formCategory)
-      const minLengthVal = minLength(this.formCategory, 3)
-      const maxLengthVal = maxLength(this.formCategory, 80)
+      const requiredVal = Validator.requiredValidator(this.formCategory)
+      const minLengthVal = Validator.minLength(this.formCategory, 3)
+      const maxLengthVal = Validator.maxLength(this.formCategory, 80)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minLengthVal.valid === false) {
@@ -353,8 +353,8 @@ export default {
     },
     validateDescription(){
       const field = "formDescription"
-      const minLengthVal = minLength(this.formDescription, 0)
-      const maxLengthVal = maxLength(this.formDescription, 160)
+      const minLengthVal = Validator.minLength(this.formDescription, 0)
+      const maxLengthVal = Validator.maxLength(this.formDescription, 160)
       if (maxLengthVal.valid === false) {
         this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
       } else if (minLengthVal.valid === false) {
@@ -366,7 +366,7 @@ export default {
     },
     validateFileUpload(){
       const field = "formFiles"
-      const requiredVal = requiredArrayValidator(this.formFiles)
+      const requiredVal = Validator.requiredArrayValidator(this.formFiles)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -376,7 +376,7 @@ export default {
     },
     validateUrl(){
       const field = "formUrl"
-      const requiredVal = requiredValidator(this.formUrl)
+      const requiredVal = Validator.requiredValidator(this.formUrl)
       const urlVal = urlValidator(this.formUrl)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
@@ -389,7 +389,7 @@ export default {
     },
     validateHtml(){
       const field = "formHtml"
-      const requiredVal = requiredValidator(this.formHtml)
+      const requiredVal = Validator.requiredValidator(this.formHtml)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {

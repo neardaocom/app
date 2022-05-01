@@ -64,7 +64,7 @@ import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import _ from "lodash"
 import loFind from "lodash/find"
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import Search from "@/components/ui/Search.vue";
 
 export default {
@@ -129,7 +129,7 @@ export default {
         results = results.filter(item => _.intersection([item.stateCode], filterStates).length > 0)
       }
       // searching
-      const searchText = toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(this.searchQuery)
       
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))

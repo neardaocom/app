@@ -26,9 +26,8 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
 import { useNear, useIPFS } from "@/hooks/vuex";
-import { nearToYocto } from "@/utils/near";
+import NearUtils from '@/models/nearBlockchain/Utils';
 import moment from 'moment'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
@@ -66,7 +65,7 @@ export default {
 
         const { nearService, factoryAccount, accountId } = useNear()
         const { ipfsService } = useIPFS()
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
         //const logger = inject('logger')
         const notify = inject('notify')
@@ -92,7 +91,7 @@ export default {
 
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
-        const onSubmit = handleSubmit(async values => {
+        const onSubmit = handleSubmit(async () => {
             // if(formAsset.value === 'near'){
             //     values.nearAmount = values.amount
             // }else{
@@ -120,7 +119,7 @@ export default {
                 template.value.id,
                 template.value.settings[0].id,
                 ipfs_cid,
-                [{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": nearToYocto(values.amount)}],
+            
                 `wf_near_send-${moment().valueOf()}`,
                 1.0
             )

@@ -1,27 +1,26 @@
-import { toCompare } from "@/utils/version";
-import { toSearch } from "@/utils/string";
-// import { convertArrayOfObjectToObject } from "@/utils/array";
+import VersionHelper from "@/models/utils/VersionHelper";
+import StringHelper from "@/models/utils/StringHelper";
 import _ from "lodash"
-import { getValueById, getIdByValue } from "@/utils/generics";
+import GenericsHelper from "@/models/utils/GenericsHelper";
 import { DAODocs, DAODocsFile } from "@/types/dao";
-import lodashFilter from "lodash/filter"
-import lodashOrderBy from "lodash/orderBy"
-// import lodashGet from "lodash/get"
-import lodashSet from "lodash/set"
-import lodashFirst from "lodash/first"
+import loFilter from "lodash/filter"
+import loOrderBy from "lodash/orderBy"
+// import loGet from "lodash/get"
+import loSet from "lodash/set"
+import loFirst from "lodash/first"
 import loFind from "lodash/find"
 
 const getFile = (docs: DAODocs, name: string, category?: string, type?: string, version?: string): DAODocsFile | undefined | any => { // TODO: Remove any
     const filter: object = {'name': name, 'valid': true}
 
     if (category !== undefined)
-        lodashSet(filter, ['categoryId'], getIdByValue(docs.categories, category))
+        loSet(filter, ['categoryId'], GenericsHelper.getIdByValue(docs.categories, category))
     if (type !== undefined)
-        lodashSet(filter, ['type'], type)
+        loSet(filter, ['type'], type)
     if (version !== undefined)
-        lodashSet(filter, ['version'], version)
+        loSet(filter, ['version'], version)
 
-    return lodashFirst( lodashOrderBy(lodashFilter(docs.files, filter) , ['version'], ['desc']))
+    return loFirst( loOrderBy(loFilter(docs.files, filter) , ['version'], ['desc']))
 }
 
 const initStructure = [
@@ -105,7 +104,7 @@ const getNames = (docs: any, category: any, t: any) => {
 }
 
 const getKey = (name: string, category: string): string => {
-    return toSearch(name) + '_' + toSearch(category)
+    return StringHelper.toSearch(name) + '_' + StringHelper.toSearch(category)
 }
 
 const getIndexInFiles = (files: any, name: string, category: string) => {
@@ -126,12 +125,12 @@ const transform = (docs: DAODocs) => {
     // const categories: object = convertArrayOfObjectToObject(docs.categories, 'id', 'value')
     
     docs.files.forEach((element: any, index: number) => {
-        version = toCompare(element.version)
+        version = VersionHelper.toCompare(element.version)
         key = getKey(element.name, element.categoryId)
         // exists
         file_index = getIndexInFiles(files, element.name, element.categoryId)
         if (file_index >= 0) {
-            file_version = toCompare(files[file_index].version)
+            file_version = VersionHelper.toCompare(files[file_index].version)
             // new/old version
             if (version > file_version) {
                 files[file_index].versions.push({
@@ -147,7 +146,7 @@ const transform = (docs: DAODocs) => {
                 files[file_index].type = element.type
                 files[file_index].valid = element.valid
                 files[file_index].ipfs_cid = element.value
-                files[file_index].search = [toSearch(element.name), toSearch( getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => toSearch(tag)))
+                files[file_index].search = [StringHelper.toSearch(element.name), StringHelper.toSearch( GenericsHelper.getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => StringHelper.toSearch(tag)))
             } else {
                 files[file_index].versions.push({
                     index: index,
@@ -162,7 +161,7 @@ const transform = (docs: DAODocs) => {
                 index: index,
                 key: key,
                 name: element.name,
-                category: getValueById(docs.categories, element.categoryId),
+                category: GenericsHelper.getValueById(docs.categories, element.categoryId),
                 tags: element.tagIds,
                 type: element.type,
                 version: element.version,
@@ -170,7 +169,7 @@ const transform = (docs: DAODocs) => {
                 ipfs_cid: element.value,
                 description: element.description,
                 versions: [],
-                search: [toSearch(element.name), toSearch( getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => toSearch(tag)))
+                search: [StringHelper.toSearch(element.name), StringHelper.toSearch( GenericsHelper.getValueById(docs.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => StringHelper.toSearch(tag)))
             })
         }
     });

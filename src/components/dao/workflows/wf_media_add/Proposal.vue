@@ -61,7 +61,7 @@ import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
-import { minorUp, majorUp } from '@/utils/version'
+import VersionHelper from '@/models/utils/VersionHelper'
 import {
     MDBSwitch,
     MDBAccordion, 
@@ -223,9 +223,9 @@ export default {
             let version = '1.0'
             if (isNewFile.value === false) {
                 if (formVersionUpgrageMajor.value === true) {
-                version = majorUp(getVersionOfFile.value)
+                version = VersionHelper.majorUp(getVersionOfFile.value)
                 } else {
-                version = minorUp(getVersionOfFile.value)
+                version = VersionHelper.minorUp(getVersionOfFile.value)
                 }
             }
             return version

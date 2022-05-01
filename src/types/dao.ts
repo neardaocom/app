@@ -1,5 +1,5 @@
 import { IPFSFile } from "@/types/ipfs";
-import { CodeValue, IDValue, Interval } from "@/types/generics";
+import { CodeValue, IDValue, Interval } from "@/models/utils/types/generics";
 import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
 

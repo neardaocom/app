@@ -57,7 +57,6 @@ export default {
    },
 
    setup () {
-      // const {dao} = toRefs(props)
       const { t } = useI18n()
       const store = useStore()
 

@@ -51,7 +51,6 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
-import DAOs from '@/data/DAOs'
 import {
   MDBContainer,
   MDBProgress,
@@ -61,14 +60,13 @@ import {
   MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { reactive } from "@vue/reactivity";
-import { transform, transTags } from '@/models/dao'
-import { getRandom } from '@/utils/integer'
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import _ from "lodash"
-import Decimal from 'decimal.js';
 import DaoCard from '@/components/daoList/DaoCard.vue'
+
+import { useFetch } from "@/hooks/daoList";
 
 export default {
   components: {
@@ -85,9 +83,11 @@ export default {
   },
   setup() {
     const { t, n } = useI18n()
-    const daos = ref(DAOs.data().daos)
-    const list = ref([])
-    const tags = ref([])
+
+    const nearDaoFactory = inject('nearDaoFactory')
+
+    const { loadingProgress, tags, list } = useFetch(nearDaoFactory.value)
+
     const searchQuery = ref('')
     const filterTag = reactive({
       agency: {
@@ -107,9 +107,8 @@ export default {
         active: false,
       },
     })
-    const loadingProgress = ref(0)
     return {
-      t, n, daos, list, tags, loadingProgress, searchQuery, filterTag
+      t, n, list, tags, loadingProgress, searchQuery, filterTag
     }
   },
   computed: {
@@ -133,7 +132,7 @@ export default {
         results = results.filter(item => _.intersection(item.tags, filterTags).length > 0)
       }
       // searching
-      const searchText = toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(this.searchQuery)
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }
@@ -144,39 +143,5 @@ export default {
       return _.join(_.orderBy(this.tags), ' | ')
     }
   },
-  mounted() {
-    this.loadingProgress = getRandom(5, 15)
-    this.fetchList()
-  },
-  methods: {
-    fetchList() {
-      Promise.all([
-        this.nearService.getDaoList(),
-        this.nearService.getTags(),
-      ]).then(r => {
-        this.loadingProgress = 75
-        this.list = transform(r[0], r[1], this.t, this.n)
-        this.tags = transTags(r[1], this.t)
-
-        // load amount
-        this.nearService.getDaosAmount(this.list.map((item) => item.id + '.' + this.factoryAccount)).then(
-          wallets => {
-            // console.log(wallets)
-            this.list.forEach((element, index) => {
-              element.amount = new Decimal(wallets[index]).times(this.nearPrice).toFixed(2)
-            });
-            this.loadingProgress = 100
-          }
-        )
-      }).catch((e) => {
-        this.$logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
-        this.$logger.error('B', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
-        this.$notify.warning(this.t('default.notify_dao_list_fetching_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_list_fetching_fail_message'))
-        this.$notify.flush()
-        console.log(e)
-      })
-      this.loadingProgress = getRandom(25, 50)
-    }
-  }
 }
 </script>

@@ -43,7 +43,7 @@
 <script>
     import { onMounted, ref, toRefs } from "vue";
     import { useI18n } from "vue-i18n";
-    import { yoctoNear } from '@/services/nearService'
+    import NearUtils from '@/models/nearBlockchain/Utils'
     import Decimal from 'decimal.js'
     import Sale from "./Sale.vue"
     import { MDBCard,
@@ -121,7 +121,7 @@
         },
         computed: {
             amountNear(){
-                return new Decimal(this.sale.amounts[1] || 0).dividedBy(yoctoNear).toNumber()
+                return new Decimal(this.sale.amounts[1] || 0).dividedBy(NearUtils.yoctoNear).toNumber()
             },
             amountDaoToken(){
                 return  new Decimal(this.sale.amounts[0]  || 0).dividedBy(10 ** this.dao.treasury.token.meta.decimals).toNumber()

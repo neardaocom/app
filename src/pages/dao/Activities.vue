@@ -45,7 +45,7 @@ import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Workflow from "@/components/dao/Workflow.vue"
 import orderBy from "lodash/orderBy"
-import { toSearch } from '@/utils/string'
+import StringHelper from '@/models/utils/StringHelper'
 import { getTemplate } from "@/models/workflow";
 import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
@@ -96,7 +96,7 @@ export default {
       results = results.filter((item) => item.state !== 'Waiting')
 
       // searching
-      const searchText = toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(this.searchQuery)
       if (searchText.length > 0) {
         results = results.filter(item => item.search.includes(searchText))
       }

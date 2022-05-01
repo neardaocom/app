@@ -39,7 +39,7 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, maxLength} from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import {
   MDBBtn,
   MDBInput,
@@ -121,8 +121,8 @@ export default {
   methods: {
     validateAccount(){
       const field = "formAccount"
-      const requiredVal = requiredValidator(this.formAccount)
-      const nearAccountVal = nearAccountValidator(this.formAccount)
+      const requiredVal = Validator.requiredValidator(this.formAccount)
+      const nearAccountVal = Validator.nearAccountValidator(this.formAccount)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (nearAccountVal.valid === false) {
@@ -134,7 +134,7 @@ export default {
     },
     validateGroup(){
       const field = "formGroup"
-      const requiredVal = requiredValidator(this.formGroup)
+      const requiredVal = Validator.requiredValidator(this.formGroup)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -144,7 +144,7 @@ export default {
     },
     validateNote(){
       const field = "formNote"
-      const maxLengthVal = maxLength(this.formNote, 100)
+      const maxLengthVal = Validator.maxLength(this.formNote, 100)
       if (maxLengthVal.valid === false) {
         this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
       } else {

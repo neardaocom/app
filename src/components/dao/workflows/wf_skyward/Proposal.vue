@@ -45,8 +45,7 @@ import { useForm } from 'vee-validate';
 import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
-import { getAccountIdPostfix } from "@/services/nearService/utils"
-import { dateToChain, durationToChain } from "@/utils/near";
+import NearUtils from '@/models/nearBlockchain/Utils';
 import { generateStorageKey } from "@/models/proposal";
 
 export default {
@@ -78,7 +77,7 @@ export default {
 
         const { nearService, factoryAccount } = useNear()
 
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
 
         const formatDate = t('default._datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
@@ -118,8 +117,8 @@ export default {
                     { U128: decimal(values.amount).toFixed() },
                     { String: values.title },
                     { String: '' }, // url
-                    { U64: dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
-                    { U64: durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
+                    { U64: NearUtils.dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
+                    { U64: NearUtils.durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
                 ],
                 'wf_skyward-' + generateStorageKey(proposalCount.value),
                 1.0

@@ -31,8 +31,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, maxLength} from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import {
   MDBBtn,
@@ -115,8 +115,8 @@ export default {
   methods: {
     validateAccount(){
       const field = "formAccount"
-      const requiredVal = requiredValidator(this.formAccount)
-      const nearAccountVal = nearAccountValidator(this.formAccount)
+      const requiredVal = Validator.requiredValidator(this.formAccount)
+      const nearAccountVal = Validator.nearAccountValidator(this.formAccount)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (nearAccountVal.valid === false) {
@@ -128,7 +128,7 @@ export default {
     },
     validateGroup(){
       const field = "formGroup"
-      const requiredVal = requiredValidator(this.formGroup)
+      const requiredVal = Validator.requiredValidator(this.formGroup)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -139,7 +139,7 @@ export default {
     validateDescription(){
       const field = "formDescription"
       this.formDescription = ref(this.$refs.refWysiwyg.getCode())
-      const maxLengthVal = maxLength(this.formDescription, 100)
+      const maxLengthVal = Validator.maxLength(this.formDescription, 100)
       if (maxLengthVal.valid === false) {
         this.errors[field] = this.t('default.' + maxLengthVal.message, maxLengthVal.params)
       } else {
@@ -160,7 +160,7 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-removeCouncil-' + getRandom(1, 999)
+          const name = this.accountId + '-removeCouncil-' + IntegerHelper.getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalRemoveCouncil', 'StoreFile-ipfs', 'File saving to ipfs failed')

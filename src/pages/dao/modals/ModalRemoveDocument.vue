@@ -45,8 +45,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, minLength, maxLength } from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import {
   MDBBtn,
   MDBAutocomplete,
@@ -89,10 +89,10 @@ export default {
     watch(show, openModal)
 
     const formName = ref("")
-    const formNameId = getRandom(1000, 9999)
+    const formNameId = IntegerHelper.getRandom(1000, 9999)
     const formNameOptions = ref([ t('default.founding_document'),  ])
     const formCategory = ref("")
-    const formCategoryId = getRandom(1000, 9999)
+    const formCategoryId = IntegerHelper.getRandom(1000, 9999)
     const formCategoryOptions = ref([ t('default.fundamental') ])
 
     const filterFormName = value => {
@@ -140,9 +140,9 @@ export default {
   methods: {
     validateName(){
       const field = "formName"
-      const requiredVal = requiredValidator(this.formName)
-      const minLengthVal = minLength(this.formName, 3)
-      const maxLengthVal = maxLength(this.formName, 80)
+      const requiredVal = Validator.requiredValidator(this.formName)
+      const minLengthVal = Validator.minLength(this.formName, 3)
+      const maxLengthVal = Validator.maxLength(this.formName, 80)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minLengthVal.valid === false) {
@@ -156,9 +156,9 @@ export default {
     },
     validateCategory(){
       const field = "formCategory"
-      const requiredVal = requiredValidator(this.formCategory)
-      const minLengthVal = minLength(this.formCategory, 3)
-      const maxLengthVal = maxLength(this.formCategory, 80)
+      const requiredVal = Validator.requiredValidator(this.formCategory)
+      const minLengthVal = Validator.minLength(this.formCategory, 3)
+      const maxLengthVal = Validator.maxLength(this.formCategory, 80)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minLengthVal.valid === false) {

@@ -18,7 +18,7 @@ import { useI18n } from 'vue-i18n';
 import { useStore } from 'vuex'
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
+import NearUtils from "@/models/nearBlockchain/Utils";
 
 
 export default {
@@ -37,7 +37,7 @@ export default {
         const store = useStore()   
 
         const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         //const nearService = computed(() => (store.getters['near/getService']))
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
 

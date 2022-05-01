@@ -58,7 +58,7 @@
 import { reactive, ref, toRefs, watch } from "vue";
 import { RefFinanceService } from '@/services/refFinanceService'
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, isNumber, minNumber, maxNumber } from '@/utils/validators'
+import Validator from '@/models/utils/Validator'
 import {
   MDBBtn,
   MDBIcon,
@@ -180,10 +180,10 @@ export default {
 
     validateFee(){
         const field = "fee"
-        const requiredVal = requiredValidator(this.fee)
-        const isNumberVal = isNumber(this.fee)
-        const minNumberVal = minNumber(this.fee, {min: 0.01})
-        const maxNumberVal = maxNumber(this.fee, {max: 19})
+        const requiredVal = Validator.requiredValidator(this.fee)
+        const isNumberVal = Validator.isNumber(this.fee)
+        const minNumberVal = Validator.minNumber(this.fee, {min: 0.01})
+        const maxNumberVal = Validator.maxNumber(this.fee, {max: 19})
         if (isNumberVal.valid === false) {
             this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {

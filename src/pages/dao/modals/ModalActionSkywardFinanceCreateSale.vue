@@ -93,8 +93,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { requiredValidator, isValid, minLength, nearRootAccountValidator, maxLength, isNumber, minNumber, maxNumber, minDate, maxDate } from '@/utils/validators'
-import { toNanoseconds, toNanosecond } from '@/utils/date'
+import Validator from '@/models/utils/Validator'
+import DateHelper from '@/models/utils/DateHelper'
 import moment from 'moment'
 import last from "lodash/last"
 import FromErrorMessage from '@/components/forms/FormErrorMessage'
@@ -196,9 +196,9 @@ export default {
   methods: {
     validateTitle(){
       const field = "formTitle"
-      const requiredVal = requiredValidator(this.formTitle)
-      const minLengthVal = minLength(this.formTitle, 5)
-      const maxLengthVal = maxLength(this.formTitle, 40)
+      const requiredVal = Validator.requiredValidator(this.formTitle)
+      const minLengthVal = Validator.minLength(this.formTitle, 5)
+      const maxLengthVal = Validator.maxLength(this.formTitle, 40)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minLengthVal.valid === false) {
@@ -212,8 +212,8 @@ export default {
     },
     validateOutTokenId(){
         const field = "formOutTokenId"
-        const required = requiredValidator(this.formOutTokenId)
-        const rootAccount = nearRootAccountValidator(this.formOutTokenId)
+        const required = Validator.requiredValidator(this.formOutTokenId)
+        const rootAccount = Validator.nearRootAccountValidator(this.formOutTokenId)
         if (required.valid === false) {
             this.errors[field] = this.t('default.' + required.message, required.params)
         } else if (rootAccount.valid === false) {
@@ -239,10 +239,10 @@ export default {
     },
     validateAmount() {
       const field = "formAmount"
-      const requiredVal = requiredValidator(this.formAmount)
-      const isNumberVal = isNumber(this.formAmount)
-      const minNumberVal = minNumber(this.formAmount, 1.0)
-      const maxNumberVal = maxNumber(this.formAmount, 1000000000.0)
+      const requiredVal = Validator.requiredValidator(this.formAmount)
+      const isNumberVal = Validator.isNumber(this.formAmount)
+      const minNumberVal = Validator.minNumber(this.formAmount, 1.0)
+      const maxNumberVal = Validator.maxNumber(this.formAmount, 1000000000.0)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (isNumberVal.valid === false) {
@@ -258,10 +258,10 @@ export default {
     },
     validateFromDate() {
       const field = "formFromDate"
-      const fromDate = moment(this.formFromDate, this.t('default._datepicker_format')).toDate()
-      const requiredVal = requiredValidator(this.formFromDate)
-      const minDateVal = minDate(fromDate, { min: this.minDate }, this.d)
-      const maxDateVal = maxDate(fromDate, { max: this.maxDate }, this.d)
+      const fromDate = DateHelper.parse(this.formFromDate, this.t('default._datepicker_format'))
+      const requiredVal = Validator.requiredValidator(this.formFromDate)
+      const minDateVal = Validator.minDate(fromDate, { min: this.minDate }, this.d)
+      const maxDateVal = Validator.maxDate(fromDate, { max: this.maxDate }, this.d)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (minDateVal.valid === false) {
@@ -275,7 +275,7 @@ export default {
     },
     validateFromTime() {
       const field = "formFromTime"
-      const requiredVal = requiredValidator(this.formFromTime)
+      const requiredVal = Validator.requiredValidator(this.formFromTime)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -302,8 +302,8 @@ export default {
               url: this.formUrl,
               amount_ft: this.formAmount.toString(),
               out_token_id: this.formOutTokenId + '.' + this.accountPostfix,
-              time_from: toNanosecond(moment(`${this.formFromDate} ${this.formFromTime}`, this.t('default._datepicker_format') + ' hh:mm').toDate()).toString(),
-              duration: toNanoseconds(this.formDurationDays, this.formDurationHours, 0, 0).toString()
+              time_from: DateHelper.toNanosecond(DateHelper.parse(`${this.formFromDate} ${this.formFromTime}`, this.t('default._datepicker_format') + ' hh:mm')).toString(),
+              duration: DateHelper.toNanoseconds(this.formDurationDays, this.formDurationHours, 0, 0).toString()
             },
             0.0
         ).then(r => {

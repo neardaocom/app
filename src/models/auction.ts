@@ -1,8 +1,8 @@
 import { Sale } from "@/services/skywardFinanceService/types"
-import { UnsupportedError } from "@/utils/error"
+import { UnsupportedError } from "@/models/utils/errors"
 import Decimal from "decimal.js"
-import { parseNanoseconds } from "@/utils/date"
-import { parseNumber } from "@/utils/number"
+import DateHelper from "@/models/utils/DateHelper"
+import NumberHelper from "@/models/utils/NumberHelper"
 import loMin from "lodash/min"
 import loStartsWith from "lodash/startsWith"
 import loGet from "lodash/get"
@@ -75,12 +75,12 @@ const transform = (source: string, sale: any): Sale | undefined => {
                     paid_unclaimed: new Decimal(sale.in_token_paid_unclaimed).toNumber(),
                     paid: new Decimal(sale.in_token_paid).toNumber(),
                 },
-                total_shares: parseNumber(sale.total_shares),
-                start_time: parseNanoseconds(sale.start_time),
-                end_time: parseNanoseconds(new Decimal(sale.start_time).plus(sale.duration).toNumber()),
-                duration: parseNumber(sale.duration),
-                remaining_duration: parseNumber(sale.remaining_duration),
-                current_time: parseNanoseconds(sale.current_time),
+                total_shares: NumberHelper.parseNumber(sale.total_shares),
+                start_time: DateHelper.parseNanoseconds(sale.start_time),
+                end_time: DateHelper.parseNanoseconds(new Decimal(sale.start_time).plus(sale.duration).toNumber()),
+                duration: NumberHelper.parseNumber(sale.duration),
+                remaining_duration: NumberHelper.parseNumber(sale.remaining_duration),
+                current_time: DateHelper.parseNanoseconds(sale.current_time),
             }
             break;
         default:

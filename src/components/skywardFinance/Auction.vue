@@ -50,7 +50,7 @@
 <script>
 import { ref, toRefs, onMounted, onUnmounted } from "vue"
 import Auction from '@/models/auction';
-import { toTimeString } from '@/utils/date'
+import DateHelper from '@/models/utils/DateHelper'
 import { MDBCard,
     MDBCardHeader,
     MDBCardBody,
@@ -107,10 +107,10 @@ export default {
     },
     computed: {
         startTime() {
-            return toTimeString(this.auction.start_time)
+            return DateHelper.toTimeString(this.auction.start_time)
         },
         endTime() {
-            return toTimeString(this.auction.end_time)
+            return DateHelper.toTimeString(this.auction.end_time)
         },
     },
 }

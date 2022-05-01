@@ -1,5 +1,5 @@
 import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO, WFMetaForm } from "@/types/workflow";
-import { CodeValue, Translate } from "@/types/generics";
+import { CodeValue, Translate } from "@/models/utils/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
 import loGet from "lodash/get";
@@ -7,15 +7,11 @@ import loSet from "lodash/set";
 import loLast from "lodash/last";
 import loToNumber from "lodash/toNumber"
 import loMerge from "lodash/merge"
-import { convertArrayOfObjectToObject } from "@/utils/array";
-import { TransactionAction } from "@/types/blockchain";
-import { nearToYocto } from "@/utils/near";
-import { NearService } from "@/services/nearService";
-import { getValueByCode } from "@/utils/generics"
+import ArrayHelper from "@/models/utils/ArrayHelper";
+import { TransactionAction } from "@/models/nearBlockchain/types/blockchain";
+import NearService from "@/services/nearService/NearService";
 import { DAORights } from "@/types/dao";
-import { instances } from "@firebase/logger/dist/src/logger";
 import { templateMetas } from "@/data/workflow";
-import { configure } from "vee-validate";
 
 export const gasDefault: Function = () => { return 100 }
 export const depositDefault: Function = () => { return 0 }
@@ -106,7 +102,7 @@ export const canFinish = (instance: WFInstance, template: WFTemplate): boolean =
 
 export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
     // const settings: WFSettings | undefined = getSettings(template, settingsId)
-    // const params: Record<string, unknown> = (settings) ? convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
+    // const params: Record<string, unknown> = (settings) ? ArrayHelper.convertArrayOfObjectToObject(settings.constants, 'code', 'value') : {}
     // console.log(settings, params)
     // return {key: 'wf_templ_' + template.code + '_constants', params: params}
     return {key: 'wf_templ_' + template.code + '_description', params: {}}

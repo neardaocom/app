@@ -7,6 +7,12 @@
 import { ref, onMounted, onUnmounted, provide} from "vue";
 import { coinGeckoExchange } from "@/services/exchangeService"
 
+// confings
+import { getConfig as nearConfig } from "@/config/near"
+
+// factories
+import NearBlockchainFactory from "@/models/nearBlockchain/Factory";
+
 export default {
   components: {
   },
@@ -27,7 +33,22 @@ export default {
 
     provide('nearPrice', near_price)
 
-    onMounted(() => {
+    // DI
+    const nearFactory = ref(new NearBlockchainFactory(nearConfig(process.env.NODE_ENV || "development")))
+    const near = ref(null)
+    const nearDaoFactory = ref(null)
+    provide('nearFactory', nearFactory)
+    provide('near', near)
+    provide('nearDaoFactory', nearDaoFactory)
+
+    onMounted(async () => {
+      // DI near
+      near.value = await nearFactory.value.createNear()
+      const walletConnection = nearFactory.value.createWalletConnection(near.value)
+      const walletAccount = nearFactory.value.createWalletAccount(walletConnection)
+
+      nearDaoFactory.value = nearFactory.value.createDaoFactory(nearFactory.value.createFactoryContractService(walletAccount))
+
       near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1_000) // 5 minutes
       // console.log('App mounted')
     })

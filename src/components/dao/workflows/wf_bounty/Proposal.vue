@@ -20,7 +20,7 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import decimal from "decimal.js";
-import { nearToYocto } from '@/utils/near';
+import NearUtils from '@/models/nearBlockchain/Utils';
 import { useNear } from "@/hooks/vuex";
 // import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 //import { inject } from '@vue/runtime-core';
@@ -93,8 +93,8 @@ export default {
                 template.value.settings[0].id,
                 ipfs_cid,
                 [
-                    {U128: nearToYocto(decimal(values.amount).toFixed())},
-                    {U128: nearToYocto(decimal(values.deposit).toFixed())},
+                    {U128: NearUtils.nearToYocto(decimal(values.amount).toFixed())},
+                    {U128: NearUtils.nearToYocto(decimal(values.deposit).toFixed())},
                     {String: values.title},
                 ],
                 'wf_bounty-' + generateStorageKey(proposalCount.value),

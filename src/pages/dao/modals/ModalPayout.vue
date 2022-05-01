@@ -48,8 +48,8 @@
 import { ref, toRefs, watch } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import {requiredValidator, nearAccountValidator, isValid, isNumber, minNumber, maxNumber} from '@/utils/validators'
-import { getRandom } from '@/utils/integer'
+import Validator from '@/models/utils/Validator'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
@@ -146,8 +146,8 @@ export default {
     },
     validateAccount(){
       const field = "formAccount"
-      const requiredVal = requiredValidator(this.formAccount)
-      const nearAccountVal = nearAccountValidator(this.formAccount)
+      const requiredVal = Validator.requiredValidator(this.formAccount)
+      const nearAccountVal = Validator.nearAccountValidator(this.formAccount)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (nearAccountVal.valid === false) {
@@ -172,10 +172,10 @@ export default {
     },
     validateAmount(){
       const field = "formAmount"
-      const requiredVal = requiredValidator(this.formAmount)
-      const isNumberVal = isNumber(this.formAmount)
-      const minNumberVal = minNumber(this.formAmount, 0.0)
-      const maxNumberVal = maxNumber(this.formAmount, 1000000.0)
+      const requiredVal = Validator.requiredValidator(this.formAmount)
+      const isNumberVal = Validator.isNumber(this.formAmount)
+      const minNumberVal = Validator.minNumber(this.formAmount, 0.0)
+      const maxNumberVal = Validator.maxNumber(this.formAmount, 1000000.0)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else if (isNumberVal.valid === false) {
@@ -192,7 +192,7 @@ export default {
     validateDescription(){
       const field = "formDescription"
       this.formDescription = ref(this.$refs.refWysiwyg.getCode())
-      const requiredVal = requiredValidator(this.formDescription)
+      const requiredVal = Validator.requiredValidator(this.formDescription)
       if (requiredVal.valid === false) {
         this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
       } else {
@@ -211,7 +211,7 @@ export default {
         // IPFS
         let ipfs_cid = null
         try {
-          const name = this.accountId + '-payout-' + this.formTitle + '-' + getRandom(1, 999)
+          const name = this.accountId + '-payout-' + this.formTitle + '-' + IntegerHelper.getRandom(1, 999)
           ipfs_cid = await this.ipfsService.storeFiles(makeFileFromString(this.formDescription, name), name)
         } catch(e){
           this.$logger.error('D', 'app@components/dao/ModalPayout', 'StoreFile-ipfs', 'File saving to ipfs failed')

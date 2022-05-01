@@ -1,7 +1,7 @@
 import { WFMetaTemplate, WFData } from "@/types/workflow"
-import { getValueByCode } from "@/utils/generics"
-import { first } from "@/utils/object"
-import { nearToYocto, yoctoToNear } from "@/utils/near"
+import GenericsHelper from "@/models/utils/GenericsHelper"
+import ObjectHelper from "@/models/utils/ObjectHelper"
+import NearUtils from "@/models/nearBlockchain/Utils"
 import loToNumber from "lodash/toNumber";
 
 export const templateMetaAddWorkflow: WFMetaTemplate = {
@@ -19,12 +19,12 @@ export const templateMetaAddWorkflow: WFMetaTemplate = {
             args: (data: WFData) => {
                 return {
                     "proposal_id": data.proposalId,
-                    "workflow_id": getValueByCode(data.inputs, 'templateId'),
+                    "workflow_id": GenericsHelper.getValueByCode(data.inputs, 'templateId'),
                 }
             },
             log: (args: any) => {
                 return {
-                    "templateId": first(args[0][0]),
+                    "templateId": ObjectHelper.first(args[0][0]),
                 }
             },
             gas: (data?: WFData): Number => {
@@ -54,7 +54,7 @@ export const templateMetaWfNearSend: WFMetaTemplate = {
                 component: 'WfNearSendNearSend',
                 schema: (data: WFData) => {
                     return {
-                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + yoctoToNear((getValueByCode(data.inputs, 'amount')) ?? '1000000.0')
+                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + NearUtils.yoctoToNear((GenericsHelper.getValueByCode(data.inputs, 'amount')) ?? '1000000.0')
                     }
                 },
             },
@@ -66,14 +66,14 @@ export const templateMetaWfNearSend: WFMetaTemplate = {
             args: (data: WFData) => {
                 return {
                     "proposal_id": data.proposalId,
-                    "receiver_id": getValueByCode(data.inputs, 'receiverId'),
-                    "amount": nearToYocto(loToNumber(data.form.amount)),
+                    "receiver_id": GenericsHelper.getValueByCode(data.inputs, 'receiverId'),
+                    "amount": NearUtils.nearToYocto(loToNumber(data.form.amount)),
                 }
             },
             log: (args: any) => {
                 return {
-                    "receiver_id": first(args[0][0]),
-                    "amount": (first(args[0][1])) ? yoctoToNear(first(args[0][1])) : undefined,
+                    "receiver_id": ObjectHelper.first(args[0][0]),
+                    "amount": (ObjectHelper.first(args[0][1])) ? NearUtils.yoctoToNear(ObjectHelper.first(args[0][1])) : undefined,
                 }
             },
             gas: (data?: WFData): Number => {
@@ -105,7 +105,7 @@ export const templateMetaSendFt: WFMetaTemplate = {
                 component: 'WfTreasurySendFtTreasurySendFt',
                 schema: (data: WFData) => {
                     return {
-                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + (getValueByCode(data.inputs, 'amount') ?? '1000000.0')
+                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + (GenericsHelper.getValueByCode(data.inputs, 'amount') ?? '1000000.0')
                     }
                 },
             },
@@ -117,8 +117,8 @@ export const templateMetaSendFt: WFMetaTemplate = {
             args: (data: WFData) => {
                 return {
                     "proposal_id": data.proposalId,
-                    "ft_account_id": getValueByCode(data.inputs, 'ftAccountId'),
-                    "receiver_id": getValueByCode(data.inputs, 'receiverId'),
+                    "ft_account_id": GenericsHelper.getValueByCode(data.inputs, 'ftAccountId'),
+                    "receiver_id": GenericsHelper.getValueByCode(data.inputs, 'receiverId'),
                     "amount": data.form.amount,
                 }
             },
@@ -245,7 +245,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
             id: 0,
             args: (data: WFData) => {
                 return [
-                    [ { String: getValueByCode(data.inputs, 'tokenId') } ],
+                    [ { String: GenericsHelper.getValueByCode(data.inputs, 'tokenId') } ],
                 ]
             },
             argsCollection: (data: WFData) => {
@@ -253,7 +253,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
             },
             log: (args: any) => {
                 return {
-                    tokenId: first(args[0][0]),
+                    tokenId: ObjectHelper.first(args[0][0]),
                 }
             },
             gas: (data?: WFData): Number => {
@@ -325,13 +325,13 @@ export const templateMetaSkyward: WFMetaTemplate = {
                       "Null"
                     ],
                     [
-                      { String: getValueByCode(data.inputs, 'title') },
-                      { String: getValueByCode(data.inputs, 'url') },
+                      { String: GenericsHelper.getValueByCode(data.inputs, 'title') },
+                      { String: GenericsHelper.getValueByCode(data.inputs, 'url') },
                       { String: data.daoId },
                       "Null",
-                      { String: getValueByCode(data.inputs, 'tokenId') },
-                      { U64: getValueByCode(data.inputs, 'startAt') },
-                      { U64: getValueByCode(data.inputs, 'duration') },
+                      { String: GenericsHelper.getValueByCode(data.inputs, 'tokenId') },
+                      { U64: GenericsHelper.getValueByCode(data.inputs, 'startAt') },
+                      { U64: GenericsHelper.getValueByCode(data.inputs, 'duration') },
                     ]
                 ]
             },
@@ -339,7 +339,7 @@ export const templateMetaSkyward: WFMetaTemplate = {
                 return [
                     [
                         { String: data.daoId },
-                        { U128: getValueByCode(data.inputs, 'amount') },
+                        { U128: GenericsHelper.getValueByCode(data.inputs, 'amount') },
                         "Null",
                     ]
                 ]
@@ -386,7 +386,7 @@ export const templateMetaBounty: WFMetaTemplate = {
                 return 100
             },
             deposit: (data?: WFData): Number => {
-                return yoctoToNear(getValueByCode(data?.inputs ?? [], 'deposit') ?? '0')
+                return NearUtils.yoctoToNear(GenericsHelper.getValueByCode(data?.inputs ?? [], 'deposit') ?? '0')
             },
         },
         { // event_unrealized
@@ -476,8 +476,8 @@ export const templateMetaBounty: WFMetaTemplate = {
             args: (data: WFData) => {
                 return {
                     "proposal_id": data.proposalId,
-                    "receiver_id": first(data.storage[0]),
-                    "amount": getValueByCode(data?.inputs ?? [], 'amount') ?? '0',
+                    "receiver_id": ObjectHelper.first(data.storage[0]),
+                    "amount": GenericsHelper.getValueByCode(data?.inputs ?? [], 'amount') ?? '0',
                 }
             },
             log: (args: any) => {

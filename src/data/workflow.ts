@@ -13,11 +13,11 @@ import {
   templateMetaSendFt,
   templateMetaBounty,
  } from "@/data/workflowMeta"
-import { toSearch } from "@/utils/string"
+import StringHelper from "@/models/utils/StringHelper"
 import moment from "moment"
 import { DAORights } from "@/types/dao"
 import { toObject } from "@/models/rights";
-import { getValueByCode } from "@/utils/generics"
+import GenericsHelper from "@/models/utils/GenericsHelper"
 import { gasDefault, depositDefault } from "@/models/workflow";
 
 export const templateMetas: Record<string, WFMetaTemplate> = {
@@ -122,7 +122,7 @@ export const templatePayout: WFTemplate = {
     ],
     startActivityIds: [1,2],
     endActivityIds: [1,2],
-    search: toSearch('Payout NEAR TOKEN'),
+    search: StringHelper.toSearch('Payout NEAR TOKEN'),
     settings: [ templatePayoutSettings ],
 }
 

@@ -105,7 +105,7 @@ import {
   MDBBtnGroup, MDBRadio, MDBBadge,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { convertArrayOfObjectToObject } from '@/utils/array'
+import ArrayHelper from '@/models/utils/ArrayHelper'
 import { ref, toRefs, reactive, toRaw } from "vue";
 // import padEnd from "lodash/padEnd";
 import loLast from "lodash/last";
@@ -113,7 +113,7 @@ import loGet from "lodash/get";
 import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNear } from '@/hooks/vuex';
-import { toTimeString } from "@/utils/date";
+import Date from "@/models/utils/DateHelper";
 import { check } from "@/models/rights";
 import loFlatten from "lodash/flatten"
 import moment from 'moment'
@@ -211,7 +211,7 @@ export default {
   },
   methods: {
     convertInput(inputActivity, inputInstance) {
-      return Object.assign(convertArrayOfObjectToObject(inputActivity, 'code', 'value'), convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
+      return Object.assign(ArrayHelper.convertArrayOfObjectToObject(inputActivity, 'code', 'value'), ArrayHelper.convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
     },
     run() {
       runActivity(this.formNextActivityCode, this.workflow, this.template, this.settings, this.nearService, this.accountId, this.data)
@@ -220,7 +220,7 @@ export default {
       this.nearService.wfFinish(this.accountId, this.proposal.id)
     },
     toTime(value) {
-      return toTimeString(value)
+      return Date.toTimeString(value)
     },
     formFlush(values) {
       // console.log('fromFlush', values)
