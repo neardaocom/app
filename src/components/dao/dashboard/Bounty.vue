@@ -15,21 +15,13 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, toRefs } from "vue"
+import { inject, onMounted, onUnmounted } from "vue"
 import { useBounties } from "@/hooks/bounty"
 import { useI18n } from 'vue-i18n'
 
 export default {
-    components: {
-    },
-    props: {
-        dao: {
-            type: Object,
-            required: true,
-        }
-    },
-    setup(props) {
-        const { dao } = toRefs(props)
+    setup() {
+        const dao = inject('dao')
         const { t, d, n } = useI18n()
 
         const {
@@ -46,7 +38,7 @@ export default {
         })
 
         return {
-            t, bounties, proposals, titles
+            dao, t, bounties, proposals, titles
         }
     },
 }

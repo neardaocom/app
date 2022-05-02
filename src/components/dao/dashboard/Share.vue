@@ -18,7 +18,7 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
-import { ref, computed, toRefs, onMounted, onUnmounted } from 'vue'
+import { ref, computed, toRefs, onMounted, onUnmounted, inject } from 'vue'
 import Decimal from 'decimal.js'
 // import Analytics from "@/models/analytics"
 import { isWalletInCouncil } from '@/models/dao'
@@ -28,17 +28,14 @@ export default {
         NumberFormatter
     },
     props: {
-        dao: {
-            type: Object,
-            required: true,
-        },
         walletId: {
             type: String,
             required: false,
         },
     },
     setup(props) {
-        const { dao, walletId } = toRefs(props)
+        const { walletId } = toRefs(props)
+        const dao = inject('dao')
         const { t } = useI18n()
 
         const myTokensAmount = computed(() => dao.value.treasury.token.owned);
@@ -80,7 +77,7 @@ export default {
         })
 
         return {
-            t, myTokensAmount, myTokensShare, isCouncil,
+            dao, t, myTokensAmount, myTokensShare, isCouncil,
             token_council_to_unlock,
         }
     }

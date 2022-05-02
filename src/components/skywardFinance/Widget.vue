@@ -24,10 +24,6 @@ export default {
         sale: {
             type: Object,
             required: true,
-        },
-        dao: {
-            type: Object,
-            required: true,
         }
     },
     setup(props) {

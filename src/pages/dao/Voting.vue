@@ -57,7 +57,7 @@
 
 <script>
 import { MDBCheckbox, MDBSelect } from "mdb-vue-ui-kit";
-import { ref, toRefs } from "vue"
+import { inject, ref, toRefs } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Proposal from "@/components/dao/Proposal.vue"
@@ -73,10 +73,6 @@ export default {
     , Proposal, Search
   },
   props: {
-    dao: {
-      type: Object,
-      required: true,
-    },
     walletId: {
       type: String,
       required: false,
@@ -91,7 +87,8 @@ export default {
     },
   },
   setup(props) {
-    const { dao, walletId, walletRights, daoRights } = toRefs(props)
+    const { walletId, walletRights, daoRights } = toRefs(props)
+    const dao = inject('dao')
     const { t, d, n } = useI18n();
 
     const proposals = dao.value.proposals.map((proposal) => {
@@ -118,7 +115,7 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { t, proposals, searchQuery, filterState, order };
+    return { dao, t, proposals, searchQuery, filterState, order };
   },
   computed: {
     results() {

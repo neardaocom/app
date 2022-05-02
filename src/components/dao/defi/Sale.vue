@@ -41,7 +41,7 @@
     <ModalRemoveLiquidity :show="modalRemoveLiquidity" :contractId="dao.wallet" :sale="sale" :tokenDecimals="dao.treasury.token.meta.decimals" :maxShares="+totalShares" />
 </template>
 <script>
-    import { onMounted, ref, toRefs } from "vue";
+    import { inject, onMounted, ref, toRefs } from "vue";
     import { useI18n } from "vue-i18n";
     import NearUtils from '@/models/nearBlockchain/Utils'
     import Decimal from 'decimal.js'
@@ -75,17 +75,14 @@
                 type: Sale,
                 required: true,
             },
-            dao: {
-                type: Object,
-                required: true,
-            },
             nearService: {
                 type: Object,
                 required: true,
             },
         },
         setup(props) {
-            const {sale, nearService, dao} = toRefs(props)
+            const {sale, nearService} = toRefs(props)
+            const dao = inject('dao')
             const { t, n } = useI18n();
             const modalAddLiquidity = ref(0)
             const modalRemoveLiquidity = ref(0)
@@ -104,7 +101,7 @@
                 })
             })
             return {
-                t, n,
+                dao, t, n,
                 modalAddLiquidity,
                 modalRemoveLiquidity,
                 tokenMetadata

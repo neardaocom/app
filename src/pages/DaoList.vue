@@ -9,19 +9,7 @@
     <h1 class="text-start">{{ t('default.organizations')}}</h1>
     <div class="row mt-5">
       <div class="col-6 col-md-4 col-lg-3">
-        <MDBInput
-          inputGroup
-          formOutline
-          wrapperClass="mb-3 my_filter_form"
-          v-model="searchQuery"
-          size="sm"
-          aria-describedby="search-addon"
-          :aria-label="t('default.search')"
-        >
-          <template #prepend>
-            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-          </template>
-        </MDBInput>
+        <Search v-model="searchQuery"/>
       </div>
       <div class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
         <small> <MDBCheckbox  :label="filterTag.agency.name" inline v-model="filterTag.agency.active" class="rounded-3"/> </small>
@@ -31,7 +19,7 @@
       </div>
     </div>
 
-    <MDBProgress class="my-1">
+    <MDBProgress class="my-2">
       <MDBProgressBar bg="secondary" :value="loadingProgress" />
     </MDBProgress>
 
@@ -50,13 +38,11 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/daoList/Breadcrumb.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
 import {
   MDBContainer,
   MDBProgress,
   MDBProgressBar,
-  MDBIcon,
-  MDBInput,
   MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
@@ -65,7 +51,7 @@ import { reactive } from "@vue/reactivity";
 import StringHelper from '@/models/utils/StringHelper'
 import _ from "lodash"
 import DaoCard from '@/components/daoList/DaoCard.vue'
-
+import Search from "@/components/ui/Search.vue"
 import { useFetch } from "@/hooks/daoList";
 
 export default {
@@ -76,10 +62,9 @@ export default {
     MDBContainer,
     MDBProgress, 
     MDBProgressBar,
-    MDBIcon,
-    MDBInput,
     MDBCheckbox,
-    DaoCard
+    DaoCard,
+    Search
   },
   setup() {
     const { t, n } = useI18n()

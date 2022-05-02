@@ -1,15 +1,15 @@
 <template>
   <div class="container mb-2">
-    <DashboardOverview :dao="dao" :nearPrice="nearPrice" />
+    <DashboardOverview :nearPrice="nearPrice" />
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <About :dao="dao" />
+        <About />
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <Share :dao="dao" :walletId="walletId" />
+        <Share :walletId="walletId" />
       </div>
-      <Bounty :dao="dao" />
-      <SkywardFinance v-if="skywardSaleIds.length > 0" :dao="dao" :scenario="'active'" :salesIds="skywardSaleIds" />
+      <Bounty/>
+      <SkywardFinance v-if="skywardSaleIds.length > 0" :scenario="'active'" :salesIds="skywardSaleIds" />
     </div>
 
     <hr/>
@@ -37,7 +37,7 @@ import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
 import { transform } from '@/models/proposal';
 import Auction from '@/models/auction';
-import { toRefs, ref } from "vue"
+import { inject, toRefs, ref } from "vue"
 import _ from "lodash"
 import loFind from "lodash/find"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
@@ -50,10 +50,6 @@ export default {
     DashboardOverview,
   },
   props: {
-    dao: {
-      type: Object,
-      required: true,
-    },
     walletId: {
       type: String,
       required: false,
@@ -69,7 +65,8 @@ export default {
   },
   setup(props) {
     const { t, n, d } = useI18n();
-    const { dao, walletId, walletRights, daoRights } = toRefs(props)
+    const dao = inject('dao')
+    const { walletId, walletRights, daoRights } = toRefs(props)
 
     const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
     // console.log(dao, walletId, walletRights, daoRights, d)
@@ -79,8 +76,9 @@ export default {
     })
     // const proposals = []
 
+
     return {
-      t, n, proposals, skywardSaleIds
+      dao, t, n, proposals, skywardSaleIds
     };
   },
   computed: {

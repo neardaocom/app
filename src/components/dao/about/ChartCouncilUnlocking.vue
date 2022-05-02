@@ -7,7 +7,7 @@
 
 <script>
   import { MDBChart } from "mdb-vue-ui-kit";
-  import { ref, onMounted, toRefs } from "vue";
+  import { ref, onMounted, toRefs, inject } from "vue";
   import { useI18n } from "vue-i18n";
   import Analytics from '@/models/analytics'
 
@@ -17,10 +17,6 @@
       MDBChart
     },
     props: {
-      dao: {
-        type: Object,
-        required: true,
-      },
       group: {
         type: Object,
         required: true,
@@ -28,7 +24,8 @@
     },
     setup(props) {
       const { t, d } = useI18n()
-      const { dao, group } = toRefs(props)
+      const dao = inject('dao')
+      const { group } = toRefs(props)
       const analytics = ref({})
       const chartOptions = ref({})
 

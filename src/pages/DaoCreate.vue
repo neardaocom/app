@@ -28,7 +28,7 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
 import DaoCreateForm from '@/components/daoCreate/DaoCreateForm.vue'
 import {
     MDBContainer,

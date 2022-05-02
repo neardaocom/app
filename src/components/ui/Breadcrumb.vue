@@ -10,11 +10,14 @@
             <li v-if="daoId" class="breadcrumb-item">
               <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
             </li>
-            <li v-if="daoId" class="breadcrumb-item">
+            <li v-if="daoId && listName" class="breadcrumb-item">
               <router-link :to="{ name: 'dao', params: {id: daoId }}">{{ daoId }}</router-link>
             </li>
-            <li class="breadcrumb-item active">
-              {{ t("default.market") }}
+            <li v-else-if="daoId" class="breadcrumb-item active">
+              {{ daoId }}
+            </li>
+            <li v-if="listName" class="breadcrumb-item active">
+              {{ t("default." + listName) }}
             </li>
           </ol>
         </nav>
@@ -33,6 +36,10 @@ export default {
   },
   props: {
     daoId: {
+      type: String,
+      required: false,
+    },
+    listName: {
       type: String,
       required: false,
     },

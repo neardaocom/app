@@ -1,8 +1,8 @@
 <template>
-  <Header :daoId="rDaoId"></Header>
+  <Header :daoId="rDaoId" ></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb :daoId="rDaoId" />
+      <Breadcrumb :daoId="rDaoId" listName="market" />
     </MDBContainer>
 
     <MDBContainer>
@@ -11,19 +11,7 @@
 
         <div  class="row mt-5">
           <div class="col-6 col-md-4 col-lg-3">
-            <MDBInput
-              inputGroup
-              formOutline
-              wrapperClass="mb-3 my_filter_form"
-              v-model="filterSearch"
-              size="sm"
-              aria-describedby="search-addon"
-              :aria-label="t('default.search')"
-            >
-              <template #prepend>
-                <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-              </template>
-            </MDBInput>
+            <Search v-model="filterSearch"/>
           </div>
           <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
           </div>
@@ -33,7 +21,7 @@
         </div>
 
 
-        <MDBProgress>
+        <MDBProgress class="my-2">
           <MDBProgressBar bg="secondary" :value="fetchProgress" />
         </MDBProgress>
 
@@ -69,13 +57,11 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/market/Breadcrumb.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
 import {
   MDBContainer,
   MDBProgress, 
   MDBProgressBar,
-  MDBInput,
-  MDBIcon,
   MDBSelect,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
@@ -94,16 +80,15 @@ import ModalProposal from '@/components/proposal/Modal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
 import TemplateCard from '@/components/market/TemplateCard.vue'
+import Search from "@/components/ui/Search.vue"
 
 export default {
   components: {
     Header, Breadcrumb, Footer, MDBContainer,
     MDBProgress, MDBProgressBar,
-    MDBIcon,
-    MDBInput,
     MDBSelect,
     ModalProposal, ModalMessage, AddWorkflow,
-    TemplateCard
+    TemplateCard, Search
   },
   setup() {
     const { t, n } = useI18n()

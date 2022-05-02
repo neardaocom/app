@@ -75,15 +75,10 @@
     <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
       <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
-
-
-    <ModalProposal title="Test" :show="modalProp" @vote="vote">
-      <AddMedia/>
-    </ModalProposal>
 </template>
 
 <script>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ModalProposal from '@/components/proposal/Modal.vue'
 import loFind from "lodash/find";
@@ -120,10 +115,6 @@ export default {
     BountyProposal,
   },
   props: {
-    dao: {
-      type: Object,
-      required: true
-    },
     accountRole: {
       type: String,
       required: true,
@@ -138,6 +129,7 @@ export default {
     },
   },
   setup() {
+    const dao = inject('dao')
     const { t } = useI18n();
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
@@ -156,6 +148,7 @@ export default {
     const activeTabId1 = ref('ex1-1');
 
     return {
+      dao,
       t,
       dropdownAction, 
       latestDaoVersion,  
@@ -193,9 +186,6 @@ export default {
   methods: {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
-    },
-    modalPropOpen(){
-      this.modalProp += 1 
     },
     modalOpen(templ, templSettings){
       this.modalProposal += 1

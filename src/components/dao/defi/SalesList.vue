@@ -2,7 +2,7 @@
     <section v-if="salesList.length > 0">
         <div class="row">
             <div class="col-12 col-md-6 mb-4" v-for="sale in salesList" :key="sale.id">
-                <Sale :sale="sale" :dao="dao" :nearService="nearService"/>
+                <Sale :sale="sale" :nearService="nearService"/>
             </div>
         </div>
     </section>
@@ -10,7 +10,7 @@
 
 <script>
 import { RefFinanceService } from '@/services/refFinanceService'
-import { onMounted, toRefs, ref } from "vue"
+import { onMounted, toRefs, ref, inject } from "vue"
 import Sale from "@/components/dao/defi/Sale.vue"
 import { transformSale } from "@/models/sales"
 
@@ -19,18 +19,14 @@ export default {
         Sale
     },
     props: {
-        dao: {
-            type: Object,
-            required: true,
-        },
         nearService: {
             type: Object,
             required: true,
         },
     },
     setup(props) {
-        const { dao, nearService } = toRefs(props)
-
+        const { nearService } = toRefs(props)
+        const dao = inject('dao')
         const refFinance = ref(null)
         const salesList = ref([])
 
@@ -55,13 +51,8 @@ export default {
             })            
         })
         return {
-             refFinanceFetch, salesList, 
+             dao, refFinanceFetch, salesList, 
         }
-    },
-
-    methods:{
-    },
-    computed: {
     },
 }
 </script>

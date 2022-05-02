@@ -2,7 +2,6 @@
   <div class="container mb-2">
     <AuctionList
       :scenario="'active'"
-      :dao="dao"
     />
     <section v-if="refFinanceFounds">
       <h5 class="text-start">{{ t('default.ft_market') }}</h5>
@@ -30,7 +29,6 @@
     </section>
     <SalesList
       v-if="dao.storage.skywardFinance"
-      :dao="dao"
       :nearService="nearService"
     />
   </div>
@@ -38,7 +36,7 @@
 
 <script>
 import { MDBBtn } from "mdb-vue-ui-kit";
-import { ref, toRefs, computed, onMounted } from "vue"
+import { ref, computed, onMounted, inject } from "vue"
 // import { ref, computed } from "vue"
 // import { reactive } from "@vue/reactivity"
 import AuctionList from "@/components/skywardFinance/List.vue"
@@ -58,14 +56,8 @@ export default {
     NumberFormatter,
     ModalRefWithdrawDaoToken, ModalRefWithdrawNear
   },
-  props: {
-    dao: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { dao } = toRefs(props)
+  setup() {
+    const dao = inject('dao')
     const { t } = useI18n();
     const store = useStore()
     // const account = computed(() => store.getters['near/getAccount'])
@@ -93,7 +85,7 @@ export default {
     })
 
     return {
-      t, nearService,
+      dao, t, nearService,
       modalRefWithdrawDaoToken, modalRefWithdrawNear,
       modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen,
       service, refFinanceFounds, tokenMetadata, tokenId,
@@ -117,7 +109,5 @@ export default {
       return this.$root.near_price
     },
   },
-  methods: {
-  }
 };
 </script>

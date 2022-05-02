@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem } from 'mdb-vue-ui-kit'
 import { useLinks, useStats } from "@/hooks/dao";
@@ -126,15 +126,9 @@ export default {
         MDBIcon,
         MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem,
     },
-    props: {
-        dao: {
-            type: Object,
-            required: true,
-        },
-    },
-    setup(props) {
+    setup() {
         const { t, n } = useI18n()
-
+        const dao = inject('dao')
         const { ipfsService } = useIPFS()
 
         const {
@@ -142,7 +136,7 @@ export default {
             kycStatus, kycDocument,
             socialTwitter, socialFacebook,
             chatDiscord
-        } = useLinks(props.dao)
+        } = useLinks(dao.value)
 
         const webLink = ref(null)
         if (web) fetch(web, ipfsService.value).then(r => {webLink.value = r})
@@ -165,7 +159,7 @@ export default {
 
         const {
             users
-        } = useStats(props.dao)
+        } = useStats(dao.value)
 
         const { walletUrl } = useNear()
 
@@ -174,7 +168,7 @@ export default {
         const chatDropdown = ref(false)
 
         return {
-            t, n,
+            dao, t, n,
             users,
             web, whitepaper, wiki, sourceCode,
             kycStatus, kycDocument,

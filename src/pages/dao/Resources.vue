@@ -1,84 +1,26 @@
 <template>
   <div class="container mb-2 text-start">
   <div v-if="docs.files.length > 0" >
-          <div class="row my-4 mx-4">
-            <div class="col-6 col-md-4 col-lg-3">
-              <MDBInput
-                inputGroup
-                formOutline
-                wrapperClass="mb-3 my_filter_form"
-                class="rounded"
-                v-model="searchQuery"
-                size="sm"
-                aria-describedby="search-addon"
-                :aria-label="t('default.search')"
-              >
-                <template #prepend>
-                  <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-                </template>
-              </MDBInput>
-            </div>
-            <div v-if="false" class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
-              <MDBCheckbox :label="filterType.pdf.name" inline v-model="filterType.pdf.active"/>
-              <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
-              <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>
-            </div>
-            <div class="col-12 col-md-6 col-lg-9 text-end pt-1 ps-4">
-              
-            </div>
-          </div>
+    <div class="row my-4 mx-4">
+      <div class="col-6 col-md-4 col-lg-3">
+        <Search v-model="searchQuery"/>
+      </div>
+      <div v-if="false" class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
+        <MDBCheckbox :label="filterType.pdf.name" inline v-model="filterType.pdf.active"/>
+        <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
+        <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>
+      </div>
+      <div class="col-12 col-md-6 col-lg-9 text-end pt-1 ps-4">
+      </div>
+    </div>
 
     <MDBCard>
       <MDBCardBody>
-        <div>
-          <MDBTable sm responsive striped>
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col"></th>
-                <th scope="col">{{ t("default.name")}}</th>
-                <th scope="col">{{ t("default.category")}}</th>
-                <th v-if="false" scope="col" style="min-width:200px">{{ t("default.description")}}</th>
-                <th v-if="false" scope="col" style="min-width:200px">{{ t("default.tags")}}</th>
-                <th scope="col">{{ t("default.valid")}}</th>
-                <th scope="col">{{ t("default.version")}}</th>
-              </tr>
-            </thead>
-            <tbody>
-
-            <tr>
-              <td colspan="7" class="p-0">
-                <MDBProgress class="my-1">
-                  <MDBProgressBar bg="secondary" :value="100" />
-                </MDBProgress>
-              </td>
-            </tr>
-
-              <tr v-for="(doc, index) in results" :key="index">
-                <td>{{ doc.index + 1 }}</td>
-                <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
-                <td class="fw-bold text-start"><a href="#"  @click.prevent="open(doc.index)">
-                  {{ doc.name }}&nbsp;
-                  <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
-                  <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
-                </a></td>
-                <td class="text-start">{{ doc.category }}</td>
-                <td v-if="false" class="text-truncate">{{ doc.description }}</td>
-                <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
-                <td class="text-start" ><MDBIcon :class="doc.valid ? 'text-success' : 'text-danger'" style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
-                <td>
-                    <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
-                    <MDBBtnGroup size="sm" role="toolbar">
-                      <MDBBtn color="secondary" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
-                      <!-- <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn> -->
-                    </MDBBtnGroup>
-                </td>
-                </tr>
-            </tbody>
-          </MDBTable>
-        </div>
+          <ResourcesTable :resources="results" @openResource="open" :progress="loadingProgress"/>
       </MDBCardBody>
     </MDBCard>
+
+
   </div>
     <section class="text-center my-4" v-if="docs.files.length == 0">
       <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
@@ -89,13 +31,9 @@
 
 <script>
 import { ref, toRefs } from "vue";
-import { reactive } from "@vue/reactivity";
+import { computed, reactive } from "@vue/reactivity";
 import {
-  MDBCard, MDBCardBody, MDBIcon, MDBTable
-  // , MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
-  , MDBBtn, MDBBtnGroup
-  , MDBInput, MDBCheckbox
-  , MDBProgress, MDBProgressBar
+  MDBCard, MDBCardBody, MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from "vue-i18n";
 // import DocumentVersion from './DocumentVersion'
@@ -107,16 +45,14 @@ import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 import { DAODocsFileType } from '@/types/dao';
 import { useRouter } from "@/hooks/dao";
+import Search from "@/components/ui/Search.vue"
+import ResourcesTable from '@/components/dao/resources/ResourcesTable.vue'
+import IntegerHelper from '@/models/utils/IntegerHelper';
 
 export default {
   components: {
-    MDBCard, MDBCardBody, MDBIcon, MDBTable, ModalDocument
-    , MDBBtn
-    , MDBBtnGroup
-    , MDBInput, MDBCheckbox
-    , MDBProgress, MDBProgressBar
-    // , MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem
-    // , DocumentVersion
+    MDBCard, MDBCardBody, MDBCheckbox,
+    ModalDocument, Search, ResourcesTable
   },
   props: {
     docs: {
@@ -126,7 +62,7 @@ export default {
   },
   setup(props) {
     const { docs } = toRefs(props)
-    console.log(docs.value);
+    //console.log(docs.value);
     const files = transform(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
     const { t } = useI18n();
     const modalDocument = ref(0)
@@ -135,6 +71,7 @@ export default {
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
     const { ipfsService } = useIPFS()
+    const loadingProgress = ref(0)
 
     const { rSearch } = useRouter()
 
@@ -156,56 +93,34 @@ export default {
         active: false,
       },
     })
-    return {
-      t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
-      searchQuery, filterType,
-      ipfsService, docData,
-      rSearch,
-    };
-  },
-  computed: {
-    results() {
-      let results = this.files
+
+    const results = computed(() => {
+      let results = files
+
+      loadingProgress.value = IntegerHelper.getRandom(5, 15)
       // filter
-      const filterTypes = Object.values(this.filterType).filter(item => item.active).map(item => item.ext)
+      const filterTypes = Object.values(filterType).filter(item => item.active).map(item => item.ext)
       if (filterTypes.length > 0) {
         results = results.filter(item => _.intersection([item.ext], filterTypes).length > 0)
       }
       // searching
-      const searchText = StringHelper.toSearch(this.searchQuery)
+      const searchText = StringHelper.toSearch(searchQuery.value)
       if (searchText.length > 2) {
         results = results.filter(item => item.search.includes(searchText))
       }
       // order
       results = _.sortBy(results, ['name', 'category'])
+      loadingProgress.value = 100
       return results
-    },
-  },
-  methods: {
-    getLastVersions(versions) {
+    })
+
+    const getLastVersions = (versions) => {
       return _.orderBy(versions, ['index'], ['desc']).slice(0, 3)
-    },
-    getIcon(type) {
-      let icon = ''
-      switch (type) {
-        case DAODocsFileType.binaryPdf:
-          icon = 'file-pdf'
-          break;
-        case DAODocsFileType.plain:
-        case DAODocsFileType.html:
-          icon = 'file-alt'
-          break;
-        case DAODocsFileType.url:
-          icon = 'link'
-          break;
-        default:
-          break;
-      }
-      return icon
-    },
-    async open(index) {
-      const doc = this.docs.files[index]
-      fetch(doc, this.ipfsService).then(r => {
+    }
+
+    const open = async (index) => {
+      const doc = docs.value.files[index]
+      fetch(doc, ipfsService.value).then(r => {
         console.log(doc);
         switch (doc.type) {
           case DAODocsFileType.url: {
@@ -215,53 +130,23 @@ export default {
           case DAODocsFileType.plain: 
           case DAODocsFileType.binaryPdf:
           case DAODocsFileType.html: {
-            this.selectedDoc = doc;
-            this.docData = r
-            this.modalDocument += 1;
+            selectedDoc.value = doc;
+            docData.value = r
+            modalDocument.value += 1;
             break;
           }
           default:
             console.log('Undefined doc.ext: ' + doc.ext);
         }
       })
-    },
-    async openDoc(index) {
-      let doc = this.docs.files[index]
-
-      if (_.indexOf(this.fetchedDocs, doc.ipfs_cid) == -1) {
-        try{
-          this.fetchedDocs[doc.ipfs_cid] = await this.ipfsService.retrieveFiles(doc.ipfs_cid)
-        }catch(e){
-          this.$logger.error('D', 'app@components/dao/Document', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-          this.$logger.error('B', 'app@components/dao/Document', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-          this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
-          this.$notify.flush()
-          console.error(e)
-        }
-        
-      } else {
-        null
-      }
-
-      doc.data = this.fetchedDocs[doc.ipfs_cid][0]
-      console.log(doc.dat);
-
-      switch (doc.type) {
-        case 'url': {
-          const doc_link = await doc.data.text();
-          window.open(doc_link, "_blank");
-          break;
-        }
-        case 'pdf':
-        case 'html': {
-          this.selectedDoc = doc;
-          this.modalDocument += 1;
-          break;
-        }
-        default:
-          console.log('Undefined doc.type: ' + doc.ext);
-      }
     }
+
+    return {
+      t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
+      searchQuery, filterType,
+      ipfsService, docData,
+      rSearch, results, getLastVersions, open, loadingProgress
+    };
   }
 };
 </script>

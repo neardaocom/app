@@ -48,32 +48,26 @@
 import { useI18n } from 'vue-i18n'
 import { MDBBadge } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import { inject } from '@vue/runtime-core'
 
 export default {
    components:{
       MDBBadge,
       NumberFormatter
    },
-    props: {
-        dao: {
-            type: Object,
-            required: true,
-        },
-        nearPrice: {
+      props: {
+         nearPrice: {
             type: Number,
             required: false,
-        }
-    },
+         }
+      },
    setup () {
+      const dao = inject('dao')
       const { t } = useI18n()
    
       return {
-         t
+         dao, t
       }
    }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

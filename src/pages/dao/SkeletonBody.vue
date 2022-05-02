@@ -18,8 +18,6 @@ export default {
     MDBSpinner
   },
   setup() {
-  },
-  created() {
-  },
+  }
 };
 </script>

@@ -10,7 +10,7 @@
 
 <script>
 import Auction from "@/components/skywardFinance/Auction.vue"
-import { onMounted, onUnmounted, toRefs, computed, ref } from "vue"
+import { onMounted, onUnmounted, computed, ref, inject } from "vue"
 import { useStore } from "vuex"
 // import { testDataset } from "@/services/skywardFinanceService/types"
 import { useSkywardFinanace } from "@/hooks/auction"
@@ -26,15 +26,10 @@ export default {
             type: String,
             required: true,
             default: 'all'
-        },
-        dao: {
-            type: Object,
-            required: true,
         }
     },
-    setup(props) {
-        const { dao } = toRefs(props)
-
+    setup() {
+        const dao = inject('dao')
         const { t } = useI18n()
 
         const store = useStore()

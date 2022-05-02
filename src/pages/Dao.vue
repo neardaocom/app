@@ -16,7 +16,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
+        <Buttons v-if="loaded" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -25,15 +25,14 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && rPage === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Voting v-if="loaded === true && rPage === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Activities v-if="loaded === true && rPage === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Treasury v-if="loaded === true && rPage === 'treasury'" :dao="dao" />
-        <DeFi v-if="loaded === true && rPage === 'defi'" :dao="dao" />
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && rPage === 'voting'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <DeFi v-if="loaded === true && rPage === 'defi'"/>
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
         <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
-        <About v-if="loaded === true && rPage === 'about'" :dao="dao" />
-        <Settings v-if="loaded === true && rPage === 'settings'" :dao="dao" />
+        <About v-if="loaded === true && rPage === 'about'" />
+        <Settings v-if="loaded === true && rPage === 'settings'"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -47,22 +46,21 @@
 import About from './dao/About.vue'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from './dao/Breadcrumb.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
 import SkeletonBody from './dao/SkeletonBody.vue'
 import Buttons from './dao/Buttons.vue'
-import Title from './dao/Title.vue'
+import Title from '@/components/dao/Title.vue'
 import DeFi from './dao/DeFi.vue'
 import Dashboard from './dao/Dashboard.vue'
 import SkeletonButtons from './dao/SkeletonButtons.vue'
-import SkeletonTitle from './dao/SkeletonTitle.vue'
-import Treasury from './dao/Treasury.vue'
+import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
 import Tokens from './dao/Tokens.vue'
 import Voting from './dao/Voting.vue'
 import Resources from './dao/Resources.vue'
 import Activities from './dao/Activities.vue'
 import Settings from './dao/Settings.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, provide } from 'vue'
 import { getRole, loadById } from "@/models/dao";
 import { getDAORights, getWalletRights } from '@/models/rights'
 import { useRouter } from "@/hooks/dao";
@@ -71,7 +69,7 @@ import { useNear } from "@/hooks/vuex";
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Resources, DeFi, Settings,
+    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Tokens, Resources, DeFi, Settings,
     SkeletonButtons, SkeletonBody,
     Title,
     SkeletonTitle,
@@ -85,6 +83,8 @@ export default {
     const loaded = ref(false)
     const daoRights = ref([])
     const walletRights = ref([])
+
+    provide('dao', dao)
 
     onMounted(() => {
       store.commit('near/setContract', rDaoId.value)

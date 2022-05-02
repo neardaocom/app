@@ -2,19 +2,7 @@
   <div class="container mb-2">
     <div v-if="workflowsNum > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
-        <MDBInput
-          inputGroup
-          formOutline
-          wrapperClass="my_filter_form"
-          v-model="searchQuery"
-          size="sm"
-          aria-describedby="search-addon"
-          :aria-label="t('default.search')"
-        >
-          <template #prepend>
-            <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-          </template>
-        </MDBInput>
+        <Search v-model="searchQuery"/>
       </div>
       <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
       </div>
@@ -39,8 +27,8 @@
 </template>
 
 <script>
-import { MDBInput, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
-import { ref } from "vue"
+import { MDBSelect } from "mdb-vue-ui-kit";
+import { inject, ref } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Workflow from "@/components/dao/Workflow.vue"
@@ -49,16 +37,13 @@ import StringHelper from '@/models/utils/StringHelper'
 import { getTemplate } from "@/models/workflow";
 import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
+import Search from "@/components/ui/Search.vue"
 
 export default {
   components: {
-    MDBInput, MDBIcon, MDBSelect, Workflow
+    MDBSelect, Workflow, Search
   },
   props: {
-    dao: {
-      type: Object,
-      required: true,
-    },
     walletId: {
       type: String,
       required: false,
@@ -73,7 +58,7 @@ export default {
     },
   },
   setup() {
-    //const { dao } = toRefs(props)
+    const dao = inject('dao')
     const { t } = useI18n();
     const { rSearch } = useRouter()
 
@@ -87,7 +72,7 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { t, searchQuery, filterState, order };
+    return { t, dao, searchQuery, filterState, order };
   },
   computed: {
     results() {
