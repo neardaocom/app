@@ -39,7 +39,7 @@ export default class StakingContract {
     * @return Promise
     */
    async new(registerId :string, gas: string) {
-      return this.contract.new({registrar_id: registerId}, gas)
+      return this.contract.new({ registrar_id: registerId }, gas)
    }
 
    /**
@@ -50,7 +50,7 @@ export default class StakingContract {
     * @return Promise
     */
    async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string) {
-      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly} , gas);
+      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly } , gas);
    }
 
    /**
@@ -60,7 +60,7 @@ export default class StakingContract {
     * @return Promise
     */
    async registerNewDao(daoId: string, voteTokenId: string, gas: string) {
-      return this.contract.register_new_dao({ dao_id: daoId, vote_token_id: voteTokenId, }, gas);
+      return this.contract.register_new_dao({ dao_id: daoId, vote_token_id: voteTokenId }, gas);
    }
 
    /**
@@ -80,7 +80,7 @@ export default class StakingContract {
     * @return Promise
     */
    async delegateOwned( daoId: string, delegateId: string, amount: string, gas: string) {
-      return this.contract.delegate_owned({ dao_id: daoId, delegate_id: delegateId, amount: amount,}, gas);
+      return this.contract.delegate_owned({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
    }
 
    /**
@@ -90,7 +90,7 @@ export default class StakingContract {
     * @return Promise
     */
    async delegate(daoId: string, delegateId: string, amount: string, gas: string) {
-      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId, amount: amount,}, gas);
+      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
    }
 
    /**
@@ -154,7 +154,7 @@ export default class StakingContract {
     * 
     * @return Promise - total amount of staked vote tokens in the dao
     */
-   async daoFtTotalSupply(daoId: string,) {
+   async daoFtTotalSupply(daoId: string) {
       return this.contract.dao_ft_total_supply({ dao_id: daoId });
    }
 
@@ -163,7 +163,7 @@ export default class StakingContract {
     * 
     * @return Promise - total amount of staked vote tokens by the user in the dao
     */
-   async daoFtBalanceOf(daoId: string, accountId: string,) {
+   async daoFtBalanceOf(daoId: string, accountId: string) {
       return this.contract.dao_ft_balance_of({ dao_id: daoId, account_id: accountId });
    }
 
@@ -172,7 +172,7 @@ export default class StakingContract {
     * 
     * @return Promise - information about user
     */
-   async daoGetUser(daoId: string, accountId: string,) {
+   async daoGetUser(daoId: string, accountId: string) {
       return this.contract.dao_get_user({ dao_id: daoId, account_id: accountId });
    }
 
