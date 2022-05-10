@@ -49,8 +49,8 @@ export default class StakingContract {
     * 
     * @return Promise
     */
-   async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string) {
-      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly } , gas);
+   async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string, deposit: string) {
+      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly } , gas, deposit);
    }
 
    /**
@@ -69,8 +69,8 @@ export default class StakingContract {
     * 
     * @return Promise
     */
-   async registerInDao(daoId: string, gas: string) {
-      return this.contract.register_in_dao({ dao_id: daoId }, gas);
+   async registerInDao(daoId: string, gas: string, deposit: string) {
+      return this.contract.register_in_dao({ dao_id: daoId }, gas, deposit);
    }
 
    /**

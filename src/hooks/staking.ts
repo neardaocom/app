@@ -1,28 +1,192 @@
-import Staking from "@/models/nearBlockchain/Staking"
-import StakingTransformer from "@/models/nearBlockchain/transformers/Staking.transformer"
-import { UserInfoStaking } from "@/models/nearBlockchain/types/staking"
-import { inject, onMounted, Ref, ref } from "vue"
-import { useI18n } from "vue-i18n"
+import Staking from "@/models/nearBlockchain/Staking";
+import StakingTransformer from "@/models/nearBlockchain/transformers/Staking.transformer";
+import { UserInfoStaking } from "@/models/nearBlockchain/types/staking";
+import { StorageBalance, StorageBalanceBounds } from "@/models/nearBlockchain/types/storageManagement";
+import { inject, onMounted, Ref, ref } from "vue";
+import { useI18n } from "vue-i18n";
 
-export const useUserInfo = (daoId: string, accountId: string, staking: Staking) => {
-   const { t, n } = useI18n()
-   const logger: any = inject('logger')
-   const notify: any = inject('notify')
+export const useStaking = (daoId: string, accountId: string, staking: Staking) => {
+   const logger: any = inject("logger");
+   const notify: any = inject("notify");
+   const { t, n } = useI18n();
    const userInfo = ref<UserInfoStaking | undefined>()
+   const daoStakedTokensAmount = ref<string | undefined>()
+   const userStakedTokensAmount = ref<string | undefined>()
+   const storageBalanceBounds = ref<StorageBalanceBounds | undefined>()
+   const daoStorageBalance = ref<StorageBalance | undefined | null>()
 
-   onMounted( async () => {
+   onMounted(async () => {
+      await fetch()
+   });
+
+   const fetch = async () => {
       try {
-         const stakingTransformer = new StakingTransformer()
-         userInfo.value = await staking.daoGetUser(daoId, accountId, stakingTransformer )
-
+         const stakingTransformer = new StakingTransformer();
+         const data = await Promise.all([
+            staking.daoGetUser(daoId, accountId, stakingTransformer),
+            staking.daoFtTotalSupply(daoId),
+            staking.daoFtBalanceOf(daoId, accountId),
+            staking.storageBalanceBounds(),
+            staking.storageBalanceOf(daoId)
+         ])
+         userInfo.value = data[0]
+         daoStakedTokensAmount.value = data[1]
+         userStakedTokensAmount.value = data[2]
+         storageBalanceBounds.value = data[3]
+         daoStorageBalance.value = data[4]
       } catch (e) {
-         logger.error('D', '', 'LoadStakingUserInfo', 'Loading staking user info')
-         logger.error('B', '', 'LoadStakingUserInfo', 'Loading staking user info')
-         //TODO: warning
-         notify.warning('Loading staking user info faild')
-         notify.flush()
-         console.log(e)
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
       }
-   })
-   return{ userInfo }
-}
+   }
+
+   const storageDeposite = async (accountId: string | null, registrationOnly: boolean | null, gas: string, deposit: string) => {
+      try {
+         await staking.storageDeposit(accountId, registrationOnly, gas, deposit);
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const registerNewDao = async (daoId: string, voteTokenId: string, gas: string) => {
+      try {
+         await staking.registerNewDao(daoId, voteTokenId, gas);
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const registerInDao = async (daoId: string, gas: string, deposit: string) => {
+      try {
+         await staking.registerInDao(daoId, gas, deposit)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const delegateOwned = async (daoId: string, delegateId: string, amount: string, gas: string) => {
+      try {
+         await staking.delegateOwned(daoId, delegateId, amount, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const delegate = async (daoId: string, delegateId: string, amount: string, gas: string) => {
+      try {
+         await staking.delegate(daoId, delegateId, amount, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const undelegate = async (daoId: string, delegateId: string, amount: string, gas: string) => {
+      try {
+         await staking.undelegate(daoId, delegateId, amount, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const withdraw = async (daoId: string, amount: string, gas: string) => {
+      try {
+         await staking.withdraw(daoId, amount, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const unregisterInDao = async (daoId: string, gas: string) => {
+      try {
+         await staking.unregisterInDao(daoId, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const storageWithdraw = async (amount: string | null, gas: string) => {
+      try {
+         await staking.storageWithdraw(amount, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   const useStorageUnregister = async (force: boolean | null, gas: string) => {
+      try {
+         await staking.storageUnregister(force, gas)
+      } catch (e) {
+         //TODO:  logget and warning translations
+         logger.error("D", "", "LoadStakingUserInfo", "Loading staking user info");
+         logger.error("B", "", "LoadStakingUserInfo", "Loading staking user info");
+
+         notify.warning("Loading staking user info faild");
+         notify.flush();
+         console.log(e);
+      }
+   };
+
+   return {
+      userInfo, daoStakedTokensAmount, userStakedTokensAmount, storageBalanceBounds, daoStorageBalance,
+      fetch, storageDeposite, registerNewDao, registerInDao, delegateOwned, delegate, undelegate, withdraw, unregisterInDao, storageWithdraw, useStorageUnregister
+   };
+};

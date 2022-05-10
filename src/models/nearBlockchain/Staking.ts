@@ -32,8 +32,8 @@ export default class Staking {
     * 
     * @return Promise
     */
-   async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string): Promise<StorageBalance> {
-      return this.service.storageDeposit(accountId, registrationOnly, gas);
+   async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string, deposit: string): Promise<StorageBalance> {
+      return this.service.storageDeposit(accountId, registrationOnly, gas, deposit);
    }
 
    /**
@@ -52,8 +52,10 @@ export default class Staking {
     * 
     * @return Promise
     */
-   async registerInDao(daoId: string, gas: string): Promise<void> {
-      return this.service.registerInDao(daoId, gas);
+   async registerInDao(daoId: string, gas: string, deposit: string): Promise<void> {
+      // ? params or static deposit ? 0.00155 Ⓝ  
+      // NearUtils.nearToYocto(decimal(0.00155)).toFixed())
+      return this.service.registerInDao(daoId, gas, deposit);
    }
 
    /**
