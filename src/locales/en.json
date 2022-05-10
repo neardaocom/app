@@ -184,7 +184,8 @@
   "name": "Name",
   "none": "None",
   "no_results": "No results",
-  "tokens": "Governance Tokens",
+  "governance_tokens": "Governance Tokens",
+  "tokens": "Tokens",
   "issue_tokens": "Issue governance tokens",
   "or": "or",
   "organization": "Organization",
@@ -458,5 +459,9 @@
   "rights_group_member": "Account: {accountId} in Group: {group}",
   "rights_group_leader": "Leader in Group: {group}",
   "rights_group_role": "Tole: {role} in Group: {group}",
-  "service": "Service"
+  "service": "Service",
+  "registration_only": "Registration only",
+  "vote_token": "Vote token",
+  "delegate_id": "Delegate account"
+
 }

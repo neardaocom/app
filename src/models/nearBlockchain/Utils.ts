@@ -15,7 +15,7 @@ export default class Utils {
         return loLast(loSplit(loToString(accountId), '.'));
     }
 
-    static nearToYocto(amount: number): string {
+    static nearToYocto(amount: number | string): string {
         return new Decimal(amount).mul(this.yoctoNear).toFixed();
     }
 

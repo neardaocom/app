@@ -147,7 +147,8 @@
   "months": "Měsíce",
   "my_share": "Můj podíl",
   "none": "Žádný",
-  "tokens": "Governance Tokeny",
+  "governance_tokens": "Governance Tokeny",
+  "tokens": "Tokeny",
   "organization": "Organizace",
   "order_created_asc": "Od nejstaršího",
   "order_created_desc": "Od nejnovějšího",
@@ -293,5 +294,9 @@
   "withdraw": "Vybrat",
   "max": "Max",
   "balance": "Zůstatek",
-  "service": "Služba"
+  "service": "Služba",
+  "registration_only": "Pouze registrace",
+  "vote_token": "Hlasovací token",
+  "delegate_id": "Učet delegáta"
+
 }
