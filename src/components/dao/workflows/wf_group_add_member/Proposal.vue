@@ -15,8 +15,7 @@
 import InputString from '@/components/forms/InputString.vue'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex'
-import { computed, ref } from '@vue/reactivity';
+import { computed, ref, inject } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import NearUtils from "@/models/nearBlockchain/Utils";
 
@@ -33,13 +32,12 @@ export default {
         },
     },
     setup () {
-        const {t} = useI18n()
-        const store = useStore()   
+        const config = inject('config')
 
-        const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+        const {t} = useI18n()
+
+        const factoryAccount = computed(() => (config.near.contractName))
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
-        //const nearService = computed(() => (store.getters['near/getService']))
-        //const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const description = ref('')
 
@@ -62,6 +60,7 @@ export default {
 
         return {
             t,
+            factoryAccount,
             accountPostfix,
             description,
             onSubmit

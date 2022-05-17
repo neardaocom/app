@@ -45,8 +45,8 @@ import { useI18n } from "vue-i18n";
 import { computed, toRefs } from "@vue/reactivity";
 import { useForm } from "vee-validate";
 import { voteLevelToTranslate } from "@/models/dao";
-import { toTranslate } from "@/models/rights";
-import { DAORightsType } from "@/types/dao";
+import Rights from "@/models/dao/Rights";
+import { DAORightsType } from "@/models/dao/types/dao";
 import { useNear } from "@/hooks/vuex";
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from "lodash/split";
@@ -100,7 +100,7 @@ export default {
           right.type === DAORightsType.TokenHolder ||
           right.type === DAORightsType.Group
         ) {
-          const trans = toTranslate(right, dao.value.groups);
+          const trans = Rights.toTranslate(right, dao.value.groups);
           rights.push({
             text: t("default." + trans.key, trans.params),
             value: index,

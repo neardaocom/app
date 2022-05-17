@@ -20,7 +20,7 @@ import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import NearUtils from "@/models/nearBlockchain/Utils";
 import moment from 'moment'
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
 
 export default {

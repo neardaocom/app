@@ -7,10 +7,10 @@ import loGet from "lodash/get";
 import loToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/models/utils/errors'
 import Auction from "@/models/auction"
-import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/types/dao';
+import { DAODocs, DAOProposal, DAORights, DAOTokenHolder } from '@/models/dao/types/dao';
 import CollectionHelper from '@/models/utils/CollectionHelper'
-import { WFSettings, WFTemplate } from '@/types/workflow';
-import { check } from './rights';
+import { WFSettings, WFTemplate } from '@/models/dao/types/workflow';
+import Rights from './dao/Rights';
 import moment from 'moment';
 import GenericsHelper from "@/models/utils/GenericsHelper";
 import Utils from '@/models/nearBlockchain/Utils';
@@ -72,7 +72,7 @@ const workflowCodeBgMapper = {
   },
   accepted: {
     color: 'success',
-    icon: 'bi bi-check-circle me-2',
+    icon: 'bi bi-Rights.check-circle me-2',
   },
   rejected: {
     color: 'danger',
@@ -273,7 +273,7 @@ const transform = (
         stateCode: stateCode,
         state: t("default.proposal_state_" + stateCode),
         status: status,
-        canVote: check(walletRights, [settings!.voteRight]),
+        canVote: Rights.check(walletRights, [settings!.voteRight]),
         isOver: isOver(proposal, settings!),
         isVoted: isVoted(proposal, walletId),
         args: args,

@@ -64,7 +64,7 @@
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
                   <template v-if="[''].includes(templ.code) === false">
-                    <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
+                    <MDBDropdownItem v-if="Rights.check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
                   </template>
                 </template>
               </template>
@@ -99,7 +99,7 @@ import {
   MDBBtn, MDBBtnGroup,
   MDBIcon
 } from "mdb-vue-ui-kit";
-import { check } from "@/models/rights";
+import Rights from "@/models/dao/Rights";
 
 export default {
   components: {
@@ -152,6 +152,8 @@ export default {
 
     const activeTabId1 = ref('ex1-1');
 
+    const check = Rights.check
+
     return {
       dao,
       t,
@@ -161,8 +163,8 @@ export default {
       modalTitle, 
       activeForm, 
       activeFormCode, 
-      formProps, 
-      check, 
+      formProps,
+      check,
       form,
       modalProp,
       activeTabId1
@@ -178,7 +180,7 @@ export default {
       return this.$store.getters['near/getAccountId']
     },
     canVote() {
-      return Object.keys(this.dao.token_holders).includes(this.accountId)
+      return Object.keys(this.dao.tokenHolders).includes(this.accountId)
     },
     nearService() {
       return this.$store.getters['near/getService']

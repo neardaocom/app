@@ -44,14 +44,14 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { voteLevelToTranslate } from "@/models/dao"
-import { toTranslate } from "@/models/rights";
-import { DAORightsType } from '@/types/dao';
+import Rights from "@/models/dao/Rights";
+import { DAORightsType } from '@/models/dao/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
 import { useNear, useIPFS } from "@/hooks/vuex";
 import { inject } from '@vue/runtime-core';
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
@@ -102,7 +102,7 @@ export default {
             const rights = []
             daoRights.value.forEach((right, index) => {  
                 if(right.type === DAORightsType.Anyone || right.type === DAORightsType.Member || right.type ===  DAORightsType.TokenHolder ||  right.type === DAORightsType.Group ){
-                    const trans = toTranslate(right, dao.value.groups)
+                    const trans = Rights.toTranslate(right, dao.value.groups)
                     rights.push({text: t('default.' + trans.key, trans.params), value: index})
                 }
             })

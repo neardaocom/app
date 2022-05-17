@@ -34,7 +34,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "src/services/ipfsService/IpfsService.js",
+    "src/models/services/ipfsService/IpfsService.js",
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],

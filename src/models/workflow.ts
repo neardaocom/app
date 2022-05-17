@@ -1,4 +1,4 @@
-import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO, WFMetaForm } from "@/types/workflow";
+import { WFAction, WFActionFunctionCall, WFActionCall, WFActivity, WFAttribute, WFData, WFInstance, WFInstanceLog, WFSettings, WFTemplate, WFTransition, WFMetaTemplate, WFInstanceLogDTO, WFMetaForm } from "@/models/dao/types/workflow";
 import { CodeValue, Translate } from "@/models/utils/types/generics";
 import loFind from "lodash/find";
 import loFindIndex from "lodash/findIndex";
@@ -8,13 +8,10 @@ import loLast from "lodash/last";
 import loToNumber from "lodash/toNumber"
 import loMerge from "lodash/merge"
 import ArrayHelper from "@/models/utils/ArrayHelper";
-import { TransactionAction } from "@/models/nearBlockchain/types/blockchain";
-import NearService from "@/services/nearService/NearService";
-import { DAORights } from "@/types/dao";
+import { TransactionAction } from "@/models/nearBlockchain/types";
+import NearService from "@/models/services/nearService/NearService";
+import { DAORights } from "@/models/dao/types/dao";
 import { templateMetas } from "@/data/workflow";
-
-export const gasDefault: Function = () => { return 100 }
-export const depositDefault: Function = () => { return 0 }
 
 export const getActivityById = (template: WFTemplate, id: number): WFActivity | undefined => loFind(template.activities, {'id': id});
 

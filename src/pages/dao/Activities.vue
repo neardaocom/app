@@ -59,8 +59,10 @@ export default {
   },
   setup() {
     const dao = inject('dao')
+    const config = inject('config')
+
     const { t } = useI18n();
-    const { rSearch } = useRouter()
+    const { rSearch } = useRouter(config)
 
     const searchQuery = ref(rSearch.value)
     const filterState = reactive({

@@ -5,7 +5,7 @@
         <nav aria-label="breadcrumb navbar-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
+              <router-link :to="{ name: 'landing-page' }">{{ config.app.brandName }}</router-link>
             </li>
             <li v-if="daoId" class="breadcrumb-item">
               <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
@@ -27,12 +27,14 @@
 </template>
 
 <script>
+import { inject } from "vue";
 import { useI18n } from "vue-i18n";
 
 export default {
   setup() {
+    const config = inject('config')
     const { t } = useI18n();
-    return { t };
+    return { t, config };
   },
   props: {
     daoId: {

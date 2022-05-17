@@ -1,18 +1,19 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
-import { DAO, DAORights } from "@/types/dao";
+import { DAO, DAORights } from "@/models/dao/types/dao";
 import loGet from "lodash/get";
 import { Translate } from "@/models/utils/types/generics";
 import { getGroupCouncil } from '@/models/dao'
-import { getDAORights, toTranslate, getWalletRights } from '@/models/rights'
+import Rights from '@/models/dao/Rights'
 import Decimal from "decimal.js";
 import { getFile } from "@/models/document"
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { Config } from "@/config";
 
-export const useRouter = () => {
+export const useRouter = (config: Config) => {
     const route = useRoute()
-    const rDaoId = computed(() => loGet(route, ['params', 'id']) ?? process.env.VUE_APP_DAO_DEFAULT)
+    const rDaoId = computed(() => loGet(route, ['params', 'id']) ?? config.app.daoDefault)
     const rPage = computed(() => loGet(route, ['query', 'page']) ?? 'overview')
     const rSearch = computed(() => loGet(route, ['query', 'search']))
     const rOrder = computed(() => loGet(route, ['query', 'order']))
@@ -62,12 +63,12 @@ export const useStats = (dao: DAO) => {
 
 export const useRights = (dao: DAO, walletId?: string) => {
     const { t } = useI18n()
-    const rights = getDAORights(dao)
+    const rights = Rights.getDAORights(dao)
     const daoRights = ref(rights)
-    const walletRights = ref<DAORights[]>(getWalletRights(dao, walletId))
+    const walletRights = ref<DAORights[]>(Rights.getWalletRights(dao, walletId))
     
     const daoRightsOptions = ref(rights.map((right, index) => {
-        const trans: Translate = toTranslate(right, dao.groups)
+        const trans: Translate = Rights.toTranslate(right, dao.groups)
         return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
     }))
 

@@ -1,5 +1,6 @@
 import _ from "lodash"
 import { Validation, ValidationParamsMin, ValidationParamsMinDate, ValidationParamsMax, ValidationParamsMaxDate } from "./types/validations";
+import validUrl from "valid-url";
 
 export default class Validator {
 
@@ -21,7 +22,6 @@ export default class Validator {
 
     static urlValidator(value: string): Validation {
         let validation = this.successValidation()
-        const validUrl = require('valid-url');
         if (validUrl.isWebUri(value) == undefined) {
             validation = this.errorValidation('invalid_url', {})
         }

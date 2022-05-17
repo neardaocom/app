@@ -2,7 +2,7 @@ import VersionHelper from "@/models/utils/VersionHelper";
 import StringHelper from "@/models/utils/StringHelper";
 import _ from "lodash"
 import GenericsHelper from "@/models/utils/GenericsHelper";
-import { DAODocs, DAODocsFile } from "@/types/dao";
+import { DAODocs, DAODocsFile } from "@/models/dao/types/dao";
 import loFilter from "lodash/filter"
 import loOrderBy from "lodash/orderBy"
 // import loGet from "lodash/get"

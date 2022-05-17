@@ -1,9 +1,9 @@
-import { firebaseConfig } from "@/config/firebase"
-import Firebase from "@/services/firebase"
+import { getConfig } from "@/config/firebase"
+import Firebase from "@/models/services/firebase"
 
 // initial state
 const state = () => ({
-    service: new Firebase(firebaseConfig)
+    service: new Firebase(getConfig(process.env.NODE_ENV || "development"))
 })
   
 // getters

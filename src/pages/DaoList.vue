@@ -49,10 +49,10 @@ import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 import { reactive } from "@vue/reactivity";
 import StringHelper from '@/models/utils/StringHelper'
-import _ from "lodash"
 import DaoCard from '@/components/daoList/DaoCard.vue'
 import Search from "@/components/ui/Search.vue"
-import { useFetch } from "@/hooks/daoList";
+import loIntersection from "lodash/intersection"
+import { useList } from "@/hooks/daoList";
 
 export default {
   components: {
@@ -67,11 +67,11 @@ export default {
     Search
   },
   setup() {
+    const config = inject('config')
     const { t, n } = useI18n()
 
-    const nearDaoFactory = inject('nearDaoFactory')
-
-    const { loadingProgress, tags, list } = useFetch(nearDaoFactory.value)
+    const { loadingProgress, list, factoryAccount } = useList(config.value)
+    // const { searchText, searchOrder, searchOrderOptions, search } = useList()
 
     const searchQuery = ref('')
     const filterTag = reactive({
@@ -79,6 +79,7 @@ export default {
         name: t('default.agency'),
         active: false,
       },
+    // const { nearService, wallet } = useNear()
       startup: {
         name: t('default.startup'),
         active: false,
@@ -93,28 +94,16 @@ export default {
       },
     })
     return {
-      t, n, list, tags, loadingProgress, searchQuery, filterTag
+      t, n, config, list, loadingProgress, searchQuery, filterTag, factoryAccount
     }
   },
   computed: {
-    nearService() {
-      return this.$store.getters['near/getService']
-    },
-    factoryAccount() {
-        return this.$store.getters['near/getFactoryAccount']
-    },
-    walletUrl() {
-        return this.$store.getters['near/getWalletUrl']
-    },
-    nearPrice() {
-      return this.$root.near_price
-    },
     results() {
       let results = this.list
       // filter
       const filterTags = Object.values(this.filterTag).filter(item => item.active).map(item => item.name)
       if (filterTags.length > 0) {
-        results = results.filter(item => _.intersection(item.tags, filterTags).length > 0)
+        results = results.filter(item => loIntersection(item.tags, filterTags).length > 0)
       }
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
@@ -123,9 +112,6 @@ export default {
       }
       // order
       return results
-    },
-    headerText() {
-      return _.join(_.orderBy(this.tags), ' | ')
     }
   },
 }

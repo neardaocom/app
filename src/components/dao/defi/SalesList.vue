@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { RefFinanceService } from '@/services/refFinanceService'
+import { RefFinanceService } from '@/models/services/refFinanceService'
 import { onMounted, toRefs, ref, inject } from "vue"
 import Sale from "@/components/dao/defi/Sale.vue"
 import { transformSale } from "@/models/sales"
