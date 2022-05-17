@@ -102,7 +102,7 @@ $theme-colors: (
 
 @import '~@/../mdb/scss/index.pro.scss';
 
-@for $i from 1 through 20 {
+@for $i from 1 through 30 {
   .bg-gradient-#{$i * 10} {
     background: transparent linear-gradient($i * 10deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
   }
@@ -216,6 +216,10 @@ h5, .h5 {
 
 h6, .h6 {
   font-weight: 600 !important;
+}
+
+.fw-800{
+  font-weight: 800 !important;
 }
 
 </style>

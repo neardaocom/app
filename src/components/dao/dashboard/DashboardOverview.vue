@@ -1,30 +1,12 @@
 <template>
    <div class="d-flex flex-wrap justify-content-evenly align-items-stretch mt-5">
 
-      <div v-if="nearPrice" class="d-flex justify-content-center text-start mb-5" style="min-width: 280px;">
-         <div> 
-            <h6> {{ t("default.dao_funds") }} </h6>
-            <NumberFormatter class="h2 border-start border-secondary border-3 ps-2" :amount="dao.treasury.near * nearPrice"/><span class="fs-5 text-secondary" style="font-weight: 800 !important;">USD</span>
-         </div>
-      </div>
+      <DashboardInfoItem v-if="nearPrice" :header="t('default.dao_funds')" :amount="dao.treasury.near * nearPrice" suffix="USD"/>
+      <DashboardInfoItem :header="t('default.my_share')" :amount="myTokensShare" suffix="%"/>
+      <DashboardInfoItem :header="t('default.tokens')" :amount="dao.treasury.token.free" :suffix="dao.treasury.token.meta.short"/>
 
 
-      <div class="d-flex justify-content-center text-start mb-5" style="min-width: 280px;">
-         <!-- <div class="align-self-end" style="padding-bottom: 8px">
-         </div> -->
-         <div> 
-            <h6 >Tokens</h6>
-            <div class="border-start border-secondary border-3 ps-2">
-               <div class="small"><NumberFormatter :amount="dao.treasury.token.free"/><span class="ms-1 text-secondary fw-bold">{{ dao.treasury.token.meta.short }}</span></div>
-               <!-- <span class="fs-2"  style="font-weight:100 !important">|</span> -->
-               <NumberFormatter class="h2" :amount="dao.treasury.near"/> 
-               <span class="fs-5 text-secondary" style="font-weight: 800 !important;">NEAR</span>         
-            </div>
-         </div>
-      </div>
-
-
-      <div class="mb-5" style="min-width: 280px;">
+      <div class="mb-5">
          <h6>{{ t("default.activity") }}</h6>
          <ul class="list-inline list-unstyled mb-0">
                <li class="list-inline-item me-1">
@@ -47,13 +29,14 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import { MDBBadge } from 'mdb-vue-ui-kit'
-import NumberFormatter from "@/components/ui/NumberFormatter.vue"
-import { inject } from '@vue/runtime-core'
+import { computed, inject } from '@vue/runtime-core'
+import DashboardInfoItem from "./DashboardInfoItem.vue"
+import Decimal from 'decimal.js'
 
 export default {
    components:{
       MDBBadge,
-      NumberFormatter
+      DashboardInfoItem,
    },
       props: {
          nearPrice: {
@@ -64,9 +47,10 @@ export default {
    setup () {
       const dao = inject('dao')
       const { t } = useI18n()
+      const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(dao.value.treasury.token.owned || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
    
       return {
-         dao, t
+         dao, t, myTokensShare
       }
    }
 }

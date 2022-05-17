@@ -5,7 +5,9 @@
          <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                <!-- <span class="rounded-circle bg-black d-flex justify-content-center align-items-center m-2" style="width: 40px; height: 40px;"><img class="" width="20" height="20" :src="'/img/near_logo.svg'"/></span> -->
-               <MDBBadge color="black" pill class="me-2" style="padding: 0.75rem"><img width="20" height="20" :src="'/img/near_logo.svg'"/></MDBBadge>
+               <slot name="icon">
+                  <MDBBadge color="black" pill class="me-2" style="padding: 0.75rem;"><img width="25" height="25" :src="'/img/near_logo.svg'"/></MDBBadge>
+               </slot>
                <span class="fs-5 fw-bold me-1"> {{ dao.name }} </span>
                <small class="text-muted"> #{{ dao.index + 1 }} </small>
             </div>

@@ -33,6 +33,8 @@
         <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
         <About v-if="loaded === true && rPage === 'about'" />
         <Settings v-if="loaded === true && rPage === 'settings'"/>
+        <Treasury v-if="loaded === true && rPage === 'treasury'"/>
+        <Governance v-if="loaded === true && rPage === 'governance'"/>
         <SkeletonBody v-if="loaded === false" />
       </div>
     </section>
@@ -59,6 +61,8 @@ import Voting from './dao/Voting.vue'
 import Resources from './dao/Resources.vue'
 import Activities from './dao/Activities.vue'
 import Settings from './dao/Settings.vue'
+import Treasury from './dao/Treasury.vue'
+import Governance from './dao/Governance.vue'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, provide } from 'vue'
 import { getRole, loadById } from "@/models/dao";
@@ -70,7 +74,7 @@ import { useNear } from "@/hooks/vuex";
 export default {
   components: {
     About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Tokens, Resources, DeFi, Settings,
-    SkeletonButtons, SkeletonBody,
+    SkeletonButtons, SkeletonBody, Governance, Treasury,
     Title,
     SkeletonTitle,
   },

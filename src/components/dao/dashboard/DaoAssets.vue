@@ -1,0 +1,49 @@
+<template>
+   <MDBCard>
+      <MDBCardBody>
+         <div class="d-flex">
+            <div class="d-flex align-items-center">
+               <slot name="icon">
+                  <MDBBadge color="black" pill class="me-2" style="padding: 0.75rem;"><img width="25" height="25" :src="'/img/near_logo.svg'"/></MDBBadge>
+               </slot>
+               <div class="text-start">
+                  <div class="fs-5 fw-bold me-1"> NEAR </div>
+                  <div class="text-muted small mt-n2">token</div>
+               </div>
+            </div>
+
+            <div class="ms-auto text-end">
+               <span class="fs-5 fw-bold"><NumberFormatter :amount="1000"/></span><span class="fs-5 ps-1">NEAR</span>
+               <div class="text-end"><span class="fw-bold"><NumberFormatter :amount="1000"/></span><span class="ps-1">USD</span></div>
+            </div>
+         </div>
+         
+      </MDBCardBody>
+   </MDBCard>
+</template>
+
+<script>
+import { useI18n } from 'vue-i18n'
+import {
+   MDBCard,
+   MDBCardBody,
+   MDBBadge,
+} from 'mdb-vue-ui-kit'
+import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+
+export default {
+   components: {
+      MDBCard,
+      MDBCardBody,
+      MDBBadge,
+      NumberFormatter
+   },
+   setup () {
+      const {t} = useI18n()
+
+      return {
+         t, 
+      }
+   }
+}
+</script>
