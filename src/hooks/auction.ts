@@ -1,7 +1,7 @@
 import { ref, reactive } from "vue";
-import { Sale } from "@/services/skywardFinanceService/types"
+import { Sale } from "@/models/services/skywardFinanceService/types"
 import { Account } from 'near-api-js';
-import { SkywardFinance } from "@/services/skywardFinanceService";
+import { SkywardFinance } from "@/models/services/skywardFinanceService";
 import Auction from "@/models/auction"
 
 export const useSkywardFinanace = (account: Account, contract: string, sales: number[]) => {

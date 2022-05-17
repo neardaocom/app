@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs, watch, inject } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import Validator from '@/models/utils/Validator'
@@ -78,10 +78,12 @@ export default {
     }
   },
   setup(props) {
+    const config = inject('config')
     const { t } = useI18n();
 
     const { show } = toRefs(props)
 
+    const factoryAccount = computed(() => (config.near.contractName))
     const active = ref(false)
     
     const openModal = () => { active.value = true }
@@ -116,16 +118,13 @@ export default {
     const errors = reactive({});
 
     return {
-      t, active
+      t, active, factoryAccount
       , formName, formNameOptions, formNameId, formCategory, formCategoryId
       , filterFormName, filterFormCategory
       , isValidated, errors
     };
   },
   computed: {
-    factoryAccount() {
-      return this.$store.getters['near/getFactoryAccount']
-    },
     accountId() {
       return this.$store.getters['near/getAccountId']
     },

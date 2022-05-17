@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import { reactive, ref, toRefs, watch } from "vue";
-import { RefFinanceService } from '@/services/refFinanceService'
+import { reactive, ref, toRefs, watch, inject } from "vue";
+import { RefFinanceService } from '@/models/services/refFinanceService'
 import { useI18n } from "vue-i18n";
 import Validator from '@/models/utils/Validator'
 import {
@@ -87,10 +87,12 @@ export default {
     }
   },
   setup(props) {
+    const config = inject('config')
     const { t } = useI18n();
 
     const { show } = toRefs(props)
 
+    const factoryAccount = computed(() => (config.near.contractName))
     const active = ref(false)
     
     const openModal = () => { active.value = true }
@@ -108,7 +110,7 @@ export default {
     const errors = reactive({});
 
     return {
-      t, active, registered, fee, isValidated, errors
+      t, active, factoryAccount, registered, fee, isValidated, errors
     };
   },
   async mounted() {
@@ -126,9 +128,6 @@ export default {
     localStorage.token_registered = 'false'
   },
   computed: {
-    factoryAccount() {
-      return this.$store.getters['near/getFactoryAccount']
-    },
     accountId() {
       return this.$store.getters['near/getAccountId']
     },

@@ -50,7 +50,7 @@
 import { useI18n } from "vue-i18n"
 import { useRights } from "@/hooks/dao";
 import { voteLevelToTranslate } from "@/models/dao"
-import { toTranslate } from "@/models/rights";
+import Rights from "@/models/dao/Rights";
 import { getActivityById, settingsConstantsToTranslate, getActivityRights } from "@/models/workflow";
 import { toRefs } from 'vue';
 //import { payoutAtStart, payoutAfterPayNear, payoutFinished } from "@/data/workflow"
@@ -87,7 +87,7 @@ export default {
       return this.t('default.' + trans.key, trans.params)
     },
     trans(right) {
-      const trans = toTranslate(right, this.dao.groups)
+      const trans = Rights.toTranslate(right, this.dao.groups)
       return this.t('default.' + trans.key, trans.params)
     },
     activityName(template, activitiId) {

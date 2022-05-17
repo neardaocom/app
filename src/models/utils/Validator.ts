@@ -1,5 +1,6 @@
 import _ from "lodash"
 import { Validation, ValidationParamsMin, ValidationParamsMinDate, ValidationParamsMax, ValidationParamsMaxDate } from "./types/validations";
+import validUrl from "valid-url";
 
 export default class Validator {
 
@@ -21,7 +22,6 @@ export default class Validator {
 
     static urlValidator(value: string): Validation {
         let validation = this.successValidation()
-        let validUrl = require('valid-url');
         if (validUrl.isWebUri(value) == undefined) {
             validation = this.errorValidation('invalid_url', {})
         }
@@ -90,7 +90,7 @@ export default class Validator {
 
     static isAlphanumericUpperecase(value: string): Validation {
         let validation = this.successValidation()
-        let re = /^[A-Z0-9]+$/
+        const re = /^[A-Z0-9]+$/
         if (!re.test(value)){
             validation = this.errorValidation('alphanumeric_uppercase', {})
         }

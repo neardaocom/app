@@ -5,7 +5,7 @@
         <nav aria-label="breadcrumb navbar-light bg-light">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
+              <router-link :to="{ name: 'landing-page' }">{{ config.app.brandName }}</router-link>
             </li>
             <li class="breadcrumb-item active">
               {{ t("default." + listName) }}
@@ -19,6 +19,7 @@
 
 <script>
 import { useI18n } from "vue-i18n";
+import { inject } from "vue";
 
 export default {
   props: {
@@ -28,13 +29,9 @@ export default {
     },
   },
   setup() {
+    const config = inject('config')
     const { t } = useI18n();
-    return { t };
+    return { t, config };
   },
-  computed: {
-    appName() {
-      return process.env.VUE_APP_BRAND_NAME
-    }
-  }
 };
 </script>

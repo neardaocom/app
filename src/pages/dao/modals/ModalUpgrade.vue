@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs, watch, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import {
   MDBBtn,
@@ -78,10 +78,12 @@ export default {
     }
   },
   setup(props) {
+    const config = inject('config')
     const { t } = useI18n();
 
     const { show } = toRefs(props)
 
+    const factoryAccount = computed(() => (config.near.contractName))
     const active = ref(false)
     
     const openModal = () => { active.value = true }
@@ -93,7 +95,7 @@ export default {
     const downloaded = ref(false)
 
     return {
-      t, active, downloaded
+      t, active, factoryAccount, downloaded
     };
   },
   async mounted() {
@@ -107,9 +109,6 @@ export default {
     localStorage.download_new_version = 'false'
   },
   computed: {
-    factoryAccount() {
-      return this.$store.getters['near/getFactoryAccount']
-    },
     accountId() {
       return this.$store.getters['near/getAccountId']
     },

@@ -114,7 +114,7 @@ import { canFinish, getSettings, runActivity, getNextActivities, getActivityRigh
 import { getArgs as getProposalArgs } from "@/models/proposal";
 import { useNear } from '@/hooks/vuex';
 import Date from "@/models/utils/DateHelper";
-import { check } from "@/models/rights";
+import Rights from "@/models/dao/Rights";
 import loFlatten from "lodash/flatten"
 import moment from 'moment'
 
@@ -171,6 +171,8 @@ export default {
         storage: loGet(daoStorage.value, [workflow.value.storage]),
         form: {},
     }
+
+    const check = Rights.check
 
     const { nearService } = useNear()
 

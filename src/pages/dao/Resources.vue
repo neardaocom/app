@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { ref, toRefs } from "vue";
+import { ref, toRefs, inject } from "vue";
 import { reactive } from "@vue/reactivity";
 import {
   MDBCard, MDBCardBody, MDBIcon, MDBTable
@@ -105,7 +105,7 @@ import StringHelper from '@/models/utils/StringHelper'
 import _ from 'lodash'
 import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
-import { DAODocsFileType } from '@/types/dao';
+import { DAODocsFileType } from '@/models/dao/types/dao';
 import { useRouter } from "@/hooks/dao";
 
 export default {
@@ -125,6 +125,8 @@ export default {
     },
   },
   setup(props) {
+    const config = inject('config')
+
     const { docs } = toRefs(props)
     console.log(docs.value);
     const files = transform(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
@@ -136,7 +138,7 @@ export default {
     const selectedDoc = ref({})
     const { ipfsService } = useIPFS()
 
-    const { rSearch } = useRouter()
+    const { rSearch } = useRouter(config)
 
     const searchQuery = ref(rSearch.value)
     const filterType = reactive({

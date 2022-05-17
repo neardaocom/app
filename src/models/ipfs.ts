@@ -1,7 +1,7 @@
 import logger from "@/logger";
-import { IpfsService } from "@/services/ipfsService/IpfsService";
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
-import { DAODocsFile, DAODocsFileType } from "@/types/dao";
+import { IpfsService } from "@/models/services/ipfsService/IpfsService";
+import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
+import { DAODocsFile, DAODocsFileType } from "@/models/dao/types/dao";
 import lodashToString from "lodash/toString";
 
 export const fetch = async (file: DAODocsFile, service?: IpfsService): Promise<string | undefined> => {

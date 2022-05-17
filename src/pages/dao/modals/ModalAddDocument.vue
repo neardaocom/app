@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { ref, toRefs, watch } from "vue";
+import { ref, toRefs, watch, inject } from "vue";
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import _ from "lodash";
@@ -117,7 +117,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import { getCategories, getCategoriesInit, transform, getIndexInFiles } from "@/models/document"
 
 export default {
@@ -145,11 +145,14 @@ export default {
     }
   },
   setup(props) {
+    const config = inject('config')
     const { show, docs } = toRefs(props)
     const { t } = useI18n();
   
     const files = transform(docs.value)
     // console.log(files)
+
+    const factoryAccount = computed(() => (config.near.contractName))
 
     const categoryOptions = getCategories(docs.value, t);
     const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
@@ -224,7 +227,7 @@ export default {
     });
 
     return {
-      t, active, files
+      t, active, files, factoryAccount
       , formName, formNameOptions, formNameId, formDescription, formCategory, formCategoryId, formCategoryOptions, formTagsNew, formTags, formFiles, formUrl, formHtml, formVersionUpgrageMajor
       , formDocumentType, filterFormName, filterFormCategory
       , nameItemTemplate, nameDisplayValueTemplate
@@ -232,9 +235,6 @@ export default {
     };
   },
   computed: {
-    factoryAccount() {
-      return this.$store.getters['near/getFactoryAccount']
-    },
     accountId() {
       return this.$store.getters['near/getAccountId']
     },

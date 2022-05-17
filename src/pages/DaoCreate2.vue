@@ -35,7 +35,7 @@ import {
     //MDBAlert
 } from 'mdb-vue-ui-kit';
 import { useI18n } from 'vue-i18n';
-import { inject, onMounted } from '@vue/runtime-core'
+import { inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNear } from '@/hooks/vuex';
 
@@ -49,9 +49,11 @@ export default {
         DaoCreateForm
     },
     setup(){
-        const { t } = useI18n();
+        const config = inject('config')
         const logger = inject('logger')
-        const router = useRouter()
+
+        const { t } = useI18n();
+        const router = useRouter(config)
         const { accountId } = useNear()
         
         onMounted(() => {

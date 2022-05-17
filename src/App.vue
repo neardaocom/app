@@ -4,67 +4,55 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted, provide} from "vue";
-import { coinGeckoExchange } from "@/services/exchangeService"
-
+import { ref, onMounted, provide, inject } from "vue";
 // confings
-import { getConfig as nearConfig } from "@/config/near"
-
 // factories
-import NearBlockchainFactory from "@/models/nearBlockchain/Factory";
+import { getConfig } from "@/config"
+import Register from "@/models/utils/Register";
+import { Loader } from "@/loader";
+import { useNearPrice } from "@/hooks/market";
+import { useLoad as useDaoLoad } from "@/hooks/daoList";
+import { useStore } from 'vuex';
 
 export default {
   components: {
   },
   setup() {
-    // near price
-    const near_price = ref(null)
-    const near_price_interval = ref(null)
-    const near_price_counter = () => {
-      coinGeckoExchange.getActualPrice('near').then(response => {
-        near_price.value = response
-        // console.log('NEAR price USD: ' + near_price.value)
-      })
-    }
-    coinGeckoExchange.getActualPrice('near').then(response => {
-      near_price.value = response
-      // console.log('NEAR price USD: ' + near_price.value)
-    })
+    const logger = inject('logger')
+    const notify = inject('notify')
+    const store = useStore()
+    // config
+    const config = ref(getConfig(process.env.NODE_ENV))
+    provide('config', config)
+    // loader
+    const loader = ref(new Loader(new Register(), config.value))
+    provide('loader', loader)
 
-    provide('nearPrice', near_price)
-
-    // DI
-    const nearFactory = ref(new NearBlockchainFactory(nearConfig(process.env.NODE_ENV || "development")))
-    const near = ref(null)
-    const nearDaoFactory = ref(null)
-    provide('nearFactory', nearFactory)
-    provide('near', near)
-    provide('nearDaoFactory', nearDaoFactory)
+    // init
+    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPrice(config)
+    const { listInterval, listResolve } = useDaoLoad(loader, logger, notify, config.value)
 
     onMounted(async () => {
-      // DI near
-      near.value = await nearFactory.value.createNear()
-      const walletConnection = nearFactory.value.createWalletConnection(near.value)
-      const walletAccount = nearFactory.value.createWalletAccount(walletConnection)
-
-      nearDaoFactory.value = nearFactory.value.createDaoFactory(nearFactory.value.createFactoryContractService(walletAccount))
-
-      near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1_000) // 5 minutes
-      // console.log('App mounted')
-    })
-
-    onUnmounted(() => {
-      clearInterval(near_price_interval.value)
-      // console.log('App unmounted')
+      store.dispatch('ipfs/init')
+      store.dispatch('near/init').then(async () => {
+        await loader.value.get('near/WalletAccount')
+        await nearPriceResolve()
+        await listResolve()
+      })
+      // Loader
+      // Load NEAR
+      // console.log('Loaded', nearNear.value)
+      //.then(() => {
+      //  listResolve()
+      //})
     })
 
     return {
-      near_price, near_price_interval, near_price_counter
+      coinGeckoExchange,  nearPriceResolve, nearPriceInterval
+      , listInterval, listResolve
     };
   },
   created() {
-    this.$store.dispatch('near/init')
-    this.$store.dispatch('ipfs/init')
   }
 };
 </script>

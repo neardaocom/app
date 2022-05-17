@@ -45,7 +45,7 @@ import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import { useStore } from 'vuex'
 import Validator from '@/models/utils/Validator'
-import { yoctoNear } from "@/services/nearService/constants";
+import { yoctoNear } from "@/models/services/nearService/constants";
 import Decimal from 'decimal.js'
 import {
   MDBBtn,

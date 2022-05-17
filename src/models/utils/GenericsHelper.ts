@@ -9,6 +9,14 @@ export default class GenericsHelper {
         return item ? item.value : undefined;
     }
 
+    static createIDValue(items: string[]): IDValue[] {
+        return items.map((value, index) => ({ id: index, value: value}));
+    }
+    static createIDValueFromObject(value: object): IDValue[] {
+        return Object.keys(value).map((key, index) => ({ id: index, value: value[key.toString()]}));
+    }
+    
+
     static getIdByValue(items: IDValue[], value: string): number | undefined {
         const item: IDValue | undefined = lodashFind(items, {value: value})
         return item ? item.id : undefined;

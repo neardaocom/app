@@ -78,12 +78,17 @@
                       >
                     </td>
                     <td class="text-start">
-                      <a class="text-reset" target="_blank" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
+                      <a class="text-reset" target="_blank" :href="config.near.walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount">
                         {{ dao.id + '.' + this.factoryAccount }} <i class="bi bi-box-arrow-up-right color-secondary ms-1"/>
                       </a>
                     </td>
                     <td class="text-end">
-                      <span class="fw-bold me-1">{{ dao.amount }}</span><span v-if="dao.amount" class="text-muted">USD</span>
+                      <template v-if="dao.treasuryAmountUsd">
+                        <span class="fw-bold me-1">{{ dao.treasuryAmountUsd }}</span><span class="text-muted">USD</span>
+                      </template>
+                      <template v-else-if="dao.treasuryAmount">
+                        <span class="fw-bold me-1">{{ dao.treasuryAmoun }}</span><span class="text-muted">{{ dao.ftName }}</span>
+                      </template>
                     </td>
                   </tr>
                 </tbody>
@@ -111,9 +116,11 @@ import { useI18n } from 'vue-i18n'
 import { ref, inject } from 'vue'
 import { reactive } from "@vue/reactivity";
 import StringHelper from '@/models/utils/StringHelper'
-import _ from "lodash"
+import loIntersection from "lodash/intersection"
 
-import { useFetch } from "@/hooks/daoList";
+import { useList } from "@/hooks/daoList";
+//import { useList } from "@/hooks/search";
+
 
 export default {
   components: {
@@ -125,11 +132,11 @@ export default {
     , MDBCheckbox
   },
   setup() {
+    const config = inject('config')
     const { t, n } = useI18n()
 
-    const nearDaoFactory = inject('nearDaoFactory')
-
-    const { loadingProgress, tags, list } = useFetch(nearDaoFactory.value)
+    const { loadingProgress, list, factoryAccount } = useList(config.value)
+    // const { searchText, searchOrder, searchOrderOptions, search } = useList()
 
     const searchQuery = ref('')
     const filterTag = reactive({
@@ -137,6 +144,7 @@ export default {
         name: t('default.agency'),
         active: false,
       },
+    // const { nearService, wallet } = useNear()
       startup: {
         name: t('default.startup'),
         active: false,
@@ -151,28 +159,16 @@ export default {
       },
     })
     return {
-      t, n, list, tags, loadingProgress, searchQuery, filterTag
+      t, n, config, list, loadingProgress, searchQuery, filterTag, factoryAccount
     }
   },
   computed: {
-    nearService() {
-      return this.$store.getters['near/getService']
-    },
-    factoryAccount() {
-        return this.$store.getters['near/getFactoryAccount']
-    },
-    walletUrl() {
-        return this.$store.getters['near/getWalletUrl']
-    },
-    nearPrice() {
-      return this.$root.near_price
-    },
     results() {
       let results = this.list
       // filter
       const filterTags = Object.values(this.filterTag).filter(item => item.active).map(item => item.name)
       if (filterTags.length > 0) {
-        results = results.filter(item => _.intersection(item.tags, filterTags).length > 0)
+        results = results.filter(item => loIntersection(item.tags, filterTags).length > 0)
       }
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
@@ -181,9 +177,6 @@ export default {
       }
       // order
       return results
-    },
-    headerText() {
-      return _.join(_.orderBy(this.tags), ' | ')
     }
   },
 }

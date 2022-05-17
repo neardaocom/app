@@ -187,7 +187,7 @@ export default {
     // liguidity
     const addLiquidity = () => {
         validate()
-        if (isValid(errors) === true) {
+        if (Validator.isValid(errors) === true) {
             const amount_2 = new Decimal(amount2.value).mul(NearUtils.yoctoNear).toFixed();
             const amount_1 = new Decimal(amount1.value).mul(10 ** tokenDecimals.value).toFixed();
 

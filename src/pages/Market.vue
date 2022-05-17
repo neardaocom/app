@@ -78,7 +78,7 @@
                         v-else-if="template.status === t('default.installed')"
                         type="button" class="btn btn-rounded px-4 py-1 btn-installed fw-bold"
                         @click.prevent=""
-                      ><i class="bi bi-check-circle me-2 fa-lg"></i>{{ template.status }}</button>
+                      ><i class="bi bi-Rights.check-circle me-2 fa-lg"></i>{{ template.status }}</button>
                       <button
                         v-else
                         type="button" class="btn btn-rounded px-4 py-1 btn-in-progress fw-bold"
@@ -118,7 +118,7 @@ import {
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
 import { useTemplateList, useCreators } from "@/hooks/workflow";
-import { onMounted, watch, ref } from 'vue'
+import { onMounted, watch, ref, inject } from 'vue'
 import { useRouter } from "@/hooks/dao";
 import { useNear } from '@/hooks/vuex'
 import { useStore } from 'vuex'
@@ -126,8 +126,8 @@ import { market } from "@/data/workflow";
 import loGet from "lodash/get";
 import loFind from "lodash/find";
 import { loadById } from "@/models/dao";
-import { check, getDAORights, getWalletRights } from '@/models/rights'
-// import { getDAORights } from '@/models/rights'
+import Rights from '@/models/dao/Rights'
+// import { Rights.getDAORights } from '@/models/rights'
 import ModalProposal from '@/components/proposal/Modal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
@@ -143,12 +143,14 @@ export default {
     , ModalProposal, ModalMessage, AddWorkflow,
   },
   setup() {
+    const config = inject('config')
+  
     const { t, n } = useI18n()
     const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
     const { creator, provider } = useCreators()
     const store = useStore()
     const { nearService, wallet } = useNear()
-    const { rDaoId } = useRouter()
+    const { rDaoId } = useRouter(config)
     const daoTemplatesCodes = ref([])
     const dao = ref({})
     const daoRights = ref([])
@@ -166,8 +168,8 @@ export default {
         loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
           .then(r => {
             dao.value = r
-            daoRights.value = getDAORights(r)
-            walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
+            daoRights.value = Rights.getDAORights(r)
+            walletRights.value = Rights.getWalletRights(r, wallet.value?.getAccountId())
           })
           .catch((e) => {
             //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
@@ -205,7 +207,7 @@ export default {
     open(template){
       if (this.rDaoId) {
         const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
-        if (check(this.walletRights, rights)) {
+        if (Rights.check(this.walletRights, rights)) {
           this.modalProposal += 1
           this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
           this.modalProps = {

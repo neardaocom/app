@@ -40,7 +40,7 @@
 
 <script>
 import { MDBInput, MDBIcon, MDBSelect } from "mdb-vue-ui-kit";
-import { ref } from "vue"
+import { ref, inject } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Workflow from "@/components/dao/Workflow.vue"
@@ -73,9 +73,11 @@ export default {
     },
   },
   setup() {
+    const config = inject('config')
+
     //const { dao } = toRefs(props)
     const { t } = useI18n();
-    const { rSearch } = useRouter()
+    const { rSearch } = useRouter(config)
 
     const searchQuery = ref(rSearch.value)
     const filterState = reactive({

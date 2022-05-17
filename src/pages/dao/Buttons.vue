@@ -11,7 +11,7 @@
           {{ t('default.voting') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          <i class="bi bi-check2-circle me-1"/>
+          <i class="bi bi-Rights.check2-circle me-1"/>
           {{ t('default.in_progress') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 color-primary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
@@ -59,7 +59,7 @@
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
                   <template v-if="[''].includes(templ.code) === false">
-                    <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
+                    <MDBDropdownItem v-if="Rights.check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
                   </template>
                 </template>
               </template>
@@ -99,7 +99,7 @@ import {
   MDBBtn, MDBBtnGroup,
   MDBIcon
 } from "mdb-vue-ui-kit";
-import { check } from "@/models/rights";
+import Rights from "@/models/dao/Rights";
 
 export default {
   components: {
@@ -155,6 +155,8 @@ export default {
 
     const activeTabId1 = ref('ex1-1');
 
+    const check = Rights.check
+
     return {
       t,
       dropdownAction, 
@@ -163,8 +165,8 @@ export default {
       modalTitle, 
       activeForm, 
       activeFormCode, 
-      formProps, 
-      check, 
+      formProps,
+      check,
       form,
       modalProp,
       activeTabId1
@@ -180,7 +182,7 @@ export default {
       return this.$store.getters['near/getAccountId']
     },
     canVote() {
-      return Object.keys(this.dao.token_holders).includes(this.accountId)
+      return Object.keys(this.dao.tokenHolders).includes(this.accountId)
     },
     nearService() {
       return this.$store.getters['near/getService']

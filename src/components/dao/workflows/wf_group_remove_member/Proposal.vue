@@ -42,12 +42,8 @@ export default {
     setup (props) {
         const {tokenHolders} = toRefs(props)
         const {t} = useI18n()
-        //const store = useStore()   
 
-        //const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
         const accountsDropdown= computed(() => (Object.keys(tokenHolders.value).map(accountId => {return {value: accountId, text: accountId}})))
-        //const nearService = computed(() => (store.getters['near/getService']))
-        //const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const description = ref('')
 

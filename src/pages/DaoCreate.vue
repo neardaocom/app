@@ -588,7 +588,7 @@ import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/daoCreate/Breadcrumb.vue'
 import FromErrorMessage from '@/components/forms/FormErrorMessage'
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { mask } from 'vue-the-mask'
 import { reactive } from "@vue/reactivity"
 import _ from "lodash"
@@ -621,8 +621,11 @@ export default({
         mask
     },
     setup() {
+        const config = inject('config')
         const { t, tc, n, d, locale } = useI18n();
         const exampleModal = ref(false)
+
+        const factoryAccount = computed(() => (config.near.contractName))
 
         const unlockingInit = new Date();
         const unlockingInitFormated = d(unlockingInit) // unlockingInit.toLocaleDateString(locale.value).replace(' ', '')
@@ -741,7 +744,7 @@ export default({
         ]
         
         return{
-           t, tc, n, d, exampleModal, account, name, slogan, type, typeOptions,
+           t, tc, n, d, exampleModal, account, name, slogan, type, typeOptions, factoryAccount,
            purpose, location, ftName, ftAmount, ftAmountFormated, ftCouncilInitDistribution, ftCouncilInitDistributionFormated, ftCouncilInitDistributionPercent,
            ftCouncilShare, ftFoundationShare, ftCommunityShare,ftPublicShare,
            ftCouncilUnlockingFrom, ftCommunityUnlockingFrom, ftFoundationUnlockingFrom, ftPublicUnlockingFrom,
@@ -1289,9 +1292,6 @@ export default({
         },
         factoryContract() {
             return this.$store.getters['near/getFactoryContract']
-        },
-        factoryAccount() {
-            return this.$store.getters['near/getFactoryAccount']
         },
         envContactName() {
             return process.env.VUE_APP_NEAR_CONTRACT_NAME

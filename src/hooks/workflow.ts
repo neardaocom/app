@@ -2,7 +2,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import StringHelper from '@/models/utils/StringHelper'
 import { useI18n } from 'vue-i18n'
-import { WFTemplate } from '@/types/workflow'
+import { WFTemplate } from '@/models/dao/types/workflow'
 import loOrderBy from "lodash/orderBy"
 import loGet from "lodash/get"
 import loFind from "lodash/find"
@@ -11,7 +11,7 @@ import { accounts } from "@/data/blockchain";
 import IntegerHelper from '@/models/utils/IntegerHelper'
 // import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
-import { Wallet } from '@/models/nearBlockchain/types/blockchain'
+import { Wallet } from '@/models/nearBlockchain/types'
 import { useStore } from 'vuex'
 
 export const useTemplateList = () => {

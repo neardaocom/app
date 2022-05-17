@@ -12,7 +12,7 @@
 import Auction from "@/components/skywardFinance/Auction.vue"
 import { onMounted, onUnmounted, toRefs, computed, ref } from "vue"
 import { useStore } from "vuex"
-// import { testDataset } from "@/services/skywardFinanceService/types"
+// import { testDataset } from "@/models/services/skywardFinanceService/types"
 import { useSkywardFinanace } from "@/hooks/auction"
 import { useI18n } from 'vue-i18n'
 import AuctionModel from '@/models/auction';

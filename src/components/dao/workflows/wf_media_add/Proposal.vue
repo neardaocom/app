@@ -60,7 +60,7 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import VersionHelper from '@/models/utils/VersionHelper'
 import {
     MDBSwitch,

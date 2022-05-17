@@ -7,12 +7,10 @@ import {
     WalletConnection,
     Near,
 } from 'near-api-js';
-import DaoContractPool from './DaoContractPool';
-import DaoFactory from './DaoFactory';
-import DaoContractService from './services/DaoContractService';
-import ProviderContractService from './services/ProviderContractService';
-import NearAccountService from './services/NearAccountService';
-import FactoryContractService from "./services/FactoryContractService";
+import DaoContractService from '../nearBlockchain/DaoContractService';
+import FactoryContractService from "../nearBlockchain/FactoryContractService";
+import NearAccountService from '../nearBlockchain/NearAccountService';
+import ProviderContractService from '../nearBlockchain/ProviderContractService';
 
 export default class Factory {
     private config: any;
@@ -35,14 +33,6 @@ export default class Factory {
 
     createWalletAccount(wallet: WalletConnection): Account {
         return wallet.account();
-    }
-
-    createDaoContractPool(near: Near, account: Account): DaoContractPool {
-        return new DaoContractPool(near, account);
-    }
-
-    createDaoFactory(service: FactoryContractService): DaoFactory {
-        return new DaoFactory(service);
     }
 
     createDaoContractService(account: Account, contractId: string): DaoContractService {

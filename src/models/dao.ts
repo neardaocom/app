@@ -13,16 +13,15 @@ import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
 import loValues from "lodash/values"
 import { templateMetas, actionMetas } from "@/data/workflow"
-import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/types/dao';
+import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from '@/models/dao/types/dao';
 import Decimal from "decimal.js";
 import moment from 'moment';
 import { CodeValue, IDValue, Translate } from '@/models/utils/types/generics';
-import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceLog, WFMetaTemplate, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/types/workflow'
-import { parse as rightsParse } from "@/models/rights";
+import { WFAction, WFActionCall, WFActionFunctionCall, WFActivity, WFInstance, WFInstanceLog, WFMetaTemplate, WFSettings, WFSettingsAction, WFTemplate, WFTransition } from '@/models/dao/types/workflow'
+import Rights from "@/models/dao/Rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
-import { gasDefault, depositDefault } from "@/models/workflow";
-import NearUtils from '@/models/nearBlockchain/Utils'
+import NearUtils from "@/models/nearBlockchain/Utils"
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -199,16 +198,16 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
                     action = {
                         id: index - 1,
                         activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? depositDefault,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? NearUtils.gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? NearUtils.depositDefault,
                         method: loSnakeCase(actionChain.action),
                     }
                 } else { // functionCall
                     action = {
                         id: index - 1,
                         activityId: activity.id,
-                        gas: templateMeta?.actions[index - 1]?.gas ?? gasDefault,
-                        deposit: templateMeta?.actions[index - 1]?.deposit ?? gasDefault,
+                        gas: templateMeta?.actions[index - 1]?.gas ?? NearUtils.gasDefault,
+                        deposit: templateMeta?.actions[index - 1]?.deposit ?? NearUtils.gasDefault,
                         fncallReceiver: actionChain.action_data.FnCall.id[0],
                         fncallMethod: actionChain.action_data.FnCall.id[1],
                         fncallGas: actionChain.action_data.FnCall.tgas,
@@ -242,15 +241,15 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
             settingsItem.activity_rights.forEach((rightsChain, index) => {
                 settingsActions.push({
                     actionId: index,
-                    rights: rightsChain.map((rightChain) => rightsParse(rightChain))
+                    rights: rightsChain.map((rightChain) => Rights.parse(rightChain))
                 })
             })
             // settings
             settings.push({
                 id: index,
                 constants: [],
-                proposeRights: settingsItem.allowed_proposers.map(item => rightsParse(item)),
-                voteRight: rightsParse(settingsItem.allowed_voters),
+                proposeRights: settingsItem.allowed_proposers.map(item => Rights.parse(item)),
+                voteRight: Rights.parse(settingsItem.allowed_voters),
                 voteLevel: {
                     type: (settingsItem.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
                     quorum: settingsItem.quorum,
