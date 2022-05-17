@@ -64,7 +64,7 @@ import Settings from './dao/Settings.vue'
 import Treasury from './dao/Treasury.vue'
 import Governance from './dao/Governance.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, provide } from 'vue'
+import { ref, onMounted, provide, inject } from 'vue'
 import { getRole } from "@/models/dao";
 import Rights from '@/models/dao/Rights'
 import DaoLoader from '@/models/dao/DaoLoader'

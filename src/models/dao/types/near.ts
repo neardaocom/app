@@ -1,3 +1,3 @@
-export type Treasury {
+export type Treasury = {
     near: number;
 }

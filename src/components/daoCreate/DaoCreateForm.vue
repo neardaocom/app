@@ -274,7 +274,7 @@ export default {
         const config = inject('config')
         const store = useStore()
 
-        const factoryAccount = computed(() => (config.near.contractName))
+        const factoryAccount = computed(() => (config.value.near.contractName))
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))
