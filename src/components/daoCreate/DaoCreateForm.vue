@@ -177,7 +177,7 @@
 
                 <div class="row">
                     <div class="col-md-6">
-                        <h5 class="text-muted">{{ t('default.tokens') }}</h5>
+                        <h5 class="text-muted">{{ t('default.governance_tokens') }}</h5>
                         <hr>
                           <dl class="row">
                             <FormSummary :name="t('default.dao_ft_name')" :value="values.dao_ft_name"/>

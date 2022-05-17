@@ -14,9 +14,6 @@
           <i class="bi bi-check2-circle me-1"/>
           {{ t('default.in_progress') }}
         </router-link>
-        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.treasury') }}
-        </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.members') }}
         </router-link>
@@ -38,6 +35,14 @@
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
           {{ t('default.settings') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
+          {{ t('default.treasury') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'governance' }}" :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
+          {{ t('default.governance') }}
         </router-link>
       </div>
       <!-- Left -->

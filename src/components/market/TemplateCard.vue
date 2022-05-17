@@ -21,7 +21,7 @@
                </small>
             </MDBCardText>
             <MDBCardText>
-               <div class="d-flex justify-content-between">
+               <div class="d-flex justify-content-between align-items-center">
                   <span>{{`${t("default.created_by")} ${creator.name}` }} </span>
                   <MDBBtn rounded @click.prevent="click" class="text-white fw-bold" :class="colorButton" >
                      {{ template.status }}
