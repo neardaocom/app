@@ -16,4 +16,8 @@ export default class ObjectHelper {
   static first(object: any) {
     return (loValues(object) ?? [undefined])[0]
   }
+
+  static toBase64(object: any) {
+    return Buffer.from(JSON.stringify(object)).toString('base64')
+  }
 }

@@ -36,7 +36,7 @@ export default {
 
         const {t} = useI18n()
 
-        const factoryAccount = computed(() => (config.near.contractName))
+        const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
 
         const description = ref('')

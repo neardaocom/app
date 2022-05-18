@@ -32,6 +32,19 @@ const routes = [
     }
   },
   {
+    path: '/creating',
+    name: 'dao-creating',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreating.vue'),
+    beforeEnter: (to: any, from: any, next: any) => {
+      if (store.getters['near/isSignedIn']) {
+        next()
+      } else {
+        store.commit('near/signIn', {successUrl: window.location.origin + to.fullPath, errorUrl: window.location.origin + '/error'})
+        next(false)
+      }
+    }
+  },
+  {
     path: '/market/:id?',
     name: 'market',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/Market.vue')

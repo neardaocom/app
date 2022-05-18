@@ -197,6 +197,7 @@
   "order_name_asc": "Name asc.",
   "order_name_desc": "Name desc.",
   "create_dao": "Create DAO",
+  "create_token": "Create TOKEN",
   "create_a_dao": "Create a DAO",
   "strat_a_dao": "Start a DAO",
   "create": "Create",

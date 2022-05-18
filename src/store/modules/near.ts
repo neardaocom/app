@@ -22,7 +22,7 @@ const getters = {
       return state.service.walletConnection.account()
     },
     getFactoryAccount: (state: any) => {
-      return state.service.config !== undefined ? state.service.config.contractName : undefined
+      return state.service.config !== undefined ? state.service.config.daoFactory : undefined
     },
     getWallet: (state: any) => {
       return state.service.walletConnection !== undefined ? state.service.walletConnection : undefined

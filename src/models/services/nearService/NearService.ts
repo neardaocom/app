@@ -58,7 +58,7 @@ class NearService {
 
     const account = this.walletConnection.account();
 
-    this.factoryContract = new FactoryContract(account, this.config.contractName);
+    this.factoryContract = new FactoryContract(account, this.config.daoFactoryAccountId);
 
     this.providerContract = new ProviderContract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME);
 
@@ -74,7 +74,7 @@ class NearService {
   }
 
   signIn(successUrl?: string, errorUrl?: string) {
-    return this.walletConnection.requestSignIn(this.config.contractName, this.config.name, successUrl, errorUrl);
+    return this.walletConnection.requestSignIn(this.config.domainAccountId, this.config.name, successUrl, errorUrl);
   }
 
   /**

@@ -90,7 +90,7 @@
         return this.$store.getters['near/isSignedIn']
       },
       contractName() {
-        return window.process.env.VUE_APP_NEAR_CONTRACT_NAME
+        return this.config.near.domainAccountId
       }
     },
     methods: {

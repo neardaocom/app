@@ -21,7 +21,7 @@ export default class DaoList {
     this.n = n
   }
 
-  async load(from: number, limit: number, factoryAccount: string, nearPrice: number) {
+  async load(from: number, limit: number, factoryAccountId: string, nearPrice: number) {
 
     const tagTransformer = new TagFromFactoryTransformer(this.t)
     const tags = await this.daoFactory.getTags(tagTransformer)
@@ -30,7 +30,7 @@ export default class DaoList {
     const list = await this.daoFactory.getDaoList(from, limit, daoTransformer)
 
     // load treasury
-    const wallets = await this.near.getAccountsAmount(list.map((item) => item.id + '.' + factoryAccount))
+    const wallets = await this.near.getAccountsAmount(list.map((item) => item.id + '.' + factoryAccountId))
     
     // console.log(wallets)
     list.forEach((element, index) => {

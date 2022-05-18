@@ -29,7 +29,7 @@ export default {
     provide('loader', loader)
 
     // init
-    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPrice(config)
+    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPrice(config.value)
     const { listInterval, listResolve } = useDaoLoad(loader, logger, notify, config.value)
 
     onMounted(async () => {

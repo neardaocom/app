@@ -31,6 +31,24 @@ export default class Utils {
         return new Decimal(amount).div(this.yoctoNear).toNumber();
     }
 
+    /**
+     * 1.5 => 1.5 * 10^24 => 1500000000000000000000000
+     * 
+     * @returns string
+     */
+    static amountToDecimals(amount: string, decimals: number): string {
+        return new Decimal(amount).mul(Decimal.pow(10, decimals)).toFixed(0);
+    }
+
+    /**
+     * 1500000000000000000000000 => 1500000000000000000000000 / 10^24 => 1.5
+     * 
+     * @returns string
+     */
+    static amountFromDecimals(amount: string, decimals: number): string {
+        return new Decimal(amount).div(Decimal.pow(10, decimals)).toFixed();
+    }
+
     static toTGas(amount: number): string {
         return Decimal.mul(amount, this.tGas).toFixed();
     }

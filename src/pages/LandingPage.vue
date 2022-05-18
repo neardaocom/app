@@ -66,7 +66,7 @@
           </div>
         </div>
 
-        <MDBBtn @click="neardao" rounded size="lg" class="text-white gradient-background m-2 fw-normal mb-8" style="width:228px">Join {{config.app.brandName}}</MDBBtn>
+        <MDBBtn @click="neardao" rounded size="lg" class="text-white bg-gradient-100 m-2 fw-normal mb-8" style="width:228px">Join {{config.app.brandName}}</MDBBtn>
 
         <div class="mb-5">
           <h6 class="text-muted me-3">{{ t('default.connect_with_us') }}</h6>

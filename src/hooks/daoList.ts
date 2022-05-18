@@ -18,7 +18,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
             const nearPriceUsd = store.getters['market/getNearPrice']
             const daoFactory = await loader?.value.get('dao/Factory')
             const daoList = new DaoList(daoFactory.value.createDaoFactory(), daoFactory.value.createNear(), t, n)
-            await daoList.load(0, 100, config.near.contractName, nearPriceUsd)
+            await daoList.load(0, 100, config.near.daoFactoryAccountId, nearPriceUsd)
             store.commit('near/setList', daoList.getList())
         } catch (e) {
             logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
@@ -44,7 +44,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
 
 export const useList = (config: Config) => {
     const store = useStore()
-    const factoryAccount = computed(() => (config.near.contractName))
+    const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
 
     const loadingProgress = ref(0)
     const list = computed(() => store.getters['near/getList'] ?? [])
@@ -61,7 +61,7 @@ export const useList = (config: Config) => {
 
 export const useListTop = (count: number = 3, config: Config) => {
     const store = useStore()
-    const factoryAccount = computed(() => (config.near.contractName))
+    const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
 
     const list = computed(() => store.getters['near/getList'] ?? [])
     const topList = ref([])

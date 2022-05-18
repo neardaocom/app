@@ -7,10 +7,12 @@ import {
     WalletConnection,
     Near,
 } from 'near-api-js';
-import DaoContractService from '../nearBlockchain/DaoContractService';
-import FactoryContractService from "../nearBlockchain/FactoryContractService";
-import NearAccountService from '../nearBlockchain/NearAccountService';
-import ProviderContractService from '../nearBlockchain/ProviderContractService';
+import DaoContractService from './DaoContractService';
+import FactoryContractService from "./FactoryContractService";
+import NearAccountService from './NearAccountService';
+import ProviderContractService from './ProviderContractService';
+import FtFactoryContractService from './FtFactoryContractService';
+import FtContractService from './FtContractService';
 
 export default class Factory {
     private config: any;
@@ -28,7 +30,7 @@ export default class Factory {
     }
 
     createWalletConnection(near: Near): WalletConnection {
-        return new WalletConnection(near, this.config.contractName);
+        return new WalletConnection(near, this.config.domainAccountId);
     }
 
     createWalletAccount(wallet: WalletConnection): Account {
@@ -40,7 +42,7 @@ export default class Factory {
     }
 
     createFactoryContractService(account: Account): FactoryContractService {
-        return new FactoryContractService(account, this.config.contractName);
+        return new FactoryContractService(account, this.config.daoFactoryAccountId);
     }
 
     createNearAccountService(account: Account): NearAccountService {
@@ -50,5 +52,13 @@ export default class Factory {
     // 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME
     createProviderContractService(account: Account, providerId: string): ProviderContractService {
         return new ProviderContractService(account, providerId);
+    }
+
+    createFtFactoryContractService(account: Account, contractId: string): FtFactoryContractService {
+        return new FtFactoryContractService(account, contractId);
+    }
+
+    createFtContractService(account: Account, contractId: string): FtContractService {
+        return new FtContractService(account, contractId);
     }
 }

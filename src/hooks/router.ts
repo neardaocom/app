@@ -11,3 +11,19 @@ export const useRouteFilter = () => {
         rSearch, rOrder
     }
 }
+
+export const useNearBlockchainTransaction = () => {
+    const route = useRoute()
+    const transactionHashes = computed(() => loGet(route, ['query', 'transactionHashes']))
+    const transactionStatus = computed(() => {
+        if (transactionHashes.value !== undefined) {
+            return loGet(route, ['query', 'errorCode']) || 'success'
+        } else {
+            return undefined
+        }
+    })
+
+    return {
+        transactionHashes, transactionStatus
+    }
+}

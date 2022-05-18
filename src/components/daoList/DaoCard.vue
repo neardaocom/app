@@ -13,7 +13,7 @@
             </div>
             <div class="text-muted small">
                {{t('default.wallet')}} 
-               <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.id + '.' + this.factoryAccount" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
+               <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.id + '.' + this.config.domainAccountId" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
             </div>
          </div>
          <div class="mt-3 small">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
    MDBCard,
@@ -59,15 +60,15 @@ export default {
    },
 
    setup () {
+      const config = inject('config')
       const { t } = useI18n()
       const store = useStore()
 
-      const factoryAccount = computed(() => store.getters['near/getFactoryAccount'])
       const walletUrl = computed(() => store.getters['near/getWalletUrl']) 
 
       return {
          t,
-         factoryAccount,
+         config,
          walletUrl
       }
    }

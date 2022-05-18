@@ -12,7 +12,7 @@
                     </div>
                     <!-- Account --> 
                     <div class="col-12 col-md-6">
-                        <InputString :labelName="t('default.account')" id="dao_account" :addon="`.${factoryAccount}`"/>
+                        <InputString :labelName="t('default.account')" id="dao_account" :addon="`.${daoFactoryAccountId}`"/>
                     </div>
 
                     <!-- Purpose -->
@@ -57,6 +57,11 @@
                     <!-- ftName -->
                     <div class="col-12 col-md-4">
                         <InputString :labelName="t('default.dao_ft_name')" id="dao_ft_name" :tooltip="t('default.ft_name_tooltip')"/>
+                    </div>
+
+                    <!-- Account --> 
+                    <div class="col-12 col-md-6">
+                        <InputString :labelName="t('default.account')" id="dao_ft_account" :addon="`.${ftFactoryAccountId}`"/>
                     </div>
                 
                     <!-- ftAmount -->
@@ -159,58 +164,7 @@
                 {{ t('default.summary') }}
             </MDBStepperHead>
             <MDBStepperContent>
-                <div class="row">
-                    <div class="col-6">
-                        <dl class="row">
-                            <FormSummary :name="t('default.dao_name')" :value="values.dao_name"/>
-
-                            <FormSummary :name="t('default.account')" :value="values.dao_account"/>
-
-                            <FormSummary :name="t('default.purpose_short')" :value="values.dao_purpose"/>
-
-                            <FormSummary :name="t('default.type')" :value="t('default.' + values.dao_type)"/>
-
-                            <FormSummary :name="t('default.founders')" :value="council.join(', ')"/>
-                        </dl> 
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <h5 class="text-muted">{{ t('default.governance_tokens') }}</h5>
-                        <hr>
-                          <dl class="row">
-                            <FormSummary :name="t('default.dao_ft_name')" :value="values.dao_ft_name"/>
-
-                            <FormSummary :name="t('default.amount')" :value="values.dao_ft_amount"/>
-
-                            <FormSummary :name="t('default.founders_unlock')" :value="(ftCouncilShare ? ftCouncilShare : '0') + '%'"/>
-                            
-                            <FormSummary :name="t('default.dao_ft_init_distribution')" :value="(values.dao_ft_init_distribution ? values.dao_ft_init_distribution  : '0') + '%'"/>
-                            
-                            <FormSummary :name="t('default.lenght_founders_vesting')" :value="unlockingTime"/>
-
-                            <FormSummary :name="t('default.community_fund')" :value="(ftCommunityShare ? ftCommunityShare : '0') + '%'"/>
-                        </dl>
-                    </div>
-
-                    <div class="col-md-6">
-                        <h5 class="text-muted">{{ t('default.voting') }}</h5>
-                        <hr>
-                        <dl class="row">
-                            <FormSummary :name="t('default.dao_vote_approve_threshold')" :value="(voteApproveThreshold ? voteApproveThreshold : '0') + '%'"/>
-
-                            <FormSummary :name="t('default.dao_vote_quorum')" :value="voteQuorum ? voteQuorum : '0' + '%'" />
-
-                            <FormSummary :name="t('default.dao_vote_duration_days')" :value="voteDurationDays"/>
-
-                            <FormSummary :name="t('default.dao_vote_duration_hours')" :value="voteDurationHours"/>
-
-                            <FormSummary :name="t('default.dao_vote_duration_minutes')" :value="voteDurationMinutes"/>
-                        </dl>       
-                    </div>
-                </div> 
-
+                <Summary :values="formData" />
                 <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn>
                 <!-- TODO: Change button to big like landing page -->
             </MDBStepperContent>
@@ -236,18 +190,19 @@ import InputString from '@/components/forms/InputString.vue'
 import Select from '@/components/forms/Select.vue'
 import InputNumber from '@/components/forms/InputNumber.vue';
 import TooltipLabel from '@/components/forms/TooltipLabel.vue'
-import FormSummary from '@/components/forms/FormSummary.vue'
 import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
-import moment from 'moment'
+import Summary from '@/components/daoCreate/Summary.vue'
 import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
-import { computed, ref, inject } from 'vue';
+import { computed, ref, inject, toRaw } from 'vue';
 import { useStore } from 'vuex'
 import { onMounted, watch, watchEffect } from '@vue/runtime-core';
 import ObjectHelper from '@/models/utils/ObjectHelper'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
 import NearUtils from "@/models/nearBlockchain/Utils";
+import { useRouter } from 'vue-router'
+import { useFormStep } from "@/hooks/createDao";
 
 export default {
     components: {
@@ -264,8 +219,8 @@ export default {
         InputString,
         Select,
         InputNumber,
-        FormSummary,
-        FromErrorMessage
+        FromErrorMessage,
+        Summary,
     },
     setup () {
         const {t} = useI18n()
@@ -273,21 +228,26 @@ export default {
         const notify = inject('notify')
         const config = inject('config')
         const store = useStore()
+        const router = useRouter()
+        const { formSubmited } = useFormStep()
 
-        const factoryAccount = computed(() => (config.value.near.contractName))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+
+        const daoFactoryAccountId = computed(() => (config.value.near.daoFactoryAccountId))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(daoFactoryAccountId.value))
+        const ftFactoryAccountId = computed(() => (config.value.near.ftFactoryAccountId))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const schema = computed(() => {
             return {
                 dao_name: 'required|min:3|max:64',
-                dao_account: `required|accountNotExists:${factoryAccount.value}`,
+                dao_account: `required|accountNotExists:${daoFactoryAccountId.value}`,
                 dao_purpose: 'required|min:3|max:160',
                 dao_type: 'required',
                 dao_council: `accountExists:${accountPostfix.value}`,
                 council_array: 'required',
                 dao_ft_name: 'required|min:3|max:64|alpha',
+                dao_ft_account: `required|accountNotExists:${ftFactoryAccountId.value}`,
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
                 dao_ft_init_distribution: 'required|strIsNumber|strNumMin:0|strNumMax:100',
                 dao_unlocking_year:'required|strIsNumber|strNumMin:0|strNumMax:20',
@@ -317,13 +277,17 @@ export default {
             ['4000000', '50', 1, 70, 33, 20]
         ]
 
-
         watchEffect(() => {ftCommunityShare.value = 100 - ftCouncilShare.value})
         watchEffect(() => {disabledUnlocking.value = ftCouncilShare.value === 0 ? true : false})
 
          watch(() => [values.dao_name], () => {
             setFieldValue('dao_account', loLowerCase(values.dao_name).replace(/\s/g, '') )
             setFieldTouched('dao_account', true)
+        })
+
+        watch(() => [values.dao_ft_name], () => {
+            setFieldValue('dao_ft_account', loLowerCase(values.dao_ft_name).replace(/\s/g, '') )
+            setFieldTouched('dao_ft_account', true)
         })
 
         watch(() => [values.dao_type], () => {
@@ -351,24 +315,18 @@ export default {
             council.value = council.value.filter((el) => el !== removedCouncil )
         }
 
-        const onSubmit = handleSubmit(values => {
-            console.log('onSubmit')
-            createDao(values)
-        }, () => {
-            console.log('onSubmit - 2')
-            if(Object.keys(errors.value).length === 1 && errors.value['dao_council']){
-                createDao(values)
-            }
-        });
-
         onMounted(() => {
             values.dao_type = 'dao'
             values.dao_unlocking_year = 3
             values.dao_unlocking_month = 0
         })
 
+        const daoAccountId = computed(() => values.dao_account ? values.dao_account + '.' + daoFactoryAccountId.value : null)
+        const ftAccountId = computed(() => values.dao_ft_account ? values.dao_ft_account + '.' + ftFactoryAccountId.value : null)
+
+        /*
         const createDao = (values) => {
-            const accountId = values.dao_account + '.' + factoryAccount.value
+            const accountId = values.dao_account + '.' + daoFactoryAccountId.value
             // set accountId to localStorage because of redirection
             localStorage.create_dao_account = accountId
 
@@ -392,6 +350,7 @@ export default {
                 10
             )
         }
+        */
 
         // type loading
         onMounted(() => {
@@ -409,19 +368,47 @@ export default {
 
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
         const ftCouncilShareComp = computed(() => new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
-        const unlockingTime = computed(() => `${values.dao_unlocking_year ? `${values.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.dao_unlocking_month > 0 ? `${values.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
 
         // const step = ref(null)
         // watchEffect(() => {
         //     console.log(step.value?.className);
         // })
-        
+
+        const formData = computed(() => ({
+            ...values,
+            ftCouncilShare: ftCouncilShare.value,
+            ftCommunityShare: ftCommunityShare.value,
+            voteApproveThreshold: voteApproveThreshold.value,
+            voteQuorum: voteQuorum.value,
+            voteDurationDays: voteDurationDays.value,
+            voteDurationHours: voteDurationHours.value,
+            voteDurationMinutes: voteDurationMinutes.value,
+        }))
+
+        const onSubmit = handleSubmit(() => {
+            // console.log('onSubmit')
+            // createDao(values)
+            
+            formSubmited(formData.value)
+            router.push({name: 'dao-creating'})
+        }, () => {
+            console.log('onSubmit - 2')
+            if(Object.keys(errors.value).length === 1 && errors.value['dao_council']){
+                // createDao(values)
+                formSubmited(formData.value)
+                router.push({name: 'dao-creating'})
+            }
+        });
 
         return {
             t,
-            factoryAccount,
+            formData,
+            daoFactoryAccountId,
+            ftFactoryAccountId,
             accountPostfix,
+            daoAccountId,
+            ftAccountId,
             typeOptions,
             onSubmit,
             council,
@@ -436,7 +423,6 @@ export default {
             voteDurationHours,
             voteDurationMinutes,
             values,
-            unlockingTime,
             addCouncil,
             removeCouncil,
             councilErrorMessage,
