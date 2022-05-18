@@ -1,6 +1,5 @@
 import { MarketConfig } from "@/config/market";
 import axios from "axios"
-// import { ExchangeInterface } from "./Interface"
 import get from "lodash/get"
 
 export default class CoinGeckoExchange {
@@ -12,7 +11,7 @@ export default class CoinGeckoExchange {
 
   async getActualPrice(id: string): Promise<number | null> {
     let price: number | null = null
-    return 10.5 // TODO: local
+    // return 10.5 // TODO: local
     await axios.get(
       this.config.coinGectoUrl,
       {
