@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { ref, toRefs } from "vue";
+import { ref, toRefs, inject } from "vue";
 import { computed, reactive } from "@vue/reactivity";
 import {
   MDBCard, MDBCardBody, MDBCheckbox
@@ -43,7 +43,7 @@ import StringHelper from '@/models/utils/StringHelper'
 import _ from 'lodash'
 import { useIPFS } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
-import { DAODocsFileType } from '@/types/dao';
+import { DAODocsFileType } from '@/models/dao/types/dao';
 import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
 import ResourcesTable from '@/components/dao/resources/ResourcesTable.vue'
@@ -61,6 +61,8 @@ export default {
     },
   },
   setup(props) {
+    const config = inject('config')
+
     const { docs } = toRefs(props)
     //console.log(docs.value);
     const files = transform(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
@@ -73,7 +75,7 @@ export default {
     const { ipfsService } = useIPFS()
     const loadingProgress = ref(0)
 
-    const { rSearch } = useRouter()
+    const { rSearch } = useRouter(config)
 
     const searchQuery = ref(rSearch.value)
     const filterType = reactive({

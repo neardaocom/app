@@ -45,7 +45,7 @@ import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
 import { useStore } from 'vuex'
 import Validator from '@/models/utils/Validator'
-import { yoctoNear } from "@/services/nearService/constants";
+import { yoctoNear } from "@/models/services/nearService/constants";
 import Decimal from 'decimal.js'
 import {
   MDBBtn,
@@ -187,7 +187,7 @@ export default {
     // liguidity
     const addLiquidity = () => {
         validate()
-        if (isValid(errors) === true) {
+        if (Validator.isValid(errors) === true) {
             const amount_2 = new Decimal(amount2.value).mul(yoctoNear).toFixed();
             const amount_1 = new Decimal(amount1.value).mul(10 ** tokenDecimals.value).toFixed();
 

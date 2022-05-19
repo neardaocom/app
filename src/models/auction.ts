@@ -1,4 +1,4 @@
-import { Sale } from "@/services/skywardFinanceService/types"
+import { Sale } from "@/models/services/skywardFinanceService/types"
 import { UnsupportedError } from "@/models/utils/errors"
 import Decimal from "decimal.js"
 import DateHelper from "@/models/utils/DateHelper"

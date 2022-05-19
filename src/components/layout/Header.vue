@@ -1,7 +1,7 @@
 <template>
   <header style="margin-top: 58px">
     <MDBNavbar expand="lg" light bg="white" position="top" container>
-      <MDBNavbarBrand href="/"><img :src="'/img/logo_neardao.png'" alt="" class="navbar-logo-image"/> <span class="navbar-logo-text">{{appName}}</span></MDBNavbarBrand>
+      <MDBNavbarBrand href="/"><img :src="'/img/logo_neardao.png'" alt="" class="navbar-logo-image"/> <span class="navbar-logo-text">{{ config.app.brandName }}</span></MDBNavbarBrand>
       <MDBNavbarToggler
         @click="collapse = !collapse"
         target="#sidenav"
@@ -9,7 +9,7 @@
       ></MDBNavbarToggler>
       <MDBCollapse v-model="collapse" id="sidenav">
         <MDBNavbarNav right class="ms-auto ">
-          <MDBNavbarItem v-if="false" class="mx-2" :to="{name: 'landing-page', query: {}}" :title="appName"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ appName }}</span></MDBNavbarItem>
+          <MDBNavbarItem v-if="false" class="mx-2" :to="{name: 'landing-page', query: {}}" :title="config.app.brandName"><MDBIcon class="pe-2" icon="home" size="lg"></MDBIcon> <span class="d-lg-nonee">{{ config.app.brandName }}</span></MDBNavbarItem>
           
           <MDBNavbarItem class="mx-2" :to="{name: 'dao-list', query: {}}" :title="t('default.organizations')"><i class="bi bi-people"/> <span class="fw-bold">{{ t('default.organizations') }}</span></MDBNavbarItem>
           
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import { ref } from 'vue';
+  import { ref, inject } from 'vue';
   import {
     MDBBtn,
     MDBNavbar,
@@ -68,11 +68,13 @@
       }
     },
     setup() {
+      const config = inject('config')
       const collapse = ref(false);
       const dropdown = ref(false);
       const { t } = useI18n();
       return {
         t,
+        config,
         collapse,
         dropdown
       }
@@ -80,9 +82,6 @@
     computed: {
       walletId() {
         return this.$store.getters['near/getAccountId']
-      },
-      appName() {
-        return process.env.VUE_APP_BRAND_NAME
       },
       walletUrl() {
         return this.$store.getters['near/getWalletUrl']

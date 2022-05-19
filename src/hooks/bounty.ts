@@ -1,4 +1,4 @@
-import { DAO, DAOProposal } from "@/types/dao";
+import { DAO, DAOProposal } from "@/models/dao/types/dao";
 import { getTemplateByCode } from "@/models/workflow";
 import loFilter from "lodash/filter";
 import loFind from "lodash/find";

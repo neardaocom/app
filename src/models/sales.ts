@@ -1,4 +1,4 @@
-import { Sale } from "@/services/refFinanceService/types";
+import { Sale } from "@/models/services/refFinanceService/types";
 import { UnsupportedError } from "@/models/utils/errors";
 import NumberHelper from "@/models/utils/NumberHelper";
 

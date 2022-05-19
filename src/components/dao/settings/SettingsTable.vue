@@ -39,7 +39,7 @@
 
 <script>
 import { voteLevelToTranslate } from "@/models/dao"
-import { toTranslate } from "@/models/rights";
+import Rights from "@/models/dao/Rights";
 import { getActivityById, settingsConstantsToTranslate, getActivityRights } from "@/models/workflow";
 import { useI18n } from 'vue-i18n';
 import { inject } from '@vue/runtime-core';
@@ -64,7 +64,7 @@ export default {
          return t('default.' + trans.key, trans.params)
       }
       const trans = (right) => {
-         const trans = toTranslate(right, dao.value.groups)
+         const trans = Rights.toTranslate(right, dao.value.groups)
          return t('default.' + trans.key, trans.params)
       }
       const activityName = (template, activitiId) => {

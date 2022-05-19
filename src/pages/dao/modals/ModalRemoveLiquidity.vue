@@ -105,7 +105,7 @@ export default {
   methods: {
     removeLiquidity(){
         this.validate()
-        if (isValid(this.errors) === true) {
+        if (Validator.isValid(this.errors) === true) {
             // const min_ft = new Decimal(this.sale.amounts[0] * this.amount / this.sale.total_shares).toFixed()
             // const min_near = new Decimal(this.sale.amounts[1] * this.amount / this.sale.total_shares).toFixed()
              const amount = new Decimal(this.amount).toFixed()

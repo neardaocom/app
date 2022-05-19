@@ -64,12 +64,14 @@ import Settings from './dao/Settings.vue'
 import Treasury from './dao/Treasury.vue'
 import Governance from './dao/Governance.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, provide } from 'vue'
-import { getRole, loadById } from "@/models/dao";
-import { getDAORights, getWalletRights } from '@/models/rights'
+import { ref, onMounted, provide, inject } from 'vue'
+import { getRole } from "@/models/dao";
+import Rights from '@/models/dao/Rights'
+import DaoLoader from '@/models/dao/DaoLoader'
 import { useRouter } from "@/hooks/dao";
-import { useStore } from 'vuex'
-import { useNear } from "@/hooks/vuex";
+// import { useStore } from 'vuex'
+// import { useNear, useWallet } from "@/hooks/vuex";
+import { useWallet } from "@/hooks/vuex";
 
 export default {
   components: {
@@ -79,10 +81,14 @@ export default {
     SkeletonTitle,
   },
   setup() {
+    const config = inject('config')
+    const loader = inject('loader')
+
     const { t } = useI18n()
-    const store = useStore()
-    const { nearService, wallet } = useNear()
-    const {rDaoId, rPage, rSearch, rOrder} = useRouter()
+    // const store = useStore()
+    // const { nearService, wallet } = useNear()
+    const { wallet } = useWallet()
+    const {rDaoId, rPage, rSearch, rOrder} = useRouter(config)
     const dao = ref({tags: []})
     const loaded = ref(false)
     const daoRights = ref([])
@@ -90,25 +96,35 @@ export default {
 
     provide('dao', dao)
 
-    onMounted(() => {
-      store.commit('near/setContract', rDaoId.value)
-      loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
-        .then(r => {
-          // console.log('load DAO', r)
-          //this.dao_state = r
-          dao.value = r
-          loaded.value = true
-          daoRights.value = getDAORights(r)
-          walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
-          // console.log(this.walletRights)
-        })
-        .catch((e) => {
-          //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-          //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-          //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
-          //this.$notify.flush()
-          console.log(e)
-        })
+    onMounted(async () => {
+      const daoFactory = await loader?.value.get('dao/Factory')
+      const servicePool = daoFactory.value.createServicePool();
+      const contractService = servicePool.getContract(rDaoId.value)
+      const accountService = await servicePool.getAccount(rDaoId.value)
+      const daoLoader = new DaoLoader(rDaoId.value, contractService, accountService, t)
+      dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
+      //console.log(dao.value)
+      loaded.value = true
+      daoRights.value = Rights.getDAORights(dao.value)
+      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.getAccountId())
+      //store.commit('near/setContract', rDaoId.value)
+      //loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
+      //  .then(r => {
+      //    // console.log('load DAO', r)
+      //    //this.dao_state = r
+      //    dao.value = r
+      //    loaded.value = true
+      //    daoRights.value = getDAORights(r)
+      //    walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
+      //    // console.log(this.walletRights)
+      //  })
+      //  .catch((e) => {
+      //    //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+      //    //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
+      //    //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
+      //    //this.$notify.flush()
+      //    console.log(e)
+      //  })
     })
 
     return { t, rDaoId, rPage, rSearch, rOrder, dao, loaded, daoRights, wallet, walletRights }

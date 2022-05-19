@@ -241,9 +241,9 @@ import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
 import moment from 'moment'
 import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
-import { computed, ref } from '@vue/reactivity';
+import { computed, ref, inject } from 'vue';
 import { useStore } from 'vuex'
-import { inject, onMounted, watch, watchEffect } from '@vue/runtime-core';
+import { onMounted, watch, watchEffect } from '@vue/runtime-core';
 import ObjectHelper from '@/models/utils/ObjectHelper'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
@@ -271,9 +271,10 @@ export default {
         const {t} = useI18n()
         const logger = inject('logger')
         const notify = inject('notify')
-        const store = useStore()   
+        const config = inject('config')
+        const store = useStore()
 
-        const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
+        const factoryAccount = computed(() => (config.value.near.contractName))
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))

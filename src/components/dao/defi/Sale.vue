@@ -56,7 +56,7 @@
     } from "mdb-vue-ui-kit";
     import ModalAddLiquidity from "../modals/ModalAddLiquidity.vue";
     import ModalRemoveLiquidity from "../modals/ModalRemoveLiquidity.vue";
-    import { GeneralTokenService } from '@/services/generalTokenService';
+    import { GeneralTokenService } from '@/models/services/generalTokenService';
 
     export default {
         components: {

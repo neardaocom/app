@@ -1,11 +1,13 @@
 import {getConfig} from "@/config/near"
-import NearService from "@/services/nearService/NearService"
+import NearService from "@/models/services/nearService/NearService"
 //import { signTransaction } from "near-api-js/lib/transaction"
 import { Commit } from "vuex"
+import { ListItemDto } from "@/models/dao/types/factory";
 
 // initial state
 const state = () => ({
-  service: undefined
+  service: undefined,
+  list: undefined,
 })
 
 // getters
@@ -36,6 +38,9 @@ const getters = {
     },
     getService: (state: any) => {
       return state.service
+    },
+    getList: (state: any) => {
+      return state.list
     }
 }
 
@@ -52,6 +57,9 @@ const actions = {
 
 // mutations
 const mutations = {
+  setList(state: any, list: ListItemDto[]) {
+    state.list = list
+  },
   setState(state: any, payload: any) {
     state.service = payload.service
   },

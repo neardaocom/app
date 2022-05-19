@@ -48,7 +48,7 @@
 
 <script>
 import { useI18n } from 'vue-i18n';
-import { DAODocsFileType } from '@/types/dao';
+import { DAODocsFileType } from '@/models/dao/types/dao';
 import {
   MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn
 } from 'mdb-vue-ui-kit'
