@@ -1,7 +1,12 @@
 import { Config } from "@/config";
-import { computed, Ref } from "vue";
+import { Loader } from "@/loader";
+import { computed, Ref, toRaw } from "vue";
 import { useStore } from "vuex";
 import DaoCreate from "@/models/dao/DaoCreate";
+import { useI18n } from "vue-i18n";
+import { NearConfig } from "@/config/near";
+import Decimal from "decimal.js";
+import NearUtils from "@/models/nearBlockchain/Utils";
 
 export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
     console.log(config.value, values.value)
@@ -61,19 +66,42 @@ export const useFormStep = () => {
     return { getState, formSubmited, tokenCreated, daoCreated }
 }
 
-export const useCreateDAO = (loader: Ref<Loader>, config: Ref<Config>, daoAccountId: string) => {
+export const useCreateDAO = (loader: Ref<Loader>, config: Ref<Config>, ftAccountId: string) => {
     const store = useStore()
+    const { t } = useI18n()
 
-    const createToken = async (formData: any) => {
+    const createDao = async (formData: any) => {
         const nearFactory = await loader.value.get('nearBlockchain/Factory')
+        const configNear = toRaw(config.value.near) as NearConfig
         const account = store.getters['near/getAccount'] // TODO: Rewrite login
         // const account = await loader.value.get('near/WalletAccount') // TODO: Rewrite login
         // console.log(account, config.value.near.ftFactoryAccountId)
-        const daoCreate = new DaoCreate(nearFactory.value.createFactoryContractService(account))
-        daoCreate.create(daoAccountId, formData.dao_ft_amount, formData.dao_ft_account, formData.dao_ft_name, initDistributionAmount, formData.council_array, formData.dao_ft_account.toUpperCase(), null)
+        const daoCreate = new DaoCreate(
+            nearFactory.value.createFactoryContractService(account),
+            nearFactory.value.createWfProviderContractService(account),
+            configNear,
+            t
+        )
+        // daoAccountId, formData.dao_ft_amount, formData.dao_ft_account, formData.dao_ft_name, initDistributionAmount, formData.council_array, formData.dao_ft_account.toUpperCase(), null
+        
+        daoCreate.create(
+            formData.dao_name,
+            formData.dao_purpose,
+            formData.dao_account,
+            ftAccountId,
+            new Decimal(formData.dao_ft_amount).toNumber(),
+            24,
+            formData.ftCouncilShare,
+            new Decimal(formData.dao_ft_init_distribution).toNumber(),
+            formData.council_array,
+            NearUtils.durationToChain({months: formData.dao_unlocking_month, years: formData.dao_unlocking_year}),
+            formData.voteApproveThreshold,
+            formData.voteQuorum,
+            NearUtils.durationToChain({days: formData.voteDurationDays, hours: formData.voteDurationHours, minutes: formData.voteDurationMinutes})
+        )
     }
 
     return {
-        createToken
+        createDao
     }
 }

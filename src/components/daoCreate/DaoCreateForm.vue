@@ -194,7 +194,7 @@ import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
 import Summary from '@/components/daoCreate/Summary.vue'
 import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
-import { computed, ref, inject, toRaw } from 'vue';
+import { computed, ref, inject } from 'vue';
 import { useStore } from 'vuex'
 import { onMounted, watch, watchEffect } from '@vue/runtime-core';
 import ObjectHelper from '@/models/utils/ObjectHelper'

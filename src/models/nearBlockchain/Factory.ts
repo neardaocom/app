@@ -10,14 +10,15 @@ import {
 import DaoContractService from './DaoContractService';
 import FactoryContractService from "./FactoryContractService";
 import NearAccountService from './NearAccountService';
-import ProviderContractService from './ProviderContractService';
+import WfProviderContractService from './WfProviderContractService';
 import FtFactoryContractService from './FtFactoryContractService';
 import FtContractService from './FtContractService';
+import { NearConfig } from '@/config/near';
 
 export default class Factory {
-    private config: any;
+    private config: NearConfig;
 
-    constructor(config: any) {
+    constructor(config: NearConfig) {
         this.config = config;
     }
 
@@ -49,9 +50,8 @@ export default class Factory {
         return new NearAccountService(account);
     }
 
-    // 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME
-    createProviderContractService(account: Account, providerId: string): ProviderContractService {
-        return new ProviderContractService(account, providerId);
+    createWfProviderContractService(account: Account): WfProviderContractService {
+        return new WfProviderContractService(account, this.config.wfProviderAccountId);
     }
 
     createFtFactoryContractService(account: Account, contractId: string): FtFactoryContractService {

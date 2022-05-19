@@ -6,6 +6,7 @@ import { UnsupportedError } from "@/models/utils/errors";
 
 import NearBlockchainFactory from "@/models/nearBlockchain/Factory";
 import DaoFactory from "@/models/dao/Factory";
+import { NearConfig } from "@/config/near";
 
 export default class Loader {
     private register: Register;
@@ -32,7 +33,7 @@ export default class Loader {
                     }
                     break;
                 case 'nearBlockchain/Factory': {
-                        const factory = new NearBlockchainFactory(this.config.near)
+                        const factory = new NearBlockchainFactory(this.config.near as NearConfig)
                         objectRef = ref(factory)
                     }
                     break;

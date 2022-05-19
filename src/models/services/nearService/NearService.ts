@@ -12,7 +12,7 @@ import BN from 'bn.js';
 
 import NearUtils from '@/models/nearBlockchain/Utils';
 import FactoryContract from '@/models/nearBlockchain/FactoryContractService';
-import ProviderContract from '@/models/nearBlockchain/ProviderContractService';
+import ProviderContract from '@/models/nearBlockchain/WfProviderContractService';
 import ServicePool from '@/models/dao/ServicePool';
 import loSet from "lodash/set"
 import loToString from "lodash/toString"
@@ -98,14 +98,14 @@ class NearService {
    * Provider: List
    */
   async providerList() {
-    return this.providerContract.list();
+    return this.providerContract.wfTemplates();
   }
 
   /**
    * Provider: Get
    */
    async providerGet(id: number) {
-    return this.providerContract.get(id);
+    return this.providerContract.wfTemplate(id);
   }
 
   /**

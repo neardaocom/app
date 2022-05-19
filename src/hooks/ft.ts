@@ -2,7 +2,7 @@ import { Config } from "@/config";
 import { Loader } from "@/loader"
 import FtCreate from "@/models/ft/FtCreate";
 import { Ref } from "vue";
-import Utils from "@/models/ft/Utils";
+import Utils from "@/models/dao/Utils";
 import { useStore } from "vuex";
 
 export const useCreateToken = (loader: Ref<Loader>, config: Ref<Config>, daoAccountId: string) => {
