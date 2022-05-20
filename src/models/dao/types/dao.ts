@@ -3,6 +3,7 @@ import { CodeValue, IDValue, Interval } from "@/models/utils/types/generics";
 import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
 import { TreasuryLock } from "./treasury";
+import { Staking } from "./staking";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -192,6 +193,7 @@ export type DAO = {
   proposals: DAOProposal[];
   workflows: WFInstance[];
   treasuryLocks: TreasuryLock[];
+  staking: Staking;
 }
 
 export type DAODTO = {

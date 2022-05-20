@@ -18,6 +18,7 @@ import NearUtils from "../nearBlockchain/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 import { listBasic } from "../../../tests/fixtures/treasury";
+import { basicStaking } from "../../../tests/fixtures/staking"
 
 export default class DaoLoader {
     private id: string;
@@ -90,6 +91,7 @@ export default class DaoLoader {
             proposals: execute.proposals,
             workflows: execute.workflows,
             treasuryLocks: listBasic(), //listEmpty()
+            staking: basicStaking(),
         }
     }
 

@@ -22,6 +22,7 @@ import Rights from "@/models/dao/Rights";
 import { keys } from 'lodash'
 import near from '@/store/modules/near'
 import NearUtils from "@/models/nearBlockchain/Utils"
+import { basicStaking } from '../../tests/fixtures/staking'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -608,7 +609,8 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
         tokenHolders: tokenHolders,
         templates: templates,
         workflows: workflows,
-        treasuryLocks: []
+        treasuryLocks: [],
+        staking: basicStaking(),
     }
 }
 
