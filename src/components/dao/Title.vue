@@ -1,8 +1,26 @@
 <template>
   <section>
     <!-- Background image -->
-    <div class="bg-image title-background-image">
+    <div class="bg-image title-background-image position-relative">
       <div class="mask">
+        <div class="d-flex position-absolute top-0 end-0 me-4 mt-3">
+          <MDBBtn tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'wallet_account' }}" size="sm" rounded class="bg-gradient-110 text-white me-2" >
+            <i class="bi bi-wallet2 me-2"/>{{t('default.dao_wallet')}}
+          </MDBBtn>
+            <MDBDropdown v-model="dropdown1">
+              <MDBDropdownToggle color="muted" size="sm" @click="dropdown1 = !dropdown1">
+              </MDBDropdownToggle>
+              <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
+                <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}">
+                  {{ t('default.about') }}
+                </MDBDropdownItem>
+                <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}">
+                  {{ t('default.dApps') }}
+                </MDBDropdownItem>
+              </MDBDropdownMenu>
+            </MDBDropdown>
+        </div>
+
         <div class="d-flex justify-content-center align-items-center h-100">
           <div class="">
             <img v-if="false" height="35" width="140" src="/img/near_logo.svg" alt="Near logo" />
@@ -17,14 +35,31 @@
 </template>
 
 <script>
+import { MDBBtn, MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from "mdb-vue-ui-kit";
+import { useI18n } from 'vue-i18n';
+import { ref } from '@vue/reactivity';
+
 export default {
   components: {
+    MDBBtn,
+    MDBDropdown, 
+    MDBDropdownToggle, 
+    MDBDropdownMenu, 
+    MDBDropdownItem
   },
   props: {
     dao: {
       type: Object,
       required: true,
     },
+  },
+  setup(){
+    const {t} = useI18n()
+    const dropdown1 = ref(false)
+    return{
+      t,
+      dropdown1
+    }
   }
 };
 </script>

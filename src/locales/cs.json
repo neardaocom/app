@@ -314,5 +314,10 @@
   "event": "Událost",
   "detail": "Detail",
   "unlocking_token": "Odemikání tokenu",
-  "total_token_value": "Total token value"
+  "total_token_value": "Total token value",
+  "next_unlock": "Příští odemčení",
+  "assets_to_withdraw": "Assets to withdraw",
+  "incentives": "Incentives",
+  "dao_wallet": "DAO wallet",
+  "to_withdraw": "K výběru"
 }
