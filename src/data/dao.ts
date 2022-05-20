@@ -61,4 +61,5 @@ export const daoTestOne: DAO = {
     ],
     templates: [],
     workflows: [],
+    treasuryLocks: [],
 }

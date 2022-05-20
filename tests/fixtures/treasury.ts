@@ -6,7 +6,7 @@ export const listEmpty = (): TreasuryLock[] => ([])
 export const listBasic = (): TreasuryLock[] => ([
     {id: 1, category: 'near', name: 'Council - Salary',  nextUnlock: new Date(), createdBy: null, assets: [
         {
-            asset: { type: 'near', accountId: 'near', name: 'NEAR', short: 'NEAR', icon: null, priceInUSD: 6.5,},
+            asset: { type: 'near', accountId: 'near', name: 'NEAR', symbol: 'NEAR', icon: null, priceInUSD: 6.5,},
             totalLocked: 200,
             unlocked: 20,
             locked: 100,
@@ -21,7 +21,7 @@ export const listBasic = (): TreasuryLock[] => ([
     ]},
     {id: 2, category: 'ft', name: 'Council - Allocation',  nextUnlock: new Date(), createdBy: null, assets: [
         {
-            asset: { type: 'ft', accountId: 'tkn.dao.near', name: 'DAO Govern. token', short: 'TKN', icon: null,},
+            asset: { type: 'ft', accountId: 'tkn.dao.near', name: 'DAO Govern. token', symbol: 'TKN', icon: null,},
             totalLocked: 100_000,
             unlocked: 0,
             locked: 100_000,
@@ -35,7 +35,7 @@ export const listBasic = (): TreasuryLock[] => ([
     ]},
     {id: 3, category: 'ft', name: 'Community - Allocation',  nextUnlock: new Date(), createdBy: null, assets: [
         {
-            asset: { type: 'ft', accountId: 'tkn.dao.near', name: 'DAO Govern. token', short: 'TKN', icon: null,},
+            asset: { type: 'ft', accountId: 'tkn.dao.near', name: 'DAO Govern. token', symbol: 'TKN', icon: null,},
             totalLocked: 300_000,
             unlocked: 0,
             locked: 300_000,

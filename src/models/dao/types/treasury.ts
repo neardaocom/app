@@ -22,7 +22,7 @@ export type TreasuryAsset = {
     type: string; // near, ft, nft
     accountId: string;
     name: string;
-    short: string;
+    symbol: string;
     icon: string|null;
     priceInUSD?: number;
 }
@@ -34,7 +34,7 @@ export type TreasuryAssetUnlocking = {
 
 export type TreasuryTotalLocked = {
     assetAccountId: string;
-    assetShort: string;
+    assetSymbol: string;
     assetIcon: string|null;
     amountLocked: number;
     amountUnlocked: number;

@@ -17,7 +17,7 @@ export default class TreasuryAnalytics {
                 } else {
                     resutls.push({
                         assetAccountId: asset.asset.accountId,
-                        assetShort: asset.asset.short,
+                        assetSymbol: asset.asset.symbol,
                         assetIcon: asset.asset.icon,
                         amountLocked: asset.locked,
                         amountUnlocked: asset.unlocked,

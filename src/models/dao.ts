@@ -608,6 +608,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
         tokenHolders: tokenHolders,
         templates: templates,
         workflows: workflows,
+        treasuryLocks: []
     }
 }
 
