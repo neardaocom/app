@@ -1,5 +1,5 @@
 <template>
-   <MDBCard tag="router-link" :to="{ name: 'dao', params: {id: dao.id + '.' + factoryAccount}}" :text="['start','reset']" class="mb-3">
+   <MDBCard tag="router-link" :to="{ name: 'dao', params: {id: dao.walletId}}" :text="['start','reset']" class="mb-3">
       <MDBCardBody>
 
          <div class="d-flex justify-content-between align-items-center">
@@ -13,7 +13,7 @@
             </div>
             <div class="text-muted small">
                {{t('default.wallet')}} 
-               <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.id + '.' + this.config.domainAccountId" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
+               <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.walletId" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
             </div>
          </div>
          <div class="mt-3 small">

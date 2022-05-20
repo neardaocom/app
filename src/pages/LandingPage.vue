@@ -33,7 +33,7 @@
 
         <div v-if="topList" class="row g-1 justify-content-center mb-2" >
           <h3 class="mb-3"> Top 3 DAOs </h3>
-          <router-link v-for="(dao) in topList" :key="dao.index" :to="{ name: 'dao', params: {id: dao.id + '.' + factoryAccount}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset mb-2" > 
+          <router-link v-for="(dao) in topList" :key="dao.index" :to="{ name: 'dao', params: {id: dao.walletId}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset mb-2" > 
             <MDBCard class="h-100">
               <MDBCardBody>
                 <!-- <h5 style="height: 15%">{{index+1}}.</h5> -->

@@ -18,7 +18,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
             const nearPriceUsd = store.getters['market/getNearPrice']
             const daoFactory = await loader?.value.get('dao/Factory')
             const daoList = new DaoList(daoFactory.value.createDaoFactory(), daoFactory.value.createNear(), t, n)
-            await daoList.load(0, 100, config.near.daoFactoryAccountId, nearPriceUsd)
+            await daoList.load(0, 100, nearPriceUsd)
             store.commit('near/setList', daoList.getList())
         } catch (e) {
             logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')

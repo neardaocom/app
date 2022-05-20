@@ -33,6 +33,13 @@ export type TagInput = {
     values: string[];
 }
 
+export type Tag = any // TODO: Write type
+
+export type Tags = {
+    last_id: number;
+    map: Tag[];
+}
+
 export type GroupSettings = {
     name: string;
     leader: string|null; // valid account_id
@@ -247,6 +254,18 @@ export type CreateDao = {
     treasury_partitions: TreasuryPartitionInput[];
 }
 
+export type Statistics = {
+    staking_id: string; // staking contract account id
+    token_id: string; // vote token contract account id
+    total_delegation_amount: string; // total delegated amount - numeric string
+    total_delegators_count: number; // total unique delegators count
+    ft_total_supply: number; // total supply of minted ft - number
+    decimals: number; // ft decimals count
+    total_members_count:  number; // total unique members
+    total_account_balance: string; // total NEAR on this account - numeric string
+    free_account_balance: string; // free NEAR on this account - numeric string
+}
+
 /**
  * FACTORY
  */
@@ -258,3 +277,9 @@ export type DaoInfo = {
     ft_amount: number;
     tags: number[];
 }
+
+/**
+ * TODO: Add types
+ */
+
+export type ProposeSettings = any

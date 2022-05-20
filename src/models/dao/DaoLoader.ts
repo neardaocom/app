@@ -18,6 +18,8 @@ import NearUtils from "../nearBlockchain/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 
+import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures
+
 export default class DaoLoader {
     private id: string;
     private dataChain: any[];
@@ -88,7 +90,29 @@ export default class DaoLoader {
             templates: execute.templates,
             proposals: execute.proposals,
             workflows: execute.workflows,
+            treasuryLocks: listBasic(), // listEmpty()
         }
+    }
+
+    async load() {
+        this.dataChain = await Promise.all([
+          this.service.getWfTemplates(),
+          this.service.getGroups(),
+          this.service.getTags('group'),
+          this.service.getTags('media'),
+          this.service.getMediaList(),
+          this.service.getTags('global'),
+          this.service.getProposals(0, 1000),
+          this.service.getDaoSettings(),
+          this.service.getStats(),
+          this.service.getFtMetadata(),
+          this.account.getState(),
+          this.service.getStorage(),
+        ]).catch((e) => {
+          throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
+        });
+
+        console.log(this.dataChain)
     }
 
     getAccountId(): string {
@@ -294,26 +318,5 @@ export default class DaoLoader {
             proposals: proposals,
             workflows: workflows,
         }
-    }
-
-    async load() {
-        this.dataChain = await Promise.all([
-          this.service.getWfTemplates(),
-          this.service.getGroups(),
-          this.service.getTags('group'),
-          this.service.getTags('media'),
-          this.service.getMediaList(),
-          this.service.getTags('global'),
-          this.service.getProposals(0, 1000),
-          this.service.getDaoSettings(),
-          this.service.getStats(),
-          this.service.getFtMetadata(),
-          this.account.getState(),
-          this.service.getStorage(),
-        ]).catch((e) => {
-          throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
-        });
-
-        console.log(this.dataChain)
     }
 }

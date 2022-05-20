@@ -2,6 +2,7 @@ import { IPFSFile } from "@/types/ipfs";
 import { CodeValue, IDValue, Interval } from "@/models/utils/types/generics";
 import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
+import { TreasuryLock } from "./treasury";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -190,6 +191,7 @@ export type DAO = {
   templates: WFTemplate[];
   proposals: DAOProposal[];
   workflows: WFInstance[];
+  treasuryLocks?: TreasuryLock[];
 }
 
 export type DAODTO = {

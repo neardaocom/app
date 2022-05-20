@@ -1,5 +1,6 @@
 import { Account, Contract} from 'near-api-js';
 import { factoryDaoList } from '../../../tests/fixtures/dao'
+import { DaoInfo } from './types/dao';
 export default class FactoryContractService {
   private contract: Contract & any;
 
@@ -7,14 +8,14 @@ export default class FactoryContractService {
     this.contract = new Contract(account, contractId, {
       viewMethods: [
         'get_dao_list',
-        'get_dao_info',
         'get_tags',
-        'get_stats',
-        'version_hash'
+        // 'get_dao_info', // TODO: Check API
+        // 'get_stats', // TODO: Check API
+        // 'version_hash' // TODO: Check API
       ],
       changeMethods: [
         'create',
-        'add_tags',
+        // 'add_tags', // TODO: Check API
       ],
     });
   }
@@ -23,7 +24,7 @@ export default class FactoryContractService {
    * DAO List
    * @returns Promise
    */
-  async getDaoList(from: number = 0, limit: number = 100) {
+  async getDaoList(from: number = 0, limit: number = 100): Promise<[string, DaoInfo][]> {
     //return factoryDaoList(); // TODO: local
     return this.contract.get_dao_list({from_index: from, limit: limit});
   }
@@ -32,37 +33,19 @@ export default class FactoryContractService {
    * Get tags
    * @returns Promise
    */
-  async getTags() {
+  async getTags(): Promise<string[]> {
     //return ['dao']; // TODO: local
     return this.contract.get_tags();
   }
 
-  /**
-   * Get dao info
-   * 
-   * @returns Promise
-   */
-  async getDaoInfo(daoId: string) {
-    return this.contract.get_dao_info({account: daoId});
-  }
-
-  /**
-   * Get dao stats
-   * 
-   * @returns Promise
-   */
-  async getDaoStats() {
-    return this.contract.get_stats();
-  }
-
-  /**
-   * Get newest version hash of contract
-   * 
-   * @returns Promise
-   */
-  async getNewestVersionHash(version: number = 0) {
-    return this.contract.version_hash({version: version});
-  }
+///**
+// * Get newest version hash of contract
+// * 
+// * @returns Promise
+// */
+//async getNewestVersionHash(version: number = 0) {
+//  return this.contract.version_hash({version: version});
+//}
 
   /**
    * Create DAO by factory

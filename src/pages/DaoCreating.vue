@@ -74,7 +74,7 @@ export default {
         const { daoAccountId, ftAccountId } = useAccounts(config, formData)
 
         const { createToken } = useCreateToken(loader, config, daoAccountId.value)
-        const { createDao } = useCreateDAO(loader, config, daoAccountId.value, ftAccountId.value)
+        const { createDao } = useCreateDAO(loader, config, ftAccountId.value)
 
 
         //const logger = inject('logger')
@@ -96,7 +96,7 @@ export default {
             }
         })
         return {
-            t, formCreateDao, createToken, createDao, formData, transactionHashes, transactionStatus
+            t, formCreateDao, createToken, createDao, formData, transactionHashes, transactionStatus, daoAccountId, ftAccountId
         }
     }
         

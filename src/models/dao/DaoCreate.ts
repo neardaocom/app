@@ -38,6 +38,7 @@ export default class DaoCreate {
         const standardFncalls = await this.provider.standardFncalls()
         const workflowWfAdd = await this.provider.defaultWfAdd()
         // setup vote settings
+        workflowWfAdd[3][0].scenario = "token_weighted"
         workflowWfAdd[3][0].approve_threshold = voteApproveThreshold
         workflowWfAdd[3][0].quorum = voteQuorum
         workflowWfAdd[3][0].duration = voteDuration
@@ -52,7 +53,7 @@ export default class DaoCreate {
             name: accountId,
             info: {
                 founded_s: DateHelper.nowToSeconds(),
-                name, 
+                name,
                 description: purpose,
                 ft_name: ftAccountId,
                 ft_amount: ftAmount,

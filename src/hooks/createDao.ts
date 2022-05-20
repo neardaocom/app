@@ -9,7 +9,6 @@ import Decimal from "decimal.js";
 import NearUtils from "@/models/nearBlockchain/Utils";
 
 export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
-    console.log(config.value, values.value)
     const daoFactoryAccountId = computed(
         () => config.value.near.daoFactoryAccountId
     );
@@ -82,8 +81,7 @@ export const useCreateDAO = (loader: Ref<Loader>, config: Ref<Config>, ftAccount
             configNear,
             t
         )
-        // daoAccountId, formData.dao_ft_amount, formData.dao_ft_account, formData.dao_ft_name, initDistributionAmount, formData.council_array, formData.dao_ft_account.toUpperCase(), null
-        
+
         daoCreate.create(
             formData.dao_name,
             formData.dao_purpose,
