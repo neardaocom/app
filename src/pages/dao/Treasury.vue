@@ -3,20 +3,9 @@
       <div class="mb-7">
          <h5 class="text-start mb-4">{{t('default.total_dao_locked_value')}}</h5>
          <div class="d-flex flex-wrap gap-3">
-           <InfoAmount
-          :amount="1000" suffix="USD" style="min-width: 283px">
-               <template #icon>
-                  <div class="rounded-circle me-2 fw-bold d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; box-shadow: 0px 3px 6px #0000001F;">
-                     $
-                  </div>
-               </template>
-            </InfoAmount
-         >
-            <InfoAmount
-          :amount="4000" suffix="NEAR" style="min-width: 283px"/>
-            <InfoAmount
-          :amount="20000000" suffix="NDAO" style="min-width: 283px"/>
-            
+           <InfoAmount v-for="(totalLock, index) in treasuryTotalLocked" :key="index"
+               :amount="totalLock.amountLocked" :suffix="totalLock.assetSymbol" style="min-width: 283px" :icon="totalLock.assetIcon">
+            </InfoAmount>     
          </div>
       </div>
       
@@ -27,17 +16,8 @@
         </div>
          
          <div class="row g-3">
-            <div class="col-md-6">
-               <Locks/>
-            </div>
-            <div class="col-md-6">
-               <Locks />
-            </div>           
-            <div class="col-md-6">
-               <Locks/>
-            </div>
-            <div class="col-md-6">
-               <Locks/>
+            <div v-for="lock in dao.treasuryLocks" :key="lock.id" class="col-md-6">
+               <TreasuryLock :lock="lock"/>
             </div>
          </div>
       </div>
@@ -49,22 +29,25 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import InfoAmount from '@/components/ui/InfoAmount.vue'
-import Locks from '@/components/dao/treasury/Lock.vue'
+import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
 import { MDBBtn } from "mdb-vue-ui-kit";
+import { inject } from '@vue/runtime-core';
+import {useAnalytics} from '@/hooks/treasury'
 export default {
-    components: {
-      InfoAmount
-   ,
-      Locks,
+   components: {
+      InfoAmount,
+      TreasuryLock,
       // ModalTreasuryLocks,
       MDBBtn 
-    },
+   },
    setup () {
       const {t} = useI18n()
+      const dao = inject('dao')
+      const {treasuryTotalLocked} = useAnalytics(dao)
 
       return {
-         t
+         t, dao, treasuryTotalLocked
       }
    }
 }

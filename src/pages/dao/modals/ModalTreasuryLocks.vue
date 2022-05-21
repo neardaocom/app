@@ -8,10 +8,10 @@
    </div>
    <div class="row g-2 mb-4">
       <div class="col-12 col-md-6">
-         <LocksDetail/>
+         <TreasuryLockDetail/>
       </div>
       <div class="col-12 col-md-6">
-         <LocksDetail/>
+         <TreasuryLockDetail/>
       </div>
    </div>
 
@@ -23,14 +23,14 @@
 
 <script>
 import { MDBBadge, MDBChart } from 'mdb-vue-ui-kit'
-import LocksDetail from '@/components/dao/treasury/LockDetail.vue'
+import TreasuryLockDetail from '@/components/dao/treasury/TreasuryLockDetail.vue'
 import { ref } from '@vue/reactivity';
 import { useI18n } from 'vue-i18n';
 export default {
    components:{
       MDBBadge,
       MDBChart,
-      LocksDetail
+      TreasuryLockDetail
    },
    setup () {
       const {t} = useI18n()

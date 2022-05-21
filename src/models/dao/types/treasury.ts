@@ -2,7 +2,7 @@ export type TreasuryLockCategory = 'salary' | 'event' | 'activity'
 
 export type TreasuryLock = {
     id: number;
-    category: string; // TreasuryLockCategory;
+    category:  TreasuryLockCategory;
     name: string;
     nextUnlock: Date;
     createdBy: string|null;
