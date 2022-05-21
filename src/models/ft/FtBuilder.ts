@@ -53,7 +53,7 @@ export default class FtBuilder {
         this.canBurn = canBurn
     }
 
-    createToken(): CreateToken {
+    create(): CreateToken {
         if (this.ownerId === undefined) {
             throw new Error("Owner is not defined");
         }

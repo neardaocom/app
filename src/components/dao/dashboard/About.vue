@@ -25,7 +25,7 @@
 
             <div class="fw-bold mb-2">
                 <i class="bi bi-people me-2 text-info"/>
-                {{`${n(users)} ${t('default.members')} | ${councilPercent || "0"}% ${t('default.council')}`}} 
+                {{`${n(users)} ${t('default.members')} | ${councilPercent || "-"}% ${t('default.council')}`}} 
             </div>
 
 

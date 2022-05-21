@@ -9,6 +9,6 @@ export type Wallet = {
 export type TransactionAction = {
     methodName: string;
     args: any;
-    gas: number;
-    deposit: number;
+    tGas: number;
+    nearDeposit: number;
 }

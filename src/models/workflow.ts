@@ -8,7 +8,7 @@ import loLast from "lodash/last";
 import loToNumber from "lodash/toNumber"
 import loMerge from "lodash/merge"
 import ArrayHelper from "@/models/utils/ArrayHelper";
-import { TransactionAction } from "@/models/nearBlockchain/types";
+import { TransactionAction } from "@/models/nearBlockchain/types/blockchain";
 import NearService from "@/models/services/nearService/NearService";
 import { DAORights } from "@/models/dao/types/dao";
 import { templateMetas } from "@/data/workflow";
@@ -152,8 +152,8 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
             actions.push({
                 methodName: (action as WFActionCall).method,
                 args: meta.actions[action.id].args(data),
-                gas: action.gas(data),
-                deposit: action.deposit(data),
+                tGas: action.gas(data),
+                nearDeposit: action.deposit(data),
             })
         } else { // functional call
             actions.push({
@@ -167,8 +167,8 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
                     // gas: (action as WFActionFunctionCall).fncallGas,
                     // deposit: (action as WFActionFunctionCall).fncallDeposit,
                 },
-                gas: action.gas(data),
-                deposit: action.deposit(data),
+                tGas: action.gas(data),
+                nearDeposit: action.deposit(data),
             })
         }
     })

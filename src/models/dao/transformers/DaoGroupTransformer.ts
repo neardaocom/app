@@ -12,32 +12,19 @@ export default class DaoGroupTransformer implements TransformerInterface {
     transform(value: any, params: any) {
         let token
 
-        const members = value.members.map(member => {
+        const members = Object.keys(value[1].members).map((accountId) => {
             return{
-                accountId: member.account_id, 
-                roles: member.tags.map(tag => this.tags.map[tag])
+                accountId, 
+                roles: value[1].members[accountId].map(tag => this.tags.map[tag])
             }
         })
 
-        if (value.release_data && value.release_model){
-            const algorithm: string = Object.keys(value.release_model)[0]
-            token = {
-                algorithm: algorithm,
-                locked: value.release_data.total,
-                init: value.release_data.init_distribution,
-                distributed: value.release_data.init_distribution,
-                unlocked: value.release_data.unlocked,
-                duration: value.release_model[algorithm].duration,
-                releaseEnd: value.release_model[algorithm].release_end,
-            }
-        }
-
         return {
-            id: value.id,
-            name: value.settings.name,
-            leader: value.settings.leader || undefined,
+            id: value[0],
+            name: value[1].settings.name,
+            leader: value[1].settings.leader || undefined,
             members,
-            token: token || undefined
+            parentId: value[1].settings.parent_group
         }
     }
 }

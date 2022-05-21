@@ -1,14 +1,18 @@
 import { Account, Contract } from 'near-api-js';
+import { User } from './types/staking';
 
-export default class StakingContract {
+export default class StakingContractService {
+  private contractId: string;
   private contract: Contract & any;
 
   constructor(account: Account, contractId: string) {
+     this.contractId = contractId
     this.contract = new Contract(account, contractId, {
       viewMethods: [
         'dao_ft_total_supply',
         'dao_ft_balance_of',
         'dao_get_user',
+        'dao_user_list',
         'storage_balance_bounds',
         'storage_balance_of',
       ],
@@ -28,6 +32,9 @@ export default class StakingContract {
     });
   }
 
+  getContractId(): string {
+     return this.contractId
+  }
 
    /*****************
     *    Change     *
@@ -174,6 +181,15 @@ export default class StakingContract {
     */
    async daoGetUser(daoId: string, accountId: string) {
       return this.contract.dao_get_user({ dao_id: daoId, account_id: accountId });
+   }
+
+   /**
+    * Return all users registered in the dao
+    * 
+    * @return Promise
+    */
+    async daoUserList(daoId: string): Promise<[string, User]> {
+      return this.contract.dao_user_list({ dao_id: daoId });
    }
 
    /**

@@ -56,9 +56,9 @@ export default {
     setup () {
         const {t} = useI18n()
 
-        const {factoryAccount} = useNear()
+        const {adminAccountId} = useNear()
 
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
         //const nearService = computed(() => (store.getters['near/getService']))
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
 

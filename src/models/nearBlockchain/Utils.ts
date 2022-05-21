@@ -62,6 +62,15 @@ export default class Utils {
     }
 
     static durationFromChain(value: number): Interval {
+        const duration = moment.duration(value, 'seconds')
+        return {
+            minutes: duration.minutes(),
+            hours: duration.hours(),
+            days: duration.days(),
+            weeks: duration.weeks(),
+            months: duration.months(),
+            years: duration.years(),
+        };
         const interval: Interval = {}
         let amount: number = value
         let amountMod: number = 0
@@ -82,6 +91,7 @@ export default class Utils {
     }
 
     static durationToChain(duration: Interval): number {
+        return moment.duration(duration).asSeconds()
         return ((duration.days ?? 0) * 86_400) + ((duration.hours ?? 0) * 3_600) + ((duration.minutes ?? 0) * 60);
     }
 

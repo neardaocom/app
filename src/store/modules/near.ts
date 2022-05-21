@@ -2,7 +2,7 @@ import {getConfig} from "@/config/near"
 import NearService from "@/models/services/nearService/NearService"
 //import { signTransaction } from "near-api-js/lib/transaction"
 import { Commit } from "vuex"
-import { ListItemDto } from "@/models/dao/types/factory";
+import { ListItemDto } from "@/models/dao/types/admin";
 
 // initial state
 const state = () => ({

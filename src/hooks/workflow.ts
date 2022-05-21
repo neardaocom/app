@@ -11,7 +11,7 @@ import { accounts } from "@/data/blockchain";
 import IntegerHelper from '@/models/utils/IntegerHelper'
 // import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
-import { Wallet } from '@/models/nearBlockchain/types'
+import { Wallet } from '@/models/nearBlockchain/types/blockchain'
 import { useStore } from 'vuex'
 
 export const useTemplateList = () => {

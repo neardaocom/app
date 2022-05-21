@@ -120,13 +120,13 @@ export default {
     const { values } = toRefs(props);
     const { t } = useI18n();
     const config = inject("config");
-    const { daoFactoryAccountId, ftFactoryAccountId, daoAccountId, ftAccountId } = useAccounts(config, values)
+    const { adminAccountId, ftFactoryAccountId, daoAccountId, ftAccountId } = useAccounts(config, values)
 
     const unlockingTime = computed(() => `${values.value.dao_unlocking_year ? `${values.value.dao_unlocking_year}  ${t('default.year')} ` : ''}${values.value.dao_unlocking_month > 0 ? `${values.value.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
     return {
       t,
-      daoFactoryAccountId,
+      adminAccountId,
       ftFactoryAccountId,
       daoAccountId,
       ftAccountId,

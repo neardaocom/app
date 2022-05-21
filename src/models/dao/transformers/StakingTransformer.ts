@@ -1,7 +1,7 @@
 import TransformerInterface from "../../interfaces/Transformer.interface";
-import { UserInfoStaking } from "../types/staking"
+import { UserInfoStaking } from "../../nearBlockchain/types/staking"
 
-export default class Staking implements TransformerInterface {
+export default class StakingTransformer implements TransformerInterface {
    //  private t: Function;
    //  private n: Function;
 

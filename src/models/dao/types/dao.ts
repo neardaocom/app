@@ -126,7 +126,7 @@ export type DAOGroup = {
   name: string;
   leader?: string;
   members: DAOGroupMember[];
-  token?: DAOTokenUnlocking;
+  parentId: number;
 }
 
 export type DAOToken = {
@@ -182,7 +182,8 @@ export type DAO = {
   treasury: DAOTreasury;
   location: string;
   lang: string;
-  created: Date;
+  created: Date | undefined;
+  version: string;
   storage: Record<string, unknown>; // TODO: Rename according by smart contract
   docs: DAODocs;
   voteLevels: DAOVoteLevel[];

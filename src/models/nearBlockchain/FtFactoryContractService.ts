@@ -18,7 +18,7 @@ export default class FtFactoryContractService {
    * Accounts List
    * @returns Promise
    */
-  async getAccounts() {
+  async getAccounts(): Promise<string[]> {
     //return factoryDaoList(); // TODO: local
     return this.contract.accounts({});
   }
@@ -28,7 +28,7 @@ export default class FtFactoryContractService {
    * 
    * @return Promise
    */
-  async create(name: string, args: string, gas: string, yoctoNear: string) {
+  async create(name: string, args: string, gas: string, yoctoNear: string): Promise<any> {
     console.log(name, args)
     return this.contract.create({name, args}, gas, yoctoNear)
   }

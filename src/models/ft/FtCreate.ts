@@ -29,7 +29,7 @@ export default class FtCreate {
             })
         }
 
-        const token = builder.createToken()
+        const token = builder.create()
 
         console.log(token)
 

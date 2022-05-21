@@ -36,8 +36,8 @@ export default {
 
         const {t} = useI18n()
 
-        const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+        const adminAccountId = computed(() => (config.near.adminAccountId))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
 
         const description = ref('')
 
@@ -60,7 +60,7 @@ export default {
 
         return {
             t,
-            factoryAccount,
+            adminAccountId,
             accountPostfix,
             description,
             onSubmit

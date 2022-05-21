@@ -1,23 +1,23 @@
 import {
     Account,
     connect,
-    Contract,
-    transactions,
     keyStores,
     WalletConnection,
     Near,
 } from 'near-api-js';
 import DaoContractService from './DaoContractService';
-import FactoryContractService from "./FactoryContractService";
+import AdminContractService from "./AdminContractService";
 import NearAccountService from './NearAccountService';
-import ProviderContractService from './ProviderContractService';
+import WfProviderContractService from './WfProviderContractService';
 import FtFactoryContractService from './FtFactoryContractService';
 import FtContractService from './FtContractService';
+import StakingContractService from './StakingContractService';
+import { NearConfig } from '@/config/near';
 
 export default class Factory {
-    private config: any;
+    private config: NearConfig;
 
-    constructor(config: any) {
+    constructor(config: NearConfig) {
         this.config = config;
     }
 
@@ -30,7 +30,7 @@ export default class Factory {
     }
 
     createWalletConnection(near: Near): WalletConnection {
-        return new WalletConnection(near, this.config.domainAccountId);
+        return new WalletConnection(near, this.config.name);
     }
 
     createWalletAccount(wallet: WalletConnection): Account {
@@ -41,17 +41,20 @@ export default class Factory {
         return new DaoContractService(account, contractId);
     }
 
-    createFactoryContractService(account: Account): FactoryContractService {
-        return new FactoryContractService(account, this.config.daoFactoryAccountId);
+    createAdminContractService(account: Account): AdminContractService {
+        return new AdminContractService(account, this.config.adminAccountId);
     }
 
     createNearAccountService(account: Account): NearAccountService {
         return new NearAccountService(account);
     }
 
-    // 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME
-    createProviderContractService(account: Account, providerId: string): ProviderContractService {
-        return new ProviderContractService(account, providerId);
+    createWfProviderContractService(account: Account): WfProviderContractService {
+        return new WfProviderContractService(account, this.config.wfProviderAccountId);
+    }
+
+    createStakingContractService(account: Account): StakingContractService {
+        return new StakingContractService(account, this.config.stakingAccountId);
     }
 
     createFtFactoryContractService(account: Account, contractId: string): FtFactoryContractService {

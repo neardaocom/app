@@ -8,7 +8,7 @@
       <ul class="list-unstyled mb-2">
          <li>
             <i class="bi bi-pie-chart me-1"/>
-            {{ councilPercent || "0" }}%
+            {{ councilPercent || "-" }}%
             {{ t("default.council") }}
          </li>
       </ul>
