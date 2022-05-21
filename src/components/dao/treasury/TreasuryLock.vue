@@ -93,9 +93,6 @@ export default {
       const {lock} = toRefs(props)
       const unlocked = computed(() => Date.now() > lock.value.nextUnlock.getTime())
 
-      console.log("now",Date.now());
-      console.log("lock",lock.value.nextUnlock.getTime());
-
       return {
          t,
          unlocked

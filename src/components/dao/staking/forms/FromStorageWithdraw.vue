@@ -12,7 +12,12 @@
 import { computed, ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate';
+import InputNumber from '@/components/forms/InputNumber.vue'
+
 export default {
+   components:{
+      InputNumber
+   },
    setup () {
       const {t} = useI18n()
 

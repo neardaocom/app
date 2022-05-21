@@ -15,7 +15,11 @@ import { useI18n } from 'vue-i18n'
 import { useNear } from '@/hooks/vuex'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
+import InputString from '@/components/forms/InputString.vue'
 export default {
+   components:{
+      InputString
+   },
    setup () {
       const {t} = useI18n()
       const { factoryAccount } = useNear()
