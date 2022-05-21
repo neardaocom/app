@@ -120,7 +120,7 @@ export default {
     const { t } = useI18n();
     const router = useRouter(config)
 
-    const { list, topList, factoryAccount } = useListTop(3, config.value)
+    const { list, topList, adminAccountId } = useListTop(3, config.value)
 
     const organizations = () => {
       router.push({ name: 'dao-list'})
@@ -141,7 +141,7 @@ export default {
       config,
       list,
       topList,
-      factoryAccount,
+      adminAccountId,
       organizations,
       createDao,
       neardao,

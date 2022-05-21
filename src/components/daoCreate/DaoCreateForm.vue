@@ -12,7 +12,7 @@
                     </div>
                     <!-- Account --> 
                     <div class="col-12 col-md-6">
-                        <InputString :labelName="t('default.account')" id="dao_account" :addon="`.${daoFactoryAccountId}`"/>
+                        <InputString :labelName="t('default.account')" id="dao_account" :addon="`.${adminAccountId}`"/>
                     </div>
 
                     <!-- Purpose -->
@@ -232,8 +232,8 @@ export default {
         const { formSubmited } = useFormStep()
 
 
-        const daoFactoryAccountId = computed(() => (config.value.near.daoFactoryAccountId))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(daoFactoryAccountId.value))
+        const adminAccountId = computed(() => (config.value.near.adminAccountId))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
         const ftFactoryAccountId = computed(() => (config.value.near.ftFactoryAccountId))
         const nearService = computed(() => (store.getters['near/getService']))
         const accountId = computed(() => ( store.getters['near/getAccountId']))
@@ -241,7 +241,7 @@ export default {
         const schema = computed(() => {
             return {
                 dao_name: 'required|min:3|max:64',
-                dao_account: `required|accountNotExists:${daoFactoryAccountId.value}`,
+                dao_account: `required|accountNotExists:${adminAccountId.value}`,
                 dao_purpose: 'required|min:3|max:160',
                 dao_type: 'required',
                 dao_council: `accountExists:${accountPostfix.value}`,
@@ -321,12 +321,12 @@ export default {
             values.dao_unlocking_month = 0
         })
 
-        const daoAccountId = computed(() => values.dao_account ? values.dao_account + '.' + daoFactoryAccountId.value : null)
+        const daoAccountId = computed(() => values.dao_account ? values.dao_account + '.' + adminAccountId.value : null)
         const ftAccountId = computed(() => values.dao_ft_account ? values.dao_ft_account + '.' + ftFactoryAccountId.value : null)
 
         /*
         const createDao = (values) => {
-            const accountId = values.dao_account + '.' + daoFactoryAccountId.value
+            const accountId = values.dao_account + '.' + adminAccountId.value
             // set accountId to localStorage because of redirection
             localStorage.create_dao_account = accountId
 
@@ -404,7 +404,7 @@ export default {
         return {
             t,
             formData,
-            daoFactoryAccountId,
+            adminAccountId,
             ftFactoryAccountId,
             accountPostfix,
             daoAccountId,

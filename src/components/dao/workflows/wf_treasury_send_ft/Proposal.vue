@@ -49,9 +49,9 @@ export default {
 
          console.log(contractId.value);
 
-        const { nearService, factoryAccount, accountId } = useNear()
+        const { nearService, adminAccountId, accountId } = useNear()
         const  ipfsService  = useIPFS()
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
 
         //const logger = inject('logger')
         const notify = inject('notify')

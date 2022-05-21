@@ -2,6 +2,7 @@ export type ListItemDto = {
     id: string;
     index: number;
     name: string;
+    created: Date;
     walletId: string;
     description: string;
     location: string | undefined;

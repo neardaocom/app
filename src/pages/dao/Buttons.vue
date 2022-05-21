@@ -263,14 +263,7 @@ export default {
       this.$refs.form?.onSubmit()
     },
     getLatestDaoVersion(){
-      this.nearService.getDaoStats()
-       .then(r => {
-          this.latestDaoVersion = r.latest_dao_version
-        })
-        .catch((e) => {
-          this.$logger.error('D', 'app@components/dao/Buttons', 'getLatestDaoVersion-blockchain', `Failed to load latest DAO version`)
-          console.log(e)
-        })
+      this.latestDaoVersion = '1.0' // TODO: Add version from factory
     },
     unlockTokens(group) {
       console.log(group)

@@ -1,12 +1,14 @@
 import { Account, Near } from 'near-api-js';
 import DaoContractService from "../nearBlockchain/DaoContractService";
+import FtContractService from "../nearBlockchain/FtContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 
 export default class ServicePool {
     private near: Near;
     private account: Account;
-    private pool: { [key: string]: DaoContractService } = {};
-    private accounts: { [key: string]: NearAccountService } = {};
+    private daoPool: { [key: string]: DaoContractService } = {};
+    private ftPool: { [key: string]: FtContractService } = {};
+    private accountPool: { [key: string]: NearAccountService } = {};
 
     constructor(near: Near, account: Account) {
         this.near = near;
@@ -14,24 +16,35 @@ export default class ServicePool {
     }
 
     getContract(contractId: string): DaoContractService {
-        if (this.pool[contractId]) {
-            return this.pool[contractId];
+        if (this.daoPool[contractId]) {
+            return this.daoPool[contractId];
         }
 
         const contract = new DaoContractService(this.account, contractId);
-        this.pool[contractId] = contract;
+        this.daoPool[contractId] = contract;
+
+        return contract;
+    }
+
+    getFt(contractId: string): FtContractService {
+        if (this.ftPool[contractId]) {
+            return this.ftPool[contractId];
+        }
+
+        const contract = new FtContractService(this.account, contractId);
+        this.ftPool[contractId] = contract;
 
         return contract;
     }
 
     async getAccount(contractId: string): Promise<NearAccountService> {
-        if (this.accounts[contractId]) {
-            return this.accounts[contractId];
+        if (this.accountPool[contractId]) {
+            return this.accountPool[contractId];
         }
 
         const account = await this.near.account(contractId);
         const nearAccount = new NearAccountService(account);
-        this.accounts[contractId] = nearAccount;
+        this.accountPool[contractId] = nearAccount;
 
         return nearAccount;
     }

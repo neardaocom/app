@@ -3,7 +3,7 @@ export type NearConfig = {
   nodeUrl: string;
   name: string;
   domainAccountId: string;
-  daoFactoryAccountId: string;
+  adminAccountId: string;
   ftFactoryAccountId: string;
   stakingAccountId: string;
   wfProviderAccountId: string;
@@ -19,7 +19,7 @@ export type NearConfigLocal = {
   nodeUrl: string;
   name: string;
   domainAccountId: string;
-  daoFactoryAccountId: string;
+  adminAccountId: string;
   ftFactoryAccountId: string;
   stakingAccountId: string;
   wfProviderAccountId: string;
@@ -34,7 +34,7 @@ export type NearConfigCI = {
   nodeUrl: string;
   name: string;
   domainAccountId: string;
-  daoFactoryAccountId: string;
+  adminAccountId: string;
   ftFactoryAccountId: string;
   stakingAccountId: string;
   wfProviderAccountId: string;
@@ -47,7 +47,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
   if (
     process.env.VUE_APP_NEAR_DAO_DOMAIN === undefined
     || process.env.VUE_APP_NEAR_NAME === undefined
-    || process.env.VUE_APP_NEAR_DAO_FACTORY === undefined
+    || process.env.VUE_APP_NEAR_ADMIN === undefined
     || process.env.VUE_APP_NEAR_FT_FACTORY === undefined
     || process.env.VUE_APP_NEAR_STAKING === undefined
     || process.env.VUE_APP_NEAR_WF_PROVIDER === undefined
@@ -65,7 +65,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'https://rpc.mainnet.near.org',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,
@@ -81,7 +81,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'https://rpc.testnet.near.org',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,
@@ -96,7 +96,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'https://rpc.betanet.near.org',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,
@@ -111,7 +111,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'http://localhost:3030',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,
@@ -127,7 +127,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'https://rpc.ci-testnet.near.org',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,
@@ -141,7 +141,7 @@ export const getConfig = (env: string): NearConfig | NearConfigLocal | NearConfi
         nodeUrl: 'https://rpc.ci-betanet.near.org',
         name: process.env.VUE_APP_NEAR_NAME,
         domainAccountId: process.env.VUE_APP_NEAR_DAO_DOMAIN,
-        daoFactoryAccountId: process.env.VUE_APP_NEAR_DAO_FACTORY,
+        adminAccountId: process.env.VUE_APP_NEAR_ADMIN,
         ftFactoryAccountId: process.env.VUE_APP_NEAR_FT_FACTORY,
         stakingAccountId: process.env.VUE_APP_NEAR_STAKING,
         wfProviderAccountId: process.env.VUE_APP_NEAR_WF_PROVIDER,

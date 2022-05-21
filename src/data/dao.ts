@@ -35,6 +35,7 @@ export const daoTestOne: DAO = {
     location: 'glo',
     lang: 'en',
     created: new Date(),
+    version: '1.0',
     storage: {
 
     },
@@ -52,6 +53,7 @@ export const daoTestOne: DAO = {
             members: [
                 { accountId: 'account.testnet', roles: ['role'] }
             ],
+            parentId: 0,
         },
     ],
     tags: [],

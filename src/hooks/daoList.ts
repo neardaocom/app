@@ -2,11 +2,12 @@ import { onMounted, onUnmounted, ref, inject, toRaw, Ref, computed, watchEffect 
 import { useI18n } from "vue-i18n";
 import IntegerHelper from "@/models/utils/IntegerHelper";
 import DaoList from "@/models/dao/DaoList";
-import { ListItemDto } from "@/models/dao/types/factory";
+import { ListItemDto } from "@/models/dao/types/admin";
 import { useStore } from "vuex";
 import { Loader } from "@/loader";
 import Decimal from "decimal.js";
 import { Config } from "@/config";
+import loFind from "lodash/find";
 
 export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: Config) => {
     const store = useStore()
@@ -17,7 +18,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
         try {
             const nearPriceUsd = store.getters['market/getNearPrice']
             const daoFactory = await loader?.value.get('dao/Factory')
-            const daoList = new DaoList(daoFactory.value.createDaoFactory(), daoFactory.value.createNear(), t, n)
+            const daoList = new DaoList(daoFactory.value.createDaoAdmin(), daoFactory.value.createNear(), t, n)
             await daoList.load(0, 100, nearPriceUsd)
             store.commit('near/setList', daoList.getList())
         } catch (e) {
@@ -44,7 +45,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
 
 export const useList = (config: Config) => {
     const store = useStore()
-    const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
+    const adminAccountId = computed(() => (config.near.adminAccountId))
 
     const loadingProgress = ref(0)
     const list = computed(() => store.getters['near/getList'] ?? [])
@@ -55,13 +56,13 @@ export const useList = (config: Config) => {
     })
 
     return {
-        loadingProgress, list, factoryAccount
+        loadingProgress, list, adminAccountId
     }
 }
 
 export const useListTop = (count: number = 3, config: Config) => {
     const store = useStore()
-    const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
+    const adminAccountId = computed(() => (config.near.adminAccountId))
 
     const list = computed(() => store.getters['near/getList'] ?? [])
     const topList = ref([])
@@ -73,6 +74,22 @@ export const useListTop = (count: number = 3, config: Config) => {
     })
 
     return {
-        list, topList, factoryAccount
+        list, topList, adminAccountId
+    }
+}
+
+export const useDao = (daoId: string) => {
+    const store = useStore()
+    const list = computed(() => store.getters['near/getList'])
+
+    const daoInfo = ref(null)
+
+    watchEffect(() => {
+        const data = toRaw(list.value)
+        daoInfo.value = loFind(data, {walletId: daoId}) || null
+    })
+
+    return {
+        daoInfo
     }
 }

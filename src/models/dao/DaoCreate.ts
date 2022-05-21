@@ -1,6 +1,6 @@
 import Decimal from "decimal.js";
 import DaoBuilder from "./DaoBuilder";
-import FactoryContractService from "../nearBlockchain/FactoryContractService";
+import AdminContractService from "../nearBlockchain/AdminContractService";
 import WfProviderContractService from "../nearBlockchain/WfProviderContractService";
 import NearUtils from "../nearBlockchain/Utils";
 import Utils from "./Utils";
@@ -9,12 +9,12 @@ import { NearConfig } from "@/config/near";
 import DateHelper from "../utils/DateHelper";
 
 export default class DaoCreate {
-    private service: FactoryContractService;
+    private service: AdminContractService;
     private provider: WfProviderContractService;
     private config: NearConfig;
     private t: Function;
 
-    constructor(service: FactoryContractService, provider: WfProviderContractService, config: NearConfig, t: Function) {
+    constructor(service: AdminContractService, provider: WfProviderContractService, config: NearConfig, t: Function) {
         this.service = service
         this.provider = provider
         this.config = config
@@ -32,13 +32,13 @@ export default class DaoCreate {
         builder.addTokenId(ftAccountId)
         builder.addStakingId(this.config.stakingAccountId)
         builder.addTotalSupply(new Decimal(ftAmount).toNumber())
-        builder.addSettings(name, purpose, [], this.config.daoFactoryAccountId, this.config.wfProviderAccountId, this.config.resourceProviderAccountId, this.config.schedulerServiceAccountId)
+        builder.addSettings(name, purpose, [], this.config.adminAccountId, this.config.wfProviderAccountId, this.config.resourceProviderAccountId, this.config.schedulerServiceAccountId)
         builder.addGroup(this.t("default.council"), council, null, 0)
         // workflow
         const standardFncalls = await this.provider.standardFncalls()
         const workflowWfAdd = await this.provider.defaultWfAdd()
         // setup vote settings
-        workflowWfAdd[3][0].scenario = "token_weighted"
+        workflowWfAdd[3][0].scenario = "TokenWeighted"
         workflowWfAdd[3][0].approve_threshold = voteApproveThreshold
         workflowWfAdd[3][0].quorum = voteQuorum
         workflowWfAdd[3][0].duration = voteDuration
@@ -57,7 +57,7 @@ export default class DaoCreate {
                 description: purpose,
                 ft_name: ftAccountId,
                 ft_amount: ftAmount,
-                tags: []
+                tags: [0]
             },
             args: ObjectHelper.toBase64(dao)
         }

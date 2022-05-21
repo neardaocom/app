@@ -75,9 +75,9 @@ export default {
 
         const { contractId, template, proposalCount } = toRefs(props)
 
-        const { nearService, factoryAccount } = useNear()
+        const { nearService, adminAccountId } = useNear()
 
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
 
         const formatDate = t('default._datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()

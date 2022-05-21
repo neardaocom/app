@@ -11,16 +11,16 @@ import Decimal from 'decimal.js';
 import BN from 'bn.js';
 
 import NearUtils from '@/models/nearBlockchain/Utils';
-import FactoryContract from '@/models/nearBlockchain/FactoryContractService';
+import FactoryContract from '@/models/nearBlockchain/AdminContractService';
 import ProviderContract from '@/models/nearBlockchain/WfProviderContractService';
 import ServicePool from '@/models/dao/ServicePool';
 import loSet from "lodash/set"
 import loToString from "lodash/toString"
-import { duration } from 'moment';
 import { rightTokenGroupCouncil, rightTokenGroupCouncilLeader, rightTokenHolder } from '@/data/dao';
-import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
+// import { workflowTemplateWfAdd, workflowTemplateWfNearSend, worlflowTemplateSettingsBuilder } from '@/data/workflow';
+import { worlflowTemplateSettingsBuilder } from '@/data/workflow';
 import { DAORights } from '@/models/dao/types/dao';
-import { TransactionAction } from "@/models/nearBlockchain/types";
+import { TransactionAction } from "@/models/nearBlockchain/types/blockchain";
 import loFill from 'lodash/fill'
 import DeprecatedError from "@/models/utils/errors/DeprecatedError";
 
@@ -58,7 +58,7 @@ class NearService {
 
     const account = this.walletConnection.account();
 
-    this.factoryContract = new FactoryContract(account, this.config.daoFactoryAccountId);
+    this.factoryContract = new FactoryContract(account, this.config.adminAccountId);
 
     this.providerContract = new ProviderContract(account, 'wf-provider.' + process.env.VUE_APP_CONTRACT_NAME);
 
@@ -143,7 +143,8 @@ class NearService {
    * @returns Promise
    */
   async getDaoInfo(daoId: string) {
-    return this.factoryContract.getDaoInfo(daoId);
+    //return this.factoryContract.getDaoInfo(daoId);
+    return null;
   }
 
   /**
@@ -152,7 +153,8 @@ class NearService {
    * @returns Promise
    */
   async getDaoStats() {
-    return this.factoryContract.getDaoStats();
+    //return this.factoryContract.getDaoStats();
+    return null;
   }
 
   /**
@@ -161,7 +163,8 @@ class NearService {
    * @returns Promise
    */
   async getNewestVersionHash() {
-    return this.factoryContract.getNewestVersionHash(0);
+    //return this.factoryContract.getNewestVersionHash(0);
+    return null;
   }
 
 
@@ -481,6 +484,7 @@ class NearService {
     storage_key: string,
     amountToTransfer: number
   ) {
+    /*
     return this.contractPool.getContract(contractId).propose(
       {
         content,
@@ -496,6 +500,8 @@ class NearService {
       NearUtils.toTGas(100),
       NearUtils.nearToYocto(amountToTransfer)
     );
+    */
+   return null;
   }
 
   async addWorkflow(
@@ -533,7 +539,7 @@ class NearService {
       depositVote, // TODO: .toString(),
       depositProposeReturn
     )
-
+      /*
     return this.contractPool.getContract(contractId).propose(
       {
         template_id: 1,
@@ -548,6 +554,8 @@ class NearService {
       Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
+    */
+   return null;
   }
 
   async addDoc(
@@ -597,7 +605,8 @@ class NearService {
 
     //console.log(args)
 
-    return this.contractPool.getContract(contractId).propose(args, Decimal.mul(100, NearUtils.tGas).toString(), amountYokto.toString());
+    //return this.contractPool.getContract(contractId).propose(args, Decimal.mul(100, NearUtils.tGas).toString(), amountYokto.toString());
+    return null;
   }
 
   async invalideDoc(
@@ -610,7 +619,8 @@ class NearService {
     const amount = new Decimal(amountToTransfer);
     const amountYokto = amount.mul(NearUtils.yoctoNear).toFixed();
 
-    return this.contractPool.getContract(contractId).propose(
+    /*
+    return this.contractPool.getContract(contractId).proposa(
       {
         proposal_input: {
           description: null,
@@ -627,6 +637,8 @@ class NearService {
       Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
+    */
+   return;
   }
 
   async distributeFt(
@@ -639,7 +651,7 @@ class NearService {
   ) {
     const amountToTransferDecimal = new Decimal(amountToTransfer);
     const amountYokto = amountToTransferDecimal.mul(NearUtils.yoctoNear).toFixed();
-
+    /*
     return this.contractPool.getContract(contractId).propose(
       {
         proposal_input: {
@@ -658,6 +670,8 @@ class NearService {
       Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
+    */
+   return;
   }
 
   /**
@@ -684,6 +698,7 @@ class NearService {
     const amountToTransferDecimal = new Decimal(amountToTransfer);
     const amountYokto = amountToTransferDecimal.mul(NearUtils.yoctoNear).toFixed();
 
+    /*
     return this.contractPool.getContract(contractId).propose(
       {
         proposal_input: {
@@ -707,6 +722,8 @@ class NearService {
       Decimal.mul(100, NearUtils.tGas).toString(),
       amountYokto.toString()
     );
+    */
+   return;
   }
 
   /**
@@ -743,7 +760,7 @@ class NearService {
     proposalId: number,
     vote: number
   ) {
-    return this.contractPool.getContract(contractId).vote(proposalId, vote, NearUtils.toTGas(10), NearUtils.nearToYocto(0.00125));
+    return this.contractPool.getContract(contractId).proposalVote(proposalId, vote, NearUtils.toTGas(10), NearUtils.nearToYocto(0.00125));
   }
 
   /**
@@ -753,11 +770,12 @@ class NearService {
     contractId: string,
     proposalId: number
   ) {
-    return this.contractPool.getContract(contractId).finishProposal(proposalId, NearUtils.toTGas(100));
+    return this.contractPool.getContract(contractId).proposalFinish(proposalId, NearUtils.toTGas(100));
   }
 
   async wfFinish(contractId: string, proposalId: number) {
-    return this.contractPool.getContract(contractId).wfFinish(proposalId, NearUtils.toTGas(10));
+    // return this.contractPool.getContract(contractId).wfFinish(proposalId, NearUtils.toTGas(10));
+    return;
   }
   
   async unlockTokens(contractId: string, group: string) {
@@ -786,17 +804,17 @@ class NearService {
     return account.signAndSendTransaction({
         receiverId: contractId,
         actions: actions.map((action:  TransactionAction) => 
-            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(NearUtils.toTGas(action.gas)), new BN(NearUtils.nearToYocto(action.deposit)))
+            transactions.functionCall(action.methodName, Buffer.from(JSON.stringify(action.args)), new BN(NearUtils.toTGas(action.tGas)), new BN(NearUtils.nearToYocto(action.nearDeposit)))
         )
     });
   }
 
   async downloadNewVersion(contractId: string){
-    return this.contractPool.getContract(contractId).upgradeDownload((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
+    //return this.contractPool.getContract(contractId).upgradeDownload((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
   }
 
   async upgrade(contractId: string){
-    return this.contractPool.getContract(contractId).upgradeMigrate((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
+    //return this.contractPool.getContract(contractId).upgradeMigrate((this.walletConnection) ? this.walletConnection.getAccountId() : null, NearUtils.toTGas(300));
   }
 
   ///////////////
@@ -809,6 +827,7 @@ class NearService {
   }
 
   async getDaoById(daoAccount: string) {
+    return;
     const daoId = daoAccount.split('.')[0]
 
     // console.log(daoId)
@@ -1007,96 +1026,107 @@ class NearService {
   }
 
   async getStatisticsMembers(contractId: string) {
-    return this.contractPool.getContract(contractId).getStatisticsMembers();
+    // return this.contractPool.getContract(contractId).getStatisticsMembers();
+    return new Promise(() => { return ;})
   }
 
   async getStatisticsFt(contractId: string) {
-    return this.contractPool.getContract(contractId).getStatisticsFt();
+    // return this.contractPool.getContract(contractId).getStatisticsFt();
+    return new Promise(() => { return ;})
   }
 
   async getProposals(contractId: string, fromIndex: number, limit: number) {
-    return this.contractPool.getContract(contractId).getProposals(fromIndex ?? 0, limit ?? 1000);
+    return this.contractPool.getContract(contractId).proposals(fromIndex ?? 0, limit ?? 1000);
   }
 
   async getDocFiles(contractId: string) {
-    return this.contractPool.getContract(contractId).getDocFiles();
+    // return this.contractPool.getContract(contractId).getDocFiles();
+    return new Promise(() => { return ;})
   }
 
   async getFtBalanceOf(contractId: string, accountId: string) {
-    return this.contractPool.getContract(contractId).getFtBalanceOf(accountId);
+    //return this.contractPool.getContract(contractId).getFtBalanceOf(accountId);
+    return new Promise(() => { return ;})
   }
 
   async getDaoConfig(contractId: string) {
-    return this.contractPool.getContract(contractId).getDaoConfig();
+    //return this.contractPool.getContract(contractId).getDaoConfig();
+    return new Promise(() => { return ;})
   }
 
   async getVotePolicies(contractId: string) {
-    return this.contractPool.getContract(contractId).getVotePolicies();
+    //return this.contractPool.getContract(contractId).getVotePolicies();
+    return new Promise(() => { return ;})
   }
 
   async getDaoVersionHash(contractId: string) {
-    return this.contractPool.getContract(contractId).getDaoVersionHash();
+    //return this.contractPool.getContract(contractId).getDaoVersionHash();
+    return new Promise(() => { return ;})
   }
 
   async getSkywardAuctions(contractId: string) {
-    return this.contractPool.getContract(contractId).getSkywardAuctions();
+    //return this.contractPool.getContract(contractId).getSkywardAuctions();
+    return new Promise(() => { return ;})
   }
 
   async getRefPools(contractId: string) {
-    return this.contractPool.getContract(contractId).getRefPools();
+    //return this.contractPool.getContract(contractId).getRefPools();
+    return new Promise(() => { return ;})
   }
 
   async getWfTemplates(contractId: string) {
-    return this.contractPool.getContract(contractId).getWfTemplates();
+    return this.contractPool.getContract(contractId).wfTemplates();
   }
 
   async getGroups(contractId: string) {
-    return this.contractPool.getContract(contractId).getGroups();
+    return this.contractPool.getContract(contractId).groups();
   }
 
   async getGroupTags(contractId: string) {
-    return this.contractPool.getContract(contractId).getTags('group');
+    return this.contractPool.getContract(contractId).tags('group');
   }
 
   async getMediaTags(contractId: string) {
-    return this.contractPool.getContract(contractId).getTags('media');
+    return this.contractPool.getContract(contractId).tags('media');
   }
 
   async getGlobalTags(contractId: string){
-    return this.contractPool.getContract(contractId).getTags('global');
+    return this.contractPool.getContract(contractId).tags('global');
   }
 
   async getMediaList(contractId: string) {
-    return this.contractPool.getContract(contractId).getMediaList();
+    //return this.contractPool.getContract(contractId).getMediaList();
+    return new Promise(() => { return ;})
   }
 
   async getDaoSettings(contractId: string){
-    return this.contractPool.getContract(contractId).getDaoSettings()
+    return this.contractPool.getContract(contractId).settings()
   }
 
   async getWfInstance(contractId: string, proposalId: number){
-    return this.contractPool.getContract(contractId).getWfInstance(proposalId);
+    return this.contractPool.getContract(contractId).wfInstance(proposalId);
   }
 
   async getWfInstanceLog(contractId: string, proposalId: number){
-    return this.contractPool.getContract(contractId).getWfInstanceLog(proposalId);
+    return this.contractPool.getContract(contractId).wfLog(proposalId);
   }
 
   async getStats(contractId: string){
-    return this.contractPool.getContract(contractId).getStats();
+    return this.contractPool.getContract(contractId).statistics();
   }
 
   async getFtMetadata(contractId: string){
-    return this.contractPool.getContract(contractId).getFtMetadata();
+    //return this.contractPool.getContract(contractId).getFtMetadata();
+    return new Promise(() => { return ;})
   }
 
   async getStorage(contractId: string) {
     // getStorage keys
-    const storageKeys: string[] = await this.contractPool.getContract(contractId).getStorage()
+    const storageKeys: string[] = await this.contractPool.getContract(contractId).storageBuckets()
   
     // load data
     const data = await Promise.all(
-      storageKeys.map((key: string) => this.contractPool.getContract(contractId).getStorageData(key))
+      storageKeys.map((key: string) => this.contractPool.getContract(contractId).storageBucketDataAll(key))
     ).catch((e) => {
       throw new Error("Storage data not louded" + e);
     });

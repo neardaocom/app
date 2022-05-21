@@ -4,7 +4,7 @@ import {
 } from 'near-api-js';
 import ServicePool from './ServicePool';
 import DaoList from './DaoList';
-import DaoFactory from './DaoFactory';
+import DaoAdmin from './DaoAdmin';
 import Near from './Near';
 import NearBlockchainFactory from "../nearBlockchain/Factory";
 import DaoLoader from './DaoLoader';
@@ -28,7 +28,7 @@ export default class Factory {
         return new ServicePool(this.near, this.account);
     }
 
-    createDaoFactory(): DaoFactory {
-        return new DaoFactory(this.nearBlockchainFactory.createFactoryContractService(this.account));
+    createDaoAdmin(): DaoAdmin {
+        return new DaoAdmin(this.nearBlockchainFactory.createAdminContractService(this.account));
     }
 }

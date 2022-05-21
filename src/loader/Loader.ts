@@ -26,15 +26,15 @@ export default class Loader {
 
         if (objectRef === undefined) {
             switch (key) {
+                case 'nearBlockchain/Factory': {
+                        const factory = new NearBlockchainFactory(this.config.near as NearConfig)
+                        objectRef = ref(factory)
+                    }
+                    break;
                 case 'near/Near': {
                         // dependency
                         const nearFactory = await this.get('nearBlockchain/Factory')
                         objectRef = ref(await nearFactory.value.createNear())
-                    }
-                    break;
-                case 'nearBlockchain/Factory': {
-                        const factory = new NearBlockchainFactory(this.config.near as NearConfig)
-                        objectRef = ref(factory)
                     }
                     break;
                 case 'near/WalletConnection': {
@@ -63,7 +63,7 @@ export default class Loader {
             this.register.set(key, objectRef!)
             console.log('Set', key, objectRef!, this.register.getList())
         } else {
-            console.log('Get', key, ref(objectRef), this.register.getList())
+            console.log('Get', key, objectRef, this.register.getList())
         }
 
 

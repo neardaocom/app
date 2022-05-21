@@ -16,23 +16,52 @@ import loValues from "lodash/values"
 import { templateMetas } from "./data/workflowMeta"
 import NearUtils from "../nearBlockchain/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
+import FtContractService from "../nearBlockchain/FtContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 
 import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures
+import ServicePool from "./ServicePool";
+import { ListItemDto } from "./types/admin";
 
 export default class DaoLoader {
     private id: string;
     private dataChain: any[];
     private t: Function;
-    private service: DaoContractService;
-    private account: NearAccountService;
+    private daoInfo: ListItemDto | null;
+    private servicePool: ServicePool;
+    private daoService!: DaoContractService;
+    private accountService!: NearAccountService;
+    private ftId!: string;
+    private ftService!: FtContractService;
 
-    constructor(id: string, service: DaoContractService, account: NearAccountService, t: Function) {
+    constructor(id: string, servicePool: ServicePool, t: Function, daoInfo: ListItemDto | null) {
         this.id = id
-        this.dataChain = []
+        this.servicePool = servicePool
         this.t = t
-        this.service = service
-        this.account = account
+        this.daoInfo = daoInfo
+        this.dataChain = []
+    }
+
+    async init(): Promise<void> {
+        if (this.daoService === undefined) {
+            this.daoService = this.servicePool.getContract(this.id)
+        }
+
+        if (this.accountService === undefined) {
+            this.accountService = await this.servicePool.getAccount(this.id)
+        }
+
+        // TODO: It's not nice
+        if (this.ftId === undefined) {
+            const stats = await this.daoService.statistics()
+            this.ftId = stats.token_id
+        }
+
+        if (this.ftService === undefined) {
+            this.ftService = this.servicePool.getFt(this.ftId)
+        }
+
+        return;
     }
 
     async getDao(walletId?: string): Promise<DAO> {
@@ -80,7 +109,8 @@ export default class DaoLoader {
             },
             location: '',
             lang: '', // TODO: Add lang to DAO
-            created: new Date(), // TODO: DAO created
+            created: this.daoInfo?.created, // TODO: DAO created
+            version: '1.0', // TODO: Add versioning
             storage: this.dataChain[11],
             docs: docs,
             voteLevels: voteLevels,
@@ -95,19 +125,26 @@ export default class DaoLoader {
     }
 
     async load() {
+        await this.init()
+
         this.dataChain = await Promise.all([
-          this.service.getWfTemplates(),
-          this.service.getGroups(),
-          this.service.getTags('group'),
-          this.service.getTags('media'),
-          this.service.getMediaList(),
-          this.service.getTags('global'),
-          this.service.getProposals(0, 1000),
-          this.service.getDaoSettings(),
-          this.service.getStats(),
-          this.service.getFtMetadata(),
-          this.account.getState(),
-          this.service.getStorage(),
+          this.daoService.wfTemplates(),
+          this.daoService.groups(),
+          this.daoService.tags('group'),
+          this.daoService.tags('media'),
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              resolve([]);
+            }, 10);
+          }), // 4: TODO: Migrate media list to resource this.daoService.getMediaList()
+          this.daoService.tags('global'),
+          this.daoService.proposals(0, 1000),
+          this.daoService.settings(),
+          this.daoService.statistics(), // 8: this.daoService.statistics(),
+          this.ftService.ftMetadata(),
+          this.accountService.getState(),
+          this.daoService.storage(),
+          this.ftService.ftBalanceOf(this.id),
         ]).catch((e) => {
           throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
         });
@@ -128,8 +165,12 @@ export default class DaoLoader {
         return this.dataChain[1].map(group => groupTrasformer.transform(group, {}) as DAOGroup);
     }
 
-    getFtTreasuryHolded(): number { return new Decimal(this.dataChain[8].ft_total_distributed).toNumber();}
-    getFtTreasuryFree(): number { return new Decimal(this.dataChain[8].ft_total_supply).minus(this.dataChain[8].ft_total_locked).toNumber()}
+    getFtDecimals() { return this.dataChain[9].decimals }
+
+    getTreasuryToken(): number { return new Decimal(NearUtils.amountFromDecimals(this.dataChain[12], this.dataChain[9].decimals)).toNumber() }
+
+    getFtTreasuryHolded(): number { return this.getTreasuryToken() }
+    getFtTreasuryFree(): number { return new Decimal(this.getTreasuryToken()).minus(0).toNumber() } // TODO: Add minuts from locks
 
     getMembers(): string[] {
         const members: string[] = []
@@ -154,11 +195,11 @@ export default class DaoLoader {
     }
 
     getMediaTags(): IDValue[] {
-        return GenericsHelper.createIDValueFromObject(this.dataChain[3].map)
+        return GenericsHelper.createIDValueFromObject(this.dataChain[3]?.map || {})
     }
 
     getGlobalTags(): IDValue[] {
-        return GenericsHelper.createIDValueFromObject(this.dataChain[7].tags)
+        return GenericsHelper.createIDValueFromObject(this.dataChain[7].tags || {})
     }
 
     // TODO: Direct mapping from data source?
@@ -222,13 +263,13 @@ export default class DaoLoader {
     async getTokenHolders(accountIds: string[]): Promise<DAOTokenHolder[]> {
         const tokenHolders: DAOTokenHolder[] = []
         const balances = await Promise.all(
-            accountIds.map((member) => this.service.getFtBalanceOf(member))
+            accountIds.map((member) => this.ftService!.ftBalanceOf(member))
         ).catch((e) => {
             throw new Error(`DAO[${this.id}] balances not loaded: ${e}`);
         });
     
         accountIds.forEach((accountId: string, index: number) => {
-            tokenHolders.push({accountId: accountId, amount: new Decimal(balances[index] ?? 0).toNumber()})
+            tokenHolders.push({accountId: accountId, amount: new Decimal(NearUtils.amountFromDecimals(balances[index] ?? '0', this.getFtDecimals())).toNumber()})
         });
 
         return tokenHolders
@@ -254,7 +295,7 @@ export default class DaoLoader {
         for (const proposal of this.dataChain[6]) {
             actionLogs = []
             // console.log(proposal)
-            workflowInstance = await this.service.getWfInstance(proposal[0])
+            workflowInstance = await this.daoService!.wfInstance(proposal[0])
             proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
             proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
             templateMeta = loGet(templateMetas, [proposalTemplate!.code])
@@ -272,7 +313,7 @@ export default class DaoLoader {
     
             // load action logs
             if (workflowInstance[0].state !== 'Waiting') {
-                workflowLog = await this.service.getWfInstanceLog(proposal[0])
+                workflowLog = await this.daoService!.wfLog(proposal[0])
                 workflowLog?.forEach((log, index) => {
                     //console.log('Log', log)
                     actionLogs.push({

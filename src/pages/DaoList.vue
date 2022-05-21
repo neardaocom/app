@@ -70,7 +70,7 @@ export default {
     const config = inject('config')
     const { t, n } = useI18n()
 
-    const { loadingProgress, list, factoryAccount } = useList(config.value)
+    const { loadingProgress, list, adminAccountId } = useList(config.value)
     // const { searchText, searchOrder, searchOrderOptions, search } = useList()
 
     const searchQuery = ref('')
@@ -94,7 +94,7 @@ export default {
       },
     })
     return {
-      t, n, config, list, loadingProgress, searchQuery, filterTag, factoryAccount
+      t, n, config, list, loadingProgress, searchQuery, filterTag, adminAccountId
     }
   },
   computed: {

@@ -1,8 +1,9 @@
-import FactoryContractService from "../nearBlockchain/FactoryContractService";
+import FactoryContractService from "../nearBlockchain/AdminContractService";
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
-import { ListItemDto } from "./types/factory";
+import { ListItemDto } from "./types/admin";
+import { DeprecatedError, NotImplementedError } from "../utils/errors";
   
-export default class DaoFactory {
+export default class DaoAdmin {
     // factory contract
     private service: FactoryContractService;
   
@@ -41,7 +42,8 @@ export default class DaoFactory {
      * @returns Promise
      */
     async getDaoInfo(daoId: string) {
-      return this.service.getDaoInfo(daoId);
+      throw new DeprecatedError("DaoInfo from factory is deprecated");
+      // return this.service.getDaoInfo(daoId);
     }
   
     /**
@@ -50,7 +52,8 @@ export default class DaoFactory {
      * @returns Promise
      */
     async getDaoStats() {
-      return this.service.getDaoStats();
+      throw new DeprecatedError("DaoStats from factory is deprecated");
+      //return this.service.getDaoStats();
     }
   
     /**
@@ -59,6 +62,7 @@ export default class DaoFactory {
      * @returns Promise
      */
     async getNewestVersionHash() {
-      return this.service.getNewestVersionHash(0);
+      throw new NotImplementedError("NewestVersion");
+      // return this.service.getNewestVersionHash(0); // TODO: Add to version 1.0
     }
 }

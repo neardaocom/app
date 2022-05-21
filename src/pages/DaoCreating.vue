@@ -16,8 +16,9 @@
                     <div class="card-body">
                         <h4>{{ t('default.summary') }}</h4>
                         <Summary :values="formCreateDao.data"/>
-                        <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="createToken(formCreateDao.data)" size="lg" :disabled="formCreateDao.step !== 'fromSubmited'">{{ t('default.create_token') }}</MDBBtn>
-                        <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="createDao(formCreateDao.data)" size="lg" :disabled="formCreateDao.step !== 'tokenCreated'">{{ t('default.create_dao') }}</MDBBtn>
+                        <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="createToken(formCreateDao.data)" size="lg" :disabled="!(formCreateDao.step === 'fromSubmited')">{{ t('default.create_token') }}</MDBBtn>
+                        <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="createDao(formCreateDao.data)" size="lg" :disabled="!(formCreateDao.step === 'tokenCreated')">{{ t('default.create_dao') }}</MDBBtn>
+                        <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="registerToken(daoAccountId, ftAccountId)" size="lg" :disabled="!(formCreateDao.step === 'daoCreated')">{{ t('default.staking_service') }}</MDBBtn>
                     </div>
                 </div>
             </div>
@@ -47,6 +48,7 @@ import { useRouter } from "vue-router";
 import { useCreateToken } from '@/hooks/ft';
 import { useAccounts, useFormStep, useCreateDAO } from "@/hooks/createDao"; // , useCreateDAO
 import { useNearBlockchainTransaction } from "@/hooks/router";
+import { useRegisterToken } from '@/hooks/staking'
 
 export default {
     components:{
@@ -62,7 +64,7 @@ export default {
         const { t } = useI18n()
         //const store = useStore()
         const router = useRouter()
-        const { getState, tokenCreated, daoCreated } = useFormStep()
+        const { getState, tokenCreated, daoCreated, stakeServiceRegistred } = useFormStep()
         const loader = inject('loader')
         const config = inject('config')
 
@@ -75,6 +77,7 @@ export default {
 
         const { createToken } = useCreateToken(loader, config, daoAccountId.value)
         const { createDao } = useCreateDAO(loader, config, ftAccountId.value)
+        const { registerToken } = useRegisterToken(loader)
 
 
         //const logger = inject('logger')
@@ -83,10 +86,15 @@ export default {
         
         onMounted(() => {
             if (transactionStatus.value === 'success') {
+                 // creating token
                 if (formCreateDao.value.step === 'fromSubmited') {
                     formCreateDao.value = tokenCreated(transactionHashes.value)
+                // creating dao
                 } else if (formCreateDao.value.step === 'tokenCreated' && transactionHashes.value !== formCreateDao.value.transactionHash) {
-                    daoCreated()
+                    formCreateDao.value = daoCreated(transactionHashes.value)
+                // stake service
+                } else if (formCreateDao.value.step === 'daoCreated' && transactionHashes.value !== formCreateDao.value.transactionHash) {
+                    stakeServiceRegistred()
                     router.push({ name: 'dao', params: {id: daoAccountId.value}})
                 } else {
                     // TODO: Wrong state
@@ -96,7 +104,7 @@ export default {
             }
         })
         return {
-            t, formCreateDao, createToken, createDao, formData, transactionHashes, transactionStatus, daoAccountId, ftAccountId
+            t, formCreateDao, createToken, createDao, registerToken, formData, transactionHashes, transactionStatus, daoAccountId, ftAccountId
         }
     }
         

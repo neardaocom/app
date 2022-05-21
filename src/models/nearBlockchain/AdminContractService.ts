@@ -1,7 +1,7 @@
 import { Account, Contract} from 'near-api-js';
 import { factoryDaoList } from '../../../tests/fixtures/dao'
-import { DaoInfo } from './types/dao';
-export default class FactoryContractService {
+import { DaoInfo } from './types/admin';
+export default class AdminContractService {
   private contract: Contract & any;
 
   constructor(account: Account, contractId: string) {

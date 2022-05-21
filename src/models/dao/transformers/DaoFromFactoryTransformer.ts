@@ -1,7 +1,8 @@
 import TransformerInterface from "../../interfaces/Transformer.interface";
 import loToInteger from "lodash/toInteger";
-import { ListItemDto } from "../types/factory";
+import { ListItemDto } from "../types/admin";
 import StringHelper from "../../utils/StringHelper";
+import NearUtils from "../../nearBlockchain/Utils";
 
 export default class DaoFromFactoryTransformer implements TransformerInterface {
     private t: Function;
@@ -19,6 +20,7 @@ export default class DaoFromFactoryTransformer implements TransformerInterface {
             id: value[0],
             index: params.index,
             name: value[1].name,
+            created: NearUtils.dateFromChain(value[1].founded_s),
             walletId: value[0],
             description: value[1].description,
             location: undefined, // value[1].lang,

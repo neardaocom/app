@@ -2,7 +2,8 @@ import { Account, Contract } from 'near-api-js';
 import { Instance, ProposeSettings, ProposalState, VoteResult, ActionInput, TreasuryPartition, Reward, ClaimbleReward, Asset, Tags, Statistics, Settings } from "./types/dao";
 import { TemplateSettings } from "./types/workflow";
 import { ResourceType } from "./types/resource";
-import { Wallet } from './types';
+import { Wallet } from './types/blockchain';
+import loSet from "lodash/set";
 
 export default class DaoContract {
   private contract: Contract & any;
@@ -212,6 +213,16 @@ export default class DaoContract {
   }
 
   /**
+   * WorkFlow log
+   * 
+   * @return Promise
+   */
+   async wfLog(proposalId: number): Promise<any[]> {
+    return new Promise(() => ([]))
+    return this.contract.wf_log({proposal_id: proposalId})
+  }
+
+  /**
    * WorkFlow propose settings
    * 
    * @return Promise
@@ -270,6 +281,28 @@ export default class DaoContract {
    */
   async storageBucketData(bucketId: string, dataId: string) {
     return this.contract.storage_bucket_data({bucket_id: bucketId, data_id: dataId})
+  }
+
+  /**
+   * Load all buckets with data
+   * 
+   * @returns Record<string, unknown>
+   */
+  async storage() {
+    // get keys
+    const storageKeys: string[] = await this.storageBuckets()
+    
+    // load data
+    const data = await Promise.all(
+      storageKeys.map((key: string) => this.storageBucketDataAll(key))
+    ).catch((e) => {
+      throw new Error("Storage data not louded: " + e);
+    });
+
+    const result: Record<string, unknown> = {}
+    storageKeys.forEach((key, index) => loSet(result, [key], data[index]))
+    
+    return result
   }
 
   /**

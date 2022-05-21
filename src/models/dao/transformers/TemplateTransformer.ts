@@ -36,10 +36,20 @@ export default class TemplateTransformer implements TransformerInterface {
         // load meta
         const templateMeta: WFMetaTemplate | undefined = loGet(this.templateMetas, [value[1][0].name])
 
-        value[1][0].activities.forEach((actionChain, index) => {
-            if (actionChain !== null) {
+        value[1][0].activities.forEach((activityChain, index) => {
+            if (activityChain !== 'Init') {
+                // add activity
+                activity = {
+                    id: index,
+                    code: activityChain.code,
+                    actionIds: [],
+                    attributes: [],
+                }
+                activities.push(activity)
+
                 // console.log('action from chain', actionChain)
                 // set activity
+                /*
                 activity = loFind(activities, {code: actionChain.code})
                 if (activity === undefined) {
                     activity = {
@@ -82,18 +92,21 @@ export default class TemplateTransformer implements TransformerInterface {
                 if (value[1][0].end.includes(index)) {
                     endActionIds.push(action.id)
                 }
+                */
             }
         })
 
         // transitions
         const transitions: WFTransition[] = []
+        /**
         value[1][0].transitions.forEach((transactionChainToIds, index) => {
             if (index === 0) {
                 transactionChainToIds.forEach((toId) => startActionIds.push(toId - 1))
             } else {
                 transitions.push({ id: index - 1, toIds: transactionChainToIds.map((toId) => toId - 1) })
             }
-        })        
+        })
+        */
 
         // settings
         const settings: WFSettings[] = []
@@ -131,7 +144,7 @@ export default class TemplateTransformer implements TransformerInterface {
         return {
             id: loToInteger(value[0]),
             version: loToString(value[1][0].version),
-            code: value[1][0].name,
+            code: value[1][0].code,
             //constants: [],
             //attributes: [],
             activities: activities,

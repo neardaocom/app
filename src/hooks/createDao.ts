@@ -1,7 +1,6 @@
 import { Config } from "@/config";
 import { Loader } from "@/loader";
 import { computed, Ref, toRaw } from "vue";
-import { useStore } from "vuex";
 import DaoCreate from "@/models/dao/DaoCreate";
 import { useI18n } from "vue-i18n";
 import { NearConfig } from "@/config/near";
@@ -9,8 +8,8 @@ import Decimal from "decimal.js";
 import NearUtils from "@/models/nearBlockchain/Utils";
 
 export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
-    const daoFactoryAccountId = computed(
-        () => config.value.near.daoFactoryAccountId
+    const adminAccountId = computed(
+        () => config.value.near.adminAccountId
     );
     const ftFactoryAccountId = computed(
         () => config.value.near.ftFactoryAccountId
@@ -18,7 +17,7 @@ export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
 
     const daoAccountId = computed(() =>
         values.value.dao_account
-            ? values.value.dao_account + "." + daoFactoryAccountId.value
+            ? values.value.dao_account + "." + adminAccountId.value
             : null
     );
     const ftAccountId = computed(() =>
@@ -27,7 +26,7 @@ export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
             : null
     );
 
-    return { daoFactoryAccountId, ftFactoryAccountId, daoAccountId, ftAccountId }
+    return { adminAccountId, ftFactoryAccountId, daoAccountId, ftAccountId }
 }
 
 export const useFormStep = () => {
@@ -58,26 +57,32 @@ export const useFormStep = () => {
         return state
       }
 
-      const daoCreated = (): void => {
+      const daoCreated = (transactionHash: string): void => {
+        const state = getState()
+        state.step = 'daoCreated'
+        state.transactionHash = transactionHash
+        localStorage.setItem('create_dao', JSON.stringify(state))
+        return state
+      }
+
+      const stakeServiceRegistred = (): void => {
         localStorage.removeItem('create_dao')
       }
 
-    return { getState, formSubmited, tokenCreated, daoCreated }
+    return { getState, formSubmited, tokenCreated, daoCreated, stakeServiceRegistred }
 }
 
 export const useCreateDAO = (loader: Ref<Loader>, config: Ref<Config>, ftAccountId: string) => {
-    const store = useStore()
     const { t } = useI18n()
 
     const createDao = async (formData: any) => {
         const nearFactory = await loader.value.get('nearBlockchain/Factory')
         const configNear = toRaw(config.value.near) as NearConfig
-        const account = store.getters['near/getAccount'] // TODO: Rewrite login
-        // const account = await loader.value.get('near/WalletAccount') // TODO: Rewrite login
+        const account = await loader.value.get('near/WalletAccount')
         // console.log(account, config.value.near.ftFactoryAccountId)
         const daoCreate = new DaoCreate(
-            nearFactory.value.createFactoryContractService(account),
-            nearFactory.value.createWfProviderContractService(account),
+            nearFactory.value.createAdminContractService(account.value),
+            nearFactory.value.createWfProviderContractService(account.value),
             configNear,
             t
         )

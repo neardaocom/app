@@ -1,10 +1,12 @@
 import { Account, Contract } from 'near-api-js';
 import { User } from './types/staking';
 
-export default class StakingContract {
+export default class StakingContractService {
+  private contractId: string;
   private contract: Contract & any;
 
   constructor(account: Account, contractId: string) {
+     this.contractId = contractId
     this.contract = new Contract(account, contractId, {
       viewMethods: [
         'dao_ft_total_supply',
@@ -30,6 +32,9 @@ export default class StakingContract {
     });
   }
 
+  getContractId(): string {
+     return this.contractId
+  }
 
    /*****************
     *    Change     *

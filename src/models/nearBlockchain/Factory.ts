@@ -1,18 +1,17 @@
 import {
     Account,
     connect,
-    Contract,
-    transactions,
     keyStores,
     WalletConnection,
     Near,
 } from 'near-api-js';
 import DaoContractService from './DaoContractService';
-import FactoryContractService from "./FactoryContractService";
+import AdminContractService from "./AdminContractService";
 import NearAccountService from './NearAccountService';
 import WfProviderContractService from './WfProviderContractService';
 import FtFactoryContractService from './FtFactoryContractService';
 import FtContractService from './FtContractService';
+import StakingContractService from './StakingContractService';
 import { NearConfig } from '@/config/near';
 
 export default class Factory {
@@ -31,7 +30,7 @@ export default class Factory {
     }
 
     createWalletConnection(near: Near): WalletConnection {
-        return new WalletConnection(near, this.config.domainAccountId);
+        return new WalletConnection(near, this.config.name);
     }
 
     createWalletAccount(wallet: WalletConnection): Account {
@@ -42,8 +41,8 @@ export default class Factory {
         return new DaoContractService(account, contractId);
     }
 
-    createFactoryContractService(account: Account): FactoryContractService {
-        return new FactoryContractService(account, this.config.daoFactoryAccountId);
+    createAdminContractService(account: Account): AdminContractService {
+        return new AdminContractService(account, this.config.adminAccountId);
     }
 
     createNearAccountService(account: Account): NearAccountService {
@@ -52,6 +51,10 @@ export default class Factory {
 
     createWfProviderContractService(account: Account): WfProviderContractService {
         return new WfProviderContractService(account, this.config.wfProviderAccountId);
+    }
+
+    createStakingContractService(account: Account): StakingContractService {
+        return new StakingContractService(account, this.config.stakingAccountId);
     }
 
     createFtFactoryContractService(account: Account, contractId: string): FtFactoryContractService {

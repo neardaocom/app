@@ -46,7 +46,7 @@ export const useGroups = (dao: DAO) => {
     const { t } = useI18n()
 
     const council = computed(() => getGroupCouncil(dao, t))
-    const councilPercent = computed(() => (council.value && council.value.token) ? new Decimal(council.value.token.locked ?? 0).div(dao.treasury.token.meta.amount ?? 1).mul(100).round().toNumber() : undefined)
+    const councilPercent = computed(() => undefined) // TODO: Move to lock
 
     return {
         council, councilPercent

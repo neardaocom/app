@@ -1,9 +1,12 @@
+import { Loader } from "@/loader";
+import DaoStaking from "@/models/dao/DaoStaking";
 import Staking from "@/models/nearBlockchain/Staking";
-import StakingTransformer from "@/models/nearBlockchain/transformers/Staking.transformer";
+import StakingTransformer from "@/models/dao/transformers/StakingTransformer";
 import { UserInfoStaking } from "@/models/nearBlockchain/types/staking";
 import { StorageBalance, StorageBalanceBounds } from "@/models/nearBlockchain/types/storageManagement";
-import { inject, onMounted, Ref, ref } from "vue";
+import { inject, onMounted, Ref, ref, toRaw } from "vue";
 import { useI18n } from "vue-i18n";
+import { useStore } from "vuex";
 
 export const useStaking = (daoId: string, accountId: string, staking: Staking) => {
    const logger: any = inject("logger");
@@ -190,3 +193,22 @@ export const useStaking = (daoId: string, accountId: string, staking: Staking) =
       fetch, storageDeposite, registerNewDao, registerInDao, delegateOwned, delegate, undelegate, withdraw, unregisterInDao, storageWithdraw, useStorageUnregister
    };
 };
+
+export const useRegisterToken = (loader: Ref<Loader>) => {
+   const store = useStore()
+
+   const registerToken = async (daoAccountId: string, tokenAccountId: string) => {
+       const nearFactory = await loader.value.get('nearBlockchain/Factory')
+       const account = store.getters['near/getAccount'] // TODO: Rewrite login
+       const walletConnection = await loader.value.get('near/WalletConnection') // TODO: Rewrite login
+       const service = nearFactory.value.createStakingContractService(account)
+       // console.log(account, config.value.near.ftFactoryAccountId)
+       const daoStaking = new DaoStaking(daoAccountId, service, walletConnection.value)
+
+       daoStaking.registerToken(tokenAccountId, 1)
+   }
+
+   return {
+       registerToken
+   }
+}

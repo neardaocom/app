@@ -16,10 +16,10 @@ export const useNear = (config: Config) => {
     const wallet = computed(() => store.getters['near/getWallet'])
     const walletUrl = computed(() => store.getters['near/getWalletUrl'])
     const provider = computed(() => store.getters['near/getProviderContract'])
-    const factoryAccount = computed(() => (config.near.daoFactoryAccountId))
+    const adminAccountId = computed(() => (config.near.adminAccountId))
     const accountId = computed(() => ( store.getters['near/getAccountId']))
 
-    return { nearService, wallet, walletUrl, provider, factoryAccount, accountId }
+    return { nearService, wallet, walletUrl, provider, adminAccountId, accountId }
 }
 
 export const useWallet = () => {

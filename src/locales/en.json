@@ -468,6 +468,7 @@
   "vote_token": "Vote token",
   "delegate_id": "Delegate account",
   "stake": "Stake",
+  "staking_service": "Staking service",
   "forward": "Forward",
   "delegate": "Delegate",
   "undelegate": "Undelegate",

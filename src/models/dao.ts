@@ -599,6 +599,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
         location: '',
         lang: '', // TODO: Add lang to DAO
         created: new Date(), // TODO: DAO created
+        version: '1.0',
         storage: dataHack[11],
         docs: docs,
         voteLevels: voteLevels,

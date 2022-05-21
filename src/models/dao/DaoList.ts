@@ -1,8 +1,8 @@
 import DaoFromFactoryTransformer from "@/models/dao/transformers/DaoFromFactoryTransformer";
 import TagFromFactoryTransformer from "@/models/dao/transformers/TagFromFactoryTransformer";
-import { ListItemDto } from "./types/factory";
+import { ListItemDto } from "./types/admin";
 import Near from "./Near";
-import DaoFactory from "./DaoFactory";
+import DaoFactory from "./DaoAdmin";
 import Decimal from "decimal.js";
 
 export default class DaoList {

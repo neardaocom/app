@@ -19,8 +19,8 @@ import { useForm } from 'vee-validate';
 export default {
    setup () {
       const {t} = useI18n()
-      const { factoryAccount } = useNear()
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(factoryAccount.value))
+      const { adminAccountId } = useNear()
+      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
 
       const refWysiwyg = ref(null)
       const schema = computed(() => {
