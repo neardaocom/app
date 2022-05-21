@@ -1,4 +1,5 @@
 import { DAO, DAORights, DAORightsType, DAOVoteLevel, DAOVoteType } from "@/models/dao/types/dao";
+import { basicStaking } from "../../tests/fixtures/staking";
 // voting
 export const votingDemocraticHalfOneHour: DAOVoteLevel = { type: DAOVoteType.Democratic, quorum: 50, approveThreshold: 50, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
 export const votingTokenWeightedLow: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 30, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
@@ -61,4 +62,6 @@ export const daoTestOne: DAO = {
     ],
     templates: [],
     workflows: [],
+    treasuryLocks: [],
+    staking: basicStaking()
 }

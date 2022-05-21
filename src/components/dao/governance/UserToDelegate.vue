@@ -15,8 +15,8 @@
             {{bio}}
          </div>
          <div class="d-flex">
-            <MDBBadge color="primary" class="me-auto align-self-center"> {{tag}} </MDBBadge>
-            {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{amount}}</span>
+            <MDBBadge color="primary" class="align-self-center"> {{tag}} </MDBBadge>
+            <div class="ms-auto"> {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{amount}}</span></div>
          </div>
       </MDBCardBody>
    </MDBCard>
@@ -40,11 +40,11 @@ export default {
       },
       bio:{
          type: String,
-         required: true
+         required: false
       },
       tag:{
          type: String,
-         required: true
+         required: false
       },
       amount:{
          type: [Number, String],

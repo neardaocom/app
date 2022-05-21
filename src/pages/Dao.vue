@@ -35,7 +35,9 @@
         <Settings v-if="loaded === true && rPage === 'settings'"/>
         <Treasury v-if="loaded === true && rPage === 'treasury'"/>
         <Governance v-if="loaded === true && rPage === 'governance'"/>
+        <WalletAccount v-if="loaded === true && rPage === 'wallet_account'"/>
         <SkeletonBody v-if="loaded === false" />
+
       </div>
     </section>
     <!-- /Parts -->
@@ -63,6 +65,7 @@ import Activities from './dao/Activities.vue'
 import Settings from './dao/Settings.vue'
 import Treasury from './dao/Treasury.vue'
 import Governance from './dao/Governance.vue'
+import WalletAccount from './dao/WalletAccount.vue'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, provide, inject } from 'vue'
 import { getRole } from "@/models/dao";
@@ -76,7 +79,7 @@ import { useWallet } from "@/hooks/vuex";
 export default {
   components: {
     About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Tokens, Resources, DeFi, Settings,
-    SkeletonButtons, SkeletonBody, Governance, Treasury,
+    SkeletonButtons, SkeletonBody, Governance, Treasury, WalletAccount,
     Title,
     SkeletonTitle,
   },

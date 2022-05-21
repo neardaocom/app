@@ -23,7 +23,7 @@
         <a v-if="false" :class="[isActive('tokens') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           {{ t('default.tokens') }}
         </a>
-        <a :class="[isActive('defi') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <a  v-if="false" :class="[isActive('defi') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-graph-up me-1"/>
           {{ t('default.dApps') }}
         </a>
@@ -31,7 +31,7 @@
           <i class="bi bi-files me-1"/>
           {{ t('default.resources') }}
         </a>
-        <a :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <a  v-if="false" :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
         </a>
@@ -46,6 +46,10 @@
         <a :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
           {{ t('default.governance') }}
+        </a>
+        <a  v-if="false" :class="[isActive('wallet_account') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-gear me-1"/>
+          {{ t('default.wallet') }}
         </a>
       </div>
       <!-- Left -->

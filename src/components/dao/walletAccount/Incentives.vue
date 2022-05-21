@@ -1,11 +1,7 @@
 <template>
    <MDBCard text="start">
       <MDBRow class="g-0">
-         <MDBCol col="1" class="d-flex flex-column justify-content-between text-center text-white bg-danger py-4" style="border-radius: 0.5rem 0 0 0.5rem">
-            <div > 
-               <i class="bi bi-lock fa-2x"/>
-               <i v-if="false" class="bi bi-unlock fa-2x"/>
-            </div>
+         <MDBCol col="1" class="d-flex flex-column-reverse justify-content-between text-center text-white bg-gradient-180 py-4" style="border-radius: 0.5rem 0 0 0.5rem">
             <div>#1</div>
          </MDBCol>
          <MDBCol col="11">
@@ -39,10 +35,7 @@
                   </span>
                </MDBCardText>
                <MDBCardText>
-                  <div class="d-flex justify-content-between">
-                     <span class="text-muted">Locked by filla.testnet</span>
-                     <a href="#" class="text-dark text-decoration-underline">{{t('default.detail')}}</a>
-                  </div>
+                  <span class="text-muted small">From Lock #1</span>
                </MDBCardText>
             </MDBCardBody>
          </MDBCol>

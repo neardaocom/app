@@ -3,9 +3,10 @@
       <MDBCardBody>
          <h5 class="text-start"> {{header}} </h5>
          <div class="d-flex align-items-center">
-            <slot name="icon"> 
-               <MDBBadge color="black" pill class="me-2" style="padding: 0.6rem"><img width="17" height="17" :src="'/img/near_logo.svg'"/></MDBBadge>
-            </slot>
+
+            <MDBBadge v-if="suffix==='NEAR'" color="black" pill class="me-2" style="padding: 0.6rem"><img width="17" height="17" :src="'/img/near_logo.svg'"/></MDBBadge>
+            <div v-else-if="!icon" class="rounded-circle bg-black d-inline-block border border-secondary me-2" style="height:38px; width:38px"/>
+            <img v-else :src="icon" class="img-fluid rounded-circle border border-secondary me-2" alt="" style="height:38px; width:38px"/>
             <span>
                <span class="fs-4 fw-800" ><NumberFormatter :amount="amount"/></span><span class="h5 text-secondary ps-1">{{suffix}}</span>
             </span>
@@ -36,11 +37,11 @@ export default {
       },
       amount:{
          type: [Number, String],
-         required: false
+         required: true
       },
       suffix:{
          type: String,
-         required: false
+         required: true
       },
    },
    setup () {

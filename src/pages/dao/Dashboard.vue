@@ -9,6 +9,9 @@
         <GovernanceToken />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
+        <Incentives />
+      </div>
+      <div class="col-12 col-md-6 col-lg-5 mb-4">
         <ActiveProposals />
       </div>
       <Bounty/>
@@ -18,13 +21,13 @@
     <h5 class="text-start">{{t('default.dao_assets')}}</h5>
     <div class="row">
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAssets />
+        <DaoAsset />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAssets />
+        <DaoAsset />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAssets />
+        <DaoAsset />
       </div>
     </div>
 
@@ -58,7 +61,9 @@ import _ from "lodash"
 import loFind from "lodash/find"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
-import DaoAssets from '@/components/dao/dashboard/DaoAssets.vue'
+import DaoAsset from '@/components/dao/dashboard/DaoAsset.vue'
+import Incentives from '@/components/dao/dashboard/Incentives.vue';
+
 
 export default {
   components: {
@@ -68,7 +73,8 @@ export default {
     DashboardOverview,
     GovernanceToken,
     ActiveProposals,
-    DaoAssets
+    DaoAsset,
+    Incentives,
   },
   props: {
     walletId: {

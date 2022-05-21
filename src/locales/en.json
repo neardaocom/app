@@ -481,6 +481,11 @@
   "event": "Event",
   "detail": "Detail",
   "unlocking_token": "Unlocking token",
-  "total_token_value": "Total token value"
+  "total_token_value": "Total token value",
+  "next_unlock": "Next unlock",
+  "assets_to_withdraw": "Assets to withdraw",
+  "incentives": "Incentives",
+  "dao_wallet": "DAO wallet",
+  "to_withdraw": "To withdraw"
 
 }
