@@ -48,5 +48,9 @@ export default class DaoStaking {
         this.stakingService.withdraw(this.id, NearUtils.amountToDecimals(amount.toString(), 24), NearUtils.toTGas(100))
     }
 
+    async unregistred() {
+        this.stakingService.unregisterInDao(this.id, NearUtils.toTGas(100))
+    }
+
 
 }

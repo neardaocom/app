@@ -233,6 +233,10 @@ export const useStake = (dao: Ref<DAO>, loader: Ref<Loader>) => {
                await daoStaking.withdraw(loGet(args, ['amount']) || 0)
             }
             break;
+         case 'unregistred': {
+               await daoStaking.unregistred()
+            }
+            break;
          default:
             break;
       }
