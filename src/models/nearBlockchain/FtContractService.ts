@@ -74,8 +74,8 @@ export default class FtContractService {
    * 
    * @return Promise
    */
-  async ftTranser(receiverId: string, amount: string, memo: string|null, gas: string, yoctoNear: string) {
-    return this.contract.ft_transfer({receiver_id: receiverId, amount, memo}, gas, yoctoNear)
+  async ftTranser(receiverId: string, amount: string, memo: string|null, gas: string) {
+    return this.contract.ft_transfer({receiver_id: receiverId, amount, memo}, gas)
   }
 
   /**
@@ -84,7 +84,8 @@ export default class FtContractService {
    * @return Promise
    */
    async ftTranserCall(receiverId: string, amount: string, memo: string|null, msg: string, gas: string, yoctoNear: string) {
-    return this.contract.ft_transfer_call({receiver_id: receiverId, amount, memo, msg}, gas, yoctoNear)
+     console.log({receiver_id: receiverId, amount, memo, msg})
+    return this.contract.ft_transfer_call({receiver_id: receiverId, amount: amount.toString(), memo, msg}, gas, yoctoNear)
    }
 
    /**

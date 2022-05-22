@@ -2,6 +2,7 @@ import { Account, Near } from 'near-api-js';
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import FtContractService from "../nearBlockchain/FtContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
+import StakingContractService from "../nearBlockchain/StakingContractService";
 
 export default class ServicePool {
     private near: Near;
@@ -9,6 +10,7 @@ export default class ServicePool {
     private daoPool: { [key: string]: DaoContractService } = {};
     private ftPool: { [key: string]: FtContractService } = {};
     private accountPool: { [key: string]: NearAccountService } = {};
+    private stakingPool: { [key: string]: StakingContractService } = {};
 
     constructor(near: Near, account: Account) {
         this.near = near;
@@ -47,5 +49,16 @@ export default class ServicePool {
         this.accountPool[contractId] = nearAccount;
 
         return nearAccount;
+    }
+
+    getStaking(contractId: string): StakingContractService {
+        if (this.ftPool[contractId]) {
+            return this.stakingPool[contractId];
+        }
+
+        const contract = new StakingContractService(this.account, contractId);
+        this.stakingPool[contractId] = contract;
+
+        return contract;
     }
 }

@@ -12,7 +12,7 @@ export const rightTokenGroupCouncil: DAORights = {type: DAORightsType.Group, gro
 export const rightTokenGroupCouncilLeader: DAORights = {type: DAORightsType.GroupLeader, groupId: 1};
 export const rightTokenGroupCouncilRole: DAORights = {type: DAORightsType.GroupRole, groupId: 1, roleId: 1};
 
-export const daoTestOne: DAO = {
+export const daoTestOne = {
     name: 'DAO',
     purpose: 'Testing',
     wallet: 'dao.testnet',

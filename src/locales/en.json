@@ -469,6 +469,7 @@
   "delegate_id": "Delegate account",
   "stake": "Stake",
   "staking_service": "Staking service",
+  "stake_register": "Register",
   "forward": "Forward",
   "delegate": "Delegate",
   "undelegate": "Undelegate",

@@ -91,13 +91,13 @@ export default class StakingContractService {
    }
 
    /**
-    * Delegates all delegated tokens to delegate
+    * Delegates all delegated tokens to delegate ~ Forwarding
     * Delegate must be registered in the dao
     * 
     * @return Promise
     */
-   async delegate(daoId: string, delegateId: string, amount: string, gas: string) {
-      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
+   async delegate(daoId: string, delegateId: string, gas: string) {
+      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId}, gas);
    }
 
    /**
