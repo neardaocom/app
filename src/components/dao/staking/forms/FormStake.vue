@@ -18,22 +18,19 @@ export default {
 
       const schema = computed(() => {
          return {
-               amount: `required|strIsNumber|strNumMax:${dao.value.staking.userInfo.staked}`
+            amount: `required|strIsNumber|strNumMax:${dao.value.staking.userInfo.staked}`
          }
       });
-
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async () => {   
             
-        }, () => {
-                console.log(errors.value)
-        });
+         }, () => {
+            console.log(errors.value)
+         });
 
       return {
-         t,
-         dao,
-         onSubmit
+         t, onSubmit, dao
       }
    }
 }

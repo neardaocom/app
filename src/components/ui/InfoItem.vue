@@ -2,7 +2,10 @@
    <div class="d-flex justify-content-center text-start mb-5">
       <div> 
          <h6> {{ header }} </h6>
-         <NumberFormatter class="h2 border-start border-secondary border-3 ps-2" :amount="amount"/><span class="fs-5 text-secondary" style="font-weight: 800 !important;">{{suffix}}</span>
+         <div class="border-start border-secondary border-3 ps-2">
+            <NumberFormatter class="h2" :amount="amount"/><span class="fs-5 text-secondary" style="font-weight: 800 !important;">{{suffix}}</span>
+            <slot></slot>
+         </div>
       </div>
    </div>
 </template>

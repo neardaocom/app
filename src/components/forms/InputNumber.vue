@@ -41,6 +41,7 @@ import {
   MDBInput,
   MDBBtn
 } from "mdb-vue-ui-kit";
+import Decimal from 'decimal.js'
 
 export default {
     components:{
@@ -137,7 +138,7 @@ export default {
         //     }
         // })
 
-        const valueToMax = () => displayValue.value = max.value.toFixed()
+        const valueToMax = () => displayValue.value = new Decimal(max.value).toFixed()
         const balanceLocale = computed(() => LocaleHelper.stringNumberToLocale(balance.value.toFixed(), locale.value))
 
         return{

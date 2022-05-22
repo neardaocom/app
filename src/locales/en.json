@@ -468,6 +468,7 @@
   "vote_token": "Vote token",
   "delegate_id": "Delegate account",
   "stake": "Stake",
+  "staked": "Staked",
   "staking_service": "Staking service",
   "forward": "Forward",
   "delegate": "Delegate",
@@ -487,6 +488,10 @@
   "assets_to_withdraw": "Assets to withdraw",
   "incentives": "Incentives",
   "dao_wallet": "DAO wallet",
-  "to_withdraw": "To withdraw"
+  "to_withdraw": "To withdraw",
+  "delegated": "Delegated",
+  "total_delegated": "Total delegated",
+  "my_vote_power": "My vote power",
+  "delegators": "Delegators"
 
 }

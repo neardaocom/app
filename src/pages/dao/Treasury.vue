@@ -3,9 +3,9 @@
       <div class="mb-7">
          <h5 class="text-start mb-4">{{t('default.total_dao_locked_value')}}</h5>
          <div class="d-flex flex-wrap gap-3">
-           <InfoAmount v-for="(totalLock, index) in treasuryTotalLocked" :key="index"
+           <InfoAmountCard v-for="(totalLock, index) in treasuryTotalLocked" :key="index"
                :amount="totalLock.amountLocked" :suffix="totalLock.assetSymbol" style="min-width: 283px" :icon="totalLock.assetIcon">
-            </InfoAmount>     
+            </InfoAmountCard>     
          </div>
       </div>
       
@@ -28,7 +28,7 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import InfoAmount from '@/components/ui/InfoAmount.vue'
+import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
 import { MDBBtn } from "mdb-vue-ui-kit";
@@ -36,7 +36,7 @@ import { inject } from '@vue/runtime-core';
 import {useAnalytics} from '@/hooks/treasury'
 export default {
    components: {
-      InfoAmount,
+      InfoAmountCard,
       TreasuryLock,
       // ModalTreasuryLocks,
       MDBBtn 

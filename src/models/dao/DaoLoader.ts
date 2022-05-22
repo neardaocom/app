@@ -18,7 +18,6 @@ import NearUtils from "../nearBlockchain/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import FtContractService from "../nearBlockchain/FtContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
-import { listBasic } from "../../../tests/fixtures/treasury";
 import { basicStaking } from "../../../tests/fixtures/staking"
 
 import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures

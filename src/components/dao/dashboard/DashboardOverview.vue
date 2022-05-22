@@ -1,9 +1,9 @@
 <template>
    <div class="d-flex flex-wrap justify-content-evenly align-items-stretch mt-5">
 
-      <DashboardInfoItem v-if="nearPrice" :header="t('default.dao_funds')" :amount="dao.treasury.near * nearPrice" suffix="USD"/>
-      <DashboardInfoItem :header="t('default.my_share')" :amount="myTokensShare" suffix="%"/>
-      <DashboardInfoItem :header="t('default.tokens')" :amount="dao.treasury.token.free" :suffix="dao.treasury.token.meta.short"/>
+      <InfoItem v-if="nearPrice" :header="t('default.dao_funds')" :amount="dao.treasury.near * nearPrice" suffix="USD"/>
+      <InfoItem :header="t('default.my_share')" :amount="myTokensShare" suffix="%"/>
+      <InfoItem :header="t('default.tokens')" :amount="dao.treasury.token.free" :suffix="dao.treasury.token.meta.short"/>
 
 
       <div class="mb-5">
@@ -30,13 +30,13 @@
 import { useI18n } from 'vue-i18n'
 import { MDBBadge } from 'mdb-vue-ui-kit'
 import { computed, inject } from '@vue/runtime-core'
-import DashboardInfoItem from "./DashboardInfoItem.vue"
+import InfoItem from "@/components/ui/InfoItem.vue"
 import Decimal from 'decimal.js'
 
 export default {
    components:{
       MDBBadge,
-      DashboardInfoItem,
+      InfoItem,
    },
       props: {
          nearPrice: {

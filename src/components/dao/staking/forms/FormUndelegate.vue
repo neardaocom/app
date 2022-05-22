@@ -1,39 +1,41 @@
 <template>
-   <InputString :labelName="t('default.dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
-   <InputString :labelName="t('default.delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/>
-   <InputNumber :labelName="t('default.amount')" id="amount"/>
-   <br/>
-   <div class="text-start">
-      <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
-   </div>
-   <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-   </MDBWysiwyg>
+   <h6>{{`${t('default.account_id')}: ${accountId}`}}</h6>
+   <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
 <script>
-import { computed, ref } from '@vue/reactivity'
+import { computed, toRefs } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-import { useNear } from '@/hooks/vuex'
+// import { useNear } from '@/hooks/vuex'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputNumber from '@/components/forms/InputNumber.vue'
-import InputString from '@/components/forms/InputString.vue'
+import { inject } from '@vue/runtime-core';
 export default {
    components:{
-      InputString,
       InputNumber
    },
-   setup () {
+   props: {
+      accountId:{
+         type: String,
+         required: true
+      },
+      amount:{
+         type: [Number, String],
+         required: true
+      }
+   },
+   setup (props) {
+      const { accountId, amount } = toRefs(props)
+      console.log(accountId); 
       const {t} = useI18n()
-      const { adminAccountId } = useNear()
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
+      const config = inject('config')
+      // const { adminAccountId } = useNear()
+      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
 
-      const refWysiwyg = ref(null)
       const schema = computed(() => {
          return {
-               dao_id: `required|accountExists:${accountPostfix.value}`,
-               delegate_id: `required|accountExists:${accountPostfix.value}`,
-               amount: 'required|strIsNumber'
+            amount: `required|strIsNumber|strNumMax:${amount.value}`
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
@@ -45,7 +47,7 @@ export default {
         });
 
       return {
-         t, accountPostfix, refWysiwyg, onSubmit
+         t, accountPostfix, onSubmit
       }
    }
 }

@@ -302,6 +302,7 @@
   "vote_token": "Hlasovací token",
   "delegate_id": "Učet delegáta",
   "stake": "Stake",
+  "staked": "Staked",
   "forward": "Forward",
   "delegate": "Delegovat",
   "undelegate": "Oddelegovat",
@@ -319,5 +320,10 @@
   "assets_to_withdraw": "Assets to withdraw",
   "incentives": "Incentives",
   "dao_wallet": "DAO wallet",
-  "to_withdraw": "K výběru"
+  "to_withdraw": "K výběru",
+  "total_delegated": "Total delegated",
+  "my_vote_power": "My vote power",
+  "delegators": "Delegators"
+
+
 }
