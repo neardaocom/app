@@ -2,17 +2,17 @@ export type TreasuryLockCategory = 'salary' | 'event' | 'activity'
 
 export type TreasuryLock = {
     id: number;
-    category:  TreasuryLockCategory;
+    category?:  TreasuryLockCategory; // deprecated
     name: string;
     nextUnlock: Date;
     createdBy: string|null;
     assets: TreasuryLockAsset[];
 }
 
-
 export type TreasuryLockAsset = {
     asset: TreasuryAsset;
     totalLocked: number;
+    totalUnlocked: number;
     unlocked: number;
     locked: number;
     unlocking: TreasuryAssetUnlocking[];
@@ -24,6 +24,7 @@ export type TreasuryAsset = {
     name: string;
     symbol: string;
     icon: string|null;
+    decimals: number;
     priceInUSD?: number;
 }
 

@@ -1,3 +1,3 @@
 export default interface Transformer {
-    transform(value: any, params: any);
+    transform(value: any, params?: any);
 }

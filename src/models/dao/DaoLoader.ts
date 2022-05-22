@@ -28,6 +28,9 @@ import { ListItemDto } from "./types/admin";
 import { Staking, StakingDelegation, StakingUserInfo, StakingUserToDelegate } from "./types/staking";
 import { UserInfoStaking } from "../nearBlockchain/types/staking";
 import NumberHelper from "../utils/NumberHelper";
+import { TreasuryLock } from "./types/treasury";
+import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
+import FtMetadataLoader from "../ft/FtMetadataLoader";
 
 export default class DaoLoader {
     private id: string;
@@ -41,6 +44,7 @@ export default class DaoLoader {
     private stakingAccountId!: string;
     private ftService!: FtContractService;
     private stakingService!: StakingContractService;
+    private ftMetadataLoader: FtMetadataLoader;
 
     constructor(id: string, servicePool: ServicePool, t: Function, daoInfo: ListItemDto | null) {
         this.id = id
@@ -48,6 +52,7 @@ export default class DaoLoader {
         this.t = t
         this.daoInfo = daoInfo
         this.dataChain = []
+        this.ftMetadataLoader = new FtMetadataLoader(servicePool)
     }
 
     async init(): Promise<void> {
@@ -85,6 +90,7 @@ export default class DaoLoader {
         const groups = this.getGroups()
         const tags = this.getGlobalTags()
         const staking = await this.getStaking(walletId)
+        const treasuryLocks = await this.getTreasuryLocks()
 
         // token holders 
         // TODO: Is it good way to find members, form proposals??
@@ -134,7 +140,7 @@ export default class DaoLoader {
             templates: execute.templates,
             proposals: execute.proposals,
             workflows: execute.workflows,
-            treasuryLocks: listBasic(), //listEmpty()
+            treasuryLocks: treasuryLocks, //listEmpty()
             staking: staking,
             settings: this.dataChain[7],
             statistics: this.dataChain[8],
@@ -161,9 +167,10 @@ export default class DaoLoader {
           this.ftService.ftMetadata(),
           this.accountService.getState(),
           this.daoService.storage(),
-          this.ftService.ftBalanceOf(this.id),
-          this.stakingService.daoFtTotalSupply(this.id), // 13
-          this.stakingService.daoUserList(this.id) // 14
+          this.ftService.ftBalanceOf(this.id), // 12: staking
+          this.stakingService.daoFtTotalSupply(this.id),
+          this.stakingService.daoUserList(this.id),
+          this.daoService.partitionList(0, 1000), // 15: treasury
         ]).catch((e) => {
           throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
         });
@@ -171,6 +178,27 @@ export default class DaoLoader {
         console.log(this.dataChain)
     }
 
+    /**
+     * Load treasury lock from blockchain dao smart contract
+     * @returns 
+     */
+    async getTreasuryLocks(): Promise<TreasuryLock[]> {
+        let lockItem: TreasuryLock
+        const locks: TreasuryLock[] = []
+        const transformer = new TreasuryLockTransformer(this.ftMetadataLoader)
+        for (lockItem of this.dataChain[15]) {
+            // console.log(lockItem)
+            locks.push(await transformer.transform(lockItem))
+        }
+        return locks
+    }
+
+    /**
+     * Load staking from blockchain smart contracts
+     * 
+     * @param walletId 
+     * @returns 
+     */
     async getStaking(walletId?: string): Promise<Staking> {
         let userInfo: StakingUserInfo | null = null
         let walletInfo: UserInfoStaking | null = null
@@ -178,7 +206,7 @@ export default class DaoLoader {
         const usersToDelegate: StakingUserToDelegate[] = []
 
         this.dataChain[14].forEach((user, index) => {
-            console.log(user)
+            //console.log(user)
             usersToDelegate.push({
                 id: index,
                 accountId: user[0],
