@@ -286,7 +286,7 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
     return templates;
 }
 
-export const loadById = async (nearService: any, id: string, t: Function, walletId?: string): Promise<DAO> => {
+export const loadById = async (nearService: any, id: string, t: Function, walletId?: string): Promise<any> => {
     const daoId = getAccountId(id)
 
     // console.log(walletId)

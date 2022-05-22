@@ -4,6 +4,7 @@ import { FT, FTMeta } from "@/types/ft";
 import { WFInstance, WFTemplate } from "./workflow";
 import { TreasuryLock } from "./treasury";
 import { Staking } from "./staking";
+import { Settings } from "@/models/nearBlockchain/types/dao";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -195,6 +196,8 @@ export type DAO = {
   workflows: WFInstance[];
   treasuryLocks: TreasuryLock[];
   staking: Staking;
+  settings: Settings;
+  statistics: Record<string, unknown>;
 }
 
 export type DAODTO = {

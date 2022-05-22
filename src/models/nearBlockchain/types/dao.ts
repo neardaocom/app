@@ -99,12 +99,13 @@ export type TreasuryPartitionInput = {
 }
 
 export type PartitionAsset = {
-    assert_id: Asset;
+    asset_id: Asset;
     amount: number; // big int - free amount with decimals
     lock: UnlockingDB|null;
 }
 
 export type TreasuryPartition = {
+    name: string;
     assets: PartitionAsset[];
 }
 

@@ -12,9 +12,9 @@ export default class StakingTransformer implements TransformerInterface {
 
     transform(value: any, params: any) {
         const data: UserInfoStaking =  {
-            voteAmount: value.vote_amount,
-            delegatedAmounts: value.delegated_amounts,
-            delegatedVoteAmount: value.delegated_voteAmount,
+            vote_amount: value.vote_amount,
+            delegated_amounts: value.delegated_amounts,
+            delegated_vote_amount: value.delegated_vote_amount,
             delegators: value.delegators
         };
         return data
