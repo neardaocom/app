@@ -19,7 +19,7 @@ export default {
          required: false,
       },
       amount:{
-         type: Number,
+         type: [Number, String],
          required: false,
       },
       suffix:{

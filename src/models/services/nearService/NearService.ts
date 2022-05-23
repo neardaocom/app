@@ -54,7 +54,7 @@ class NearService {
       }
     }, this.config));
 
-    this.walletConnection = new WalletConnection(this.near, (process.env.VUE_APP_NEAR_CONTRACT_NAME || null));
+    this.walletConnection = new WalletConnection(this.near, this.config.name);
 
     const account = this.walletConnection.account();
 

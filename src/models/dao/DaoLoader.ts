@@ -12,17 +12,26 @@ import TemplateTransformer from "./transformers/TemplateTransformer";
 import StringHelper from '../utils/StringHelper'
 import loFind from "lodash/find"
 import loGet from "lodash/get"
+import loIsNil from "lodash/isNil"
+import loSum from "lodash/sum"
 import loValues from "lodash/values"
 import { templateMetas } from "./data/workflowMeta"
 import NearUtils from "../nearBlockchain/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import FtContractService from "../nearBlockchain/FtContractService";
+import StakingContractService from "../nearBlockchain/StakingContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 import { basicStaking } from "../../../tests/fixtures/staking"
-
 import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures
 import ServicePool from "./ServicePool";
 import { ListItemDto } from "./types/admin";
+import { Staking, StakingDelegation, StakingWallet, StakingUserToDelegate } from "./types/staking";
+import { UserInfoStaking } from "../nearBlockchain/types/staking";
+import NumberHelper from "../utils/NumberHelper";
+import { TreasuryLock } from "./types/treasury";
+import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
+import FtMetadataLoader from "../ft/FtMetadataLoader";
+import IntegerHelper from "../utils/IntegerHelper";
 
 export default class DaoLoader {
     private id: string;
@@ -32,8 +41,11 @@ export default class DaoLoader {
     private servicePool: ServicePool;
     private daoService!: DaoContractService;
     private accountService!: NearAccountService;
-    private ftId!: string;
+    private ftAccountId!: string;
+    private stakingAccountId!: string;
     private ftService!: FtContractService;
+    private stakingService!: StakingContractService;
+    private ftMetadataLoader: FtMetadataLoader;
 
     constructor(id: string, servicePool: ServicePool, t: Function, daoInfo: ListItemDto | null) {
         this.id = id
@@ -41,6 +53,7 @@ export default class DaoLoader {
         this.t = t
         this.daoInfo = daoInfo
         this.dataChain = []
+        this.ftMetadataLoader = new FtMetadataLoader(servicePool)
     }
 
     async init(): Promise<void> {
@@ -53,13 +66,18 @@ export default class DaoLoader {
         }
 
         // TODO: It's not nice
-        if (this.ftId === undefined) {
-            const stats = await this.daoService.statistics()
-            this.ftId = stats.token_id
+        if (this.ftAccountId === undefined || this.stakingAccountId === undefined) {
+            const settings = await this.daoService.settings()
+            this.ftAccountId = settings.token_id
+            this.stakingAccountId = settings.staking_id
         }
 
         if (this.ftService === undefined) {
-            this.ftService = this.servicePool.getFt(this.ftId)
+            this.ftService = this.servicePool.getFt(this.ftAccountId)
+        }
+
+        if (this.stakingService === undefined) {
+            this.stakingService = this.servicePool.getStaking(this.stakingAccountId)
         }
 
         return;
@@ -72,6 +90,8 @@ export default class DaoLoader {
         const voteLevels = this.getVoteLevels()
         const groups = this.getGroups()
         const tags = this.getGlobalTags()
+        const staking = await this.getStaking(walletId)
+        const treasuryLocks = await this.getTreasuryLocks()
 
         // token holders 
         // TODO: Is it good way to find members, form proposals??
@@ -95,7 +115,7 @@ export default class DaoLoader {
                 token: {
                     meta: {
                         name: this.dataChain[9].name,
-                        short: this.dataChain[9].symbol, // TODO: short -> symbol
+                        symbol: this.dataChain[9].symbol,
                         accountId: this.id,
                         amount: this.dataChain[8].ft_total_supply,
                         decimals: this.dataChain[9].decimals,
@@ -121,8 +141,10 @@ export default class DaoLoader {
             templates: execute.templates,
             proposals: execute.proposals,
             workflows: execute.workflows,
-            treasuryLocks: listBasic(), //listEmpty()
-            staking: basicStaking(),
+            treasuryLocks: treasuryLocks, //listEmpty()
+            staking: staking,
+            settings: this.dataChain[7],
+            statistics: this.dataChain[8],
         }
     }
 
@@ -146,12 +168,101 @@ export default class DaoLoader {
           this.ftService.ftMetadata(),
           this.accountService.getState(),
           this.daoService.storage(),
-          this.ftService.ftBalanceOf(this.id),
+          this.ftService.ftBalanceOf(this.id), // 12: staking
+          this.stakingService.daoFtTotalSupply(this.id),
+          this.stakingService.daoUserList(this.id),
+          this.daoService.partitionList(0, 1000), // 15: treasury
         ]).catch((e) => {
           throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
         });
 
         console.log(this.dataChain)
+    }
+
+    /**
+     * Load treasury lock from blockchain dao smart contract
+     * @returns 
+     */
+    async getTreasuryLocks(): Promise<TreasuryLock[]> {
+        let lockItem: TreasuryLock
+        const locks: TreasuryLock[] = []
+        const transformer = new TreasuryLockTransformer(this.ftMetadataLoader)
+        for (lockItem of this.dataChain[15]) {
+            // console.log(lockItem)
+            locks.push(await transformer.transform(lockItem))
+        }
+        return locks
+    }
+
+    /**
+     * Load staking from blockchain smart contracts
+     * 
+     * @param walletId 
+     * @returns 
+     */
+    async getStaking(walletId?: string): Promise<Staking> {
+        let wallet: StakingWallet | null = null
+        let walletInfo: UserInfoStaking | null = null
+        // let walletInfo: object | null = null
+        const usersToDelegate: StakingUserToDelegate[] = []
+
+        this.dataChain[14].forEach((user, index) => {
+            //console.log(user)
+            usersToDelegate.push({
+                id: index,
+                accountId: user[0],
+                bio: null,
+                tag: null, // TODO: Add from groups
+                votesCasted: user[1].delegators.length,
+                voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(user[1].delegated_vote_amount.toString() || '0', this.getFtDecimals()))
+            })
+
+            if (user[0] === walletId) {
+                walletInfo = user[1]
+            }
+        })
+
+        if (loIsNil(walletInfo) === false) {
+            const userStaked = await this.stakingService.daoFtBalanceOf(this.id, walletId!)
+            const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).filter((item) =>item[0] !== walletId).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
+            const delegationsVoteAmountSum = loSum(delegations.map((item) => item.voteAmount))
+
+            // compute delegators
+            const delegators: StakingDelegation[] = []
+            this.dataChain[14].filter((item) => item[0] !== walletId).forEach((user, index) => {
+                user[1].delegated_amounts.filter((item) => item[0] === walletId).forEach((item) => {
+                    delegators.push({
+                        id: delegators.length,
+                        accountId: user[0],
+                        voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1].toString() || '0', this.getFtDecimals())),
+                    })
+                })
+            })
+            const delegatorsAmount = loSum(delegators.map((item) => item.voteAmount)) || 0
+
+            // console.log(walletInfo, typeof walletInfo)
+            wallet = {
+                staked: NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletInfo!.vote_amount, this.getFtDecimals())), // userStaked
+                voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletInfo!.delegated_vote_amount || '0', this.getFtDecimals())), 
+                delegatedVoteAmount: delegationsVoteAmountSum,
+                delegations,
+                delegators,
+                delegatorsAmount,
+            }
+        }
+
+        const totalStaked = NumberHelper.parseNumber(NearUtils.amountFromDecimals(this.dataChain[13], this.getFtDecimals()))
+        const totalVoteAmount: number = loSum(usersToDelegate.map((item) => item.voteAmount)) || 0
+        const walletFtBalance: string | null = walletId ? await this.ftService.ftBalanceOf(walletId) : null
+        const walletFtAmount = NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletFtBalance || '0', this.getFtDecimals()))
+
+        return {
+            totalStaked,
+            totalVoteAmount,
+            walletFtAmount,
+            wallet,
+            usersToDelegate,
+        }
     }
 
     getAccountId(): string {

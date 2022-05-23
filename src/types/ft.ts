@@ -1,7 +1,7 @@
 export type FTMeta = {
     name: string;
-    short: string;
-    img?: string;
+    symbol: string;
+    icon?: string;
     accountId: string;
     amount?: number;
     decimals?: number;

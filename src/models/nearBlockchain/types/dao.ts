@@ -26,6 +26,8 @@ export type Settings = {
     workflow_provider: string; // valid account_id
     resource_provider: string; // valid account_id
     scheduler: string; // valid account_id
+    token_id: string;
+    staking_id: string;
 }
 
 export type TagInput = {
@@ -54,7 +56,7 @@ export type GroupMember = {
 export type GroupInput = {
     settings: GroupSettings;
     members: GroupMember[];
-    member_roles: Record<string, string[]>; // keys are group role names, values are account ids for the role
+    member_roles: { name: string, members: string[]}[]; // keys are group role names, values are account ids for the role
 }
 
 export type Asset = "near" | {"f_t": AssetFT} | {"n_f_t": AssetNFT}
@@ -99,12 +101,13 @@ export type TreasuryPartitionInput = {
 }
 
 export type PartitionAsset = {
-    assert_id: Asset;
+    asset_id: Asset;
     amount: number; // big int - free amount with decimals
     lock: UnlockingDB|null;
 }
 
 export type TreasuryPartition = {
+    name: string;
     assets: PartitionAsset[];
 }
 
@@ -238,8 +241,6 @@ export type Instance = {
 }
 
 export type CreateDao = {
-    token_id: string;
-    staking_id: string;
     total_supply: number;
     decimals: number;
     settings: Settings;

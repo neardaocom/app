@@ -4,24 +4,28 @@ export type StakingUserToDelegate = {
    bio: string|null;
    tag: string|null;
    votesCasted: number;
+   voteAmount: number;
 }
 
-export type StakingDelegatedAmounts = {
+export type StakingDelegation = {
    id: number;
    accountId: string;
-   amount: number;
+   voteAmount: number;
 }
 
-export type StakingUserInfo = {
+export type StakingWallet = {
    staked: number;
-   delegated: number;
-   delegatedAmounts: StakingDelegatedAmounts[]
-   delegators: string[];
+   voteAmount: number;
+   delegatedVoteAmount: number;
+   delegations: StakingDelegation[];
+   delegators: StakingDelegation[];
+   delegatorsAmount: number;
 }
 
 export type Staking = {
    totalStaked: number;
-   userInfo: StakingUserInfo | null;
+   totalVoteAmount: number;
+   walletFtAmount: number | null;
+   wallet: StakingWallet | null;
    usersToDelegate: StakingUserToDelegate[];
 }
- 

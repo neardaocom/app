@@ -32,16 +32,28 @@ export default class DaoCreate {
         builder.addTokenId(ftAccountId)
         builder.addStakingId(this.config.stakingAccountId)
         builder.addTotalSupply(new Decimal(ftAmount).toNumber())
-        builder.addSettings(name, purpose, [], this.config.adminAccountId, this.config.wfProviderAccountId, this.config.resourceProviderAccountId, this.config.schedulerServiceAccountId)
+        builder.addSettings(
+            name,
+            purpose,
+            [],
+            this.config.adminAccountId,
+            this.config.wfProviderAccountId,
+            this.config.resourceProviderAccountId,
+            this.config.schedulerServiceAccountId,
+            this.config.stakingAccountId,
+            ftAccountId
+        )
         builder.addGroup(this.t("default.council"), council, null, 0)
         // workflow
         const standardFncalls = await this.provider.standardFncalls()
         const workflowWfAdd = await this.provider.defaultWfAdd()
+        // console.log(workflowWfAdd)
         // setup vote settings
-        workflowWfAdd[3][0].scenario = "TokenWeighted"
+        workflowWfAdd[3][0].scenario = "token_weighted"
         workflowWfAdd[3][0].approve_threshold = voteApproveThreshold
         workflowWfAdd[3][0].quorum = voteQuorum
         workflowWfAdd[3][0].duration = voteDuration
+        // console.log(workflowWfAdd)
         builder.addWorkflow(standardFncalls.map((item) => item[0]), standardFncalls.map((item) => item[1]), workflowWfAdd[1], workflowWfAdd[2], [workflowWfAdd[0]], [workflowWfAdd[3]]);
         // treasury lock
         const assetAmount = Utils.getLockDistributionAmount(ftAmount.toString(), councilSharePercent, councilSharePercentInit)

@@ -1,5 +1,5 @@
 <template>
-   <InputNumber :labelName="t('default.amount')" :balance="dao.staking.userInfo.staked" :max="dao.staking.userInfo.staked" id="amount" :addon="dao.treasury.token.meta.short"/>
+   <InputNumber :labelName="t('default.amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
 </template>
 
 <script>
@@ -8,6 +8,7 @@ import { useI18n } from 'vue-i18n'
 import { useForm } from 'vee-validate';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import { inject } from '@vue/runtime-core';
+import { useStake, useStakeAction } from '@/hooks/staking';
 export default {
    components:{
       InputNumber
@@ -15,17 +16,21 @@ export default {
    setup () {
       const {t} = useI18n()
       const dao = inject('dao')
+      const loader = inject('loader')
+
+      const { walletTokenFree } = useStake(dao)
+      const { runAction } = useStakeAction(dao, loader)
 
       const schema = computed(() => {
          return {
-               amount: `required|strIsNumber|strNumMax:${dao.value.staking.userInfo.staked}`
+               amount: `required|strIsNumber|strNumMax:${walletTokenFree.value}`
          }
       });
 
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
-      const onSubmit = handleSubmit(async () => {   
-            
+      const onSubmit = handleSubmit(async (values) => {
+            runAction('withdraw', { amount: values.amount })
         }, () => {
                 console.log(errors.value)
         });
@@ -33,6 +38,7 @@ export default {
       return {
          t,
          dao,
+         walletTokenFree,
          onSubmit
       }
    }

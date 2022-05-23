@@ -3,23 +3,32 @@ import moment from "moment";
 
 export const noneStaking = (): Staking => ({
    totalStaked: 0,
-   userInfo: null,
+   totalVoteAmount: 0,
+   walletFtAmount: null,
+   wallet: null,
    usersToDelegate: []
 })
 
 export const basicStaking = (): Staking => ({
    totalStaked: 100_000,
-   userInfo: {
+   totalVoteAmount: 100_000,
+   walletFtAmount: 10,
+   wallet: {
       staked: 358,
-      delegated: 148,
-      delegatedAmounts: [   
-         {id: 1, accountId: "jake.near", amount: 100},
-         {id: 1, accountId: "mike.near", amount: 48},
+      voteAmount: 54,
+      delegatedVoteAmount: 148,
+      delegations: [   
+         {id: 1, accountId: "jake.near", voteAmount: 100},
+         {id: 1, accountId: "mike.near", voteAmount: 48},
       ],
-      delegators: ["petr.near", "kuba.near"],
+      delegators: [
+         {id: 1, accountId: "petr.near", voteAmount: 100},
+         {id: 2, accountId: "kuba.near", voteAmount: 48},
+      ],
+      delegatorsAmount: 148,
    },
    usersToDelegate: [
-      {id: 1, accountId: "jake.near", bio: null, tag: null, votesCasted: 23},
-      {id: 1, accountId: "mike.near", bio: "bio", tag: "Advisor", votesCasted: 45},
+      {id: 1, accountId: "jake.near", bio: null, tag: null, votesCasted: 23, voteAmount: 100},
+      {id: 1, accountId: "mike.near", bio: "bio", tag: "Advisor", votesCasted: 45, voteAmount: 100},
    ],
 })

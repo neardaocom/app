@@ -12,12 +12,15 @@ export default class Rights {
         if (typeof value === "string") {
             switch (value) {
                 case 'Anyone':
+                case 'anyone':
                     right = { type: DAORightsType.Anyone }
                     break;
                 case 'Member':
+                case 'member':
                     right = { type: DAORightsType.Member }
                     break;
                 case 'TokenHolder':
+                case 'token_holder':
                     right = { type: DAORightsType.TokenHolder }
                     break;
                 default:
@@ -29,18 +32,23 @@ export default class Rights {
 
             switch (objectKeys[0]) {
                 case 'Account':
+                case 'account':
                     right = { type: DAORightsType.Account, accountId: value.Account }
                     break;
                 case 'Group':
+                case 'group':
                     right = { type: DAORightsType.Group, groupId: value.Group }
                     break;
                 case 'GroupMember':
+                case 'group_member':
                     right = { type: DAORightsType.GroupMember, groupId: value.GroupMember[0], accountId: value.GroupMember[1] }
                     break;
                 case 'GroupLeader':
+                case 'group_leader':
                     right = { type: DAORightsType.GroupLeader, groupId: value.GroupLeader }
                     break;
                 case 'GroupRole':
+                case 'group_role':
                     right = { type: DAORightsType.GroupRole, groupId: value.GroupRole[0], roleId: value.GroupRole[1] }
                     break;
                 default:
