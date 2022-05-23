@@ -23,7 +23,7 @@
             </li>
             <li>
                <i class="bi bi-cash-coin me-1"/>
-               <span class="text-reset">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.short }}
+               <span class="text-reset">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.symbol }}
             </li>
          </ul>
       </div>

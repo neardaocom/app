@@ -85,7 +85,7 @@ export default class FtContractService {
    */
    async ftTranserCall(receiverId: string, amount: string, memo: string|null, msg: string, gas: string, yoctoNear: string) {
      console.log({receiver_id: receiverId, amount, memo, msg})
-    return this.contract.ft_transfer_call({receiver_id: receiverId, amount: amount.toString(), memo, msg}, gas, yoctoNear)
+    return this.contract.ft_transfer_call({receiver_id: receiverId, amount: amount, memo, msg}, gas, yoctoNear)
    }
 
    /**

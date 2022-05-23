@@ -231,7 +231,7 @@ export default {
           this.activeForm = 'AddMedia'
           break
         case 'wf_skyward':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.short, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'SkywardProposal'
           break 
         case 'wf_bounty':

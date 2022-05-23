@@ -25,12 +25,13 @@ import { basicStaking } from "../../../tests/fixtures/staking"
 import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures
 import ServicePool from "./ServicePool";
 import { ListItemDto } from "./types/admin";
-import { Staking, StakingDelegation, StakingUserInfo, StakingUserToDelegate } from "./types/staking";
+import { Staking, StakingDelegation, StakingWallet, StakingUserToDelegate } from "./types/staking";
 import { UserInfoStaking } from "../nearBlockchain/types/staking";
 import NumberHelper from "../utils/NumberHelper";
 import { TreasuryLock } from "./types/treasury";
 import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
 import FtMetadataLoader from "../ft/FtMetadataLoader";
+import IntegerHelper from "../utils/IntegerHelper";
 
 export default class DaoLoader {
     private id: string;
@@ -66,9 +67,9 @@ export default class DaoLoader {
 
         // TODO: It's not nice
         if (this.ftAccountId === undefined || this.stakingAccountId === undefined) {
-            const stats = await this.daoService.statistics()
-            this.ftAccountId = stats.token_id
-            this.stakingAccountId = stats.staking_id
+            const settings = await this.daoService.settings()
+            this.ftAccountId = settings.token_id
+            this.stakingAccountId = settings.staking_id
         }
 
         if (this.ftService === undefined) {
@@ -114,7 +115,7 @@ export default class DaoLoader {
                 token: {
                     meta: {
                         name: this.dataChain[9].name,
-                        short: this.dataChain[9].symbol, // TODO: short -> symbol
+                        symbol: this.dataChain[9].symbol,
                         accountId: this.id,
                         amount: this.dataChain[8].ft_total_supply,
                         decimals: this.dataChain[9].decimals,
@@ -200,7 +201,7 @@ export default class DaoLoader {
      * @returns 
      */
     async getStaking(walletId?: string): Promise<Staking> {
-        let userInfo: StakingUserInfo | null = null
+        let wallet: StakingWallet | null = null
         let walletInfo: UserInfoStaking | null = null
         // let walletInfo: object | null = null
         const usersToDelegate: StakingUserToDelegate[] = []
@@ -222,22 +223,44 @@ export default class DaoLoader {
         })
 
         if (loIsNil(walletInfo) === false) {
-            // const userStaked = await this.stakingService.daoFtBalanceOf(this.id, walletId!)
-            const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
+            const userStaked = await this.stakingService.daoFtBalanceOf(this.id, walletId!)
+            const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).filter((item) =>item[0] !== walletId).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
             const delegationsVoteAmountSum = loSum(delegations.map((item) => item.voteAmount))
+
+            // compute delegators
+            const delegators: StakingDelegation[] = []
+            this.dataChain[14].filter((item) => item[0] !== walletId).forEach((user, index) => {
+                user[1].delegated_amounts.filter((item) => item[0] === walletId).forEach((item) => {
+                    delegators.push({
+                        id: delegators.length,
+                        accountId: user[0],
+                        voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1].toString() || '0', this.getFtDecimals())),
+                    })
+                })
+            })
+            const delegatorsAmount = loSum(delegators.map((item) => item.voteAmount)) || 0
+
             // console.log(walletInfo, typeof walletInfo)
-            userInfo = {
+            wallet = {
                 staked: NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletInfo!.vote_amount, this.getFtDecimals())), // userStaked
                 voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletInfo!.delegated_vote_amount || '0', this.getFtDecimals())), 
                 delegatedVoteAmount: delegationsVoteAmountSum,
-                delegations: delegations,
-                delegators: walletInfo!.delegators || [],
+                delegations,
+                delegators,
+                delegatorsAmount,
             }
         }
 
+        const totalStaked = NumberHelper.parseNumber(NearUtils.amountFromDecimals(this.dataChain[13], this.getFtDecimals()))
+        const totalVoteAmount: number = loSum(usersToDelegate.map((item) => item.voteAmount)) || 0
+        const walletFtBalance: string | null = walletId ? await this.ftService.ftBalanceOf(walletId) : null
+        const walletFtAmount = NumberHelper.parseNumber(NearUtils.amountFromDecimals(walletFtBalance || '0', this.getFtDecimals()))
+
         return {
-            totalStaked: NumberHelper.parseNumber(NearUtils.amountFromDecimals(this.dataChain[13], this.getFtDecimals())),
-            userInfo,
+            totalStaked,
+            totalVoteAmount,
+            walletFtAmount,
+            wallet,
             usersToDelegate,
         }
     }

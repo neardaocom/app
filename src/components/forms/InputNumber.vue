@@ -59,11 +59,11 @@ export default {
             required: true
         },
         balance: {
-            type: Object,
+            type: [Object, Number, String],
             required: false
         },
         max: {
-            type: Object,
+            type: [Object, Number, String],
             required: false
         },
         tooltip: {
@@ -139,7 +139,7 @@ export default {
         // })
 
         const valueToMax = () => displayValue.value = new Decimal(max.value).toFixed()
-        const balanceLocale = computed(() => LocaleHelper.stringNumberToLocale(balance.value.toFixed(), locale.value))
+        const balanceLocale = computed(() => LocaleHelper.stringNumberToLocale(new Decimal(balance.value).toFixed(), locale.value))
 
         return{
             t,

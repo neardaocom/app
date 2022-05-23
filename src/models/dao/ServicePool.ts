@@ -52,7 +52,7 @@ export default class ServicePool {
     }
 
     getStaking(contractId: string): StakingContractService {
-        if (this.ftPool[contractId]) {
+        if (this.stakingPool[contractId]) {
             return this.stakingPool[contractId];
         }
 

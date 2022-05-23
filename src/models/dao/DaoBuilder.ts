@@ -25,10 +25,12 @@ export default class DaoBuilder {
     constructor() {
     }
 
+    // deprecated
     addTokenId(tokenId: string) {
         this.tokenId = tokenId
     }
 
+    // deprecated
     addStakingId(stakingId: string) {
         this.stakingId = stakingId
     }
@@ -41,7 +43,7 @@ export default class DaoBuilder {
         this.decimals = decimals
     }
 
-    addSettings(name: string, purpose: string, tags: number[], daoAdminAccountId: string, workflowProvider: string, resourceProvider: string, scheduler: string) {
+    addSettings(name: string, purpose: string, tags: number[], daoAdminAccountId: string, workflowProvider: string, resourceProvider: string, scheduler: string, stakingAccountId: string, tokenAccountId: string) {
         this.settings = {
             name,
             purpose,
@@ -51,6 +53,8 @@ export default class DaoBuilder {
             workflow_provider: workflowProvider,
             resource_provider: resourceProvider,
             scheduler,
+            token_id: tokenAccountId,
+            staking_id: stakingAccountId,
         }
     }
 
@@ -58,7 +62,10 @@ export default class DaoBuilder {
         this.groups.push({
             settings: {name, leader, parent_group: parentGroup},
             members: accountIds.map((accountId) => ({account_id: accountId, tags: []})),
-            member_roles: loSet({}, [name], accountIds),
+            member_roles: [{
+                name,
+                members: accountIds
+            }]
         })
     }
 
@@ -128,8 +135,6 @@ export default class DaoBuilder {
         }
 
         return {
-            token_id: this.tokenId,
-            staking_id: this.stakingId,
             total_supply: this.totalSupply,
             decimals: this.decimals,
             settings: this.settings,

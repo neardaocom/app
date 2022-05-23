@@ -8,6 +8,95 @@ import { computed, inject, onMounted, Ref, ref, toRaw } from "vue";
 import { useI18n } from "vue-i18n";
 import loGet from "lodash/get";
 import { DAO } from "@/models/dao/types/dao";
+import NumberHelper from "@/models/utils/NumberHelper";
+
+export const useStake = (dao: Ref<DAO>) => {
+   const canStake = computed(() => dao.value.staking.wallet !== null)
+   const allVotePower = computed(() => dao.value.staking.totalVoteAmount || 0)
+   const walletVotePower = computed(() => dao.value.staking.wallet?.voteAmount || null)
+   const walletVotePowerPercent = computed(() => walletVotePower.value ? NumberHelper.toPercentDivision(walletVotePower.value, allVotePower.value) : null)
+   const walletTokenAmount = computed(() => dao.value.staking.walletFtAmount)
+   const walletTokenStaked = computed(() => dao.value.staking.wallet?.staked)
+   const walletVotePowerOwned = computed(() => dao.value.staking.wallet?.voteAmount ? dao.value.staking.wallet?.voteAmount - (dao.value.staking.wallet?.delegatorsAmount || 0) : 0)
+   const walletVotePowerDelegators = computed(() => dao.value.staking.wallet?.delegatorsAmount)
+   const walletVotePowerDelegated = computed(() => dao.value.staking.wallet?.delegatedVoteAmount)
+   const walletTokenFree = computed(() => ((walletTokenStaked.value || 0) - (walletVotePowerOwned.value || 0) - (walletVotePowerDelegated.value || 0)))
+
+   return {
+      canStake, allVotePower, walletVotePower, walletVotePowerPercent, walletTokenAmount, walletTokenStaked, walletVotePowerOwned, walletVotePowerDelegators, walletVotePowerDelegated, walletTokenFree
+   }
+}
+
+export const useStakeAction = (dao: Ref<DAO>, loader: Ref<Loader>) => {
+  
+
+   // init
+   const runAction = async (action: string, args: object) => {
+      const nearFactory = await loader.value.get('nearBlockchain/Factory')
+      const account = await loader.value.get('near/WalletAccount')
+      const walletConnection = await loader.value.get('near/WalletConnection')
+      const service = nearFactory.value.createStakingContractService(account.value)
+      const ftService = nearFactory.value.createFtContractService(account.value, dao.value.settings.token_id)
+      // console.log(account, config.value.near.ftFactoryAccountId)
+      const daoStaking = new DaoStaking(dao.value.wallet, service, ftService, walletConnection.value)
+
+      switch (action) {
+         case 'register': {
+               await daoStaking.stakeRegister()
+            }
+            break;
+         case 'stake': {
+               await daoStaking.stake(loGet(args, ['amount']) || 0)
+            }
+            break;
+         case 'delegate': {
+               await daoStaking.delegate(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
+            }
+            break;
+         case 'undelegate': {
+               await daoStaking.undelegate(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
+            }
+            break;
+         case 'forward': {
+               await daoStaking.forward(loGet(args, ['delegateId']) || '')
+            }
+            break;
+         case 'withdraw': {
+               await daoStaking.withdraw(loGet(args, ['amount']) || 0)
+            }
+            break;
+         case 'unregistred': {
+               await daoStaking.unregistred()
+            }
+            break;
+         default:
+            break;
+      }
+   }
+
+   return {
+      runAction
+   }
+}
+
+export const useRegisterToken = (loader: Ref<Loader>) => {
+   const registerToken = async (daoAccountId: string, tokenAccountId: string) => {
+      const nearFactory = await loader.value.get('nearBlockchain/Factory')
+      const account = await loader.value.get('near/WalletAccount')
+      const walletConnection = await loader.value.get('near/WalletConnection')
+      const service = nearFactory.value.createStakingContractService(account.value)
+      const ftService = nearFactory.value.createFtContractService(account.value, null)
+      // console.log(account, config.value.near.ftFactoryAccountId)
+      const daoStaking = new DaoStaking(daoAccountId, service, ftService, walletConnection.value)
+
+      daoStaking.registerToken(tokenAccountId, 1)
+   }
+
+   return {
+      registerToken
+   }
+}
+
 
 export const useStaking = (daoId: string, accountId: string, staking: Staking) => {
    const logger: any = inject("logger");
@@ -194,73 +283,3 @@ export const useStaking = (daoId: string, accountId: string, staking: Staking) =
       fetch, storageDeposite, registerNewDao, registerInDao, delegateOwned, delegate, undelegate, withdraw, unregisterInDao, storageWithdraw, useStorageUnregister
    };
 };
-
-export const useStake = (dao: Ref<DAO>, loader: Ref<Loader>) => {
-   const canStake = computed(() => dao.value.staking.userInfo !== null)
-
-   // init
-   const runAction = async (action: string, args: object) => {
-      const nearFactory = await loader.value.get('nearBlockchain/Factory')
-      const account = await loader.value.get('near/WalletAccount')
-      const walletConnection = await loader.value.get('near/WalletConnection')
-      const service = nearFactory.value.createStakingContractService(account.value)
-      const ftService = nearFactory.value.createFtContractService(account.value, dao.value.statistics.token_id)
-      // console.log(account, config.value.near.ftFactoryAccountId)
-      const daoStaking = new DaoStaking(dao.value.wallet, service, ftService, walletConnection.value)
-
-      switch (action) {
-         case 'register': {
-               await daoStaking.stakeRegister()
-            }
-            break;
-         case 'stake': {
-               await daoStaking.stake(loGet(args, ['amount']) || 0)
-            }
-            break;
-         case 'delegate': {
-               await daoStaking.delegate(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
-            }
-            break;
-         case 'undelegate': {
-               await daoStaking.undelegate(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
-            }
-            break;
-         case 'forward': {
-               await daoStaking.forward(loGet(args, ['delegateId']) || '')
-            }
-            break;
-         case 'withdraw': {
-               await daoStaking.withdraw(loGet(args, ['amount']) || 0)
-            }
-            break;
-         case 'unregistred': {
-               await daoStaking.unregistred()
-            }
-            break;
-         default:
-            break;
-      }
-   }
-
-   return {
-      canStake, runAction
-   }
-}
-
-export const useRegisterToken = (loader: Ref<Loader>) => {
-   const registerToken = async (daoAccountId: string, tokenAccountId: string) => {
-      const nearFactory = await loader.value.get('nearBlockchain/Factory')
-      const account = await loader.value.get('near/WalletAccount')
-      const walletConnection = await loader.value.get('near/WalletConnection')
-      const service = nearFactory.value.createStakingContractService(account.value)
-      const ftService = nearFactory.value.createFtContractService(account.value, null)
-      // console.log(account, config.value.near.ftFactoryAccountId)
-      const daoStaking = new DaoStaking(daoAccountId, service, ftService, walletConnection.value)
-
-      daoStaking.registerToken(tokenAccountId, 1)
-   }
-
-   return {
-      registerToken
-   }
-}

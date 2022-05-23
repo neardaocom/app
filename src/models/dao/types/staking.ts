@@ -13,17 +13,19 @@ export type StakingDelegation = {
    voteAmount: number;
 }
 
-export type StakingUserInfo = {
+export type StakingWallet = {
    staked: number;
    voteAmount: number;
    delegatedVoteAmount: number;
    delegations: StakingDelegation[];
-   delegators: string[];
+   delegators: StakingDelegation[];
+   delegatorsAmount: number;
 }
 
 export type Staking = {
    totalStaked: number;
-   userInfo: StakingUserInfo | null;
+   totalVoteAmount: number;
+   walletFtAmount: number | null;
+   wallet: StakingWallet | null;
    usersToDelegate: StakingUserToDelegate[];
 }
- 
