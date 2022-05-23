@@ -1,22 +1,20 @@
 <template>
    <div class="container mb-4">
       <div class="mb-7">
-         <h5 class="text-start mb-4">{{t('default.total_dao_locked_value')}}</h5>
+         <h5 class="text-start mb-4">{{t('default.available_assets')}}</h5>
          <div class="d-flex flex-wrap gap-3">
-           <InfoAmountCard v-for="(totalLock, index) in treasuryTotalLocked" :key="index"
-               :amount="totalLock.amountLocked" :suffix="totalLock.assetSymbol" style="min-width: 283px" :icon="totalLock.assetIcon">
+            <InfoAmountCard :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
+            <InfoAmountCard :amount="availableTokenAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
+            <InfoAmountCard v-for="(ftAsset, index) in treasuryFtAssets" :key="index"
+               :amount="ftAsset.value.amount - ftAsset.value.amountLockedInLocks" :suffix="ftAsset.asset.symbol" style="min-width: 283px" :icon="ftAsset.asset.symbol">
             </InfoAmountCard>     
          </div>
       </div>
       
       <div>
-        <div class="d-flex mb-4">
-          <h5 class="text-start me-auto">{{t('default.locks')}}</h5>
-          <MDBBtn color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.payout')}}</MDBBtn>
-        </div>
-         
+         <h5 class="text-start me-auto">{{t('default.locks')}}</h5>
          <div class="row g-3">
-            <div v-for="lock in dao.treasuryLocks" :key="lock.id" class="col-md-6">
+            <div v-for="lock in treasuryLocks" :key="lock.id" class="col-md-6">
                <TreasuryLock :lock="lock"/>
             </div>
          </div>
@@ -31,23 +29,25 @@ import { useI18n } from 'vue-i18n'
 import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
-import { MDBBtn } from "mdb-vue-ui-kit";
-import { inject } from '@vue/runtime-core';
+import { computed, inject } from '@vue/runtime-core';
 import {useAnalytics} from '@/hooks/treasury'
 export default {
    components: {
       InfoAmountCard,
       TreasuryLock,
-      // ModalTreasuryLocks,
-      MDBBtn 
+      // ModalTreasuryLocks, 
    },
    setup () {
       const {t} = useI18n()
       const dao = inject('dao')
-      const {treasuryTotalLocked} = useAnalytics(dao)
+      const {treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets} = useAnalytics(dao)
+
+      const availableNearAmount = computed(() => treasuryNear.value.amount - treasuryNear.value.amountLockedInLocks) 
+      const availableTokenAmount = computed(() => treasuryToken.value.amount - treasuryToken.value.amountLockedInLocks) 
 
       return {
-         t, dao, treasuryTotalLocked
+         t, dao, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets,
+         availableNearAmount, availableTokenAmount
       }
    }
 }

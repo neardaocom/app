@@ -81,7 +81,7 @@
     </section>
 
     <!-- Modals -->
-    <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote">
+    <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote" :submitText="t('default.vote')" size="lg">
       <component ref="form" :is="activeForm" v-bind="formProps"></component>
     </ModalProposal>
 </template>

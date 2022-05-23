@@ -4,9 +4,8 @@
     tabindex="-1"
     labelledby="modalProposalLabel"
     v-model="active"
-    size="lg"
   >
-  <MDBModalHeader>
+  <MDBModalHeader v-if="title">
       <MDBModalTitle id="modalProposalLabel"> {{ title }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
@@ -14,7 +13,7 @@
     </MDBModalBody>
     <MDBModalFooter>
       <MDBBtn outline="secondary" rounded @click="close()">{{ t('default.close') }}</MDBBtn>
-      <MDBBtn outline="primary" rounded @click="vote()">{{ t('default.vote') }}</MDBBtn>
+      <MDBBtn v-if="submitText" outline="primary" rounded @click="submit()">{{ submitText }}</MDBBtn>
     </MDBModalFooter>
   </MDBModal>
 </template>
@@ -49,9 +48,13 @@ export default {
     title:{
       type: String,
       required: true
+    },
+    submitText:{
+      type: String,
+      required: true
     }
   },
-  emits: ['vote'],
+  emits: ['submit'],
   setup (props, {emit}) {
     const { show } = toRefs(props)
     const {t} = useI18n()
@@ -65,13 +68,13 @@ export default {
       active.value = false
     }
     
-    const vote = () => {
-      emit('vote')
+    const submit = () => {
+      emit('submit')
     }
     return {
       t,
       active,
-      vote,
+      submit,
       close
     }
   }

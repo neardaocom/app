@@ -40,8 +40,8 @@
          </div>
       </div>
    </div>
-   <ModalProposal :title="t('default.forward')" :show="modalProposal" @vote="submitModal">
-      <FormDelegate ref="form" v-bind="formProps"/>
+   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="t('default.forward')">
+      <FormDelegate ref="form"/>
    </ModalProposal>
 </template>
 

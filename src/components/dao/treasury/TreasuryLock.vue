@@ -35,7 +35,9 @@
                </div>
                <MDBCardText  class="mb-5">
                   <div v-for="(asset, index) in lock.assets" :key="index" class="d-flex">
-                     <MDBBadge color="black" pill class="me-2 mt-2" style="padding: 0.3rem; width:25px; height:25px;"><img width="12" height="12" :src="'/img/near_logo.svg'" /></MDBBadge>
+                     <MDBBadge v-if="asset.asset.symbol==='NEAR'" color="black" pill class="me-2 mt-2" style="padding: 0.3rem"><img width="12" height="12" :src="'/img/near_logo.svg'"/></MDBBadge>
+                     <div v-else-if="!asset.asset.icon" class="rounded-circle bg-black d-inline-block border border-secondary me-2" style="height:25px; width:25px"/>
+                     <img v-else :src="asset.asset.icon" class="img-fluid rounded-circle border border-secondary me-2" alt="" style="height:25px; width:25px"/>
                      <span>
                         <span class="fs-4 fw-800" ><NumberFormatter :amount="asset.unlocked"/></span><span class="h5 ps-1">{{asset.asset.symbol}}</span>
                         <div class="mt-n2">

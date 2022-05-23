@@ -21,7 +21,7 @@
              <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>
           </div>
 
-         <ModalProposal :title="modalTitle" :show="modalProposal" @vote="submitModal">
+         <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="submitText">
             <component ref="form" :is="activeForm" v-bind="formProps"></component>
          </ModalProposal>
        </div>
@@ -60,7 +60,7 @@ export default {
       const { runAction } = useStakeAction(dao, loader)
 
       const modalProposal = ref(0)
-      const modalTitle = ref('')
+      const submitText = ref('')
       const modalMessage = ref(0)
       const formProps = ref({})
       const activeForm = ref('')
@@ -68,19 +68,19 @@ export default {
 
       const stake = () => {
          modalProposal.value += 1
-         modalTitle.value = t('default.stake')
+         submitText.value = t('default.stake')
          activeForm.value = 'FormStake'
       }
 
       const withdraw = () => {
          modalProposal.value += 1
-         modalTitle.value = t('default.withdraw')
+         submitText.value = t('default.withdraw')
          activeForm.value = 'FormWithdraw'
       }
 
       const delegate = () => {
          modalProposal.value += 1
-         modalTitle.value = t('default.delegate')
+         submitText.value = t('default.delegate')
          activeForm.value = 'FormDelegateOwned'
       }
 
@@ -93,7 +93,7 @@ export default {
          t,
          dao,
          modalProposal,
-         modalTitle,
+         submitText,
          modalMessage,
          formProps,
          activeForm,

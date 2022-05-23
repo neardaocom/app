@@ -43,7 +43,7 @@
   </main>
 
   <!-- Modals -->
-  <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote()">
+  <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote()" :submitText="t('default.vote')" size="lg">
     <AddWorkflow ref="form" v-bind="modalProps" />
   </ModalProposal>
 

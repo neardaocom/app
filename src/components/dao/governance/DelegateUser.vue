@@ -9,7 +9,7 @@
       </MDBCardBody>
    </MDBCard>
 
-   <ModalProposal :title="t('default.undelegate')" :show="modalProposal" @vote="submitModal">
+   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="t('default.undelegate')">
       <FormUndelegate ref="form" v-bind="formProps"/>
    </ModalProposal>
 </template>
