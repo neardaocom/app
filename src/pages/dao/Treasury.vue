@@ -1,13 +1,13 @@
 <template>
-   <div class="container mb-4">
+   <div v-if="dataLoaded" class="container mb-4">
       <div class="mb-7">
          <h5 class="text-start mb-4">{{t('default.available_assets')}}</h5>
          <div class="d-flex flex-wrap gap-3">
             <InfoAmountCard :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
-            <InfoAmountCard :amount="availableTokenAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
+            <InfoAmountCard :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol" style="min-width: 283px" :icon="treasuryToken.asset.icon"/>
             <InfoAmountCard v-for="(ftAsset, index) in treasuryFtAssets" :key="index"
                :amount="ftAsset.value.amount - ftAsset.value.amountLockedInLocks" :suffix="ftAsset.asset.symbol" style="min-width: 283px" :icon="ftAsset.asset.symbol">
-            </InfoAmountCard>     
+            </InfoAmountCard>
          </div>
       </div>
       
@@ -29,7 +29,7 @@ import { useI18n } from 'vue-i18n'
 import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
-import { computed, inject } from '@vue/runtime-core';
+import { inject } from '@vue/runtime-core';
 import {useAnalytics} from '@/hooks/treasury'
 export default {
    components: {
@@ -41,13 +41,10 @@ export default {
       const {t} = useI18n()
       const dao = inject('dao')
       const loader = inject('loader')
-      const {treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets} = useAnalytics(dao, loader)
-
-      const availableNearAmount = computed(() => treasuryNear.value.amount - treasuryNear.value.amountLockedInLocks) 
-      const availableTokenAmount = computed(() => treasuryToken.value.amount - treasuryToken.value.amountLockedInLocks) 
+      const { dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets, availableNearAmount,  availableTokenAmount } = useAnalytics(dao, loader)
 
       return {
-         t, dao, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets,
+         t, dao, dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets,
          availableNearAmount, availableTokenAmount
       }
    }

@@ -39,9 +39,9 @@
                      <div v-else-if="!asset.asset.icon" class="rounded-circle bg-black d-inline-block border border-secondary me-2" style="height:25px; width:25px"/>
                      <img v-else :src="asset.asset.icon" class="img-fluid rounded-circle border border-secondary me-2" alt="" style="height:25px; width:25px"/>
                      <span>
-                        <span class="fs-4 fw-800" ><NumberFormatter :amount="asset.unlocked"/></span><span class="h5 ps-1">{{asset.asset.symbol}}</span>
+                        <span class="fs-4 fw-800" ><NumberFormatter :amount="asset.unlocked"/></span><span class="h6 ps-1">{{asset.asset.symbol}}</span>
                         <div class="mt-n2">
-                           <NumberFormatter :amount="asset.totalLocked"/> {{asset.asset.symbol}} <span class="text-muted small"> {{t('default.total_locked')}} </span>
+                           <NumberFormatter :amount="asset.totalLocked"/> <span class="text-muted small"> {{t('default.total_locked')}} </span>
                         </div>
                      </span>
                   </div>
