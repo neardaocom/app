@@ -102,9 +102,10 @@ export default {
     provide('dao', dao)
 
     onMounted(async () => {
-      const daoFactory = await loader?.value.get('dao/Factory')
-      const servicePool = daoFactory.value.createServicePool();
-      const daoLoader = new DaoLoader(rDaoId.value, servicePool, t, daoInfo)
+      // const daoFactory = await loader?.value.get('dao/Factory')
+      // const servicePool = daoFactory.value.createServicePool();
+      const servicePool = await loader?.value.get('dao/ServicePool')
+      const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo)
       dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
 
       //console.log(dao.value)
