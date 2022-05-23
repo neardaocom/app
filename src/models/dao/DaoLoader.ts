@@ -31,7 +31,6 @@ import NumberHelper from "../utils/NumberHelper";
 import { TreasuryLock } from "./types/treasury";
 import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
 import FtMetadataLoader from "../ft/FtMetadataLoader";
-import IntegerHelper from "../utils/IntegerHelper";
 
 export default class DaoLoader {
     private id: string;

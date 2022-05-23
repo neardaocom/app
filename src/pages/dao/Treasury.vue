@@ -40,7 +40,8 @@ export default {
    setup () {
       const {t} = useI18n()
       const dao = inject('dao')
-      const {treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets} = useAnalytics(dao)
+      const loader = inject('loader')
+      const {treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets} = useAnalytics(dao, loader)
 
       const availableNearAmount = computed(() => treasuryNear.value.amount - treasuryNear.value.amountLockedInLocks) 
       const availableTokenAmount = computed(() => treasuryToken.value.amount - treasuryToken.value.amountLockedInLocks) 

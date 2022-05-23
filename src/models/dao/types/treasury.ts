@@ -4,7 +4,7 @@ export type TreasuryLock = {
     id: number;
     category?:  TreasuryLockCategory; // deprecated
     name: string;
-    nextUnlock: Date;
+    nextUnlock: Date|null;
     createdBy: string|null;
     assets: TreasuryLockAsset[];
 }
