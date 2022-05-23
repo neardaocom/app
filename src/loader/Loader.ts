@@ -57,6 +57,12 @@ export default class Loader {
                         objectRef = ref (factory)
                     }
                     break;
+                case 'dao/ServicePool': {
+                        const daoFactory = await this.get('dao/Factory')
+                        const servicePool = daoFactory.value.createServicePool()
+                        objectRef = ref (servicePool)
+                    }
+                    break;
                 default:
                     throw new UnsupportedError('Key: ' + key)
             }

@@ -78,10 +78,12 @@ export default class TreasuryLockTransformer implements TransformerInterface {
             })
         }
 
+        const nextUnlock = new Date() // TODO: Add date
+
         const lock: TreasuryLock = {
             id: data[0],
             name: data[1].name,
-            nextUnlock: new Date(),
+            nextUnlock: nextUnlock,
             createdBy: null,
             assets: assets,
         }

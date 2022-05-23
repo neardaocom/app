@@ -44,10 +44,12 @@ export default {
    setup () {
       const {t} = useI18n()
       const dao = inject('dao')
-      const {treasuryTotalLocked} = useAnalytics(dao)
+      const loader = inject('loader')
+      const { treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets } = useAnalytics(dao, loader)
 
       return {
-         t, dao, treasuryTotalLocked
+         t, dao,
+         treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets
       }
    }
 }
