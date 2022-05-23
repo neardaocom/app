@@ -1,11 +1,16 @@
-import lodashFind from "lodash/find";
-import lodashToString from "lodash/toString";
-import lodashGet from "lodash/get";
+import loFind from "lodash/find";
+import loToString from "lodash/toString";
+import loGet from "lodash/get";
+import loIsEqual from "lodash/isEqual";
 
 export default class CollectionHelper {
 
     static findParam(data: any, filter: object, param: string[]): string | undefined {
-        const file = lodashFind(data, filter)
-        return file ? lodashToString(lodashGet(file, param)) : undefined
+        const file = loFind(data, filter)
+        return file ? loToString(loGet(file, param)) : undefined
+    }
+
+    static findDeep<T extends object>(data: T, path: string[], value: any): T[keyof T] | undefined {
+        return loFind(data, (item): boolean => loIsEqual(loGet(item, path), value)) // loMatchesProperty(path, value)
     }
 }

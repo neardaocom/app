@@ -30,7 +30,7 @@ export default class TreasuryLockTransformer implements TransformerInterface {
         let totalLocked: number = 0
         let totalUnlocked: number = 0
         let unlocked: number = 0
-        let locked: number = 0
+        //let locked: number = 0
         for (lockAssetData of data[1].assets) {
             // FT
             if (loGet(lockAssetData, ['asset_id', 'f_t']) !== undefined) {
@@ -67,14 +67,13 @@ export default class TreasuryLockTransformer implements TransformerInterface {
             totalLocked = lockAssetData.lock?.lock.amount_total_locked || 0
             totalUnlocked = lockAssetData.lock?.lock.amount_total_unlocked || 0
             unlocked = lockAssetData.amount
-            locked = totalLocked - totalUnlocked + unlocked
+            // locked = totalLocked - totalUnlocked + unlocked
 
             assets.push({
                 asset: treasuryAsset!,
                 totalLocked,
                 totalUnlocked,
                 unlocked,
-                locked,
                 unlocking: [],
             })
         }

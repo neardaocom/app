@@ -14,7 +14,6 @@ export type TreasuryLockAsset = {
     totalLocked: number;
     totalUnlocked: number;
     unlocked: number;
-    locked: number;
     unlocking: TreasuryAssetUnlocking[];
 }
 
@@ -33,10 +32,8 @@ export type TreasuryAssetUnlocking = {
     amount: number;
 }
 
-export type TreasuryTotalLocked = {
-    assetAccountId: string;
-    assetSymbol: string;
-    assetIcon: string|null;
-    amountLocked: number;
-    amountUnlocked: number;
+export type TreasuryTotalAsset = {
+    asset: TreasuryAsset;
+    amount: number; // amount owned by DAO
+    amountLockedInLocks: number;
 }
