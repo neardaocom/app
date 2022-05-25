@@ -8,9 +8,7 @@
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex  align-items-center">
-                    <slot name="icon">
-                        <MDBBadge color="black" pill class="me-2" style="padding: 0.75rem;"><img width="25" height="25" :src="'/img/near_logo.svg'"/></MDBBadge>
-                    </slot>
+                    <Icon icon="NEAR" :size="45"/>
                     <div class="text-start">
                         <div class="fs-5 fw-bold me-1">{{dao.name}}</div>
                         <div class="text-muted small mt-n2">{{ dao.wallet }}</div>
@@ -132,12 +130,14 @@ import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdown
 import { useGroups, useLinks, useStats } from "@/hooks/dao";
 import { useIPFS, useNear } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
+import Icon from '@/components/ui/Icon.vue'
 
 export default {
     components: {
         MDBIcon,
         MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem,
-        MDBBadge
+        MDBBadge,
+        Icon
     },
     setup() {
         const { t, n } = useI18n()

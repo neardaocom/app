@@ -25,14 +25,14 @@
                      </div>
                   </div>
                </div>
-               <MDBCardText class="d-flex mb-5">
-                   <MDBBadge color="black" pill class="me-2 mt-2" style="padding: 0.3rem; width:25px; height:25px;"><img width="12" height="12" :src="'/img/near_logo.svg'" /></MDBBadge>
-                   <span>
-                     <span class="fs-4 fw-800" ><NumberFormatter :amount="1000"/></span><span class="h5 ps-1">NEAR</span>
-                     <div class="mt-n2">
-                        <NumberFormatter :amount="2000000"/> NEAR <span class="text-muted small"> total locked </span>
-                     </div>
-                  </span>
+               <MDBCardText class="mb-5">
+                  <div class="d-flex align-items-center">
+                     <Icon icon="NEAR" :size="25"/>
+                     <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="1000"/><span class="fs-5 fw-bold" >NEAR</span></span>
+                  </div>
+                  <div class="mt-n2" style="margin-left: 33px">
+                     <NumberFormatter :amount="2000000"/> <span class="text-muted small"> {{t('default.total_locked')}} </span>
+                  </div>
                </MDBCardText>
                <MDBCardText>
                   <span class="text-muted small">From Lock #1</span>
@@ -55,6 +55,7 @@ import {
    MDBCol
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import Icon from '@/components/ui/Icon.vue'
 
 export default {
    components: {
@@ -65,6 +66,7 @@ export default {
       MDBBadge,
       MDBRow,
       MDBCol,
+      Icon,
       NumberFormatter
    },
    props: {

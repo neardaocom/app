@@ -3,10 +3,8 @@
       <MDBCardBody>
          <h5 class="text-start"> {{header}} </h5>
          <div class="d-flex align-items-center">
-
-            <MDBBadge v-if="suffix==='NEAR'" color="black" pill class="me-2" style="padding: 0.6rem"><img width="17" height="17" :src="'/img/near_logo.svg'"/></MDBBadge>
-            <div v-else-if="!icon" class="rounded-circle bg-black d-inline-block border border-secondary me-2" style="height:38px; width:38px"/>
-            <img v-else :src="icon" class="img-fluid rounded-circle border border-secondary me-2" alt="" style="height:38px; width:38px"/>
+            <Icon v-if="suffix==='NEAR'"  icon="NEAR" :size="38"/>
+            <Icon v-else :icon="icon" :size="38"/>
             <span>
                <span class="fs-4 fw-800" ><NumberFormatter :amount="amount"/></span><span class="h5 text-secondary ps-1">{{suffix}}</span>
             </span>
@@ -16,14 +14,15 @@
 </template>
 
 <script>
-import { MDBCard, MDBCardBody, MDBBadge} from "mdb-vue-ui-kit";
+import { MDBCard, MDBCardBody} from "mdb-vue-ui-kit";
 import { useI18n } from 'vue-i18n';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import Icon from "@/components/ui/Icon.vue"
 export default {
    components: {
       MDBCard,
       MDBCardBody,
-      MDBBadge,
+      Icon,
       NumberFormatter
     },
    props: {
