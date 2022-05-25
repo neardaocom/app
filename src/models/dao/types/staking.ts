@@ -5,6 +5,8 @@ export type StakingUserToDelegate = {
    tag: string|null;
    votesCasted: number;
    voteAmount: number;
+   value: number; // For select in form
+   text: string; // For select in form
 }
 
 export type StakingDelegation = {
