@@ -83,6 +83,7 @@ export const actionMetas: Record<string, WFAction> = {
   treasury_send_near: actionDAOTreasurySendNear,
 }
 
+/*
 export const templatePayoutSettings: WFSettings = {
   id: 1,
   proposeRights: [rightMember, rightAnyone],
@@ -94,7 +95,7 @@ export const templatePayoutSettings: WFSettings = {
     { actionId: 2, rights: [rightTokenGroupCouncil] },
   ]
 }
-
+*/
 /*
 export const templatePayout: WFTemplate = {
     id: 1,

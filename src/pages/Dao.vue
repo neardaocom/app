@@ -71,11 +71,12 @@ import { ref, onMounted, provide, inject } from 'vue'
 import { getRole } from "@/models/dao";
 import Rights from '@/models/dao/Rights'
 import DaoLoader from '@/models/dao/DaoLoader'
+import DaoMarket from '@/models/dao/DaoMarket'
 import { useRouter } from "@/hooks/dao";
 import { useDao } from "@/hooks/daoList";
 // import { useStore } from 'vuex'
 // import { useNear, useWallet } from "@/hooks/vuex";
-import { useWallet } from "@/hooks/vuex";
+import { useWallet } from "@/hooks/wallet";
 
 export default {
   components: {
@@ -91,22 +92,29 @@ export default {
     const { t } = useI18n()
     // const store = useStore()
     // const { nearService, wallet } = useNear()
-    const { wallet } = useWallet()
+    const { wallet } = useWallet(loader)
     const {rDaoId, rPage, rSearch, rOrder} = useRouter(config)
     const { daoInfo } = useDao(rDaoId.value)
+
     const dao = ref({tags: []})
+    const templateMeta = ref([])
     const loaded = ref(false)
     const daoRights = ref([])
     const walletRights = ref([])
 
     provide('dao', dao)
+    provide('templateMeta', templateMeta)
 
     onMounted(async () => {
       // const daoFactory = await loader?.value.get('dao/Factory')
       // const servicePool = daoFactory.value.createServicePool();
       const servicePool = await loader?.value.get('dao/ServicePool')
-      const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo)
+      const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
       dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
+
+      // load templates metadata
+      const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value)
+      templateMeta.value = await daoMarket.list([], t) || []
 
       //console.log(dao.value)
       loaded.value = true

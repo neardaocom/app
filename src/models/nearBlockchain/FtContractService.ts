@@ -1,11 +1,11 @@
 import { Account, Contract} from 'near-api-js';
 import { FungibleTokenMetadata, Settings, InitDistribution, StorageBalance, StorageBalanceBounds } from "./types/ft";
+import ContractService from './ContractService';
 
-export default class FtContractService {
-  private contract: Contract & any;
+export default class FtContractService extends ContractService {
 
   constructor(account: Account, contractId: string) {
-    this.contract = new Contract(account, contractId, {
+    super(new Contract(account, contractId, {
       viewMethods: [
         'ft_total_supply',
         'ft_balance_of',
@@ -26,7 +26,7 @@ export default class FtContractService {
         'storage_withdraw',
         'storage_unregister',
       ],
-    });
+    }));
   }
 
   /**

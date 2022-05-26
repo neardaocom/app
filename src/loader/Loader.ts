@@ -1,6 +1,6 @@
 import Register from "@/models/utils/Register";
 import { ref, Ref } from "vue";
-import { InvalidInputError } from "@/models/utils/errors";
+import { AppError, InvalidInputError } from "@/models/utils/errors";
 import { Config, getConfig } from "@/config"
 import { UnsupportedError } from "@/models/utils/errors";
 
@@ -15,6 +15,14 @@ export default class Loader {
     constructor (register: Register, config: Config) {
         this.register = register;
         this.config = config;
+    }
+
+    load(key: string): Ref {
+        const value = this.register.get(key)
+        if (value === undefined) {
+            throw new AppError("Loader has not loaded: " + key)
+        }
+        return ref(value)
     }
 
     async get(key: string): Promise<Ref> {

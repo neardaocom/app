@@ -12,6 +12,7 @@ import TemplateTransformer from "./transformers/TemplateTransformer";
 import StringHelper from '../utils/StringHelper'
 import loFind from "lodash/find"
 import loGet from "lodash/get"
+import loSet from "lodash/set"
 import loIsNil from "lodash/isNil"
 import loSum from "lodash/sum"
 import loValues from "lodash/values"
@@ -31,6 +32,7 @@ import NumberHelper from "../utils/NumberHelper";
 import { TreasuryLock } from "./types/treasury";
 import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
 import FtMetadataLoader from "../ft/FtMetadataLoader";
+import ProposalTransformer from "./transformers/ProposalTransformer";
 
 export default class DaoLoader {
     private id: string;
@@ -95,7 +97,7 @@ export default class DaoLoader {
         // token holders 
         // TODO: Is it good way to find members, form proposals??
         const members: string[] = this.getMembers()
-        const tokenHolders: DAOTokenHolder[] = await this.getTokenHolders(members)
+        const tokenHolders: DAOTokenHolder[] = await this.getTokenHolders(staking.usersToDelegate, members)
         let walletToken: number | undefined = undefined
         tokenHolders.forEach((holder) => {
             if (holder.accountId == walletId) {
@@ -137,9 +139,9 @@ export default class DaoLoader {
             groups: groups,
             tags: tags,
             tokenHolders: tokenHolders,
-            templates: execute.templates,
-            proposals: execute.proposals,
-            workflows: execute.workflows,
+            templates: execute.templates || {},
+            proposals: execute.proposals || [],
+            workflows: execute.workflows || [],
             treasuryLocks: treasuryLocks, //listEmpty()
             staking: staking,
             settings: this.dataChain[7],
@@ -172,8 +174,19 @@ export default class DaoLoader {
           this.stakingService.daoUserList(this.id),
           this.daoService.partitionList(0, 1000), // 15: treasury
         ]).catch((e) => {
-          throw new Error(`DAOHack[${this.id}] not loaded: ${e}`);
+          throw new Error(`DataChain[${this.id}] not loaded: ${e}`);
         });
+
+        // load proposal settings
+        const dataChainProposalSettings = await Promise.all(
+            this.dataChain[6].map((proposalChain) => this.daoService.wfProposeSettings(proposalChain[0]) )
+        ).catch((e) => {
+            throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
+        })
+        // save it to proposals
+        dataChainProposalSettings.forEach((proposalSettings, index) => {
+            this.dataChain[6][index][2] = proposalSettings
+        })
 
         console.log(this.dataChain)
     }
@@ -223,7 +236,7 @@ export default class DaoLoader {
 
         if (loIsNil(walletInfo) === false) {
             const userStaked = await this.stakingService.daoFtBalanceOf(this.id, walletId!)
-            const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).filter((item) =>item[0] !== walletId).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
+            const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).filter((item) => true || item[0] !== walletId).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
             const delegationsVoteAmountSum = loSum(delegations.map((item) => item.voteAmount))
 
             // compute delegators
@@ -297,7 +310,7 @@ export default class DaoLoader {
         // search in voters
         this.dataChain[6].forEach((proposal) => { // get list of voting token holders
             // voters
-            Object.keys(proposal[1].Curr.votes).forEach((voter: string) => {
+            Object.keys(proposal[1].current.votes).forEach((voter: string) => {
                 if (members.includes(voter) === false) {
                     members.push(voter)
                 }
@@ -350,30 +363,33 @@ export default class DaoLoader {
     getVoteLevels(): DAOVoteLevel[] {
         const transformer = new VoteLevelTransformer()
         const voteLevels: DAOVoteLevel[] = []
-        this.dataChain[0].forEach((template) => {return 
+        this.dataChain[0].forEach((template) => {
             template[1][1].forEach((settingsItem) => {
-                voteLevels.push(transformer.transform(settingsItem, {}))
+                voteLevels.push(transformer.transform(settingsItem))
             })
         })
         loUniqWith(voteLevels, loIsEqual)
         return voteLevels
     }
 
-    getTemplates(): WFTemplate[] {
-        const templates: WFTemplate[] = []
+    getTemplates(): Record<number, WFTemplate> {
+        const templates: Record<number, WFTemplate> = {}
+        let template: WFTemplate
 
         const transformer = new TemplateTransformer(this.t)
         
         // console.log("Template", dataHack[0])
-        this.dataChain[0].forEach((template) => {
-            templates.push(transformer.transform(template, {}))
+        this.dataChain[0].forEach((templateChain) => {
+            template = transformer.transform(templateChain)
+            loSet(templates, [template.id], template)
         });
 
         return templates;
     }
 
-    async getTokenHolders(accountIds: string[]): Promise<DAOTokenHolder[]> {
+    async getTokenHolders(usersToDelegate: StakingUserToDelegate[],  accountIds: string[] = []): Promise<DAOTokenHolder[]> {
         const tokenHolders: DAOTokenHolder[] = []
+        /*
         const balances = await Promise.all(
             accountIds.map((member) => this.ftService!.ftBalanceOf(member))
         ).catch((e) => {
@@ -383,14 +399,21 @@ export default class DaoLoader {
         accountIds.forEach((accountId: string, index: number) => {
             tokenHolders.push({accountId: accountId, amount: new Decimal(NearUtils.amountFromDecimals(balances[index] ?? '0', this.getFtDecimals())).toNumber()})
         });
+        */
+        usersToDelegate.forEach((user) =>
+            tokenHolders.push({accountId: user.accountId, amount: user.voteAmount})
+        )
 
         return tokenHolders
     }
 
     async getExecute(): Promise<DAOExecute> {
-        const templates: WFTemplate[] = this.getTemplates()
+        const executes: DAOExecute = {}
+
+        // Templates
+        executes.templates = this.getTemplates()
         let templateMeta: WFMetaTemplate | undefined
-        // console.log('Templates', templates)
+        // console.log('Templates', executes.templates)
     
         // Proposals
         const proposals: DAOProposal[] = []
@@ -403,28 +426,27 @@ export default class DaoLoader {
         let proposalConstants: CodeValue[]
         let proposalInputs: CodeValue[]
         let actionLogs: WFInstanceLog[]
+
+        const proposalTransformer = new ProposalTransformer(executes.templates)
     
-        for (const proposal of this.dataChain[6]) {
+        //console.log(this.dataChain[6])
+        for (let i = 0; i < this.dataChain[6].length; i++) {
+
+            proposals.push(proposalTransformer.transform(this.dataChain[6][i]))
+
+
+            /*
             actionLogs = []
             // console.log(proposal)
             workflowInstance = await this.daoService!.wfInstance(proposal[0])
-            proposalTemplate = loFind(templates, {id: proposal[1].Curr.workflow_id})
-            proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].Curr.workflow_settings_id})
+            proposalTemplate = loFind(executes.templates, {id: proposal[1].current.workflow_id})
+            proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].current.workflow_settings_id})
             templateMeta = loGet(templateMetas, [proposalTemplate!.code])
             // console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
-    
-            proposalConstants = []
-            //proposalConstants = templateMeta?.constants.map((attr) => {
-            //    return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
-            //}) ?? []
-    
-            proposalInputs = templateMeta?.inputs.map((attr) => {
-                // console.log('Binds', Object.values(workflowInstance[1].binds[attr.bindId]))
-                return { code: attr.code, value: loValues(workflowInstance[1].binds[attr.bindId])[0]}
-            }) ?? []
-    
+            */
             // load action logs
-            if (workflowInstance[0].state !== 'Waiting') {
+            //if (workflowInstance[0].state !== 'Waiting') {
+                /* TODO: Add log
                 workflowLog = await this.daoService!.wfLog(proposal[0])
                 workflowLog?.forEach((log, index) => {
                     //console.log('Log', log)
@@ -436,26 +458,13 @@ export default class DaoLoader {
                         args: templateMeta?.actions[log.action_id - 1]?.log(log.args),
                     })
                 })
-            }
-    
-            proposals.push({
-                id: proposal[0],
-                created: NearUtils.dateFromChain(proposal[1].Curr.created),
-                createdBy: proposal[1].Curr.created_by,
-                votes: proposal[1].Curr.votes,
-                state: proposal[1].Curr.state,
-                templateId: proposal[1].Curr.workflow_id,
-                settingsId: proposal[1].Curr.workflow_settings_id,
-                workflowAddSettingsId: proposal[1].Curr.workflow_add_settings_id,
-                inputs: proposalInputs,
-                constants: proposalConstants,
-                content: proposal[1].Curr.content ?? {},
-            })
-    
+                */
+            //}
+            /*
             workflows.push({
                 id: proposal[0],
-                templateId: proposal[1].Curr.workflow_id,
-                settingsId: proposal[1].Curr.workflow_settings_id,
+                templateId: proposal[1].current.workflow_id,
+                settingsId: proposal[1].current.workflow_settings_id,
                 state: workflowInstance[0].state,
                 storage: workflowInstance[1].storage_key,
                 inputs: proposalInputs,
@@ -464,12 +473,14 @@ export default class DaoLoader {
                 actionLogs: actionLogs,
                 search: [StringHelper.toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
             })
+            */
         }
 
-        return {
-            templates: templates,
-            proposals: proposals,
-            workflows: workflows,
-        }
+        executes.proposals = proposals
+        executes.workflows = workflows
+
+        //console.log(executes.proposals, executes.workflows)
+
+        return executes
     }
 }

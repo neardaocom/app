@@ -73,6 +73,7 @@ export type WFAction = WFActionCall | WFActionFunctionCall
 export type WFActivity = {
     id: number;
     code: string;
+    automatic?: boolean;
     actionIds: number[];
     attributes: WFAttribute[];
 }
@@ -85,16 +86,17 @@ export type WFTransition = {
 export type WFTemplate = {
     id: number;
     code: string;
-    name?: string;
-    status?: string;
+    name: string;
     version: string;
-    actions: WFAction[];
+    autoExecute: boolean;
+    needStorage: boolean;
     activities: WFActivity[];
+    // actions: WFAction[];
     transactions: WFTransition[];
-    startActionIds: number[];
-    endActionIds: number[];
-    search: string;
+    startActivityIds: number[];
+    endActivityIds: number[];
     settings: WFSettings[];
+    search?: string;
     // constants: WFAttribute[];
     // attributes: WFAttribute[];
 }
@@ -109,7 +111,7 @@ export type WFSettings = {
     proposeRights: DAORights[];
     voteRight: DAORights;
     voteLevel: DAOVoteLevel;
-    actionRights: WFSettingsAction[];
+    activityRights: Record<number, DAORights[]>;
     constants: CodeValue[];
 }
 

@@ -1,15 +1,13 @@
 import { Account, Contract } from 'near-api-js';
-import { Instance, ProposeSettings, ProposalState, VoteResult, ActionInput, TreasuryPartition, Reward, ClaimbleReward, Asset, Tags, Statistics, Settings } from "./types/dao";
-import { TemplateSettings } from "./types/workflow";
-import { ResourceType } from "./types/resource";
+import { Instance, ProposeSettings, ProposalState, VoteResult, ActionInput, TreasuryPartition, Reward, ClaimbleReward, Asset, Tags, Statistics, Settings, ProposalInputs } from "./types/dao";
 import { Wallet } from './types/blockchain';
 import loSet from "lodash/set";
+import ContractService from './ContractService';
 
-export default class DaoContract {
-  private contract: Contract & any;
+export default class DaoContractService extends ContractService {
 
   constructor(account: Account, contractId: string) {
-    this.contract = new Contract(account, contractId, {
+    super(new Contract(account, contractId, {
       viewMethods: [
         // groups
         'group',
@@ -43,13 +41,16 @@ export default class DaoContract {
         'claimable_rewards',
         // tick
         'next_tick',
+        // media
+        'media',
+        'media_list',
         // others
         'statistics',
         'tags',
         'settings',
+        
         // upgrade
         // 'wf_log', // TODO: Add to workflow
-        // 'media_list', // TODO: Move to resource
       ],
       changeMethods: [
         // proposals and voting
@@ -67,7 +68,7 @@ export default class DaoContract {
         'download_new_version', // TODO: What about upgrade
         'upgrade_self',
       ],
-    });
+    }));
   }
 
   /**
@@ -130,23 +131,11 @@ export default class DaoContract {
    * @return Promise
    */
    async proposalCreate(
-     description: ResourceType|null,
-     templateId: number,
-     templateSettingsId: number,
-     proposeSettings: ProposeSettings,
-     templateSettings: TemplateSettings[]|null, // only in case "wf_add" workflow
-     schedulerMsg: string|null,
+     proposalInputs: ProposalInputs,
      gas: string,
      yoctoNear: string
    ) {
-    return this.contract.proposal_create({
-      description,
-      template_id: templateId,
-      template_settings_id: templateSettingsId,
-      propose_settings: proposeSettings,
-      template_settings: templateSettings,
-      scheduler_msg: schedulerMsg,
-    }, gas, yoctoNear)
+    return this.contract.proposal_create(proposalInputs, gas, yoctoNear)
   }
 
   /**
@@ -164,7 +153,7 @@ export default class DaoContract {
    * @return Promise
    */
    async proposalFinish(id: number, gas: string): Promise<ProposalState> {
-    return this.contract.finish_proposal({ id }, gas);
+    return this.contract.proposal_finish({ id }, gas);
   }
 
   /**
@@ -218,7 +207,6 @@ export default class DaoContract {
    * @return Promise
    */
    async wfLog(proposalId: number): Promise<any[]> {
-    return new Promise(() => ([]))
     return this.contract.wf_log({proposal_id: proposalId})
   }
 
@@ -417,6 +405,25 @@ export default class DaoContract {
   async statistics(): Promise<Statistics> {
     return this.contract.statistics()
   }
+
+  /**
+   * Media list
+   * 
+   * @return Promise
+   */
+   async mediaList(fromId: number, limit: number) {
+    return this.contract.mediaList({from_id: fromId, limit})
+  }
+
+  /**
+   * Media
+   * 
+   * @return Promise
+   */
+   async media(id: number) {
+    return this.contract.media({id})
+  }
+
 
 ///**
 // * Download new version

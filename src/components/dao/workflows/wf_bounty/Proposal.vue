@@ -25,7 +25,7 @@ import { useNear } from "@/hooks/vuex";
 // import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 //import { inject } from '@vue/runtime-core';
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
-import { generateStorageKey } from "@/models/proposal";
+import { generateStorageKey } from "@/models/dao/DaoProposal";
 
 export default {
     components:{

@@ -3,7 +3,7 @@ import { getTemplateByCode } from "@/models/workflow";
 import loFilter from "lodash/filter";
 import loFind from "lodash/find";
 import { ref } from "vue";
-import { getArgs } from "@/models/proposal";
+// import { getArgs } from "@/models/dao/DaoProposal";
 
 export const useBounties = (dao: DAO, t: Function, d: Function, n: Function) => {
     const template = getTemplateByCode(dao.templates, 'wf_bounty')
@@ -16,7 +16,7 @@ export const useBounties = (dao: DAO, t: Function, d: Function, n: Function) => 
 
     const titles = ref(bounties.value.map((bounty, index) => {
         const proposal: DAOProposal = proposals.value[index]! as DAOProposal
-        return t('default.wf_templ_wf_bounty_title', getArgs(proposal, 'wf_bounty', t, d, n))
+        return '' // t('default.wf_templ_wf_bounty_title', getArgs(proposal, 'wf_bounty', t, d, n)) // TODO: Rewrite
     }))
 
     return {

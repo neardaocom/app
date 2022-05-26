@@ -1,10 +1,10 @@
 import { Account, Contract} from 'near-api-js';
+import ContractService from './ContractService';
 
-export default class WfProviderContract {
-  private contract: Contract & any;
+export default class WfProviderContract extends ContractService {
 
   constructor(account: Account, contractId: string) {
-    this.contract = new Contract(account, contractId, {
+    super(new Contract(account, contractId, {
       viewMethods: [
         'wf_templates',
         'wf_template',
@@ -17,7 +17,7 @@ export default class WfProviderContract {
       ],
       changeMethods: [
       ],
-    });
+    }));
   }
 
   /**

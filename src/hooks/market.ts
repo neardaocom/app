@@ -1,10 +1,18 @@
-import { ref, reactive, onMounted, onUnmounted } from "vue";
+import { ref, Ref, reactive, onMounted, onUnmounted } from "vue";
 import { Account } from 'near-api-js';
 import { useStore } from 'vuex'
 import { RefFinanceService } from '@/models/services/refFinanceService'
 import { GeneralTokenService } from '@/models/services/generalTokenService';
 import { CoinGeckoExchange } from "@/models/services/exchangeService"
 import { Config } from "@/config";
+import { Loader } from "@/loader";
+import DaoMarket from "@/models/dao/DaoMarket";
+
+export const useMarket = (loader: Ref<Loader>, config: Ref<Config>) => {
+    const servicePool = loader.value.load('dao/ServicePool')
+    const market = ref(new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value))
+    return { market }
+}
 
 export const useRefFinance = (account: Account, contract: string) => {
     const nearAccount = reactive(account)

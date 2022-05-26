@@ -1,11 +1,11 @@
 import { Account, Contract} from 'near-api-js';
 import { factoryDaoList } from '../../../tests/fixtures/dao'
 import { DaoInfo } from './types/admin';
-export default class AdminContractService {
-  private contract: Contract & any;
+import ContractService from './ContractService';
+export default class AdminContractService extends ContractService {
 
   constructor(account: Account, contractId: string) {
-    this.contract = new Contract(account, contractId, {
+    super(new Contract(account, contractId, {
       viewMethods: [
         'get_dao_list',
         'get_tags',
@@ -17,7 +17,7 @@ export default class AdminContractService {
         'create',
         // 'add_tags', // TODO: Check API
       ],
-    });
+    }))
   }
 
   /**

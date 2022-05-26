@@ -9,13 +9,14 @@ import { useI18n } from "vue-i18n";
 import loGet from "lodash/get";
 import { DAO } from "@/models/dao/types/dao";
 import NumberHelper from "@/models/utils/NumberHelper";
+import Decimal from "decimal.js";
 
 export const useStake = (dao: Ref<DAO>) => {
    const canStake = computed(() => dao.value.staking.wallet !== null)
    const allVotePower = computed(() => dao.value.staking.totalVoteAmount || 0)
    const walletVotePower = computed(() => dao.value.staking.wallet?.voteAmount || null)
    const walletVotePowerPercent = computed(() => walletVotePower.value ? NumberHelper.toPercentDivision(walletVotePower.value, allVotePower.value) : null)
-   const walletTokenAmount = computed(() => dao.value.staking.walletFtAmount)
+   const walletTokenAmount = computed(() => new Decimal(dao.value.staking.walletFtAmount || 0).plus(dao.value.staking.wallet?.staked || 0).toNumber())
    const walletTokenStaked = computed(() => dao.value.staking.wallet?.staked)
    const walletVotePowerOwned = computed(() => dao.value.staking.wallet?.voteAmount ? dao.value.staking.wallet?.voteAmount - (dao.value.staking.wallet?.delegatorsAmount || 0) : 0)
    const walletVotePowerDelegators = computed(() => dao.value.staking.wallet?.delegatorsAmount)

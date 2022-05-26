@@ -73,9 +73,9 @@ export type TemplateSettings = {
 // define inputs for workflow that are created when proposal is being proposed
 export type ProposeSettings = {
     // Top level binds. Shared across all activities.
-    global: SourceDataVariant|null;
+    constants: SourceDataVariant|null;
     // Bind per activity. Init activity's binds must be on 0th pos and null.
-    binds: ActivityBind|null[];
+    activity_constants: ActivityBind|null[];
     // Storage key under which is the workflow data storage created.
     storage_key: string|null; // must if unique string if Template's key "need_storage" is true
 }
@@ -84,9 +84,9 @@ export type SourceDataVariant = {map: Record<string, Value>}
 
 export type ActivityBind = {
     // Binds shared for all actions.
-    shared: SourceDataVariant|null;
+    constants: SourceDataVariant|null;
     // Bind per activity actions.
-    values: (SourceDataVariant|null)[];
+    actions_constants: (SourceDataVariant|null)[];
 }
 
 /**
@@ -110,9 +110,10 @@ export type Activity = {
 
 }
 
-export type ActivityRight = {
-
-}
+export type ActivityRight =
+    "anyone" | "token_holder" | "member"
+    | {group: number;} | {group_member: [number, string];} | {group_role: [number, number];} | {group_leader: number;}
+    | {account:string;}
  
 export type EExpr = {
 
@@ -125,5 +126,6 @@ export type Transition = {
 
 
 export type TransitionLimit = {
-    
+    to: number;
+    limit: number;
 }

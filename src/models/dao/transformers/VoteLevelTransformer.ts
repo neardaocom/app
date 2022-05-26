@@ -2,15 +2,19 @@ import TransformerInterface from "@/models/interfaces/Transformer.interface";
 import { DAOVoteType } from "../types/dao";
 import moment from 'moment';
 import loIsBoolean from "lodash/isBoolean"
+import VoteTypeTransformer from "./VoteTypeTransformer";
 
 export default class VoteLevelTransformer implements TransformerInterface {
 
+    protected voteTypeTransformer: VoteTypeTransformer;
+
     constructor() {
+        this.voteTypeTransformer = new VoteTypeTransformer()
     }
 
-    transform(value: any, params: any) {
+    transform(value: any) {
         return {
-            type: (value.scenario === 'TokenWeighted') ? DAOVoteType.TokenWeighted : DAOVoteType.Democratic,
+            type: this.voteTypeTransformer.transform(value.scenario),
             quorum: value.quorum,
             approveThreshold: value.approve_threshold,
             spamThreshold: value.spam_threshold,

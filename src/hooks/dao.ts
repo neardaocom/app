@@ -1,15 +1,14 @@
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
+import { computed, ref, Ref } from "vue";
 import { DAO, DAORights } from "@/models/dao/types/dao";
 import loGet from "lodash/get";
 import { Translate } from "@/models/utils/types/generics";
 import { getGroupCouncil } from '@/models/dao'
 import Rights from '@/models/dao/Rights'
-import Decimal from "decimal.js";
 import { getFile } from "@/models/document"
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { Config } from "@/config";
+import loIsNil from 'lodash/isNil'
 
 export const useRouter = (config: Config) => {
     const route = useRoute()
@@ -61,14 +60,13 @@ export const useStats = (dao: DAO) => {
     }
 }
 
-export const useRights = (dao: DAO, walletId?: string) => {
+export const useRights = (dao: Ref<DAO>, walletId?: string) => {
     const { t } = useI18n()
-    const rights = Rights.getDAORights(dao)
-    const daoRights = ref(rights)
-    const walletRights = ref<DAORights[]>(Rights.getWalletRights(dao, walletId))
+    const daoRights = computed(() => loIsNil(dao.value) === false ? Rights.getDAORights(dao.value) : [])
+    const walletRights = computed(() => loIsNil(dao.value) === false && loIsNil(walletId) === false ? Rights.getWalletRights(dao.value, walletId) : [])
     
-    const daoRightsOptions = ref(rights.map((right, index) => {
-        const trans: Translate = Rights.toTranslate(right, dao.groups)
+    const daoRightsOptions = computed(() => daoRights.value.map((right, index) => {
+        const trans: Translate = Rights.toTranslate(right, dao.value.groups)
         return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
     }))
 

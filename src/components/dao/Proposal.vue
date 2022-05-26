@@ -92,10 +92,10 @@
           && proposal.isVoted === false
         "
       >
-        <button @click="vote(1)" type="button" class="btn btn-outline-success btn-rounded">
+        <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
-        <button @click="vote(2)" type="button" class="btn btn-outline-danger btn-rounded">
+        <button @click="vote(proposal.id, 2)" type="button" class="btn btn-outline-danger btn-rounded">
           <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->
@@ -106,7 +106,7 @@
         v-else-if="workflowCode === 'finishing'"
         role="group"
       >
-        <button v-if="proposal.canVote === true" @click="finalize()" type="button" class="btn btn-outline-primary btn-rounded">
+        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded">
           <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
         </button>
       </div>
@@ -120,12 +120,13 @@ import {
   // , MDBCollapse, MDBBtn, MDBIcon
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { ref, toRefs, onMounted, onUnmounted } from "vue";
+import { ref, toRefs, onMounted, onUnmounted, inject } from "vue";
 import _ from "lodash";
 
 import TextCollapse from '@/components/ui/TextCollapse.vue';
-import { workflowCodeBgMapper, getProgress, getWorkflowCode } from '@/models/proposal';
+import ProposalHelper from "@/models/dao/ProposalHelper"
 import moment from 'moment'
+import { useProposal } from '@/hooks/proposal';
 
 export default {
   components: {
@@ -145,16 +146,22 @@ export default {
   },
   setup(props) {
     const { proposal } = toRefs(props)
+    const loader = inject('loader')
+    const dao = inject('dao')
+
+    const { vote, finish } = useProposal(dao, loader)
+
     const { t } = useI18n();
     const proposalDescription = ref('')
     const proposalDescriptionLoaded = ref(false)
     const collapseDescription = ref(false)
-    const workflowCodeMapper = ref(workflowCodeBgMapper);
+    const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
     const progress = ref(proposal.value.progress)
+    // console.log('Progress: ' + progress.value)
+
     const progressCounter = () => {
-      progress.value = getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration.value)
-      // console.log('Progress: ' + progress.value)
+      progress.value = ProposalHelper.getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration.value)
     }
     const progressInterval = ref(null);
 
@@ -168,7 +175,7 @@ export default {
       //console.log('unmounted')
     })
 
-    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval, moment };
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval, moment, vote, finish };
   },
   computed: {
     accountId(){
@@ -181,39 +188,9 @@ export default {
       return this.$store.getters['ipfs/getService']
     },
     workflowCode() {
-      return getWorkflowCode(this.proposal.status, this.progress)
+      // console.log(this.proposal, this.progress)
+      return ProposalHelper.getStatus(this.proposal.status, this.progress)
     }
-  },
-  methods: {
-    vote(choice) {
-      // console.log(choice);
-      this.nearService
-        .vote(this.contractId, this.proposal.id, choice)
-        .then((r) => {
-          console.log(r);
-        })
-        .catch((e) => {
-          this.$logger.error('D', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
-          this.$logger.error('B', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
-          this.$notify.danger(this.t('default.notify_proposal_voting_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_voting_fail_message' , {proposal: this.proposal.title}))
-          this.$notify.flush()
-          console.log(e);
-        });
-    },
-    finalize() {
-      this.nearService
-        .finalize(this.contractId, this.proposal.id)
-        .then((r) => {
-          console.log(r);
-        })
-        .catch((e) => {
-          this.$logger.error('D', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
-          this.$logger.error('B', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
-          this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
-          this.$notify.flush()
-          console.log(e);
-        });
-    },
   },
   mounted() {
     //console.log(this.proposal.description)

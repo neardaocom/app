@@ -26,6 +26,14 @@ export default {
     provide('config', config)
     // loader
     const loader = ref(new Loader(new Register(), config.value))
+    loader.value.get('near/WalletAccount').then(() => {}).catch((reason) => { // init Near
+      // TODO: Error catch
+      console.log(reason)
+    })
+    loader.value.get('dao/ServicePool').then(() => {}).catch((reason) => { // init ServicePool
+      // TODO: Error catch
+      console.log(reason)
+    })
     provide('loader', loader)
 
     // init
@@ -35,7 +43,7 @@ export default {
     onMounted(async () => {
       store.dispatch('ipfs/init')
       store.dispatch('near/init').then(async () => {
-        await loader.value.get('near/WalletAccount')
+       // await loader.value.get('near/WalletAccount')
         await nearPriceResolve()
         await listResolve()
       })

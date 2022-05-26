@@ -111,7 +111,7 @@ import { ref, toRefs, reactive, toRaw } from "vue";
 import loLast from "lodash/last";
 import loGet from "lodash/get";
 import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
-import { getArgs as getProposalArgs } from "@/models/proposal";
+import { getArgs as getProposalArgs } from "@/models/dao/DaoProposal";
 import { useNear } from '@/hooks/vuex';
 import Date from "@/models/utils/DateHelper";
 import Rights from "@/models/dao/Rights";

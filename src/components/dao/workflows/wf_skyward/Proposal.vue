@@ -46,7 +46,7 @@ import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
 import NearUtils from '@/models/nearBlockchain/Utils';
-import { generateStorageKey } from "@/models/proposal";
+import { generateStorageKey } from "@/models/dao/DaoProposal";
 
 export default {
     components:{

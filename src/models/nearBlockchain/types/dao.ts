@@ -1,3 +1,4 @@
+import { Media, ResourceType } from "./resource";
 import { MethodName, ObjectMetadata, FnCallId, Template, TemplateSettings } from "./workflow";
 
 export type VersionedProposal = { "current": Proposal }
@@ -16,6 +17,15 @@ export type Proposal = {
     workflow_id: number; // proposed workflow id
     workflow_settings_id: number; // proposed workflow id - template settings id
 }
+
+export type ProposalInputs = {
+    description: ResourceType | null;
+    template_id: number;
+    template_settings_id: number;
+    propose_settings: ProposeSettings;
+    template_settings: TemplateSettings[] | null;
+    scheduler_msg: string | null;
+  }
 
 export type Settings = {
     name: string;
@@ -225,6 +235,8 @@ export type TransitionCounter = {
     limit: number; // max transition done limit
 }
 
+
+
 // running workflow state
 export type Instance = {
     state: InstanceState;
@@ -253,6 +265,7 @@ export type CreateDao = {
     workflow_templates: Template[];
     workflow_template_settings: TemplateSettings[][];
     treasury_partitions: TreasuryPartitionInput[];
+    media: Media[];
 }
 
 export type Statistics = {
