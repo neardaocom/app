@@ -26,7 +26,7 @@
 
 
     <!-- Filter, checkboxes, order -->
-    <div v-if="proposals.length > 0" class="row my-4 mx-4">
+    <div v-if="list.length > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
         <Search v-model="searchQuery" />
       </div>
@@ -40,13 +40,13 @@
     </div>
 
     <!-- Proposals -->
-    <section v-if="proposals.length == 0">
+    <section v-if="list.length == 0">
       <hr>
       <h6 class="mb-0 text-start">{{ t("default.no_active_proposal") }}</h6>
     </section>
 
     <div class="row">
-      <div v-for="(proposal, index) in results" :key="index" class="col-12 col-md-6 mb-4 mb-md-0">
+      <div v-for="(proposal) in results" :key="proposal.id" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
           <Proposal :proposal="proposal" :contractId="dao.wallet" />
         </section>
@@ -61,11 +61,12 @@ import { inject, ref, toRefs } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Proposal from "@/components/dao/Proposal.vue"
-import { transform } from '@/models/proposal';
-import _ from "lodash"
-import loFind from "lodash/find"
+import loIntersection from "lodash/intersection"
+import loOrderBy from "lodash/orderBy"
 import StringHelper from '@/models/utils/StringHelper'
 import Search from "@/components/ui/Search.vue";
+import { useList } from "@/hooks/proposal"
+import { useRights } from '@/hooks/dao';
 
 export default {
   components: {
@@ -87,13 +88,15 @@ export default {
     },
   },
   setup(props) {
-    const { walletId, walletRights, daoRights } = toRefs(props)
+    const { walletId } = toRefs(props)
     const dao = inject('dao')
-    const { t, d, n } = useI18n();
+    const loader = inject('loader')
+    const templateMeta = inject('templateMeta')
+    const { t } = useI18n();
 
-    const proposals = dao.value.proposals.map((proposal) => {
-      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
-    })
+    const { walletRights } = useRights(dao, walletId.value)
+
+    const { list } = useList(dao, templateMeta, walletId.value, walletRights.value, loader)
 
     const searchQuery = ref('')
     const filterState = reactive({
@@ -115,15 +118,15 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { dao, t, proposals, searchQuery, filterState, order };
+    return { dao, t, list, searchQuery, filterState, order };
   },
   computed: {
     results() {
-      let results = this.proposals
+      let results = this.list
       // filter
       const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
       if (filterStates.length > 0) {
-        results = results.filter(item => _.intersection([item.stateCode], filterStates).length > 0)
+        results = results.filter(item => loIntersection([item.stateCode], filterStates).length > 0)
       }
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
@@ -134,10 +137,10 @@ export default {
       // order
       switch (this.order.selected) {
         case 'created_desc':
-          results = _.orderBy(results, ['id'], ['desc'])
+          results = loOrderBy(results, ['id'], ['desc'])
           break;
         case 'created_asc':
-          results = _.orderBy(results, ['id'], ['asc'])
+          results = loOrderBy(results, ['id'], ['asc'])
           break;
         default:
           break;
@@ -146,7 +149,5 @@ export default {
       return results
     },
   },
-  methods: {
-  }
 };
 </script>

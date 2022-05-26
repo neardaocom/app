@@ -1,40 +1,34 @@
 import { Account, Contract } from 'near-api-js';
 import { User } from './types/staking';
+import ContractService from './ContractService';
 
-export default class StakingContractService {
-  private contractId: string;
-  private contract: Contract & any;
+export default class StakingContractService extends ContractService {
 
-  constructor(account: Account, contractId: string) {
-     this.contractId = contractId
-    this.contract = new Contract(account, contractId, {
-      viewMethods: [
-        'dao_ft_total_supply',
-        'dao_ft_balance_of',
-        'dao_get_user',
-        'dao_user_list',
-        'storage_balance_bounds',
-        'storage_balance_of',
-      ],
-      changeMethods: [
-        'new',
-        'storage_deposit',
-        'register_new_dao',
-        'register_in_dao',
-        'delegate_owned',
-        'delegate',
-        'undelegate',
-        'withdraw',
-        'unregister_in_dao',
-        'storage_withdraw',
-        'storage_unregister',
-      ],
-    });
-  }
-
-  getContractId(): string {
-     return this.contractId
-  }
+   constructor(account: Account, contractId: string) {
+      super(new Contract(account, contractId, {
+         viewMethods: [
+            'dao_ft_total_supply',
+            'dao_ft_balance_of',
+            'dao_get_user',
+            'dao_user_list',
+            'storage_balance_bounds',
+            'storage_balance_of',
+         ],
+         changeMethods: [
+            'new',
+            'storage_deposit',
+            'register_new_dao',
+            'register_in_dao',
+            'delegate_owned',
+            'delegate',
+            'undelegate',
+            'withdraw',
+            'unregister_in_dao',
+            'storage_withdraw',
+            'storage_unregister',
+         ],
+      }));
+   }
 
    /*****************
     *    Change     *
@@ -45,7 +39,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-   async new(registerId :string, gas: string) {
+   async new(registerId: string, gas: string) {
       return this.contract.new({ registrar_id: registerId }, gas)
    }
 
@@ -56,8 +50,8 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-   async storageDeposit(accountId: string|null, registrationOnly: boolean|null,  gas: string, deposit: string) {
-      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly } , gas, deposit);
+   async storageDeposit(accountId: string | null, registrationOnly: boolean | null, gas: string, deposit: string) {
+      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly }, gas, deposit);
    }
 
    /**
@@ -86,7 +80,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-   async delegateOwned( daoId: string, delegateId: string, amount: string, gas: string) {
+   async delegateOwned(daoId: string, delegateId: string, amount: string, gas: string) {
       return this.contract.delegate_owned({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
    }
 
@@ -97,7 +91,7 @@ export default class StakingContractService {
     * @return Promise
     */
    async delegate(daoId: string, delegateId: string, gas: string) {
-      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId}, gas);
+      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId }, gas);
    }
 
    /**
@@ -114,7 +108,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-    async withdraw(daoId: string, amount: string, gas: string) {
+   async withdraw(daoId: string, amount: string, gas: string) {
       return this.contract.withdraw({ dao_id: daoId, amount: amount }, gas);
    }
 
@@ -124,7 +118,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-    async unregisterInDao(daoId: string, gas: string) {
+   async unregisterInDao(daoId: string, gas: string) {
       return this.contract.unregister_in_dao({ dao_id: daoId }, gas);
    }
 
@@ -134,7 +128,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-    async storageWithdraw(amount: string|null, gas: string) {
+   async storageWithdraw(amount: string | null, gas: string) {
       return this.contract.storage_withdraw({ amount: amount }, gas);
    }
 
@@ -146,7 +140,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-    async storageUnregister(force: boolean|null, gas: string) {
+   async storageUnregister(force: boolean | null, gas: string) {
       return this.contract.storage_unregister({ force: force }, gas);
    }
 
@@ -188,7 +182,7 @@ export default class StakingContractService {
     * 
     * @return Promise
     */
-    async daoUserList(daoId: string): Promise<[string, User]> {
+   async daoUserList(daoId: string): Promise<[string, User]> {
       return this.contract.dao_user_list({ dao_id: daoId });
    }
 

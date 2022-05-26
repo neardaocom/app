@@ -51,14 +51,13 @@
 import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
 import About from "@/components/dao/dashboard/About.vue";
 import Bounty from "@/components/dao/dashboard/Bounty.vue";
-import GovernanceToken from "@/components/dao/dashboard/GovernanceToken.vue"
+import GovernanceToken from "@/components/dao/dashboard/GovernanceToken.vue";
 import { useI18n } from "vue-i18n";
 import Proposal from "@/components/dao/Proposal.vue"
-import { transform } from '@/models/proposal';
 import Auction from '@/models/auction';
-import { inject, toRefs, ref } from "vue"
+import { inject, ref } from "vue"
 import _ from "lodash"
-import loFind from "lodash/find"
+// import loFind from "lodash/find"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
 import DaoAsset from '@/components/dao/dashboard/DaoAsset.vue'
@@ -90,16 +89,18 @@ export default {
       required: true,
     },
   },
-  setup(props) {
-    const { t, n, d } = useI18n();
+  setup() {
+    const { t, n } = useI18n();
     const dao = inject('dao')
-    const { walletId, walletRights, daoRights } = toRefs(props)
+    // const { walletId, walletRights, daoRights } = toRefs(props)
 
     const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
     // console.log(dao, walletId, walletRights, daoRights, d)
     // proposals
-    const proposals = dao.value.proposals.map((proposal) => {
-      return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
+    const proposals = dao.value.proposals.map(() => {
+      
+      // return transform(proposal, loFind(dao.value.templates, {id: proposal.templateId}), dao.value.tokenHolders, dao.value.treasury.token.holded, walletId.value, walletRights.value, daoRights.value, t, d, n)
+      return {}
     })
     // const proposals = []
 

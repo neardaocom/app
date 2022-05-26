@@ -160,21 +160,25 @@ export type DAOProposal = {
   id: number;
   created: Date;
   createdBy: string;
+  end?: Date; // TODO: Move to required
+  description?: any | null; // TODO: Description from media
   votes: DAOVote[];
   state: string;
   templateId: number;
   settingsId: number;
-  workflowAddSettingsId: number;
   inputs: CodeValue[];
+  storageKey?: string | null;
   constants: CodeValue[];
-  content: Record<string, unknown>;
+  content?: Record<string, unknown>; // Deprecated?
+  workflowAddSettingsId?: number; // Deprecated?
 }
 
 export type DAOExecute = {
-  templates: WFTemplate[];
-  proposals: DAOProposal[];
-  workflows: WFInstance[];
+  templates?: Record<number, WFTemplate>;
+  proposals?: DAOProposal[];
+  workflows?: WFInstance[];
 }
+
 
 export type DAO = {
   name: string;
@@ -191,7 +195,7 @@ export type DAO = {
   groups: DAOGroup[];
   tags: IDValue[];
   tokenHolders: DAOTokenHolder[];
-  templates: WFTemplate[];
+  templates: Record<number, WFTemplate>;
   proposals: DAOProposal[];
   workflows: WFInstance[];
   treasuryLocks: TreasuryLock[];

@@ -106,12 +106,12 @@ import {
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import ArrayHelper from '@/models/utils/ArrayHelper'
-import { ref, toRefs, reactive, toRaw } from "vue";
+import { ref, toRefs, reactive } from "vue";
 // import padEnd from "lodash/padEnd";
 import loLast from "lodash/last";
 import loGet from "lodash/get";
 import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
-import { getArgs as getProposalArgs } from "@/models/proposal";
+// import { getArgs as getProposalArgs } from "@/models/dao/DaoProposal";
 import { useNear } from '@/hooks/vuex';
 import Date from "@/models/utils/DateHelper";
 import Rights from "@/models/dao/Rights";
@@ -202,7 +202,7 @@ export default {
       return loLast(this.workflow.activityLogs)
     },
     proposalTitle() {
-      return this.t('default.wf_templ_' + this.template.code + '_title', getProposalArgs(toRaw(this.proposal), this.template.code, this.t, this.d, this.n))
+      return this.t('default.wf_templ_' + this.template.code + '_title', {}) // TODO: Add args
     },
     componentName() {
       return metaGetActivityForm(this.template.code, this.formNextActivityCode)?.component

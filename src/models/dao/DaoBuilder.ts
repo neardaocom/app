@@ -3,7 +3,7 @@ import { MethodName, ObjectMetadata, FnCallId, Template, TemplateSettings } from
 import DateHelper from "../utils/DateHelper";
 
 import loFind from "lodash/find";
-import loSet from "lodash/set";
+import { Media } from "../nearBlockchain/types/resource";
 
 export default class DaoBuilder {
     private tokenId?: string;
@@ -14,6 +14,7 @@ export default class DaoBuilder {
     private groups: GroupInput[] = [];
     private tags: TagInput[] = [];
     private treasuryPartitions: TreasuryPartitionInput[] = [];
+    private media: Media[] = []
 
     private standardFunctionCalls?: MethodName[];
     private standardFunctionCallMetadata?: ObjectMetadata[][];
@@ -49,7 +50,7 @@ export default class DaoBuilder {
             purpose,
             tags,
             dao_admin_account_id: daoAdminAccountId,
-            dao_admin_rights:  ["all"],
+            dao_admin_rights:  ["upgrade"],
             workflow_provider: workflowProvider,
             resource_provider: resourceProvider,
             scheduler,
@@ -147,6 +148,7 @@ export default class DaoBuilder {
             workflow_templates: this.workflowTemplates,
             workflow_template_settings: this.workflowTemplateSettings,
             treasury_partitions: this.treasuryPartitions,
+            media: this.media,
         };
     }
 

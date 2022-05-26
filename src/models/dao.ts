@@ -162,6 +162,7 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
     let action: WFAction
     let activity: WFActivity | undefined
     let templateMeta: WFMetaTemplate | undefined
+/*
     // console.log("Template", dataHack[0])
     templatesFromChain.forEach((template) => {
         // console.log(template)
@@ -274,14 +275,14 @@ export const transTemplates = (templatesFromChain: any[], t: Function): WFTempla
             //constants: [],
             //attributes: [],
             activities: activities,
-            actions: actions,
             transactions: transitions,
-            startActionIds: loUniq(startActionIds),
+            startActiIds: loUniq(startActionIds),
             endActionIds: loUniq(endActionIds),
             search: [StringHelper.toSearch(t('default.wf_templ_' + template[1][0].name))].join('-'),
             settings: settings,
         })
     });
+*/
 
     return templates;
 }

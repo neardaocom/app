@@ -3,6 +3,7 @@ import DaoContractService from "../nearBlockchain/DaoContractService";
 import FtContractService from "../nearBlockchain/FtContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
 import StakingContractService from "../nearBlockchain/StakingContractService";
+import WfProviderContractService from "../nearBlockchain/WfProviderContractService";
 
 export default class ServicePool {
     private near: Near;
@@ -11,6 +12,7 @@ export default class ServicePool {
     private ftPool: { [key: string]: FtContractService } = {};
     private accountPool: { [key: string]: NearAccountService } = {};
     private stakingPool: { [key: string]: StakingContractService } = {};
+    private wfProviderPool: { [key: string]: WfProviderContractService } = {};
 
     constructor(near: Near, account: Account) {
         this.near = near;
@@ -58,6 +60,17 @@ export default class ServicePool {
 
         const contract = new StakingContractService(this.account, contractId);
         this.stakingPool[contractId] = contract;
+
+        return contract;
+    }
+
+    getWfProvider(contractId: string): WfProviderContractService {
+        if (this.wfProviderPool[contractId]) {
+            return this.wfProviderPool[contractId];
+        }
+
+        const contract = new WfProviderContractService(this.account, contractId);
+        this.wfProviderPool[contractId] = contract;
 
         return contract;
     }

@@ -1,4 +1,5 @@
 export type TreasuryLockCategory = 'salary' | 'event' | 'activity'
+export type TreasuryAssetUnlockingType = 'linear' | 'none'
 
 export type TreasuryLock = {
     id: number;
@@ -11,6 +12,7 @@ export type TreasuryLock = {
 
 export type TreasuryLockAsset = {
     asset: TreasuryAsset;
+    startFrom: Date;
     totalLocked: number;
     totalUnlocked: number;
     unlocked: number;
@@ -29,6 +31,7 @@ export type TreasuryAsset = {
 
 export type TreasuryAssetUnlocking = {
     targetDate: Date;
+    type: TreasuryAssetUnlockingType;
     amount: number;
 }
 

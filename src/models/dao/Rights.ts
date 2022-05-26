@@ -3,6 +3,7 @@ import { Translate } from "@/models/utils/types/generics";
 import loIsEqual from "lodash/isEqual";
 import loFirst from "lodash/first";
 import loFind from "lodash/find";
+import { ActivityRight } from "../nearBlockchain/types/workflow";
 
 export default class Rights {
 
@@ -11,15 +12,12 @@ export default class Rights {
 
         if (typeof value === "string") {
             switch (value) {
-                case 'Anyone':
                 case 'anyone':
                     right = { type: DAORightsType.Anyone }
                     break;
-                case 'Member':
                 case 'member':
                     right = { type: DAORightsType.Member }
                     break;
-                case 'TokenHolder':
                 case 'token_holder':
                     right = { type: DAORightsType.TokenHolder }
                     break;
@@ -31,25 +29,20 @@ export default class Rights {
             if (objectKeys.length !== 1) throw new Error("Unexpected value: " + value)
 
             switch (objectKeys[0]) {
-                case 'Account':
                 case 'account':
-                    right = { type: DAORightsType.Account, accountId: value.Account }
+                    right = { type: DAORightsType.Account, accountId: value.account }
                     break;
-                case 'Group':
                 case 'group':
-                    right = { type: DAORightsType.Group, groupId: value.Group }
+                    right = { type: DAORightsType.Group, groupId: value.group }
                     break;
-                case 'GroupMember':
                 case 'group_member':
-                    right = { type: DAORightsType.GroupMember, groupId: value.GroupMember[0], accountId: value.GroupMember[1] }
+                    right = { type: DAORightsType.GroupMember, groupId: value.group_member[0], accountId: value.group_member[1] }
                     break;
-                case 'GroupLeader':
                 case 'group_leader':
-                    right = { type: DAORightsType.GroupLeader, groupId: value.GroupLeader }
+                    right = { type: DAORightsType.GroupLeader, groupId: value.group_leader }
                     break;
-                case 'GroupRole':
                 case 'group_role':
-                    right = { type: DAORightsType.GroupRole, groupId: value.GroupRole[0], roleId: value.GroupRole[1] }
+                    right = { type: DAORightsType.GroupRole, groupId: value.group_role[0], roleId: value.group_role[1] }
                     break;
                 default:
                     throw new Error("Unexpected value: " + objectKeys[0])
@@ -61,32 +54,32 @@ export default class Rights {
         return right
     }
 
-    static toObject(right: DAORights): any {
+    static toObject(right: DAORights): ActivityRight {
         let object: any = undefined
         switch (right.type) {
             case DAORightsType.Anyone:
-                object = "Anyone"
+                object = "anyone"
                 break;
             case DAORightsType.Member:
-                object = "Member"
+                object = "member"
                 break;
             case DAORightsType.TokenHolder:
-                object = "TokenHolder"
+                object = "token_holder"
                 break;
             case DAORightsType.Account:
-                object = { Account: right.accountId }
+                object = { account: right.accountId }
                 break;
             case DAORightsType.Group:
-                object = { Group: right.groupId }
+                object = { group: right.groupId }
                 break;
             case DAORightsType.GroupMember:
-                object = { GroupMember: [right.groupId, right.accountId] }
+                object = { group_member: [right.groupId, right.accountId] }
                 break;
             case DAORightsType.GroupLeader:
-                object = { GroupLeader: right.groupId }
+                object = { group_leader: right.groupId }
                 break;
             case DAORightsType.GroupRole:
-                object = { GroupRole: [right.groupId, right.roleId] }
+                object = { group_role: [right.groupId, right.roleId] }
                 break;
             default:
                 throw new Error("Unsupported type: " + right);
@@ -172,6 +165,7 @@ export default class Rights {
     }
 
     static check(owned: DAORights[], target: DAORights[]): boolean {
+        // console.log(owned, target)
         let checked: boolean = false
 
         for (const targetRight of target) {

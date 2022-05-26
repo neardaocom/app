@@ -1,17 +1,17 @@
 import { Account, Contract} from 'near-api-js';
+import ContractService from './ContractService';
 
-export default class FtFactoryContractService {
-  private contract: Contract & any;
+export default class FtFactoryContractService extends ContractService {
 
   constructor(account: Account, contractId: string) {
-    this.contract = new Contract(account, contractId, {
+    super(new Contract(account, contractId, {
       viewMethods: [
         'accounts',
       ],
       changeMethods: [
         'create',
       ],
-    });
+    }));
   }
 
   /**
@@ -29,7 +29,6 @@ export default class FtFactoryContractService {
    * @return Promise
    */
   async create(name: string, args: string, gas: string, yoctoNear: string): Promise<any> {
-    console.log(name, args)
     return this.contract.create({name, args}, gas, yoctoNear)
   }
 }

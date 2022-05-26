@@ -76,11 +76,11 @@ export const getActivities = (template: WFTemplate, activityIds: number[]): WFAc
     return activities;
 }
 
-export const getTemplate = (templates: WFTemplate[], id: number): WFTemplate | undefined => {
+export const getTemplate = (templates: Record<number, WFTemplate>, id: number): WFTemplate | undefined => {
     return loFind(templates, {'id': id});
 }
 
-export const getTemplateByCode = (templates: WFTemplate[], code: string): WFTemplate | undefined => {
+export const getTemplateByCode = (templates: Record<number, WFTemplate>, code: string): WFTemplate | undefined => {
     return loFind(templates, {'code': code});
 }
 
@@ -94,7 +94,7 @@ export const getLastActivity = (instance: WFInstance): WFInstanceLog | undefined
 
 export const canFinish = (instance: WFInstance, template: WFTemplate): boolean => {
     // console.log('canFinish', instance, template)
-    return instance.state === 'Running' && (instance.actionLastId !== undefined) ? template.endActionIds.includes(instance.actionLastId) : false;
+    return instance.state === 'Running' && (instance.actionLastId !== undefined) ? template.endActivityIds.includes(instance.actionLastId) : false;
 }
 
 export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
@@ -110,13 +110,13 @@ export const metaGetActivityForm = (templateCode: string, activityCode: string):
 }
 
 export const getActivityRights = (settings: WFSettings, activity: WFActivity): DAORights[] => {
-    return settings.actionRights[activity.actionIds[0]].rights
+    return settings.activityRights[activity.actionIds[0]]
 }
 
 export const getNextActivities = (template: WFTemplate, actionLastId: number | undefined): WFActivity[] => {
     const activities: WFActivity[] = []
     if (actionLastId === undefined) { // at start
-        template.startActionIds.forEach((actionId) => {
+        template.startActivityIds.forEach((actionId) => {
             template.activities.filter((activity) => activity.actionIds[0] === actionId).forEach((activity) => activities.push(activity))
         })
     } else { // transition
@@ -131,7 +131,7 @@ export const getNextActivities = (template: WFTemplate, actionLastId: number | u
 export const getActionsOfActivity = (template: WFTemplate, activityId: number): WFAction[] => {
     const actions: WFAction[] = []
 
-    template.actions.filter((action) => template.activities[activityId].actionIds.includes(action.id)).forEach((action) => actions.push(action))
+    // template.actions.filter((action) => template.activities[activityId].actionIds.includes(action.id)).forEach((action) => actions.push(action))
 
     return actions
 }
@@ -180,10 +180,12 @@ export const runActivity = (activityCode: string, workflow: WFInstance, template
 
 export const transformLogs = (logs: WFInstanceLog[], template: WFTemplate): WFInstanceLogDTO[] => {
     const list: WFInstanceLogDTO[] = []
-    let item: WFInstanceLogDTO | undefined = undefined
-    let action: WFAction | undefined = undefined
-    let activity: WFActivity | undefined = undefined
+    const item: WFInstanceLogDTO | undefined = undefined
+    const action: WFAction | undefined = undefined
+    const activity: WFActivity | undefined = undefined
     logs.forEach((log) => {
+        // TODO: WfLog
+        /*
         // get action
         action = template.actions[log.actionId]
         activity = template.activities[action.activityId]
@@ -211,6 +213,7 @@ export const transformLogs = (logs: WFInstanceLog[], template: WFTemplate): WFIn
                 args: log.args
             }
         }
+        */
     })
 
     if (item !== undefined) list.push(item)

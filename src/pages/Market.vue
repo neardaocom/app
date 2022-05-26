@@ -25,7 +25,7 @@
           <MDBProgressBar bg="secondary" :value="fetchProgress" />
         </MDBProgress>
 
-        <h5 class="text-start mt-5">Owned sevices</h5>
+        <h5 v-if="dao" class="text-start mt-5">Owned sevices</h5>
         <div class="row gx-5 mt-3">
           <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status === t('default.installed'))" :key="index">
             <TemplateCard :template="template" @btn-click="open" />
@@ -67,13 +67,13 @@ import {
 import { useI18n } from 'vue-i18n'
 import { useTemplateList, useCreators } from "@/hooks/workflow";
 import { onMounted, watch, ref, inject } from 'vue'
-import { useRouter } from "@/hooks/dao";
-import { useNear } from '@/hooks/vuex'
-import { useStore } from 'vuex'
+import { useRights, useRouter } from "@/hooks/dao";
+// import { useNear } from '@/hooks/vuex'
+// import { useStore } from 'vuex'
 import { market } from "@/data/workflow";
 import loGet from "lodash/get";
 import loFind from "lodash/find";
-import { loadById } from "@/models/dao";
+// import { loadById } from "@/models/dao";
 import Rights from '@/models/dao/Rights'
 // import { Rights.getDAORights } from '@/models/rights'
 import ModalProposal from '@/components/proposal/Modal.vue'
@@ -81,6 +81,9 @@ import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
 import TemplateCard from '@/components/market/TemplateCard.vue'
 import Search from "@/components/ui/Search.vue"
+import { useWallet } from '@/hooks/wallet'
+import DaoLoader from '@/models/dao/DaoLoader'
+import { useDao } from "@/hooks/daoList";
 
 export default {
   components: {
@@ -91,50 +94,35 @@ export default {
     TemplateCard, Search
   },
   setup() {
-    const config = inject('config')
-  
     const { t, n } = useI18n()
-    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
-    const { creator, provider } = useCreators()
-    const store = useStore()
-    const { nearService, wallet } = useNear()
     const { rDaoId } = useRouter(config)
+    const config = inject('config')
+    const loader = inject('loader')
+    const dao = ref(null)
+    const { wallet } = useWallet(loader)
+    const { daoInfo } = useDao(rDaoId.value)
+    const { daoRights, walletRights } = useRights(dao, wallet.value?.getAccountId())
+    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList(loader, config)
+    const { creator, provider } = useCreators()
     const daoTemplatesCodes = ref([])
-    const dao = ref({})
-    const daoRights = ref([])
-    const walletRights = ref([])
+    
 
     const modalProposal = ref(0)
     const modalTitle = t('default.wf_templ_wf_add')
     const modalProps = ref({})
     const modalMessage = ref(0)
 
-    onMounted(() => {
+    onMounted(async () => {
       if (rDaoId.value) {
-        store.commit('near/setContract', rDaoId.value)
+        // fetch dao
+        const servicePool = await loader?.value.get('dao/ServicePool')
+        const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
+        dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
+        console.log(dao.value)
+        daoTemplatesCodes.value = Object.values(dao.value.templates).map((template) => template.code)
 
-        loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
-          .then(r => {
-            dao.value = r
-            daoRights.value = Rights.getDAORights(r)
-            walletRights.value = Rights.getWalletRights(r, wallet.value?.getAccountId())
-          })
-          .catch((e) => {
-            //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-            //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-            //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
-            //this.$notify.flush()
-            console.log(e)
-          })
-
-        nearService.value.getWfTemplates(rDaoId.value).then(r => {
-          // daoTemplatesCodes
-          r.forEach((template) => {
-            daoTemplatesCodes.value.push(template[1][0].name)
-          })
-
-          fetch(daoTemplatesCodes.value)
-        })
+        // fetch templates
+        fetch(daoTemplatesCodes.value)
       } else {
         fetch([])
       }
@@ -144,7 +132,7 @@ export default {
 
     return {
       t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
-      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights,
+      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights, wallet,
     }
   },
   methods: {
@@ -157,7 +145,7 @@ export default {
         const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
         if (Rights.check(this.walletRights, rights)) {
           this.modalProposal += 1
-          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
+          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.value.code) + ' ' + this.t('default.feature')
           this.modalProps = {
             template: template,
             contractId: this.rDaoId,

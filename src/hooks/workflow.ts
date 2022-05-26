@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import StringHelper from '@/models/utils/StringHelper'
 import { useI18n } from 'vue-i18n'
@@ -6,21 +6,22 @@ import { WFTemplate } from '@/models/dao/types/workflow'
 import loOrderBy from "lodash/orderBy"
 import loGet from "lodash/get"
 import loFind from "lodash/find"
-import loToString from "lodash/toString"
 import { accounts } from "@/data/blockchain";
 import IntegerHelper from '@/models/utils/IntegerHelper'
 // import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
 import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
 import { Wallet } from '@/models/nearBlockchain/types/blockchain'
 import { useStore } from 'vuex'
+import DaoMarket from '@/models/dao/DaoMarket'
+import { Config } from '@/config'
+import { MarketTemplate } from '@/models/dao/types/market'
+import { Loader } from '@/loader'
 
-export const useTemplateList = () => {
+export const useTemplateList = (loader: Ref<Loader>, config: Ref<Config>) => {
     const { t } = useI18n()
-    const store = useStore()
-    const nearService = computed(() => store.getters['near/getService'])
 
-    const dataSource = ref<WFTemplate[]>([])
-    const dataResults = ref<WFTemplate[]>([])
+    const dataSource = ref<MarketTemplate[]>([])
+    const dataResults = ref<MarketTemplate[]>([])
 
     const fetchProgress = ref(0)
 
@@ -40,11 +41,11 @@ export const useTemplateList = () => {
         // searching
         const searchText = StringHelper.toSearch(filterSearch.value)
         if (searchText.length > 2) {
-            dataResults.value = dataResults.value.filter((item: WFTemplate) => item.search.includes(searchText))
+            dataResults.value = dataResults.value.filter((item: MarketTemplate) => item.search?.includes(searchText))
         }
 
         // order
-        console.log(filterOrder.value)
+        //console.log(filterOrder.value)
         switch (filterOrder.value) {
             case 'most_popular':
                 dataResults.value = loOrderBy(dataResults.value, ['status', 'name'], ['asc', 'asc'])
@@ -65,54 +66,15 @@ export const useTemplateList = () => {
         return;
     }
 
-    const fetch = (installedTemplateCodes: string[]): void => {
-        const list: WFTemplate[] = [];
+    const fetch = async (installedTemplateCodes: string[]) => {
         fetchProgress.value = IntegerHelper.getRandom(5, 15)
+        const servicePool = await loader.value.get('dao/ServicePool')
+        const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value);
 
-        nearService.value.providerList().then( r => {
-            r.forEach(template => {
-                if (['wf_add', 'wf_near_send'].includes(template.name) === false) {
-                    list.push({
-                        id: template.id,
-                        version: loToString(template.version),
-                        code: template.name,
-                        name: t('default.wf_templ_' + template.name),
-                        status: t('default.' + (installedTemplateCodes.includes(template.name) ? 'installed' : 'buy')),
-                        //constants: [],
-                        //attributes: [],
-                        activities: [],
-                        actions: [],
-                        transactions: [],
-                        startActionIds: [],
-                        endActionIds: [],
-                        search: [StringHelper.toSearch(t('default.wf_templ_' + template.name)), StringHelper.toSearch(t('default.workflow'))].join('-'),
-                        settings: [],
-                    })
-                }
-            });
+        dataSource.value = await daoMarket.list(installedTemplateCodes, t) || []
 
-            list.push({
-                id: 0,
-                version: '1',
-                code: 'wf_ref_finance',
-                name: t('default.wf_templ_wf_ref_finance'),
-                status: t('default.in_progress'),
-                //constants: [],
-                //attributes: [],
-                activities: [],
-                actions: [],
-                transactions: [],
-                startActionIds: [],
-                endActionIds: [],
-                search: [StringHelper.toSearch(t('default.wf_templ_wf_ref_finanace')), StringHelper.toSearch(t('default.workflow'))].join('-'),
-                settings: [],
-            })
-
-            fetchProgress.value = 100
-            filter()
-        })
-        
-        dataSource.value = list // [templatePayout, templateCreateGroup, templateAddMember]
+        fetchProgress.value = 100
+        filter()
     }
 
     return {

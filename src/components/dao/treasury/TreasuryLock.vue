@@ -25,10 +25,10 @@
                      <MDBBadge color="muted" pill class="me-2" style="padding: 0.3rem" ><i class="bi bi-unlock"/></MDBBadge>
                      <div>
                         <div class="fw-bold">
-                           {{lock.nextUnlock.getUTCHours()}}:{{lock.nextUnlock.getUTCMinutes()}} <small class="fw-normal">UTC</small>
+                           {{lock.nextUnlock?.getUTCHours()}}:{{lock.nextUnlock?.getUTCMinutes()}} <small class="fw-normal">UTC</small>
                         </div>
                         <div class="text-muted text-end mt-n2">
-                           {{lock.nextUnlock.getUTCMonth()}}/{{lock.nextUnlock.getUTCDate()}}/{{lock.nextUnlock.getUTCFullYear()}}
+                           {{lock.nextUnlock?.getUTCMonth()}}/{{lock.nextUnlock?.getUTCDate()}}/{{lock.nextUnlock?.getUTCFullYear()}}
                         </div>
                      </div>
                   </div>
@@ -94,7 +94,7 @@ export default {
    setup (props) {
       const { t } = useI18n()
       const {lock} = toRefs(props)
-      const unlocked = computed(() => Date.now() > lock.value.nextUnlock.getTime())
+      const unlocked = computed(() => Date.now() > lock.value.nextUnlock?.getTime())
 
       return {
          t,

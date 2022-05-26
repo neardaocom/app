@@ -25,3 +25,9 @@ export type Interval = {
     months?: number;
     years?: number;
 }
+
+export type DateFormated = {
+    value: Date;
+    date: string;
+    time: string;
+}

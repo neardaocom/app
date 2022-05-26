@@ -20,8 +20,8 @@ export default class Factory {
         this.nearBlockchainFactory = nearBlockchainFactory
     }
 
-    createNear(): Near {
-        return new Near(new ServicePool(this.near, this.account));
+    createNear(servicePool: ServicePool): Near {
+        return new Near(servicePool);
     }
 
     createServicePool(): ServicePool {

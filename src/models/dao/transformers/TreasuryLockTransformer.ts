@@ -1,14 +1,17 @@
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
 import loFind from "lodash/find"
 import loGet from "lodash/get"
+import loMin from "lodash/min"
 import loFindKey from "lodash/findKey"
 import loToPairs from "lodash/toPairs"
-import { TreasuryAsset, TreasuryLock, TreasuryLockAsset } from "../types/treasury";
+import { TreasuryAsset, TreasuryLock, TreasuryLockAsset, TreasuryAssetUnlocking } from "../types/treasury";
 import { TreasuryPartition, AssetFT, PartitionAsset } from "../../nearBlockchain/types/dao";
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import { NotImplementedError } from "@/models/utils/errors";
 import { getMetadata } from "../../ft/data";
 import { FungibleTokenMetadata } from "@/models/nearBlockchain/types/ft";
+import NearUtils from "../../nearBlockchain/Utils";
+import TreasuryHelper from "../TreasuryHelper";
 
 export default class TreasuryLockTransformer implements TransformerInterface {
 
@@ -30,6 +33,7 @@ export default class TreasuryLockTransformer implements TransformerInterface {
         let totalLocked: number = 0
         let totalUnlocked: number = 0
         let unlocked: number = 0
+        let unlocking: TreasuryAssetUnlocking[] = []
         //let locked: number = 0
         for (lockAssetData of data[1].assets) {
             // FT
@@ -69,16 +73,24 @@ export default class TreasuryLockTransformer implements TransformerInterface {
             unlocked = lockAssetData.amount
             // locked = totalLocked - totalUnlocked + unlocked
 
+            unlocking = []
+            lockAssetData.lock?.lock.periods.forEach((period) => unlocking.push({
+                targetDate: NearUtils.dateFromChain(period.end_at),
+                type: period.type,
+                amount: period.amount
+            }))
+
             assets.push({
                 asset: treasuryAsset!,
+                startFrom: NearUtils.dateFromChain(lockAssetData.lock?.lock.start_from || 0),
                 totalLocked,
                 totalUnlocked,
                 unlocked,
-                unlocking: [],
+                unlocking: unlocking,
             })
         }
 
-        const nextUnlock = new Date() // TODO: Add date
+        const nextUnlock = loMin(assets.map((asset) => TreasuryHelper.getNextUnlock(asset))) || null
 
         const lock: TreasuryLock = {
             id: data[0],
