@@ -11,7 +11,7 @@ import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import { inject } from '@vue/runtime-core';
-import { useStake } from '@/hooks/staking';
+import { useStakeAction } from '@/hooks/staking';
 export default {
    components:{
       InputNumber
@@ -33,7 +33,7 @@ export default {
       const config = inject('config')
       const dao = inject('dao')
       const loader = inject('loader')
-      const { runAction } = useStake(dao, loader)
+      const { runAction } = useStakeAction(dao, loader)
       
       const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
 

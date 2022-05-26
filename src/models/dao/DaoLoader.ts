@@ -238,7 +238,7 @@ export default class DaoLoader {
         if (loIsNil(walletInfo) === false) {
             const userStaked = await this.stakingService.daoFtBalanceOf(this.id, walletId!)
             const delegations: StakingDelegation[] = (walletInfo!.delegated_amounts || []).filter((item) => true || item[0] !== walletId).map((item, index) => ({id: index + 1, accountId: item[0], voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(item[1], this.getFtDecimals()))}))
-            const delegationsVoteAmountSum = loSum(delegations.map((item) => item.voteAmount))
+            const delegationsVoteAmountSum = loSum(delegations.filter((item) => item.accountId !== walletId!).map((item) => item.voteAmount))
 
             // compute delegators
             const delegators: StakingDelegation[] = []
