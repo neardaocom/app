@@ -165,8 +165,12 @@
             </MDBStepperHead>
             <MDBStepperContent>
                 <Summary :values="formData" />
-                <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn>
-                <!-- TODO: Change button to big like landing page -->
+                <!-- <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn> -->
+                <div class="mt-4 text-center"> 
+                    <MDBBtn @click="onSubmit" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
+                        {{ t('default.create_dao') }}
+                    </MDBBtn>
+                </div>
             </MDBStepperContent>
         </MDBStepperStep>
     </MDBStepper>
