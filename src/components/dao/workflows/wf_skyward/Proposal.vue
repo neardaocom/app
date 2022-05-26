@@ -46,7 +46,7 @@ import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
 import NearUtils from '@/models/nearBlockchain/Utils';
-import { generateStorageKey } from "@/models/dao/DaoProposal";
+import ProposalHelper from '@/models/dao/ProposalHelper';
 
 export default {
     components:{
@@ -120,7 +120,7 @@ export default {
                     { U64: NearUtils.dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
                     { U64: NearUtils.durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
                 ],
-                'wf_skyward-' + generateStorageKey(proposalCount.value),
+                'wf_skyward-' + ProposalHelper.generateStorageKey(proposalCount.value),
                 1.0
             )
         }, () => {
