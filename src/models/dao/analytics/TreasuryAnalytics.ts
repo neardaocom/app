@@ -31,6 +31,7 @@ export default class TreasuryAnalytics {
                     icon: nearMetadata.icon,
                     decimals: nearMetadata.decimals,
                 },
+                startFrom: new Date(),
                 totalLocked: 0,
                 totalUnlocked: 0,
                 unlocked: 0,
@@ -50,6 +51,7 @@ export default class TreasuryAnalytics {
                     icon: tokenMetadata.icon,
                     decimals: tokenMetadata.decimals,
                 },
+                startFrom: new Date(),
                 totalLocked: 0,
                 totalUnlocked: 0,
                 unlocked: 0,
@@ -111,5 +113,18 @@ export default class TreasuryAnalytics {
         })
 
         return resutls
+    }
+
+    static computeLockAssetStat(locks: TreasuryLock[], assetAccountId: string): {locked: number; unlocked: number; } {
+        let lockedSum: number = 0
+        let unlockedSum: number = 0
+
+        locks.forEach((treasuryLock) => {
+            treasuryLock.assets.filter((treasuryLockAsset) => treasuryLockAsset.asset.accountId === assetAccountId).forEach((treasuryLockAsset) => {
+                lockedSum += treasuryLockAsset.totalLocked - treasuryLockAsset.totalUnlocked
+                unlockedSum += treasuryLockAsset.unlocked
+            })
+        })
+        return { locked: lockedSum, unlocked: unlockedSum }
     }
 }

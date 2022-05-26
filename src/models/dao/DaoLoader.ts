@@ -33,6 +33,7 @@ import { TreasuryLock } from "./types/treasury";
 import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
 import FtMetadataLoader from "../ft/FtMetadataLoader";
 import ProposalTransformer from "./transformers/ProposalTransformer";
+import TreasuryAnalytics from "./analytics/TreasuryAnalytics";
 
 export default class DaoLoader {
     private id: string;
@@ -121,8 +122,8 @@ export default class DaoLoader {
                         amount: this.dataChain[8].ft_total_supply,
                         decimals: this.dataChain[9].decimals,
                     },
-                    free: this.getFtTreasuryFree(),
-                    holded: this.getFtTreasuryHolded(),
+                    free: this.getFtTreasuryFree(treasuryLocks),
+                    holded: this.getFtTreasuryHolded(staking),
                     owned: walletToken,
                 },
                 near: NearUtils.yoctoToNear(this.dataChain[10].amount),
@@ -294,8 +295,11 @@ export default class DaoLoader {
 
     getTreasuryToken(): number { return new Decimal(NearUtils.amountFromDecimals(this.dataChain[12], this.dataChain[9].decimals)).toNumber() }
 
-    getFtTreasuryHolded(): number { return this.getTreasuryToken() }
-    getFtTreasuryFree(): number { return new Decimal(this.getTreasuryToken()).minus(0).toNumber() } // TODO: Add minuts from locks
+    getFtTreasuryHolded(staking: Staking): number { return staking.totalVoteAmount }
+    getFtTreasuryFree(treasuryLocks: TreasuryLock[]): number {
+        const stats = TreasuryAnalytics.computeLockAssetStat(treasuryLocks, this.ftAccountId)
+        return new Decimal(this.getTreasuryToken()).minus(stats.locked).toNumber()
+    }
 
     getMembers(): string[] {
         const members: string[] = []
