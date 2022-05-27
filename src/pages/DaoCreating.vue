@@ -20,40 +20,26 @@
                                     {{ t('default.governance_token') }}
                                 </MDBStepperHead>
                                 <MDBStepperContent>
-                                    <div class="row d-flex justify-content-center">
-                                        <dl class="row text-start col-md-7">
-                                            <FormSummary :name="t('default.dao_name')" :value="formCreateDao.data.dao_name" />
 
-                                            <FormSummary :name="t('default.account')" :value="daoAccountId" />
-
-                                            <FormSummary
-                                            :name="t('default.purpose_short')"
-                                            :value="formCreateDao.data.dao_purpose"
-                                            />
-
-                                            <FormSummary
-                                            :name="t('default.type')"
-                                            :value="t('default.' + formCreateDao.data.dao_type)"
-                                            />
-
-                                            <FormSummary
-                                            :name="t('default.founders')"
-                                            :value="formCreateDao.data.council_array.join(', ')"
-                                            />
+                                    <div class="row justify-content-center">
+                                        <dl class="row col-md-8 offset-md-2 text-start">
+                                            <FormSummary :name="t('default.dao_ft_name')" :value="formCreateDao.data.dao_ft_name"/>
+                                            <FormSummary :name="t('default.account')" :value="ftAccountId" />
+                                            <FormSummary :name="t('default.amount')" :value="formCreateDao.data.dao_ft_amount"/>
+                                            <FormSummary :name="t('default.founders_unlock')" :value="(formCreateDao.data.ftCouncilShare ? formCreateDao.data.ftCouncilShare : '0') + '%'"/>
+                                            <FormSummary :name="t('default.dao_ft_init_distribution')" :value="(formCreateDao.data.dao_ft_init_distribution ? formCreateDao.data.dao_ft_init_distribution : '0') + '%'"/>
+                                            <FormSummary :name="t('default.lenght_founders_vesting')" :value="unlockingTime"/>
+                                            <FormSummary :name="t('default.community_fund')" :value="(formCreateDao.data.ftCommunityShare ? formCreateDao.data.ftCommunityShare : '0') + '%'"/>
                                         </dl>
                                     </div>
-                                        
-                                        <!-- <Summary :values="formCreateDao.data"/> -->
-                                        <!-- <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="createToken(formCreateDao.data)" size="lg" :disabled="!(formCreateDao.step === 'fromSubmited')">{{ t('default.create_token') }}</MDBBtn> -->
-                                        <div class="mt-4 text-center"> 
-                                            <MDBBtn @click="createToken(formCreateDao.data)" :disabled="!(formCreateDao.step === 'fromSubmited')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
-                                                {{ t('default.create_token') }}
-                                            </MDBBtn>
-                                        </div>
-                                        
-                                    
+                                    <div class="mt-4 text-center"> 
+                                        <MDBBtn @click="createToken(formCreateDao.data)" :disabled="!(formCreateDao.step === 'fromSubmited')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
+                                            {{ t('default.create_token') }}
+                                        </MDBBtn>
+                                    </div>
                                     <!-- Hack: can't step to second step -->
                                     <MDBInput v-model="input1" wrapperClass="d-none" required/> 
+
                                 </MDBStepperContent>
                             </MDBStepperStep>
                             <MDBStepperStep>
@@ -61,17 +47,24 @@
                                     {{ t('default.Dao') }}
                                 </MDBStepperHead>
                                 <MDBStepperContent>
-                                    <span>
-                                        <Summary :values="formCreateDao.data"/>
-                                        <div class="mt-4 text-center"> 
-                                            <MDBBtn @click="createDao(formCreateDao.data)" :disabled="!(formCreateDao.step === 'tokenCreated')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
-                                                {{ t('default.create_dao') }}
-                                            </MDBBtn>
-                                        </div>
-                                        <!-- <MDBBtn wrapperClass="mt-10 mb-2 text-center" color="success" @click="createDao(formCreateDao.data)" size="lg" :disabled="!(formCreateDao.step === 'tokenCreated')">{{ t('default.create_dao') }}</MDBBtn> -->
-                                    </span>
+
+                                    <div class="row justify-content-center">
+                                        <dl class="row col-md-8 offset-md-2 text-start">
+                                            <FormSummary :name="t('default.dao_name')" :value="formCreateDao.data.dao_name" />
+                                            <FormSummary :name="t('default.account')" :value="daoAccountId" />
+                                            <FormSummary :name="t('default.purpose_short')" :value="formCreateDao.data.dao_purpose"/>
+                                            <FormSummary :name="t('default.type')" :value="t('default.' + formCreateDao.data.dao_type)"/>
+                                            <FormSummary :name="t('default.founders')" :value="formCreateDao.data.council_array.join(', ')"/>
+                                        </dl>
+                                    </div>
+                                    <div class="mt-4 text-center"> 
+                                        <MDBBtn @click="createDao(formCreateDao.data)" :disabled="!(formCreateDao.step === 'tokenCreated')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
+                                            {{ t('default.create_dao') }}
+                                        </MDBBtn>
+                                    </div>
                                     <!-- Hack: can't step to third step -->
                                     <MDBInput v-model="input2" wrapperClass="d-none" required/> 
+
                                 </MDBStepperContent>
                             </MDBStepperStep>
                             <MDBStepperStep>
@@ -79,15 +72,20 @@
                                    {{ t('default.staking_service') }}
                                 </MDBStepperHead>
                                 <MDBStepperContent>
-                                    <span>
-                                        <Summary :values="formCreateDao.data"/>
-                                        <div class="mt-4 text-center"> 
-                                            <MDBBtn @click="registerToken(daoAccountId, ftAccountId)" :disabled="!(formCreateDao.step === 'daoCreated')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
-                                                {{ t('default.staking_service') }}
-                                            </MDBBtn>
-                                        </div> 
-                                        <!-- <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="registerToken(daoAccountId, ftAccountId)" size="lg" :disabled="!(formCreateDao.step === 'daoCreated')">{{ t('default.staking_service') }}</MDBBtn> -->
-                                    </span>
+                                    <div class="row justify-content-center">
+                                        <dl class="row col-md-8 offset-md-2 text-start">
+                                            <FormSummary :name="t('default.dao_vote_approve_threshold')" :value="(formCreateDao.data.voteApproveThreshold ? formCreateDao.data.voteApproveThreshold : '0') + '%'" />
+                                            <FormSummary :name="t('default.dao_vote_quorum')" :value="formCreateDao.data.voteQuorum ? formCreateDao.data.voteQuorum : '0' + '%'"/>
+                                            <FormSummary :name="t('default.dao_vote_duration_days')" :value="formCreateDao.data.voteDurationDays" />
+                                            <FormSummary :name="t('default.dao_vote_duration_hours')" :value="formCreateDao.data.voteDurationHours" />
+                                            <FormSummary :name="t('default.dao_vote_duration_minutes')" :value="formCreateDao.data.voteDurationMinutes" />
+                                        </dl>
+                                    </div>
+                                    <div class="mt-4 text-center"> 
+                                        <MDBBtn @click="registerToken(daoAccountId, ftAccountId)" :disabled="!(formCreateDao.step === 'daoCreated')" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
+                                            {{ t('default.staking_service') }}
+                                        </MDBBtn>
+                                    </div> 
                                 </MDBStepperContent>
                             </MDBStepperStep>
                         </MDBStepper>
@@ -105,7 +103,6 @@
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
 import Breadcrumb from '@/components/ui/Breadcrumb.vue'
-import Summary from '@/components/daoCreate/Summary.vue'
 import FormSummary from '@/components/forms/FormSummary.vue'
 import {
     MDBContainer,
@@ -117,7 +114,7 @@ import {
     MDBInput,
     //MDBAlert
 } from 'mdb-vue-ui-kit';
-import { ref, inject } from 'vue';
+import { ref, inject, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from '@vue/runtime-core'
 // import { useStore } from 'vuex'
@@ -136,7 +133,6 @@ export default {
         MDBContainer,
         MDBBtn,
         //MDBAlert,
-        Summary,
         MDBStepper,
         MDBStepperStep, 
         MDBStepperHead, 
@@ -162,6 +158,8 @@ export default {
         const { createToken } = useCreateToken(loader, config, daoAccountId.value)
         const { createDao } = useCreateDAO(loader, config, ftAccountId.value)
         const { registerToken } = useRegisterToken(loader)
+
+        const unlockingTime = computed(() => `${formCreateDao.value.data.dao_unlocking_year ? `${formCreateDao.value.data.dao_unlocking_year}  ${t('default.year')} ` : ''}${formCreateDao.value.dao_unlocking_month > 0 ? `${formCreateDao.value.dao_unlocking_month} ${t('default.month')}`: ''}`)
 
         const stepper = ref(null);
         const input1 = ref('');
@@ -213,7 +211,7 @@ export default {
         })
         return {
             t, formCreateDao, createToken, createDao, registerToken, formData, transactionHashes, 
-            transactionStatus, daoAccountId, ftAccountId, stepper, input1, input2
+            transactionStatus, daoAccountId, ftAccountId, stepper, input1, input2, unlockingTime
         }
     }
         
