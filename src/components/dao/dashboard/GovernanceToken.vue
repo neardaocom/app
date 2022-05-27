@@ -1,9 +1,12 @@
 <template>
     <div class="card text-start w-auto p-2">
         <div class="card-body">
-            <h6 class="text-muted">
-                {{t('default.governance_token')}}
-            </h6>
+            <div class="d-flex">
+                <h6 class="text-muted">
+                    {{t('default.governance_token')}}
+                </h6>
+                <Tooltip class="ms-auto" text="Tooltip" />
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                <MDBBadge class="text-white bg-gradient-290" style="padding: 0.6rem">{{`${dao.token_name} ${t('default.token')}`}}</MDBBadge> 
@@ -37,6 +40,7 @@ import { useI18n } from 'vue-i18n'
 import { MDBBtn, MDBBadge } from 'mdb-vue-ui-kit'
 import { inject } from '@vue/runtime-core'
 import NumberFormatter from '@/components/ui/NumberFormatter.vue'
+import Tooltip from '@/components/ui//Tooltip.vue'
 import Icon from '@/components/ui/Icon.vue'
 
 export default {
@@ -44,7 +48,8 @@ export default {
       MDBBtn, 
       MDBBadge,
       NumberFormatter,
-      Icon
+      Icon,
+      Tooltip
    },
    setup() {
       const { t, n } = useI18n()

@@ -1,10 +1,12 @@
 <template>
     <div class="card text-start w-auto p-2">
         <div class="card-body">
-
-            <h6 class="text-muted">
-                {{t('default.dao')}}
-            </h6>
+            <div class="d-flex">
+                <h6 class="text-muted">
+                    {{t('default.dao')}}
+                </h6>
+                <Tooltip class="ms-auto" text="Tooltip" />
+            </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex  align-items-center">
@@ -131,13 +133,15 @@ import { useGroups, useLinks, useStats } from "@/hooks/dao";
 import { useIPFS, useNear } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 import Icon from '@/components/ui/Icon.vue'
+import Tooltip from '@/components/ui//Tooltip.vue'
 
 export default {
     components: {
         MDBIcon,
         MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem,
         MDBBadge,
-        Icon
+        Icon,
+        Tooltip
     },
     setup() {
         const { t, n } = useI18n()

@@ -1,7 +1,7 @@
 <template>
   <div class="container mb-2">
     <div class="row">
-      <div class="col-12 col-md-6 col-lg-4 mb-4">
+      <div class="col-12 col-md-6 col-lg-5 mb-4">
         <DaoInformation/>
       </div>
       <div class="col-12 col-md-6 col-lg-4 mb-4">
@@ -11,10 +11,13 @@
       <div v-if="council" class="col-12 col-md-6 mb-4">
         <div class="card text-start w-auto p-2" >
           <div class="card-body">
-            <h5 class="">
-              <i class="bi bi-bar-chart text-gradient-180 me-1"/>
-              {{ t("default.council_unlocking_token") }}
-            </h5>
+            <div class="d-flex">
+              <h5>
+                <i class="bi bi-bar-chart text-gradient-180 me-1"/>
+                {{ t("default.council_unlocking_token") }}
+              </h5>
+              <Tooltip class="ms-auto" text="Tooltip" />
+            </div>
             <ChartCouncilUnlocking :group="council"/>
           </div>
         </div>
@@ -31,12 +34,14 @@ import { inject } from "vue"
 import DaoInformation from "@/components/dao/about/DaoInformation.vue"
 import DaoMembers from "@/components/dao/about/DaoMembers.vue"
 import { useGroups } from '@/hooks/dao';
+import Tooltip from '@/components/ui//Tooltip.vue'
 
 export default {
   components: {
     ChartCouncilUnlocking,
     DaoInformation,
-    DaoMembers
+    DaoMembers,
+    Tooltip
   },
 
   setup() {

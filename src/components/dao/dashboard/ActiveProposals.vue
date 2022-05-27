@@ -1,10 +1,12 @@
 <template>
    <MDBCard>
       <MDBCardBody class="text-start">
-         <h6 class="text-muted">
-            {{t('default.active_proposals')}}
-         </h6>
-
+         <div class="d-flex">
+            <h6 class="text-muted">
+               {{t('default.active_proposals')}}
+            </h6>
+            <Tooltip class="ms-auto" text="Tooltip" />
+         </div>
           <!-- v-for -->
          <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
@@ -45,9 +47,11 @@
 <script>
 import { MDBCard, MDBCardBody, MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
 import { useI18n } from 'vue-i18n';
+import Tooltip from '@/components/ui//Tooltip.vue'
+
 export default {
    components:{
-      MDBCard, MDBCardBody, MDBProgress, MDBProgressBar
+      MDBCard, MDBCardBody, MDBProgress, MDBProgressBar,Tooltip
    },
    setup () {
       const {t} = useI18n()

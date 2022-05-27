@@ -1,7 +1,10 @@
 <template>
    <MDBCard>
       <MDBCardBody class="text-start">
-         <h5>{{t('default.next_unlock')}}</h5>
+         <div class="d-flex">
+            <h5>{{t('default.next_unlock')}}</h5>
+            <Tooltip class="ms-auto" text="Tooltip" />
+         </div>
          <i class="bi bi-unlock text-gradient-180 me-2"/> <span class="fw-800"> 2022/06/01 - 12:00am</span>
 
          <div class="d-flex mt-2" style="opacity:0.5;">
@@ -26,12 +29,14 @@ import { MDBCard, MDBCardBody} from "mdb-vue-ui-kit";
 import NumberFormatter from "@/components/ui/NumberFormatter.vue";
 import { useI18n } from 'vue-i18n';
 import Icon from '@/components/ui/Icon.vue'
+import Tooltip from '@/components/ui//Tooltip.vue'
 export default {
   components: {
       MDBCard,
       MDBCardBody,
       Icon,
-      NumberFormatter
+      NumberFormatter,
+      Tooltip
     },
       
    setup () {
