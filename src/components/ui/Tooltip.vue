@@ -1,7 +1,7 @@
 <template>
    <MDBTooltip v-model="tooltip" tag="a">
       <template #reference>
-         <i class="bi bi-info-circle-fill text-muted"/>
+         <i class="bi bi-info-circle-fill" :class="`text-${color}`"/>
       </template>
       <template #tip>
         {{text}}
@@ -21,6 +21,11 @@ export default {
       text:{
          type: String,
          required: true
+      },
+      color:{
+         type: String,
+         required: false,
+         default: 'muted',
       }
    },
    setup () {

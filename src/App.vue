@@ -220,4 +220,8 @@ h6, .h6 {
   font-weight: 800 !important;
 }
 
+.fw-600{
+  font-weight: 600 !important;
+}
+
 </style>
