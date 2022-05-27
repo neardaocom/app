@@ -1,5 +1,5 @@
 <template>
-   <InputString :labelName="t('default.delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/>
+   <Select :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
 </template>
 
 <script>
@@ -8,12 +8,13 @@ import { useI18n } from 'vue-i18n'
 // import { useNear } from '@/hooks/vuex'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
-import InputString from '@/components/forms/InputString.vue'
+import Select from '@/components/forms/Select.vue'
 import { inject } from '@vue/runtime-core';
 import { useStakeAction } from '@/hooks/staking';
+import loFind from 'lodash/find'
 export default {
    components:{
-      InputString,
+      Select,
    },
    setup () {
       const {t} = useI18n()
@@ -29,19 +30,20 @@ export default {
 
       const schema = computed(() => {
          return {
-               delegate_id: `required|accountExists:${accountPostfix.value}`,
+               delegate_id: `required`,
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async (values) => {
-            runAction('forward', { delegateId: values.delegate_id + '.' + accountPostfix.value })
+         const delegateId = loFind(dao.value.staking.usersToDelegate, { 'value': values.delegate_id })
+         runAction('forward', { delegateId: delegateId.accountId})
         }, () => {
                 console.log(errors.value)
         });
 
       return {
-         t, accountPostfix, onSubmit
+         t, accountPostfix, onSubmit, dao
       }
    }
 }

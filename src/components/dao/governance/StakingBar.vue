@@ -1,25 +1,45 @@
 <template>
   <MDBCard>
-       <div class="row g-0"> 
-          <div class="col-md-2 bg-gradient-120 text-white d-flex align-items-center justify-content-center p-2" style="border-radius: 0.5rem 0 0 0.5rem">
-              <NumberFormatter :amount="walletTokenAmount" class="me-1 fw-bold"/>
-              /
-              <NumberFormatter :amount="walletTokenStaked" class="ms-1 fw-bold"/>
-              <span class="ms-1">{{t('default.staked').toLowerCase()}}</span>
-          </div>
-          <div class="col-md-4 d-flex align-items-center justify-content-center p-2">
-             <NumberFormatter :amount="walletVotePowerOwned" class="fw-bold ms-1" /><span class="text-muted ms-1">{{t('default.owned').toLowerCase()}}</span>
-             <NumberFormatter :amount="walletVotePowerDelegators" class="fw-bold ms-3" /><span class="text-muted ms-1">{{t('default.from_delegators').toLowerCase()}}</span>
-             <NumberFormatter :amount="walletVotePowerDelegated" class="fw-bold ms-3" /><span class="text-muted ms-1">{{t('default.delegated').toLowerCase()}}</span>
-          </div>
-          <div class="col-md-6 d-flex flex-wrap align-items-center justify-content-center p-2">
-             <template v-if="canStake">
-                 <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.stake')}}</MDBBtn>
-                 <MDBBtn @click="delegate" :disabled="walletTokenStaked == 0" color="primary" size="sm" rounded  style="width: 144px">{{t('default.delegate')}}</MDBBtn>
-                 <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded  style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
-             </template>
-             <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>
-          </div>
+      <div class="row g-0 d-flex"> 
+         <div class="col-md-4 d-flex align-items-center position-relative bg-gradient-120 text-white text-start p-3" style="border-radius: 0.5rem 0 0 0.5rem">
+            <Tooltip class="position-absolute top-0 end-0 mt-1 me-2" color="white" text="Tooltip" />
+            <div class="align-items-center">
+               <div class="fw-600 mb-n2">{{t('default.staked')}}</div>
+               <span class="fs-2 fw-800">
+               <NumberFormatter :amount="walletTokenAmount" />
+               /
+               <NumberFormatter :amount="walletTokenStaked"/>
+               </span>
+               <span class="fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+            </div>
+         </div>
+
+         <div class="col-md-6 d-flex align-items-center justify-content-evenly text-start  p-3">
+            <div>
+               <div class="fw-600 mb-n2">{{t('default.owned')}}</div>
+               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerOwned"/>
+               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+            </div>
+            <div>
+               <div class="fw-600 mb-n2">{{t('default.from_delegators')}}</div>
+               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerDelegators"/>
+               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+            </div>
+            <div>
+               <div class="fw-600 mb-n2">{{t('default.delegated')}}</div>
+               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerDelegated"/>
+               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+            </div>
+         </div>
+
+         <div class="col-md-2 d-flex flex-column align-items-center justify-content-center p-2">
+            <template v-if="canStake">
+               <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.stake')}}</MDBBtn>
+               <MDBBtn @click="delegate" :disabled="walletTokenStaked == 0" color="primary" size="sm" rounded  style="width: 144px">{{t('default.delegate')}}</MDBBtn>
+               <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded  style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
+            </template>
+            <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>
+         </div>
 
          <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="submitText">
             <component ref="form" :is="activeForm" v-bind="formProps"></component>
@@ -38,6 +58,7 @@ import FormWithdraw from '@/components/dao/staking/forms/FormWithdraw.vue'
 import FormDelegateOwned from '@/components/dao/staking/forms/FormDelegate.vue'
 import { useStake, useStakeAction } from '@/hooks/staking';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import Tooltip from '@/components/ui//Tooltip.vue'
 export default {
    components: {
       MDBCard,
@@ -47,6 +68,7 @@ export default {
       FormDelegateOwned,
       ModalProposal,
       NumberFormatter,
+      Tooltip
     },
     props:{
     },

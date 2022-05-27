@@ -227,7 +227,9 @@ export default class DaoLoader {
                 bio: null,
                 tag: null, // TODO: Add from groups
                 votesCasted: user[1].delegators.length,
-                voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(user[1].delegated_vote_amount.toString() || '0', this.getFtDecimals()))
+                voteAmount: NumberHelper.parseNumber(NearUtils.amountFromDecimals(user[1].delegated_vote_amount.toString() || '0', this.getFtDecimals())),
+                value: index,
+                text: user[0]
             })
 
             if (user[0] === walletId) {

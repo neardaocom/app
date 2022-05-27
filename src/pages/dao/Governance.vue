@@ -12,8 +12,8 @@
 
       <StakingBar class="mb-3"/>
 
-      <div class="row g-1 mb-5">
-         <div v-for="delegateUser in dao.staking.wallet?.delegations" :key="delegateUser.id" class="col-md-3">
+      <div class="row g-2 mb-5">
+         <div v-for="delegateUser in dao.staking.wallet?.delegations" :key="delegateUser.id" class="col-md-4">
             <DelegateUser :amount="delegateUser.voteAmount" :accountId="delegateUser.accountId" />
          </div>
       </div>

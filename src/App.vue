@@ -79,6 +79,7 @@ $light: #f0f2f5;
 $white: #fff;
 $black: #000;
 $muted: #A7A7A7;
+$light-muted: #A7A7A7;
 
 
 // because I add colors muted, gradiend
@@ -94,6 +95,7 @@ $theme-colors: (
   'white': $white,
   'black': $black,
   'muted': $muted,
+  'light-muted': $light-muted
 );
 
 @import '~@/../mdb/scss/index.pro.scss';
@@ -216,6 +218,10 @@ h6, .h6 {
 
 .fw-800{
   font-weight: 800 !important;
+}
+
+.fw-600{
+  font-weight: 600 !important;
 }
 
 </style>

@@ -28,7 +28,7 @@ export const basicStaking = (): Staking => ({
       delegatorsAmount: 148,
    },
    usersToDelegate: [
-      {id: 1, accountId: "jake.near", bio: null, tag: null, votesCasted: 23, voteAmount: 100},
-      {id: 1, accountId: "mike.near", bio: "bio", tag: "Advisor", votesCasted: 45, voteAmount: 100},
+      {id: 1, accountId: "jake.near", bio: null, tag: null, votesCasted: 23, voteAmount: 100, value: 1, text: "jake.near"},
+      {id: 2, accountId: "mike.near", bio: "bio", tag: "Advisor", votesCasted: 45, voteAmount: 100, value: 1, text: "jake.near"},
    ],
 })

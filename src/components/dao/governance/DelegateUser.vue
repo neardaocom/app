@@ -1,9 +1,25 @@
 <template>
    <MDBCard text="start">
       <MDBCardBody>
-         <h6>{{accountId}}</h6>
+         <div class="d-flex align-items-center mb-3">
+            <div class="rounded-circle me-2 fw-bold d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; box-shadow: 0px 3px 6px #0000001F;">
+               <i class="bi bi-person fs-4"/>
+            </div>
+            <span class="fs-6 fw-800">{{accountId}} 
+               <a class="" :href="nearWalletUrl + '/accounts/' + accountId" target="_blank">
+                  <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
+               </a>
+            </span>   
+            <div class="ms-auto text-danger">
+               <i class="bi bi-arrow-left fs-5"/>
+               <i class="bi bi-person fs-4"/>
+            </div>
+         </div>
          <div class="d-flex">
-            <NumberFormatter class="fw-bold" :amount="amount"/>
+            <span>
+               {{t('default.delegated')}}
+               <NumberFormatter class="fw-bold ms-1" :amount="amount"/>
+            </span>
             <MDBBtn @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
          </div>
       </MDBCardBody>
@@ -20,7 +36,8 @@ import { useI18n } from 'vue-i18n';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import ModalProposal from '@/components/proposal/Modal.vue'
 import FormUndelegate from '@/components/dao/staking/forms/FormUndelegate.vue'
-import { ref, toRefs } from '@vue/reactivity';
+import { computed, ref, toRefs } from '@vue/reactivity';
+import { useStore } from 'vuex';
 export default {
    components: {
       MDBCard,
@@ -43,6 +60,8 @@ export default {
    setup (props) {
       const {accountId, amount} = toRefs(props)
       const {t} = useI18n()
+      const store = useStore()
+      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])
 
       const modalProposal = ref(0)
       const form = ref(null)
@@ -62,6 +81,7 @@ export default {
 
       return {
          t,
+         nearWalletUrl,
          modalProposal,
          undelegate,
          submitModal,

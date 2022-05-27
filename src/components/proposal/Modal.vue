@@ -47,7 +47,7 @@ export default {
     },
     title:{
       type: String,
-      required: true
+      required: false
     },
     submitText:{
       type: String,

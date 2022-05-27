@@ -4,7 +4,7 @@
          <div class="d-flex">
             <div class="d-flex align-items-center">
                <slot name="icon">
-                  <MDBBadge color="black" pill class="me-2" style="padding: 0.75rem;"><img width="25" height="25" :src="'/img/near_logo.svg'"/></MDBBadge>
+                  <Icon icon="NEAR" :size="50"/>
                </slot>
                <div class="text-start">
                   <div class="fs-5 fw-bold me-1"> NEAR </div>
@@ -25,16 +25,16 @@
 import { useI18n } from 'vue-i18n'
 import {
    MDBCard,
-   MDBCardBody,
-   MDBBadge,
+   MDBCardBody
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import Icon from "@/components/ui/Icon.vue"
 
 export default {
    components: {
       MDBCard,
       MDBCardBody,
-      MDBBadge,
+      Icon,
       NumberFormatter
    },
    setup () {
