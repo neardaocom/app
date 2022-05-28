@@ -1,9 +1,11 @@
 import Decimal from "decimal.js"
+import loSet from "lodash/set"
 import loLast from "lodash/last"
 import loSplit from "lodash/split"
 import loToString from "lodash/toString"
 import moment from "moment"
 import { Interval } from "../utils/types/generics";
+import ObjectHelper from "../utils/ObjectHelper";
 
 export default class Utils {
 
@@ -102,5 +104,14 @@ export default class Utils {
      */
     static getPublicSalePercent(council: number, community: number, investor: number): number {
         return 100 - (council ?? 0) - (community ?? 0) - (investor ?? 0)
+    }
+
+    /**
+     * static [ [ 'id', { u64: 2 } ] ] => {'id': 2}
+     */
+    static parseObjectFromArray(data: [string, object][]): Record<string, unknown> {
+        const parsed = {}
+        data.forEach((item) => loSet(parsed, [item[0]], ObjectHelper.first(item[1])))
+        return parsed
     }
 }

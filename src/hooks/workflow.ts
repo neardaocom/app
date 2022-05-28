@@ -2,10 +2,11 @@ import { ref, computed, onMounted, Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import StringHelper from '@/models/utils/StringHelper'
 import { useI18n } from 'vue-i18n'
-import { WFTemplate } from '@/models/dao/types/workflow'
+import { WFInstance, WFTemplate } from '@/models/dao/types/workflow'
 import loOrderBy from "lodash/orderBy"
 import loGet from "lodash/get"
 import loFind from "lodash/find"
+import loFlatten from "lodash/flatten"
 import { accounts } from "@/data/blockchain";
 import IntegerHelper from '@/models/utils/IntegerHelper'
 // import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
@@ -16,6 +17,40 @@ import DaoMarket from '@/models/dao/DaoMarket'
 import { Config } from '@/config'
 import { MarketTemplate } from '@/models/dao/types/market'
 import { Loader } from '@/loader'
+import { DAO, DAORights } from '@/models/dao/types/dao'
+import DaoWorkflow from '@/models/dao/DaoWorkflow'
+import { Account } from 'near-api-js'
+import { template } from 'lodash'
+
+export const useDaoWorkflow = (loader: Ref<Loader>, dao: Ref<DAO>, workflow: Ref<WFInstance>) => {
+    const servicePool = loader.value.load('dao/ServicePool')
+    const daoWorkflow = ref(new DaoWorkflow(dao.value, workflow.value, servicePool.value.getContract(dao.value.wallet)))
+
+    return {
+        daoWorkflow
+    }
+}
+
+export const useWorkflow = (daoWorkflow: Ref<DaoWorkflow>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>) => {
+    const {t, d, n} = useI18n()
+    const proposalVoting = computed(() => daoWorkflow.value.getProposalVoting(templatesMeta.value, wallet.value.accountId, walletRights.value, t, d, n))
+    const template = computed(() => daoWorkflow.value.getTemplate())
+    const canFinish = computed(() => daoWorkflow.value.canFinish())
+    const activityNexts = computed(() => daoWorkflow.value.getNextActivities())
+    const activityNextsRights = computed(() => loFlatten(activityNexts.value.map((activity) => {
+        return daoWorkflow.value.getActivityRights(activity.id)
+    })))
+    const activityLogs = computed(() => daoWorkflow.value.getLogs())
+
+    const nextActivitiesOptions = computed(() => activityNexts.value.map( (activity) => {
+        console.log(activity)
+        return { text: t('default.wf_templ_' + template.value?.code + '__' + activity.code), value: activity.id, rights: daoWorkflow.value.getActivityRights(activity.id)}
+    }))
+
+    return {
+        proposalVoting, template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions
+    }
+}
 
 export const useTemplateList = (loader: Ref<Loader>, config: Ref<Config>) => {
     const { t } = useI18n()

@@ -9,11 +9,8 @@
         </span>
         
         <div class="p-2">
-           <h5>{{ proposal.type }}</h5>
-            <div
-              class="mt-n2 small"
-              v-html="proposal.title"
-            />
+           <div class="mt-n2 fs-5" v-html="proposal.title"></div>
+           <div class="mt-n2 small">{{ proposal.type }}</div>
         </div>
 
         <div class="ms-auto p-2">
