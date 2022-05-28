@@ -72,6 +72,7 @@
                   </template>
                 </template>
               </template>
+              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, null, 100, 3600, 1)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -104,6 +105,7 @@ import {
   MDBIcon
 } from "mdb-vue-ui-kit";
 import Rights from "@/models/dao/Rights";
+import { useRewards } from '@/hooks/rewards'
 
 export default {
   components: {
@@ -139,9 +141,12 @@ export default {
   },
   setup() {
     const dao = inject('dao')
+    const loader = inject('loader')
     const { t } = useI18n();
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
+
+    const { daoRewards, createSalary } = useRewards(dao, loader)
 
     const form = ref()
 
@@ -171,7 +176,8 @@ export default {
       check,
       form,
       modalProp,
-      activeTabId1
+      activeTabId1,
+      daoRewards, createSalary,
     };
   },
 

@@ -108,7 +108,8 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
 }
 
 export const metaGetActivityForm = (templateCode: string, activityCode: string): WFMetaForm | undefined => {
-    return loFind(loGet(templateMetas, [templateCode])?.activities, {code: activityCode})?.form
+    //return loFind(loGet(templateMetas, [templateCode])?.activities, {code: activityCode})?.form
+    return undefined
 }
 
 // move to DaoProposal

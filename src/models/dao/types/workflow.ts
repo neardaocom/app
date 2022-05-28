@@ -125,7 +125,7 @@ export type WFInstanceLog = {
     txBlock?: string;
     txSigner: String;
     txSignedAt: Date;
-    args: Record<string, unknown>[];
+    args: Record<string, unknown>;
 }
 
 export type WFInstance = {
@@ -157,5 +157,5 @@ export type WFInstanceLogDTO = {
     txSignedAt: Date;
     actions: WFAction[];
     logs: WFInstanceLog[];
-    args: Record<string, unknown>[];
+    args: Record<string, unknown>;
 }

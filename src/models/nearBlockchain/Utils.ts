@@ -13,6 +13,8 @@ export default class Utils {
 
     static tGas: string = '1000000000000'; // 10^12
 
+    static dateIninity: number = 9007199254740991
+
     static gasDefault(): number {
         return 100;
     }

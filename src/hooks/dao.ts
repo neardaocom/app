@@ -9,6 +9,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { Config } from "@/config";
 import loIsNil from 'lodash/isNil'
+import CollectionHelper from "@/models/utils/CollectionHelper";
 
 export const useRouter = (config: Config) => {
     const route = useRoute()
@@ -49,6 +50,14 @@ export const useGroups = (dao: DAO) => {
 
     return {
         council, councilPercent
+    }
+}
+
+export const useLocks = (dao: Ref<DAO>) => {
+    const locksOptions = computed(() => CollectionHelper.toOptions(dao.value.treasuryLocks, ['name'], ['id']))
+
+    return {
+        locksOptions
     }
 }
 

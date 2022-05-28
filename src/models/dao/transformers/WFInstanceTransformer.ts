@@ -25,7 +25,7 @@ export default class WFInstanceTransformer implements TransformerInterface {
     
         const activityLogs: WFInstanceLog[] = []
 
-        value[4].forEach((log, index) => {
+        value[4]?.forEach((log, index) => {
                 //console.log('Log', log)
             activityLogs.push({
                 id: index,
