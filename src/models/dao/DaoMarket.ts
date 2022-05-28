@@ -30,12 +30,13 @@ export default class DaoMarket {
         const wfTemplate = await this.servicePool.getWfProvider(this.wfProviderAccountId).wfTemplate(workflowId)
         // console.log(workflowId, proposeRights, voteRight , activityDefaultRights)
 
-        const builder = new ProposalBuilder()
+        const builder = new ProposalBuilder(this.servicePool.getWfProvider(this.wfProviderAccountId))
         builder.addTemplateId(1)
         builder.addTemplateSettingsId(0)
         builder.addConstantNumber('workflow_id', workflowId)
         builder.addConstantString('provider_id', this.wfProviderAccountId)
         builder.addActivity()
+        builder.addTemplateWorflowId(workflowId)
         builder.addTemplateVoteLevel(dao.voteLevels[0])
         builder.addTemplateProposeRights(proposeRights)
         builder.addTemplateVoteRights(voteRight)
@@ -46,15 +47,17 @@ export default class DaoMarket {
         for (let i = 0; i < activitiesNumber; i++) {
             console.log(i)
             if (activityRights[i + 1] !== undefined) {
-                builder.addTemplateActivity(activityRights[i + 1], [{to: i + 1, limit: 10}])
+                builder.addTemplateActivity(activityRights[i + 1])
             } else {
-                builder.addTemplateActivity(activityDefaultRights, [{to: i + 1, limit: 10}])
+                builder.addTemplateActivity(activityDefaultRights)
             }
         }
 
-        console.log(builder.create())
+        const createArgs = await builder.create()
 
-        return this.servicePool.getContract(dao.wallet).proposalCreate(builder.create(), NearUtils.toTGas(10), NearUtils.nearToYocto(price))
+        console.log(createArgs)
+
+        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(price))
     }
 
 

@@ -40,6 +40,62 @@ export const templateWfAdd: WFMetaTemplate = {
     actions: [],
 }
 
+export const templateReward: WFMetaTemplate = {
+    id: 9,
+    code: 'reward2',
+    constants: [],
+    inputs: [],
+    activities: [
+        {
+            id: 1,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        dao_action: 'reward_add'
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+    ],
+    actions: [],
+}
+
+export const templateLock: WFMetaTemplate = {
+    id: 6,
+    code: 'lock1',
+    constants: [],
+    inputs: [],
+    activities: [
+        {
+            id: 1,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        dao_action: 'treasury_add_partition'
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+    ],
+    actions: [],
+}
+
 export const workflowMetadata: Record<string, WFMetaTemplate> = {
     'wf_add': templateWfAdd,
+    'reward2': templateReward,
+    'lock1': templateLock,
 }

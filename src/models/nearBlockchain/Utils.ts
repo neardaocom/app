@@ -62,7 +62,7 @@ export default class Utils {
     }
 
     static dateToChain(value: Date): number {
-        return new Decimal(moment(value).valueOf()).div(1_000).toNumber();
+        return new Decimal(moment(value).valueOf()).div(1_000).round().toNumber();
     }
 
     static durationFromChain(value: number): Interval {

@@ -12,6 +12,7 @@ import { getMetadata } from "../../ft/data";
 import { FungibleTokenMetadata } from "@/models/nearBlockchain/types/ft";
 import NearUtils from "../../nearBlockchain/Utils";
 import TreasuryHelper from "../TreasuryHelper";
+import NumberHelper from "@/models/utils/NumberHelper";
 
 export default class TreasuryLockTransformer implements TransformerInterface {
 
@@ -70,7 +71,7 @@ export default class TreasuryLockTransformer implements TransformerInterface {
 
             totalLocked = lockAssetData.lock?.lock.amount_total_locked || 0
             totalUnlocked = lockAssetData.lock?.lock.amount_total_unlocked || 0
-            unlocked = lockAssetData.amount
+            unlocked = NumberHelper.parseNumber(NearUtils.amountFromDecimals(lockAssetData.amount.toString(), ftMetadata.decimals))
             // locked = totalLocked - totalUnlocked + unlocked
 
             unlocking = []
