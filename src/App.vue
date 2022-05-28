@@ -24,9 +24,17 @@ export default {
     // config
     const config = ref(getConfig(process.env.NODE_ENV))
     provide('config', config)
+
+    // wallet
+    const wallet = ref(null)
+    provide('wallet', wallet)
+
     // loader
     const loader = ref(new Loader(new Register(), config.value))
-    loader.value.get('near/WalletAccount').then(() => {}).catch((reason) => { // init Near
+    provide('loader', loader)
+    loader.value.get('near/WalletAccount').then((walletAccount) => {
+      wallet.value = walletAccount.value
+    }).catch((reason) => { // init Near
       // TODO: Error catch
       console.log(reason)
     })
@@ -34,7 +42,6 @@ export default {
       // TODO: Error catch
       console.log(reason)
     })
-    provide('loader', loader)
 
     // init
     const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPrice(config.value)

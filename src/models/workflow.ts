@@ -76,6 +76,7 @@ export const getActivities = (template: WFTemplate, activityIds: number[]): WFAc
     return activities;
 }
 
+// vote to DaoProposal
 export const getTemplate = (templates: Record<number, WFTemplate>, id: number): WFTemplate | undefined => {
     return loFind(templates, {'id': id});
 }
@@ -83,18 +84,19 @@ export const getTemplate = (templates: Record<number, WFTemplate>, id: number): 
 export const getTemplateByCode = (templates: Record<number, WFTemplate>, code: string): WFTemplate | undefined => {
     return loFind(templates, {'code': code});
 }
-
+// vote to DaoProposal
 export const getSettings = (template: WFTemplate, settingsId: number): WFSettings | undefined => {
     return loFind(template.settings, {'id': settingsId});
 }
 
 export const getLastActivity = (instance: WFInstance): WFInstanceLog | undefined => {
-    return loLast(instance.actionLogs);
+    return loLast(instance.activityLogs);
 }
 
+// vote to DaoProposal
 export const canFinish = (instance: WFInstance, template: WFTemplate): boolean => {
     // console.log('canFinish', instance, template)
-    return instance.state === 'Running' && (instance.actionLastId !== undefined) ? template.endActivityIds.includes(instance.actionLastId) : false;
+    return instance.state === 'Running' && (instance.activityLastId !== undefined) ? template.endActivityIds.includes(instance.activityLastId) : false;
 }
 
 export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: number): Translate => {
@@ -106,13 +108,16 @@ export const settingsConstantsToTranslate = (template: WFTemplate, settingsId: n
 }
 
 export const metaGetActivityForm = (templateCode: string, activityCode: string): WFMetaForm | undefined => {
-    return loFind(loGet(templateMetas, [templateCode])?.activities, {code: activityCode})?.form
+    //return loFind(loGet(templateMetas, [templateCode])?.activities, {code: activityCode})?.form
+    return undefined
 }
 
+// move to DaoProposal
 export const getActivityRights = (settings: WFSettings, activity: WFActivity): DAORights[] => {
     return settings.activityRights[activity.actionIds[0]]
 }
 
+// vote to DaoProposal
 export const getNextActivities = (template: WFTemplate, actionLastId: number | undefined): WFActivity[] => {
     const activities: WFActivity[] = []
     if (actionLastId === undefined) { // at start

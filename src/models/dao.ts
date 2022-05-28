@@ -539,7 +539,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
                 //console.log('Log', log)
                 actionLogs.push({
                     id: index,
-                    actionId: log.action_id - 1,
+                    activityId: log.action_id - 1,
                     txSigner: log.caller,
                     txSignedAt: NearUtils.dateFromChain(log.timestamp),
                     args: templateMeta?.actions[log.action_id - 1]?.log(log.args),
@@ -569,8 +569,8 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
             storage: workflowInstance[1].storage_key,
             inputs: proposalInputs,
             constants: proposalConstants,
-            actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
-            actionLogs: actionLogs,
+            activityLastId: (workflowInstance[0].current_activity_id === 0) ? 0 : (workflowInstance[0].current_activity_id - 1),
+            activityLogs: actionLogs,
             search: [StringHelper.toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
         })
     }

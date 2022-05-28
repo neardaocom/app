@@ -2,9 +2,8 @@ import TransformerInterface from "@/models/interfaces/Transformer.interface";
 import { DAOProposal } from "../types/dao";
 import NearUtils from "@/models/nearBlockchain/Utils";
 import { CodeValue } from "@/models/utils/types/generics";
-import GenericsHelper from "@/models/utils/GenericsHelper";
-import ObjectHelper from "@/models/utils/ObjectHelper";
 import { WFTemplate } from "../types/workflow";
+import ProposalHelper from "../ProposalHelper";
 
 export default class ProposalTransformer implements TransformerInterface {
     private templates: Record<number, WFTemplate>;
@@ -21,10 +20,7 @@ export default class ProposalTransformer implements TransformerInterface {
             //    return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
             //}) ?? []
     
-        const proposalInputs: CodeValue[] = GenericsHelper.createCodeValueFromObject(value[2].constants.map).map((item) => {
-            item.value = ObjectHelper.first(item.value)
-            return item
-        })
+        const proposalInputs: CodeValue[] = ProposalHelper.transformInputs(value[2].constants)
     
         return {
             id: value[0],

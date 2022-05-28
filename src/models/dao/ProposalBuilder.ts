@@ -53,13 +53,29 @@ export default class ProposalBuilder {
         loSet(this.constants, key, {'u128': value})
     }
 
-    addActivityConstants() {
+    addActivity() {
         this.activityConstants.push({
             constants: null,
-            actions_constants: [
-                null
-            ]
+            actions_constants: [{
+                map: {}
+            }]
         })
+    }
+
+    addActivityActionConstant(key: string, value: object) {
+        loSet(this.activityConstants[this.activityConstants.length - 1].actions_constants[0].map, key, value)
+    }
+
+    addActivityActionConstantString(key: string, value: string) {
+        this.addActivityActionConstant(key, {'string': value})
+    }
+
+    addActivityActionConstantNumber(key: string, value: number) {
+        this.addActivityActionConstant(key, {'u64': value})
+    }
+
+    addActivityActionConstantBigNumber(key: string, value: string) {
+        this.addActivityActionConstant(key, {'u128': value})
     }
 
     addTemplateVoteLevel(voteLevel: DAOVoteLevel) {

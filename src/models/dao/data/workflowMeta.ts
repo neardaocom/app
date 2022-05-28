@@ -12,7 +12,35 @@ export const templateMetaAddWorkflow: WFMetaTemplate = {
     inputs: [
         { code: 'templateId', bindId: 0 },
     ],
-    activities: [],
+    activities: [
+        {
+            id: 1,
+            args: (data: WFData) => {
+                return [
+                    {
+                        action: {
+                            fn_call: [
+                                'workflow-provider.v1.neardao.testnet',
+                                'wf_template'
+                            ]
+                        },
+                        values: {
+                            map: {
+                                id: {
+                                    u64: loToNumber(GenericsHelper.getValueByCode(data.inputs, 'workflow_id'))
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            log: (args: any) => {
+                return {
+                    "templateId": ObjectHelper.first(args[0][0]),
+                }
+            },
+        },
+    ],
     actions: [
         {
             id: 0,
@@ -48,17 +76,17 @@ export const templateMetaWfNearSend: WFMetaTemplate = {
         { code: 'amount', bindId: 1 },
     ],
     activities: [
-        {
-            code: 'near_send',
-            form: {
-                component: 'WfNearSendNearSend',
-                schema: (data: WFData) => {
-                    return {
-                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + NearUtils.yoctoToNear((GenericsHelper.getValueByCode(data.inputs, 'amount')) ?? '1000000.0')
-                    }
-                },
-            },
-        },
+        //{
+        //    code: 'near_send',
+        //    form: {
+        //        component: 'WfNearSendNearSend',
+        //        schema: (data: WFData) => {
+        //            return {
+        //                amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + NearUtils.yoctoToNear((GenericsHelper.getValueByCode(data.inputs, 'amount')) ?? '1000000.0')
+        //            }
+        //        },
+        //    },
+        //},
     ],
     actions: [
         {
@@ -99,17 +127,17 @@ export const templateMetaSendFt: WFMetaTemplate = {
         { code: 'amount', bindId: 2 },
     ],
     activities: [
-        {
-            code: 'treasury_send_ft',
-            form: {
-                component: 'WfTreasurySendFtTreasurySendFt',
-                schema: (data: WFData) => {
-                    return {
-                        amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + (GenericsHelper.getValueByCode(data.inputs, 'amount') ?? '1000000.0')
-                    }
-                },
-            },
-        },
+        //{
+        //    code: 'treasury_send_ft',
+        //    form: {
+        //        component: 'WfTreasurySendFtTreasurySendFt',
+        //        schema: (data: WFData) => {
+        //            return {
+        //                amount: 'required|strIsNumber|strNumMin:0|strNumMax:' + (GenericsHelper.getValueByCode(data.inputs, 'amount') ?? '1000000.0')
+        //            }
+        //        },
+        //   },
+        //},
     ],
     actions: [
         {
@@ -181,15 +209,15 @@ export const templateMetaMediaAdd: WFMetaTemplate = {
         { code: 'link', bindId: 6 },
     ],
     activities: [
-        {
-            code: 'media_add',
-            form: {
-                component: '',
-                schema: (data: WFData) => {
-                    return {}
-                },
-            },
-        },
+        //{
+        //    code: 'media_add',
+        //    form: {
+        //        component: '',
+        //        schema: (data: WFData) => {
+        //            return {}
+        //        },
+        //    },
+        //},
     ],
     actions: [
         {

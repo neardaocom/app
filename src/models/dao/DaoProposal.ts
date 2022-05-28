@@ -4,6 +4,7 @@ import { ProposalVoting } from './types/proposal';
 import ProposalVotingTransformer from './transformers/ProposalVotingTransformer';
 import { MarketTemplate } from './types/market';
 import { DaoContractService } from '../nearBlockchain';
+import TransformerInterface from "@/models/interfaces/Transformer.interface";
 
 
 export default class DaoProposal {
@@ -11,7 +12,7 @@ export default class DaoProposal {
   private service: DaoContractService;
 
   constructor(dao: DAO, service: DaoContractService) {
-    this.dao  = dao
+    this.dao = dao
     this.service = service
   }
 

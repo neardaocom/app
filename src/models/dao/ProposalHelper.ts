@@ -11,6 +11,8 @@ import loToInteger from "lodash/toInteger";
 import loToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/models/utils/errors'
 import CollectionHelper from "../utils/CollectionHelper";
+import { CodeValue } from "../utils/types/generics";
+import ObjectHelper from "../utils/ObjectHelper";
 
 export default class ProposalHelper {
 
@@ -157,5 +159,12 @@ export default class ProposalHelper {
 
     static isVoted(proposal: DAOProposal, accountId: string): boolean {
         return Object.keys(proposal.votes).includes(accountId);
+    }
+
+    static transformInputs(proposalConstants: any): CodeValue[] {
+        return GenericsHelper.createCodeValueFromObject(proposalConstants.map).map((item) => {
+            item.value = ObjectHelper.first(item.value)
+            return item
+        })
     }
 }

@@ -35,7 +35,7 @@ export default class DaoMarket {
         builder.addTemplateSettingsId(0)
         builder.addConstantNumber('workflow_id', workflowId)
         builder.addConstantString('provider_id', this.wfProviderAccountId)
-        builder.addActivityConstants()
+        builder.addActivity()
         builder.addTemplateVoteLevel(dao.voteLevels[0])
         builder.addTemplateProposeRights(proposeRights)
         builder.addTemplateVoteRights(voteRight)

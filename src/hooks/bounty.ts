@@ -8,7 +8,7 @@ import { ref } from "vue";
 export const useBounties = (dao: DAO, t: Function, d: Function, n: Function) => {
     const template = getTemplateByCode(dao.templates, 'wf_bounty')
 
-    const bounties = ref(loFilter(dao.workflows, {'state': 'Running', templateId: template?.id, actionLastId: undefined}))
+    const bounties = ref(loFilter(dao.workflows, {'state': 'running', templateId: template?.id, activityLastId: 0}))
 
     const proposals = ref(bounties.value.map((bounty) => {
         return loFind(dao.proposals, {id: bounty.id})

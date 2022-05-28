@@ -26,6 +26,7 @@ export default class DaoContractService extends ContractService {
         'wf_instance',
         'wf_propose_settings',
         'wf_add_proposed_template_settings',
+        'wf_log',
         // storage
         'storage_buckets', // storage keys
         'storage_bucket_data', // storage data of keys
@@ -48,9 +49,8 @@ export default class DaoContractService extends ContractService {
         'statistics',
         'tags',
         'settings',
-        
+
         // upgrade
-        // 'wf_log', // TODO: Add to workflow
       ],
       changeMethods: [
         // proposals and voting
@@ -58,7 +58,8 @@ export default class DaoContractService extends ContractService {
         'proposal_vote',
         'proposal_finish',
         // workflow
-        'wf_run_activity',
+        'workflow_run_activity',
+        'workflow_finish',
         // treasury management
         'unlock_partition_assets',
         // wallet
@@ -76,7 +77,7 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async groups() {
+  async groups() {
     return this.contract.groups()
   }
 
@@ -85,8 +86,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async group(id: number) {
-    return this.contract.group({id})
+  async group(id: number) {
+    return this.contract.group({ id })
   }
 
   /**
@@ -94,8 +95,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async groupRoles(id: number) {
-    return this.contract.group_roles({id})
+  async groupRoles(id: number) {
+    return this.contract.group_roles({ id })
   }
 
   /**
@@ -103,8 +104,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async userRoles(accountId: string) {
-    return this.contract.user_roles({account_id: accountId})
+  async userRoles(accountId: string) {
+    return this.contract.user_roles({ account_id: accountId })
   }
 
   /**
@@ -112,8 +113,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async proposals(fromId: number, limit: number) {
-    return this.contract.proposals({from_id: fromId, limit})
+  async proposals(fromId: number, limit: number) {
+    return this.contract.proposals({ from_id: fromId, limit })
   }
 
   /**
@@ -121,8 +122,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async proposal(id: number) {
-    return this.contract.proposal({id})
+  async proposal(id: number) {
+    return this.contract.proposal({ id })
   }
 
   /**
@@ -130,11 +131,11 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async proposalCreate(
-     proposalInputs: ProposalInputs,
-     gas: string,
-     yoctoNear: string
-   ) {
+  async proposalCreate(
+    proposalInputs: ProposalInputs,
+    gas: string,
+    yoctoNear: string
+  ) {
     return this.contract.proposal_create(proposalInputs, gas, yoctoNear)
   }
 
@@ -143,8 +144,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async proposalVote(id: number, vote: number, gas: string, yoctoNear: string): Promise<VoteResult> {
-    return this.contract.proposal_vote({id, vote} , gas, yoctoNear)
+  async proposalVote(id: number, vote: number, gas: string, yoctoNear: string): Promise<VoteResult> {
+    return this.contract.proposal_vote({ id, vote }, gas, yoctoNear)
   }
 
   /**
@@ -152,7 +153,7 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async proposalFinish(id: number, gas: string): Promise<ProposalState> {
+  async proposalFinish(id: number, gas: string): Promise<ProposalState> {
     return this.contract.proposal_finish({ id }, gas);
   }
 
@@ -171,7 +172,7 @@ export default class DaoContractService extends ContractService {
    * @return Promise
    */
   async userVoteWeight(accountId: string) {
-    return this.contract.user_vote_weight({account_id: accountId})
+    return this.contract.user_vote_weight({ account_id: accountId })
   }
 
   /**
@@ -189,7 +190,7 @@ export default class DaoContractService extends ContractService {
    * @return Promise
    */
   async wfTemplate(id: number) {
-    return this.contract.wf_template({id})
+    return this.contract.wf_template({ id })
   }
 
   /**
@@ -198,7 +199,7 @@ export default class DaoContractService extends ContractService {
    * @return Promise
    */
   async wfInstance(proposalId: number): Promise<Instance> {
-    return this.contract.wf_instance({proposal_id: proposalId})
+    return this.contract.wf_instance({ proposal_id: proposalId })
   }
 
   /**
@@ -206,8 +207,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async wfLog(proposalId: number): Promise<any[]> {
-    return this.contract.wf_log({proposal_id: proposalId})
+  async wfLog(proposalId: number): Promise<any[]> {
+    return this.contract.wf_log({ proposal_id: proposalId })
   }
 
   /**
@@ -215,8 +216,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async wfProposeSettings(proposalId: number): Promise<ProposeSettings> {
-    return this.contract.wf_propose_settings({proposal_id: proposalId})
+  async wfProposeSettings(proposalId: number): Promise<ProposeSettings> {
+    return this.contract.wf_propose_settings({ proposal_id: proposalId })
   }
 
   /**
@@ -224,8 +225,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async wfAddProposedTemplateSettings(proposalId: number): Promise<ProposeSettings> {
-    return this.contract.wf_add_proposed_template_settings({proposal_id: proposalId})
+  async wfAddProposedTemplateSettings(proposalId: number): Promise<ProposeSettings> {
+    return this.contract.wf_add_proposed_template_settings({ proposal_id: proposalId })
   }
 
   /**
@@ -233,16 +234,30 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async wfRunActivity(
-     proposalId: number,
-     activityId: number,
-     actionsInputs: ActionInput|null[],
-     gas: string
-    ) {
+  async workflowRunActivity(
+    proposalId: number,
+    activityId: number,
+    actionsInputs: ActionInput[] | null,
+    gas: string
+  ) {
     return this.contract.workflow_run_activity({
       proposal_id: proposalId,
       activity_id: activityId,
       actions_inputs: actionsInputs,
+    }, gas);
+  }
+
+  /**
+   * WorkFlow finish
+   * 
+   * @return Promise
+   */
+  async workflowFinish(
+    proposalId: number,
+    gas: string
+  ) {
+    return this.contract.workflow_finish({
+      proposal_id: proposalId,
     }, gas);
   }
 
@@ -257,7 +272,7 @@ export default class DaoContractService extends ContractService {
    * @returns 
    */
   async storageBucketDataAll(bucketId: string) {
-    return this.contract.storage_bucket_data_all({bucket_id: bucketId})
+    return this.contract.storage_bucket_data_all({ bucket_id: bucketId })
   }
 
   /**
@@ -268,7 +283,7 @@ export default class DaoContractService extends ContractService {
    * @returns 
    */
   async storageBucketData(bucketId: string, dataId: string) {
-    return this.contract.storage_bucket_data({bucket_id: bucketId, data_id: dataId})
+    return this.contract.storage_bucket_data({ bucket_id: bucketId, data_id: dataId })
   }
 
   /**
@@ -279,7 +294,7 @@ export default class DaoContractService extends ContractService {
   async storage() {
     // get keys
     const storageKeys: string[] = await this.storageBuckets()
-    
+
     // load data
     const data = await Promise.all(
       storageKeys.map((key: string) => this.storageBucketDataAll(key))
@@ -289,7 +304,7 @@ export default class DaoContractService extends ContractService {
 
     const result: Record<string, unknown> = {}
     storageKeys.forEach((key, index) => loSet(result, [key], data[index]))
-    
+
     return result
   }
 
@@ -298,16 +313,16 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async partitionList(fromId: number, limit: number): Promise<[number, TreasuryPartition][]> {
-    return this.contract.partition_list({from_id: fromId, limit})
+  async partitionList(fromId: number, limit: number): Promise<[number, TreasuryPartition][]> {
+    return this.contract.partition_list({ from_id: fromId, limit })
   }
   /**
    * Get partition
    * 
    * @return Promise
    */
-   async partition(id: number): Promise<TreasuryPartition|null> {
-    return this.contract.partition({id})
+  async partition(id: number): Promise<TreasuryPartition | null> {
+    return this.contract.partition({ id })
   }
 
   /**
@@ -324,8 +339,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async rewardList(fromId: number, limit: number): Promise<[number, Reward][]> {
-    return this.contract.reward_list({from_id: fromId, limit})
+  async rewardList(fromId: number, limit: number): Promise<[number, Reward][]> {
+    return this.contract.reward_list({ from_id: fromId, limit })
   }
 
   /**
@@ -333,8 +348,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async reward(id: number): Promise<Reward|null> {
-    return this.contract.reward({id})
+  async reward(id: number): Promise<Reward | null> {
+    return this.contract.reward({ id })
   }
 
   /**
@@ -342,8 +357,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async wallet(accountId: string): Promise<Wallet|null> {
-    return this.contract.wallet({account_id: accountId})
+  async wallet(accountId: string): Promise<Wallet | null> {
+    return this.contract.wallet({ account_id: accountId })
   }
 
   /**
@@ -351,8 +366,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async claimableRewards(accountId: string): Promise<ClaimbleReward[]> {
-    return this.contract.claimable_rewards({account_id: accountId})
+  async claimableRewards(accountId: string): Promise<ClaimbleReward[]> {
+    return this.contract.claimable_rewards({ account_id: accountId })
   }
 
   /**
@@ -375,8 +390,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async nextTick(searchMaxTicks: number): Promise<number|null> {
-    return this.contract.next_tick({search_max_ticks: searchMaxTicks})
+  async nextTick(searchMaxTicks: number): Promise<number | null> {
+    return this.contract.next_tick({ search_max_ticks: searchMaxTicks })
   }
 
   /**
@@ -385,7 +400,7 @@ export default class DaoContractService extends ContractService {
    * @param category 
    * @returns 
    */
-  async tags(category: string): Promise<Tags|null> {
+  async tags(category: string): Promise<Tags | null> {
     return this.contract.tags({ category });
   }
 
@@ -411,8 +426,8 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async mediaList(fromId: number, limit: number) {
-    return this.contract.mediaList({from_id: fromId, limit})
+  async mediaList(fromId: number, limit: number) {
+    return this.contract.mediaList({ from_id: fromId, limit })
   }
 
   /**
@@ -420,30 +435,30 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-   async media(id: number) {
-    return this.contract.media({id})
+  async media(id: number) {
+    return this.contract.media({ id })
   }
 
 
-///**
-// * Download new version
-// * 
-// * @return Promise
-// */
-// async upgradeDownload(accountId: string, gas: string) {
-////return this.contract.download_new_version({ account_id: accountId }, gas);
-//}
+  ///**
+  // * Download new version
+  // * 
+  // * @return Promise
+  // */
+  // async upgradeDownload(accountId: string, gas: string) {
+  ////return this.contract.download_new_version({ account_id: accountId }, gas);
+  //}
 
-///**
-// * Upgrade contract
-// * 
-// * @return Promise
-// */
-// async upgradeMigrate(accountId: string, gas: string) {
-////return this.contract.upgrade_self({ account_id: accountId }, gas);
-//}
+  ///**
+  // * Upgrade contract
+  // * 
+  // * @return Promise
+  // */
+  // async upgradeMigrate(accountId: string, gas: string) {
+  ////return this.contract.upgrade_self({ account_id: accountId }, gas);
+  //}
 
-//async getDaoVersionHash() {
-////return this.contract.version_hash();
-//}
+  //async getDaoVersionHash() {
+  ////return this.contract.version_hash();
+  //}
 }
