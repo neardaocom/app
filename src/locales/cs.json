@@ -323,7 +323,13 @@
   "to_withdraw": "K výběru",
   "total_delegated": "Total delegated",
   "my_vote_power": "My vote power",
-  "delegators": "Delegators"
-
+  "delegators": "Delegators",
+  "commission_system": "Provizní systém",
+  "lock": "Zamčení",
+  "frequency": "Četnost",
+  "frequency_days": "Dny",
+  "frequency_hours": "Hodiny",
+  "rewards_start_at": "Začíná",
+  "rewards_ends": "Končí"
 
 }

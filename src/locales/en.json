@@ -502,6 +502,12 @@
   "delegated": "Delegated",
   "total_delegated": "Total delegated",
   "my_vote_power": "My actual voting power",
-  "delegators": "Delegators"
-
+  "delegators": "Delegators",
+  "commission_system": "Commission system",
+  "lock": "Lock",
+  "frequency": "Frequency",
+  "frequency_days": "Days",
+  "frequency_hours": "Hours",
+  "rewards_start_at": "Start at",
+  "rewards_ends": "Ends"
 }

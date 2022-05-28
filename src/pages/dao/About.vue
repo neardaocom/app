@@ -23,6 +23,10 @@
         </div>
       </div>
       <!-- END: council unlocking cashflow -->
+
+      <div class="col-12 col-md-6 mb-4">
+        <CommisionSystem/>
+      </div>
     </div>
   </div>
 </template>
@@ -35,13 +39,15 @@ import DaoInformation from "@/components/dao/about/DaoInformation.vue"
 import DaoMembers from "@/components/dao/about/DaoMembers.vue"
 import { useGroups } from '@/hooks/dao';
 import Tooltip from '@/components/ui//Tooltip.vue'
+import CommisionSystem from '@/components/dao/about/CommisionSystem.vue'
 
 export default {
   components: {
     ChartCouncilUnlocking,
     DaoInformation,
     DaoMembers,
-    Tooltip
+    Tooltip,
+    CommisionSystem
   },
 
   setup() {
