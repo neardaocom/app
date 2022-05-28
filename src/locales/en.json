@@ -378,7 +378,7 @@
   "wf_templ_wf_add_description": "Select and use features",
   "wf_templ_wf_add_constants": "",
   "wf_templ_wf_add__wf_add": "Install",
-  "wf_templ_wf_add__wf_add_title": "Template ID: <strong>{templateId}</strong>",
+  "wf_templ_wf_add__wf_add_title": "Template ID: <strong>{id}</strong>",
   "wf_templ_wf_add_activity_wf_add": "Add workflow",
   "wf_templ_wf_near_send": "Send NEAR tokens",
   "wf_templ_wf_near_send_title": "Sending <strong>{receiverId}</strong> amount <strong>{amount} Ⓝ</strong>",

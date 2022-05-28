@@ -22,8 +22,9 @@ export type WFMetaForm = {
 }
 
 export type WFMetaActivity = {
-    code: string;
-    form?: WFMetaForm;
+    id: number;
+    args: Function;
+    log: Function;
 }
 
 export type WFMetaTemplate = {
@@ -117,7 +118,9 @@ export type WFSettings = {
 
 export type WFInstanceLog = {
     id: number;
-    actionId: number;
+    activityId: number;
+    activity?: WFActivity | null;
+    actionId?: number;
     txHash?: string;
     txBlock?: string;
     txSigner: String;
@@ -133,8 +136,8 @@ export type WFInstance = {
     storage: string;
     inputs: CodeValue[];
     constants: CodeValue[];
-    actionLastId: number | undefined;
-    actionLogs: WFInstanceLog[];
+    activityLastId: number;
+    activityLogs: WFInstanceLog[];
     search: string;
 }
 

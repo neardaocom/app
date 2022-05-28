@@ -3,6 +3,10 @@ import moment from "moment";
 
 export default class DateHelper {
 
+    static formatTime: string = 'H:mm'
+
+    static formatDateLong: string = 'MMMM D, YYYY'
+
     static parse(value: string, format: string): Date {
         return moment(value, format).toDate()
     }
@@ -45,6 +49,13 @@ export default class DateHelper {
             date = new Date(date)
         }
         return date.getHours() + ':' + date.toISOString().substring(14, 16);
+    }
+
+    static format(date: Date | number, format: string): string {
+        if (typeof date == 'number') {
+            date = new Date(date)
+        }
+        return moment(date).format(format);
     }
 
 }

@@ -103,6 +103,8 @@ export default {
     const walletRights = ref([])
 
     provide('dao', dao)
+    provide('daoRights', daoRights)
+    provide('walletRights', walletRights)
     provide('templateMeta', templateMeta)
 
     onMounted(async () => {

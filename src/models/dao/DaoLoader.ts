@@ -33,7 +33,9 @@ import { TreasuryLock } from "./types/treasury";
 import TreasuryLockTransformer from "./transformers/TreasuryLockTransformer";
 import FtMetadataLoader from "../ft/FtMetadataLoader";
 import ProposalTransformer from "./transformers/ProposalTransformer";
+import WFInstanceTransformer from "./transformers/WFInstanceTransformer";
 import TreasuryAnalytics from "./analytics/TreasuryAnalytics";
+import PromiseHelper from "../utils/PromiseHelper";
 
 export default class DaoLoader {
     private id: string;
@@ -187,6 +189,32 @@ export default class DaoLoader {
         // save it to proposals
         dataChainProposalSettings.forEach((proposalSettings, index) => {
             this.dataChain[6][index][2] = proposalSettings
+        })
+
+        // load workflow instance
+        const dataChainWfInstance = await Promise.all(
+            this.dataChain[6].map((proposalChain) =>
+                proposalChain[1].current.state === 'accepted' ? this.daoService.wfInstance(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
+            )
+        ).catch((e) => {
+            throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
+        })
+        // save it to proposals
+        dataChainWfInstance.forEach((wfInstance, index) => {
+            this.dataChain[6][index][3] = wfInstance
+        })
+
+        // load workflow log
+        const dataChainWfLog = await Promise.all(
+            this.dataChain[6].map((proposalChain) =>
+                proposalChain[1].current.state === 'accepted' ? this.daoService.wfLog(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
+            )
+        ).catch((e) => {
+            throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
+        })
+        // save it to proposals
+        dataChainWfLog.forEach((wfLog, index) => {
+            this.dataChain[6][index][4] = wfLog
         })
 
         console.log(this.dataChain)
@@ -432,52 +460,14 @@ export default class DaoLoader {
         let actionLogs: WFInstanceLog[]
 
         const proposalTransformer = new ProposalTransformer(executes.templates)
+        const wfInstanceTransformer = new WFInstanceTransformer(executes.templates)
     
         //console.log(this.dataChain[6])
         for (let i = 0; i < this.dataChain[6].length; i++) {
-
             proposals.push(proposalTransformer.transform(this.dataChain[6][i]))
-
-
-            /*
-            actionLogs = []
-            // console.log(proposal)
-            workflowInstance = await this.daoService!.wfInstance(proposal[0])
-            proposalTemplate = loFind(executes.templates, {id: proposal[1].current.workflow_id})
-            proposalSettings = loFind(proposalTemplate?.settings, {id: proposal[1].current.workflow_settings_id})
-            templateMeta = loGet(templateMetas, [proposalTemplate!.code])
-            // console.log("WorkflowInstance", workflowInstance, proposalTemplate, proposalSettings)
-            */
-            // load action logs
-            //if (workflowInstance[0].state !== 'Waiting') {
-                /* TODO: Add log
-                workflowLog = await this.daoService!.wfLog(proposal[0])
-                workflowLog?.forEach((log, index) => {
-                    //console.log('Log', log)
-                    actionLogs.push({
-                        id: index,
-                        actionId: log.action_id - 1,
-                        txSigner: log.caller,
-                        txSignedAt: NearUtils.dateFromChain(log.timestamp),
-                        args: templateMeta?.actions[log.action_id - 1]?.log(log.args),
-                    })
-                })
-                */
-            //}
-            /*
-            workflows.push({
-                id: proposal[0],
-                templateId: proposal[1].current.workflow_id,
-                settingsId: proposal[1].current.workflow_settings_id,
-                state: workflowInstance[0].state,
-                storage: workflowInstance[1].storage_key,
-                inputs: proposalInputs,
-                constants: proposalConstants,
-                actionLastId: (workflowInstance[0].current_activity_id === 0) ? undefined : (workflowInstance[0].current_activity_id - 1),
-                actionLogs: actionLogs,
-                search: [StringHelper.toSearch('#' + proposal[0]), proposalTemplate?.search ?? ''].join('-'),
-            })
-            */
+            if (this.dataChain[6][i][3] !== null) {
+                workflows.push(wfInstanceTransformer.transform(this.dataChain[6][i]))
+            }
         }
 
         executes.proposals = proposals

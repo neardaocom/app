@@ -11,27 +11,26 @@
           <!-- HEAD -->
           <div class="row">
             <div class="col-10">
-              <h5>{{ t('default.wf_templ_' + template.code) }}</h5>
-              <div class="mt-n2 " v-html="proposalTitle"></div>
+              <div class="mt-n2 fs-5" v-html="proposalVoting.title"></div>
+              <div class="mt-n2 small">{{ proposalVoting.type }}</div>
             </div>
             <div class="col-2 text-right">
               <!-- TODO: Voting -->
             </div>
           </div>
           <!-- End HEAD -->
-
           <!-- Activities -->
           <div class="row">
             <div class="col-12">
               <hr class="mt-1 mb-3"/>
             </div>
           </div>
-          <div class="row" v-for="(log, index) in activityLogs" :key="index">
+          <div class="row" v-for="(log) in activityLogs" :key="log.id">
             <div class="col-1 text-center">
               <MDBBadge color="info" pill class="p-2 me-3c"><i class="bi bi-box"></i></MDBBadge>
             </div>
             <div class="col-10 mb-3">
-                <div class="text-muted small">{{moment(d(log.txSignedAt)).format("MMMM D, YYYY")}} - {{ toTime(log.txSignedAt) }}</div>
+                <div class="text-muted small">{{ toDate(log.txSignedAt) }} - {{ toTime(log.txSignedAt) }}</div>
                 <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
                 <div class="mt-n1 small">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
@@ -46,8 +45,8 @@
           </div>
           <!-- END Activities -->
 
-          <!-- NEXT Activity -->
-          <div v-if="workflow.state === 'Running' && check(walletRights, activityNextsRights)" class="row">
+          <!-- NEXT Activity-->
+          <div v-if="workflow.state === 'running' && check(walletRights, activityNextsRights)" class="row">
             <div class="col-1 text-center">
               <MDBBadge color="muted" pill class="p-2 me-3c"><i class="fas fa-check"></i></MDBBadge>
             </div>
@@ -56,18 +55,18 @@
                 <div class="col-12">
                   <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
                   <MDBBtnGroup v-if="activityNexts.length > 0">
-                    <template v-for="(option, index) in optionsNextActivities" :key="index">
+                    <template v-for="(option, index) in nextActivitiesOptions" :key="index">
                       <MDBRadio
                         v-if="check(walletRights, option.rights)"
                         :btnCheck="true" :wrap="false" labelClass="btn btn-secondary btn-sm"
                         :label="option.text"
                         :name="'nextActivity-' + workflow.id"
                         :value="option.value"
-                        v-model="formNextActivityCode"
+                        v-model="formNextActivityId"
                       />
                     </template>
                   </MDBBtnGroup>
-                  <template v-if="workflow.actionLastId !== undefined && showFinish === true">
+                  <template v-if="workflow.activityLastId !== undefined && canFinish === true">
                     <span v-if="activityNexts.length > 0" class="ms-3 me-3 text-uppercase">{{ t('default.or') }}</span>
                     <button class="btn btn-info btn-sm rounded-pill" @click.prevent="finish()">{{ t('default.wf_finish') }}</button>
                   </template>
@@ -85,7 +84,7 @@
               </div>
             </div>
           </div>
-          <div v-else-if="workflow.state === 'Finished'" class="row">
+          <div v-else-if="workflow.state === 'finished'" class="row">
             <div class="col-1">
               <MDBBadge color="info" pill class="p-2 me-3"><i class="fas fa-check me-2"></i> {{ t('default.wf_finished') }}</MDBBadge>
             </div>
@@ -99,67 +98,61 @@
 
 <script>
 import {
-  // MDBSelect
-  // MDBProgress, MDBProgressBar, 
-  // , MDBCollapse, MDBBtn, MDBIcon
   MDBBtnGroup, MDBRadio, MDBBadge,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import ArrayHelper from '@/models/utils/ArrayHelper'
-import { ref, toRefs, reactive } from "vue";
+//import ArrayHelper from '@/models/utils/ArrayHelper'
+import { toRefs, inject, ref } from "vue";
+//import { ref, toRefs, reactive, inject } from "vue";
 // import padEnd from "lodash/padEnd";
-import loLast from "lodash/last";
-import loGet from "lodash/get";
-import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
+//import loLast from "lodash/last";
+//import loGet from "lodash/get";
+import loToNumber from "lodash/toNumber";
+//import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
+import { metaGetActivityForm } from "@/models/workflow";
 // import { getArgs as getProposalArgs } from "@/models/dao/DaoProposal";
-import { useNear } from '@/hooks/vuex';
-import Date from "@/models/utils/DateHelper";
+//import { useNear } from '@/hooks/vuex';
+//import Date from "@/models/utils/DateHelper";
 import Rights from "@/models/dao/Rights";
-import loFlatten from "lodash/flatten"
-import moment from 'moment'
+//import loFlatten from "lodash/flatten"
+import DateHelper from '@/models/utils/DateHelper'
 
-import WfNearSendNearSend from './workflows/wf_near_send/NearSend.vue'
-import WfSkywardRegisterTokens from './workflows/wf_skyward/RegisterTokens.vue'
-import WfTreasurySendFtTreasurySendFt from './workflows/wf_treasury_send_ft/TreasurySendFt.vue'
+//import WfNearSendNearSend from './workflows/wf_near_send/NearSend.vue'
+//import WfSkywardRegisterTokens from './workflows/wf_skyward/RegisterTokens.vue'
+//import WfTreasurySendFtTreasurySendFt from './workflows/wf_treasury_send_ft/TreasurySendFt.vue'
+import { useDaoWorkflow, useWorkflow } from '@/hooks/workflow'
 
 export default {
   components: {
     MDBBtnGroup, MDBRadio, MDBBadge,
-    // MDBProgress, MDBProgressBar, 
-    // WFInstance
-    // MDBCollapse, MDBBtn, MDBIcon,
-    WfNearSendNearSend, WfSkywardRegisterTokens, WfTreasurySendFtTreasurySendFt
   },
   props: {
     workflow: {
       type: Object,
       required: true,
     },
-    proposal: {
-      type: Object,
-      required: true,
-    },
-    template: {
-      type: Object,
-      required: true,
-    },
-    accountId: {
-      type: String,
-      required: true,
-    },
-    walletRights: {
-      type: Object,
-      required: true,
-    },
-    daoStorage: {
-      type: Object,
-      required: true,
-    },
   },
   setup(props) {
     const { t, d, n } = useI18n();
-    const { workflow, template, daoStorage, accountId } = toRefs(props)
 
+    const { workflow } = toRefs(props)
+    const loader = inject('loader')
+    const dao = inject('dao')
+    const wallet = inject('wallet')
+    const walletRights = inject('walletRights')
+    const templateMeta = inject('templateMeta')
+
+    const { daoWorkflow } = useDaoWorkflow(loader, dao, workflow)
+    const { proposalVoting, template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions } = useWorkflow(daoWorkflow, templateMeta, wallet, walletRights)
+
+    const check = Rights.check
+
+    const formNextActivityId = ref(nextActivitiesOptions.value.length > 0 ? nextActivitiesOptions.value[0].value.toString() : '')
+
+    //const activityNexts = ref([])
+    //const activityNextsRights = ref([])
+    // const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))
+    /*
     const settings = reactive(getSettings(template.value, workflow.value.settingsId))
 
     const data = {
@@ -172,13 +165,9 @@ export default {
         form: {},
     }
 
-    const check = Rights.check
-
-    const { nearService } = useNear()
-
     // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
-    const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))
-    const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId))
+    
+    const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId) || [])
     const activityNextsRights = ref(loFlatten(activityNexts.value.map((activity) => {
       return getActivityRights(settings, activity)
     })))
@@ -189,40 +178,38 @@ export default {
       return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, rights: getActivityRights(settings, activity)}
     }))
 
-    const formNextActivityCode = ref(optionsNextActivities.value.length > 0 ? optionsNextActivities.value[0].value.toString() : '')
-    // const selectedNextActivity = ref("");
+    
+     return { t, d, n, daoWorkflow, proposalVoting, data, settings, check, formNextActivityId, optionsNextActivities, activityNexts, activityNextsRights, canFinish, activityLogs, nearService, moment };
+    */
 
-    const showFinish = ref(canFinish(workflow.value, template.value))
 
-
-    return { t, d, n, data, settings, check, formNextActivityCode, optionsNextActivities, activityNexts, activityNextsRights, showFinish, activityLogs, nearService, moment };
+    return {
+      t, d, n, daoWorkflow, proposalVoting, template, check,
+      walletRights, nextActivitiesOptions,
+      activityLogs, activityNexts, activityNextsRights, canFinish,
+      formNextActivityId,
+    };
   },
   computed: {
-    activityLast() {
-      return loLast(this.workflow.activityLogs)
-    },
-    proposalTitle() {
-      return this.t('default.wf_templ_' + this.template.code + '_title', {}) // TODO: Add args
-    },
     componentName() {
-      return metaGetActivityForm(this.template.code, this.formNextActivityCode)?.component
+      return metaGetActivityForm(this.template.code, 'wf_add')?.component
     },
     componentProps() {
-      return {schema: metaGetActivityForm(this.template.code, this.formNextActivityCode)?.schema(this.data)}
+      return {schema: metaGetActivityForm(this.template.code, 'wf_add')?.schema(this.data)}
     }
   },
   methods: {
-    convertInput(inputActivity, inputInstance) {
-      return Object.assign(ArrayHelper.convertArrayOfObjectToObject(inputActivity, 'code', 'value'), ArrayHelper.convertArrayOfObjectToObject(inputInstance, 'code', 'value'))
-    },
     run() {
-      runActivity(this.formNextActivityCode, this.workflow, this.template, this.settings, this.nearService, this.accountId, this.data)
+      this.daoWorkflow.runActivity(loToNumber(this.formNextActivityId))
     },
     finish() {
-      this.nearService.wfFinish(this.accountId, this.proposal.id)
+      this.daoWorkflow.finish()
     },
     toTime(value) {
-      return Date.toTimeString(value)
+      return DateHelper.format(value, DateHelper.formatTime)
+    },
+    toDate(value) {
+      return DateHelper.format(value, DateHelper.formatDateLong)
     },
     formFlush(values) {
       // console.log('fromFlush', values)
