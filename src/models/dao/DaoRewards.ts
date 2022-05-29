@@ -2,23 +2,24 @@ import { DAO } from "./types/dao";
 import ProposalBuilder from "./ProposalBuilder";
 import NearUtils from "../nearBlockchain/Utils";
 import DaoUtils from "../dao/Utils";
-import DaoContractService from "../nearBlockchain/DaoContractService";
-import WfProviderContractService from "../nearBlockchain/WfProviderContractService";
-import { RewardPricelist } from "./types/rewards";
+import { Reward, RewardPricelist } from "./types/rewards";
+import RewardsClaimableTransformer from "./transformers/RewardsClaimableTransformer";
+import FtMetadataLoader from "../ft/FtMetadataLoader";
+import ServicePool from "./ServicePool";
+import loGet from 'lodash/get'
+import RewardsHelper from "./RewardsHelper";
 
 export default class DaoRewards {
-    private daoService: DaoContractService;
-    private wfProviderService: WfProviderContractService;
+    private servicePool: ServicePool
 
-    constructor(daoService: DaoContractService, wfProviderService: WfProviderContractService) {
-        this.daoService = daoService
-        this.wfProviderService = wfProviderService
+    constructor(servicePool: ServicePool) {
+        this.servicePool = servicePool
     }
 
     async createSalary(dao: DAO, groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number, startAt: Date, endAt?: Date) {
         const templateReward = DaoUtils.getTemplateByCode(dao, 'reward2')
 
-        const builder = new ProposalBuilder(this.wfProviderService)
+        const builder = new ProposalBuilder(this.servicePool.getWfProvider(dao.settings.workflow_provider))
         builder.addTemplateId(templateReward.id)
         builder.addTemplateSettingsId(0)
         builder.addActivity()
@@ -51,10 +52,40 @@ export default class DaoRewards {
 
         console.log(createArgs)
 
-        return this.daoService.proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
+        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
     }
 
     static getList(dao: DAO, type: string): RewardPricelist[] {
-        return dao.rewards.filter((item) => item.type === type)
+        return dao.rewardsPricelists.filter((item) => item.type === type)
+    }
+
+    async loadClaimable(accountId: string, dao: DAO, ftMetadataLoader: FtMetadataLoader): Promise<Reward[]> {
+        let list: Reward[] = []
+        if (accountId) {
+            // console.log('Claimable reward loading...')
+            const dataChain = await Promise.all([
+                this.servicePool.getContract(dao.wallet).wallet(accountId),
+                this.servicePool.getContract(dao.wallet).claimableRewards(accountId),
+            ]).catch((e) => {
+                throw new Error(`DataChain not loaded: ${e}`);
+            })
+            // console.log(dataChain)
+            const transformer = new RewardsClaimableTransformer(dao.rewardsPricelists, dao.treasuryLocks, ftMetadataLoader)
+            list = await transformer.transform({
+                rewards: loGet(dataChain, [0, 'rewards']),
+                claimable_rewards: loGet(dataChain, [1, 'claimable_rewards']),
+                failed_withdraws: loGet(dataChain, [0, 'failed_withdraws']),
+            })
+        }
+        return list
+    }
+
+    static recomputeCounting(rewards: Reward[]|null) {
+        // console.log('Claimable reward counting...')
+        rewards?.forEach((reward) => {
+            reward.amounts.forEach((amount) => {
+                amount.amountCounting = RewardsHelper.getAmountCounting(amount)
+            })
+        })
     }
 }

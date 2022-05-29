@@ -67,7 +67,7 @@ import Treasury from './dao/Treasury.vue'
 import Governance from './dao/Governance.vue'
 import Rewards from './dao/Rewards.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, provide, inject } from 'vue'
+import { ref, onMounted, provide, inject, onUnmounted } from 'vue'
 import { getRole } from "@/models/dao";
 import Rights from '@/models/dao/Rights'
 import DaoLoader from '@/models/dao/DaoLoader'
@@ -76,7 +76,7 @@ import { useRouter } from "@/hooks/dao";
 import { useDao } from "@/hooks/daoList";
 // import { useStore } from 'vuex'
 // import { useNear, useWallet } from "@/hooks/vuex";
-import { useWallet } from "@/hooks/wallet";
+import { useRewards, useClaimableRewards } from "@/hooks/rewards";
 
 export default {
   components: {
@@ -88,13 +88,12 @@ export default {
   setup() {
     const config = inject('config')
     const loader = inject('loader')
+    const wallet = inject('wallet')
 
     const { t } = useI18n()
-    // const store = useStore()
-    // const { nearService, wallet } = useNear()
-    const { wallet } = useWallet(loader)
     const {rDaoId, rPage, rSearch, rOrder} = useRouter(config)
     const { daoInfo } = useDao(rDaoId.value)
+
 
     const dao = ref({tags: []})
     const templateMeta = ref([])
@@ -107,12 +106,23 @@ export default {
     provide('walletRights', walletRights)
     provide('templateMeta', templateMeta)
 
+    const { daoRewards } = useRewards(dao, loader)
+    const {
+      rewardsClaimable, rewardsLoadClaimable, rewardsAssetStats,
+      rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsLoadTurnOn, rewardsLoadTurnOff,
+      rewardsCountingIntervalId, rewardsCountingTurnOn, rewardsCountingTurnOff,
+    } = useClaimableRewards(
+      dao, wallet, daoRewards, loader
+    )
+    provide('rewardsClaimable', rewardsClaimable)
+    provide('rewardsAssetsStats', rewardsAssetStats)
+
     onMounted(async () => {
       // const daoFactory = await loader?.value.get('dao/Factory')
       // const servicePool = daoFactory.value.createServicePool();
       const servicePool = await loader?.value.get('dao/ServicePool')
       const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
-      dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
+      dao.value = await daoLoader.getDao(wallet.value?.accountId)
 
       // load templates metadata
       const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value)
@@ -121,35 +131,30 @@ export default {
       //console.log(dao.value)
       loaded.value = true
       daoRights.value = Rights.getDAORights(dao.value)
-      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.getAccountId())
-      //store.commit('near/setContract', rDaoId.value)
-      //loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
-      //  .then(r => {
-      //    // console.log('load DAO', r)
-      //    //this.dao_state = r
-      //    dao.value = r
-      //    loaded.value = true
-      //    daoRights.value = getDAORights(r)
-      //    walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
-      //    // console.log(this.walletRights)
-      //  })
-      //  .catch((e) => {
-      //    //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-      //    //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-      //    //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
-      //    //this.$notify.flush()
-      //    console.log(e)
-      //  })
+      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.accountId)
+
+      // rewards
+      rewardsLoadClaimable()
+      rewardsLoadTurnOn()
+      rewardsCountingTurnOn()
     })
 
-    return { t, rDaoId, rPage, rSearch, rOrder, dao, daoInfo, loaded, daoRights, wallet, walletRights }
+    onUnmounted(() => {
+      rewardsLoadTurnOff()
+      rewardsCountingTurnOff()
+    })
+
+    return {
+      t, rDaoId, rPage, rSearch, rOrder, dao, daoInfo, loaded, daoRights, wallet, walletRights,
+      daoRewards, rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsCountingIntervalId,
+    }
   },
   computed: {
     accountId() {
       return this.$store.getters["near/getAccountId"];
     },
     accountRole() {
-      return getRole(this.dao, this.wallet.getAccountId())
+      return getRole(this.dao, this.wallet.accountId)
     },
   },
   methods: {

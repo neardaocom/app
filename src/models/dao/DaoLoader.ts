@@ -37,7 +37,7 @@ import WFInstanceTransformer from "./transformers/WFInstanceTransformer";
 import TreasuryAnalytics from "./analytics/TreasuryAnalytics";
 import PromiseHelper from "../utils/PromiseHelper";
 import { RewardPricelist } from "./types/rewards";
-import RewardPricelistTransformer from "./transformers/RewardPricelistTransformer";
+import RewardsPricelistTransformer from "./transformers/RewardsPricelistTransformer";
 
 export default class DaoLoader {
     private id: string;
@@ -98,7 +98,7 @@ export default class DaoLoader {
         const tags = this.getGlobalTags()
         const staking = await this.getStaking(walletId)
         const treasuryLocks = await this.getTreasuryLocks()
-        const rewards = await this.getRewards(groups)
+        const rewardsPricelists = await this.getRewards(groups)
 
         // token holders 
         // TODO: Is it good way to find members, form proposals??
@@ -152,7 +152,7 @@ export default class DaoLoader {
             staking: staking,
             settings: this.dataChain[7],
             statistics: this.dataChain[8],
-            rewards: rewards,
+            rewardsPricelists: rewardsPricelists,
         }
     }
 
@@ -246,7 +246,7 @@ export default class DaoLoader {
      */
      async getRewards(groups: DAOGroup[]): Promise<RewardPricelist[]> {
         const rewards: RewardPricelist[] = []
-        const transformer = new RewardPricelistTransformer(this.ftMetadataLoader, groups)
+        const transformer = new RewardsPricelistTransformer(this.ftMetadataLoader, groups)
         for (let i = 0; i < this.dataChain[16].length; i++) {
             // console.log(lockItem)
             rewards.push(await transformer.transform(this.dataChain[16][i]))

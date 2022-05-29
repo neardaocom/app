@@ -203,7 +203,7 @@ export type DAO = {
   staking: Staking;
   settings: Settings;
   statistics: Record<string, unknown>;
-  rewards: RewardPricelist[];
+  rewardsPricelists: RewardPricelist[];
 }
 
 export type DAODTO = {
