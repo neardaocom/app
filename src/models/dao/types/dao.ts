@@ -5,6 +5,7 @@ import { WFInstance, WFTemplate } from "./workflow";
 import { TreasuryLock } from "./treasury";
 import { Staking } from "./staking";
 import { Settings } from "@/models/nearBlockchain/types/dao";
+import { RewardPricelist } from "./rewards";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -202,6 +203,7 @@ export type DAO = {
   staking: Staking;
   settings: Settings;
   statistics: Record<string, unknown>;
+  rewards: RewardPricelist[];
 }
 
 export type DAODTO = {

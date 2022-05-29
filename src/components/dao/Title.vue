@@ -6,8 +6,8 @@
         <div class="d-flex position-absolute top-0 end-0 me-4 mt-3">
 
         <MDBDropdown btnGroup v-model="dropdown1" >
-          <MDBBtn color="primary" tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'wallet_account' }}" size="sm" class="bg-gradient-110">
-            <i class="bi bi-wallet2 me-2"/>{{t('default.dao_wallet')}}
+          <MDBBtn color="primary" tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'rewards' }}" size="sm" class="bg-gradient-110">
+            <i class="bi bi-coin me-2"/>{{t('default.rewards')}}
           </MDBBtn>
           <MDBDropdownToggle split @click="dropdown1 = !dropdown1" size="sm" class="bg-gradient-110" />
           <MDBDropdownMenu>

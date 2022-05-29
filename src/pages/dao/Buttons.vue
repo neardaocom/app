@@ -72,7 +72,8 @@
                   </template>
                 </template>
               </template>
-              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, null, 100, 3600, 1)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 3)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click.prevent="createLockSimple('Council commissions', 5, 100000)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.lock_simple') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -106,6 +107,7 @@ import {
 } from "mdb-vue-ui-kit";
 import Rights from "@/models/dao/Rights";
 import { useRewards } from '@/hooks/rewards'
+import { useTreasury } from '@/hooks/treasury';
 
 export default {
   components: {
@@ -147,6 +149,7 @@ export default {
     const latestDaoVersion = ref(0)
 
     const { daoRewards, createSalary } = useRewards(dao, loader)
+    const { daoTreasury, createLockSimple } = useTreasury(dao, loader)
 
     const form = ref()
 
@@ -178,6 +181,7 @@ export default {
       modalProp,
       activeTabId1,
       daoRewards, createSalary,
+      daoTreasury, createLockSimple,
     };
   },
 

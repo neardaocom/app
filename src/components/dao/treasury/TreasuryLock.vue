@@ -2,12 +2,12 @@
    <MDBCard text="start">
       <MDBRow class="g-0">
          <MDBCol col="1" 
-            :class="unlocked ? 'bg-success' : 'bg-danger'" 
+            :class="isUnlocked ? 'bg-success' : 'bg-danger'" 
             class="d-flex flex-column justify-content-between text-center text-white py-4" 
             style="border-radius: 0.5rem 0 0 0.5rem"
          >
             <div > 
-               <i v-if="!unlocked" class="bi bi-lock fa-2x"/>
+               <i v-if="!isUnlocked" class="bi bi-lock fa-2x"/>
                <i v-else class="bi bi-unlock fa-2x"/>
             </div>
             <div>#{{lock.id}}</div>
@@ -21,7 +21,7 @@
                      </small>
                      <MDBCardTitle class="fw-bold"> {{lock.name}} </MDBCardTitle>
                   </div>
-                  <div class="d-flex align-items-center ms-auto">
+                  <div v-if="lock.nextUnlock" class="d-flex align-items-center ms-auto">
                      <MDBBadge color="muted" pill class="me-2" style="padding: 0.3rem" ><i class="bi bi-unlock"/></MDBBadge>
                      <div>
                         <div class="fw-bold">
@@ -41,13 +41,13 @@
                         <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="asset.unlocked"/><span class="fs-5 fw-bold" >{{asset.asset.symbol}}</span></span>
                      </div>
                      <div class="mt-n2" style="margin-left: 33px">
-                        <NumberFormatter :amount="asset.totalLocked"/> <span class="text-muted small"> {{t('default.total_locked')}} </span>
+                        <NumberFormatter :amount="computeUnlocked(asset)"/> <span class="text-muted small"> {{t('default.treasury_locked')}} </span>
                      </div>
                   </div>
                </MDBCardText>
                <MDBCardText>
                   <div class="d-flex justify-content-between">
-                     <!-- <span class="text-muted">Locked by filla.testnet</span> -->
+                     <MDBBtn v-if="canUnlock" @click="unlock(lock.id)" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{ t('default.treasury_unlock') }}</MDBBtn>
                      <a href="#" class="text-dark text-decoration-underline ms-auto">{{t('default.detail')}}</a>
                   </div>
                   
@@ -67,11 +67,13 @@ import {
    MDBCardTitle,
    MDBBadge,
    MDBRow,
-   MDBCol
+   MDBCol,
+   MDBBtn,
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
-import { computed, toRefs } from '@vue/reactivity'
+import { toRefs } from '@vue/reactivity'
 import Icon from '@/components/ui/Icon.vue'
+import { useTreasuryLock } from '@/hooks/treasury'
 
 export default {
    components: {
@@ -83,22 +85,28 @@ export default {
       MDBRow,
       MDBCol,
       Icon,
+      MDBBtn,
       NumberFormatter
    },
    props: {
       lock:{
          type: Object,
          required: true
+      },
+      unlock: {
+         type: Function,
+         required: true
       }
    },
    setup (props) {
       const { t } = useI18n()
       const {lock} = toRefs(props)
-      const unlocked = computed(() => Date.now() > lock.value.nextUnlock?.getTime())
+      
+      const { isUnlocked, canUnlock, computeUnlocked } = useTreasuryLock(lock)
 
       return {
          t,
-         unlocked
+         isUnlocked, canUnlock, computeUnlocked
       }
    }
 }

@@ -2,12 +2,16 @@ import { ProposalInputs } from "../nearBlockchain/types/dao";
 import { TemplateSettings, TransitionLimit } from "../nearBlockchain/types/workflow";
 
 import loSet from "lodash/set";
+import loUnset from "lodash/unset";
 import { DAORights, DAOVoteLevel } from "./types/dao";
 import { AppError } from "../utils/errors";
 import NearUtils from "../nearBlockchain/Utils";
 import Rights from "./Rights";
+import WfProviderContract from "../nearBlockchain/WfProviderContractService";
 
 export default class ProposalBuilder {
+    private service: WfProviderContract;
+
     private description?: number;
     private templateId?: number;
     private templateSettingsId?: number;
@@ -17,12 +21,14 @@ export default class ProposalBuilder {
     private activityConstants: any[] = [];
     
     // template
-    private proposeRights?: DAORights[];
-    private voteRight?: DAORights;
-    private voteLevel?: DAOVoteLevel;
-    private activities: [DAORights[], TransitionLimit[]][] = [];
+    private templateWorkflowId?: number;
+    private templateProposeRights?: DAORights[];
+    private templateVoteRight?: DAORights;
+    private templateVoteLevel?: DAOVoteLevel;
+    private templateActivitiesRights: DAORights[][] = [];
 
-    constructor() {
+    constructor(service: WfProviderContract) {
+        this.service = service
     }
 
     addTemplateId(templateId: number) {
@@ -63,7 +69,7 @@ export default class ProposalBuilder {
     }
 
     addActivityActionConstant(key: string, value: object) {
-        loSet(this.activityConstants[this.activityConstants.length - 1].actions_constants[0].map, key, value)
+        loSet(this.activityConstants[this.activityConstants.length - 1].actions_constants[0].map, [key], value)
     }
 
     addActivityActionConstantString(key: string, value: string) {
@@ -78,24 +84,28 @@ export default class ProposalBuilder {
         this.addActivityActionConstant(key, {'u128': value})
     }
 
-    addTemplateVoteLevel(voteLevel: DAOVoteLevel) {
-        this.voteLevel = voteLevel
+    addTemplateWorflowId(workflowId: number) {
+        this.templateWorkflowId = workflowId
     }
 
-    addTemplateProposeRights(proposeRights: DAORights[]) {
-        this.proposeRights = proposeRights
+    addTemplateVoteLevel(templateVoteLevel: DAOVoteLevel) {
+        this.templateVoteLevel = templateVoteLevel
     }
 
-    addTemplateVoteRights(voteRight: DAORights) {
-        this.voteRight = voteRight
+    addTemplateProposeRights(templateProposeRights: DAORights[]) {
+        this.templateProposeRights = templateProposeRights
     }
 
-    addTemplateActivity(rights: DAORights[], transationLimits: TransitionLimit[] ) {
-        this.activities.push([rights, transationLimits])
+    addTemplateVoteRights(templateVoteRight: DAORights) {
+        this.templateVoteRight = templateVoteRight
+    }
+
+    addTemplateActivity(rights: DAORights[]) {
+        this.templateActivitiesRights.push(rights)
     }
 
 
-    create(): ProposalInputs {
+    async create(): Promise<ProposalInputs> {
         if (this.templateId === undefined) {
             throw new Error("TemplateId is not defined");
         }
@@ -105,24 +115,29 @@ export default class ProposalBuilder {
         }
 
         let templateSettings: TemplateSettings[] | null = null
-        if ( this.voteLevel !== undefined || this.voteRight !== undefined || this.proposeRights !== undefined ) {
+        if ( this.templateWorkflowId !== undefined || this.templateVoteLevel !== undefined || this.templateVoteRight !== undefined || this.templateProposeRights !== undefined ) {
             // check
-            console.log(this.activities)
-            if (this.voteLevel === undefined || this.voteRight === undefined || this.proposeRights === undefined) {
-                throw new AppError("voteLevel and this.voteRight and this.proposeRights must be added")
+            if (this.templateWorkflowId === undefined || this.templateVoteLevel === undefined || this.templateVoteRight === undefined || this.templateProposeRights === undefined) {
+                throw new AppError("templateWorkflowId and templateVoteLevel and this.templateVoteRight and this.templateProposeRights must be added")
             }
 
+            // load template from provider
+            const templateProvider = await this.service.wfTemplate(this.templateWorkflowId)
+            // console.log(templateProvider[0].transitions)
+
             templateSettings = [{
-                allowed_proposers: this.proposeRights.map((item) => Rights.toObject(item)),
-                allowed_voters: Rights.toObject(this.voteRight!),
-                activity_rights: this.activities.map((item) => item[0]).map((item) => item.map((right) => Rights.toObject(right))),
-                transition_limits: this.activities.map((item) => item[1]),
-                scenario: this.voteLevel!.type === 0 ? 'democratic' : 'token_weighted',
-                duration: NearUtils.durationToChain(this.voteLevel!.duration),
-                quorum: this.voteLevel!.quorum,
-                approve_threshold: this.voteLevel!.approveThreshold,
-                spam_threshold: this.voteLevel!.spamThreshold || 80,
-                vote_only_once: this.voteLevel!.voteOnlyOnce,
+                allowed_proposers: this.templateProposeRights.map((item) => Rights.toObject(item)),
+                allowed_voters: Rights.toObject(this.templateVoteRight!),
+                activity_rights: this.templateActivitiesRights.map((item) => item.map((right) => Rights.toObject(right))),
+                transition_limits: templateProvider[0].transitions.map((transition) =>
+                    transition.map((transitionItem) => ({ to: transitionItem.activity_id, limit: 100})
+                )),
+                scenario: this.templateVoteLevel!.type === 0 ? 'democratic' : 'token_weighted',
+                duration: NearUtils.durationToChain(this.templateVoteLevel!.duration),
+                quorum: this.templateVoteLevel!.quorum,
+                approve_threshold: this.templateVoteLevel!.approveThreshold,
+                spam_threshold: this.templateVoteLevel!.spamThreshold || 80,
+                vote_only_once: this.templateVoteLevel!.voteOnlyOnce,
                 deposit_propose: NearUtils.nearToYocto(1),
                 deposit_vote: '1',
                 deposit_propose_return: 0,

@@ -69,6 +69,7 @@
     },
     setup() {
       const config = inject('config')
+      const wallet = inject('wallet')
       const collapse = ref(false);
       const dropdown = ref(false);
       const { t } = useI18n();
@@ -76,7 +77,8 @@
         t,
         config,
         collapse,
-        dropdown
+        dropdown,
+        wallet,
       }
     },
     computed: {
@@ -99,6 +101,7 @@
         },
         logout() {
           this.$logger.info('B', 'User', 'Logout', `Wallet ${this.walletId} is logged out`)
+          //this.wallet.
           this.$store.commit('near/signOut')
           if (this.$route.name === "dao-create"){
             this.$router.push({name: 'landing-page'})
