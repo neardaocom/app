@@ -1,6 +1,6 @@
 <template>
    <div class="container mb-4">
-      <div class="mb-7">
+      <div v-show="false" class="mb-7">
          <h5 class="text-start mb-4">{{t('default.wallet')}}</h5>
          <div class="row g-2">
             <div class="col-md-4">
@@ -9,14 +9,14 @@
          </div>
       </div>
 
-      <div v-if="rewardsAssetsStats.lenght > 0" class="mb-7">
+      <div v-if="rewardsAssetsStats?.length > 0" class="mb-7 mt-4">
          <div class="d-flex mb-4">
             <h5 class="text-start me-auto">{{t('default.assets_to_withdraw')}}</h5>
             <MDBBtn color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
          </div>
          <div class="row g-2">
             <div v-for="reward in rewardsAssetsStats" :key="reward.id" class="col-md-4">
-               <AssetToWithdraw :countingAmount="reward.amountCounting" :withdrawAmount="reward.amount" :icon="reward.asset.icon" :suffix="reward.asset.icon" type="Token"/>
+               <AssetToWithdraw :countingAmount="reward.amountCounting" :withdrawAmount="reward.amount" :icon="reward.asset.icon" :suffix="reward.asset.symbol" type="Token"/>
             </div>
          </div>
       </div>
