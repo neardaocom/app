@@ -61,20 +61,22 @@ export default class DaoRewards {
 
     async loadClaimable(accountId: string, dao: DAO, ftMetadataLoader: FtMetadataLoader): Promise<Reward[]> {
         let list: Reward[] = []
+        // TODO: account not in rewards
         if (accountId) {
             // console.log('Claimable reward loading...')
             const dataChain = await Promise.all([
                 this.servicePool.getContract(dao.wallet).wallet(accountId),
                 this.servicePool.getContract(dao.wallet).claimableRewards(accountId),
             ]).catch((e) => {
-                throw new Error(`DataChain not loaded: ${e}`);
+                console.log(e)
+                // throw new Error(`DataChain not loaded: ${e}`);
             })
             // console.log(dataChain)
             const transformer = new RewardsClaimableTransformer(dao.rewardsPricelists, dao.treasuryLocks, ftMetadataLoader)
             list = await transformer.transform({
-                rewards: loGet(dataChain, [0, 'rewards']),
-                claimable_rewards: loGet(dataChain, [1, 'claimable_rewards']),
-                failed_withdraws: loGet(dataChain, [0, 'failed_withdraws']),
+                rewards: loGet(dataChain, [0, 'rewards']) || [],
+                claimable_rewards: loGet(dataChain, [1, 'claimable_rewards']) || [],
+                failed_withdraws: loGet(dataChain, [0, 'failed_withdraws']) || [],
             })
         }
         return list
@@ -88,4 +90,6 @@ export default class DaoRewards {
             })
         })
     }
+
+    
 }
