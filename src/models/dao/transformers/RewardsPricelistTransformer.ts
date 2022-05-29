@@ -5,7 +5,6 @@ import loToPairs from "lodash/toPairs"
 import loToString from "lodash/toString"
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import NearUtils from "../../nearBlockchain/Utils";
-import TreasuryHelper from "../TreasuryHelper";
 import NumberHelper from "@/models/utils/NumberHelper";
 import DaoAssetTransformer from "./DaoAssetTransformer";
 import { DaoAsset } from "../types/asset";
@@ -13,7 +12,7 @@ import { RewardPricelist, RewardPricelistAmount, RewardType } from "../types/rew
 import { DAOGroup } from "../types/dao";
 import { NotImplementedError } from "@/models/utils/errors";
 
-export default class RewardPricelistTransformer implements TransformerInterface {
+export default class RewardsPricelistTransformer implements TransformerInterface {
 
     protected daoAssetTransformer: DaoAssetTransformer;
     protected daoGroups: DAOGroup[]

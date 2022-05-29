@@ -366,7 +366,7 @@ export default class DaoContractService extends ContractService {
    * 
    * @return Promise
    */
-  async claimableRewards(accountId: string): Promise<ClaimbleReward[]> {
+  async claimableRewards(accountId: string): Promise<Record<string, ClaimbleReward[]>> {
     return this.contract.claimable_rewards({ account_id: accountId })
   }
 
