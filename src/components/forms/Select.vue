@@ -1,7 +1,8 @@
 <template>
-    <span>
+    <div class="text-start">
         <label :for="id" class="form-label">{{ labelName }}</label>
         <MDBSelect 
+            class="mb-4"
             :filter="filter"
             :preselect="true" 
             v-model:selected="value"
@@ -16,7 +17,7 @@
             @blur="handleBlur"
             @change="handleBlur"
         />
-    </span>
+    </div>
 </template>
 
 <script>

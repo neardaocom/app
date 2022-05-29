@@ -32,7 +32,7 @@
           <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
           {{ t('default.settings') }}
         </router-link>

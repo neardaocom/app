@@ -1,30 +1,32 @@
 <template>
-    <label v-if="labelName" :for="id" class="form-label float-start">
-        {{ labelName }}
-        <TooltipLabel v-if="tooltip" :description="tooltip"/>
-    </label>
-    <MDBInput 
-        inputGroup 
-        wrapperClass="mb-4"
-        :disabled="disabled"
-        :id="id" 
-        v-model="value" 
-        :isValidated="meta.touched"
-        :isValid="!errorMessage"
-        :invalidFeedback="errorMessage" 
-        :aria-describedby="id"
-        @change="handleChange"
-        @blur="handleBlur($event), handleChange($event)"
-        @input="handleBlur"
-    >
-        <template v-if="prepend" #prepend>
-            <span class="input-group-text" id="id">{{ prepend }}</span>
-        </template>
-        <span v-if="addon" class="input-group-text" :id="id">{{ addon }}</span>
-        <MDBBtn v-if="buttonText" :id="`${id}-add`" @click="emit('buttonClick')" :color="color">
-            {{ buttonText}}
-        </MDBBtn>
-    </MDBInput>
+    <div class="text-start">
+        <label v-if="labelName" :for="id" class="form-label">
+            {{ labelName }}
+            <TooltipLabel v-if="tooltip" :description="tooltip"/>
+        </label>
+        <MDBInput 
+            inputGroup 
+            wrapperClass="mb-4"
+            :disabled="disabled"
+            :id="id" 
+            v-model="value" 
+            :isValidated="meta.touched"
+            :isValid="!errorMessage"
+            :invalidFeedback="errorMessage" 
+            :aria-describedby="id"
+            @change="handleChange"
+            @blur="handleBlur($event), handleChange($event)"
+            @input="handleBlur"
+        >
+            <template v-if="prepend" #prepend>
+                <span class="input-group-text" id="id">{{ prepend }}</span>
+            </template>
+            <span v-if="addon" class="input-group-text" :id="id">{{ addon }}</span>
+            <MDBBtn v-if="buttonText" :id="`${id}-add`" @click="emit('buttonClick')" :color="color">
+                {{ buttonText}}
+            </MDBBtn>
+        </MDBInput>
+    </div>
 
 </template>
 

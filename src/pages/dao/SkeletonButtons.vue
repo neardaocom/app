@@ -35,7 +35,7 @@
           <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
         </a>
-        <a :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <a  v-if="false"  :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
           {{ t('default.settings') }}
         </a>

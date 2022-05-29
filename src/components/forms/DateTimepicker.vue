@@ -1,17 +1,21 @@
 <template>
-    <label v-if="labelName" :for="id" class="form-label">
-        {{ labelName }}
-        <TooltipLabel v-if="tooltip" :description="tooltip"/>
-    </label>
+    <div class="text-start">
+        <label v-if="labelName" :for="id" class="form-label">
+            {{ labelName }}
+            <TooltipLabel v-if="tooltip" :description="tooltip"/>
+        </label>
 
-    <MDBTimepicker
-        v-model.trim="value"
-        :hoursFormat="24"
-        @change="handleChange"
-        @blur="handleBlur($event), handleChange($event)"
-        @input="handleBlur"
-    />
-    <FromErrorMessage class="mt-3 mb-4" :show="errorMessage !== null" :message="errorMessage"/>
+        <MDBDateTimepicker
+            class=""
+            v-model="value"
+            @change="handleChange"
+            @blur="handleBlur($event), handleChange($event)"
+            @input="handleBlur"
+            :timepicker="{ hoursFormat: 24 }"
+            :datepicker="{ format: `${t('default._datepicker_format')}` }"
+        />
+        <FromErrorMessage class="mt-3 mb-4" :show="errorMessage !== null" :message="errorMessage"/>
+    </div>
 
 </template>
 
@@ -21,13 +25,14 @@ import TooltipLabel from '@/components/forms/TooltipLabel.vue'
 import FromErrorMessage from '@/components/forms/FormErrorMessage.vue'
 
 import {
-    MDBTimepicker,
+    MDBDateTimepicker,
 } from "mdb-vue-ui-kit";
 import { toRefs } from '@vue/reactivity';
+import { useI18n } from 'vue-i18n';
 
 export default {
     components:{
-        MDBTimepicker,
+        MDBDateTimepicker,
         FromErrorMessage,
         TooltipLabel
     },
@@ -47,9 +52,11 @@ export default {
     },
     setup (props, {emit}) {
         const {id} = toRefs(props)
+        const {t} = useI18n()
         const { value, errorMessage, meta, handleChange, handleBlur } = useField(id.value);
 
         return {
+            t,
             value,
             errorMessage,
             meta,

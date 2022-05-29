@@ -147,7 +147,7 @@ export default {
         const { t, n } = useI18n()
         const dao = inject('dao')
         const { ipfsService } = useIPFS()
-        const { councilPercent } = useGroups(dao.value)
+        const { councilPercent } = useGroups(dao)
 
         const {
             web, whitepaper, wiki, sourceCode,

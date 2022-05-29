@@ -1,6 +1,6 @@
 <template>
   <div class="position-relative" v-show="show">
-    <div class="position-absolute top-0 start-0" style="width: auto; margin-top: -.75rem; font-size: .875rem; color: #f93154;">{{ getMessage }}</div>
+    <div class="position-absolute top-0 start-0 text-danger" style="width: auto; margin-top: -.75rem; font-size: .875rem">{{ getMessage }}</div>
   </div>
 </template>
 

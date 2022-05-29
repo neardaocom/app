@@ -12,7 +12,16 @@
           <MDBDropdownToggle split @click="dropdown1 = !dropdown1" size="sm" class="bg-gradient-110" />
           <MDBDropdownMenu>
             <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}">
+              <i class="bi bi-info-square me-1"/> 
               {{ t('default.about') }}
+            </MDBDropdownItem>
+            <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}">
+              <i class="bi bi-gear me-1"/> 
+              {{ t('default.settings') }}
+            </MDBDropdownItem>
+            <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}">
+              <i class="bi bi-graph-up me-1"/>
+              {{ t('default.dApps') }}
             </MDBDropdownItem>
           </MDBDropdownMenu>
         </MDBDropdown>

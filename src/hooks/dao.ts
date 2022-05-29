@@ -42,14 +42,15 @@ export const useLinks = (dao: DAO) => {
     }
 }
 
-export const useGroups = (dao: DAO) => {
+export const useGroups = (dao: Ref<DAO>) => {
     const { t } = useI18n()
 
-    const council = computed(() => getGroupCouncil(dao, t))
+    const council = computed(() => getGroupCouncil(dao.value, t))
     const councilPercent = computed(() => undefined) // TODO: Move to lock
+    const groupsOptions =  computed(() => CollectionHelper.toOptions(dao.value.groups, ['name'], ['id']))
 
     return {
-        council, councilPercent
+        council, councilPercent, groupsOptions
     }
 }
 
