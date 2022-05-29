@@ -5,18 +5,21 @@
             <div class="rounded-circle me-2 fw-bold d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; box-shadow: 0px 3px 6px #0000001F;">
                <i class="bi bi-person" style="font-size: 1.2rem;"/>
             </div>
-            <span class="fs-6 fw-800">{{accountId}} 
-               <a class="" :href="nearWalletUrl + '/accounts/' + accountId" target="_blank">
+            <span class="fs-6 fw-800">{{ user.accountId }}
+               <a class="" :href="nearWalletUrl + '/accounts/' + user.accountId" target="_blank">
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
-            </span>   
+            </span>
          </div>
          <div class="text-start small mb-3">
-            {{bio}}
+            {{ user.bio }}
          </div>
          <div class="d-flex">
-            <MDBBadge color="primary" class="align-self-center"> {{tag}} </MDBBadge>
-            <div class="ms-auto"> {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{amount}}</span></div>
+            <MDBBadge color="primary" class="align-self-center"> {{user.tag}} </MDBBadge>
+         </div>
+         <div class="d-flex">
+            <div>{{t('default.vote_amount')}} <span class="fw-bold ms-1">{{ user.voteAmount }}</span></div>
+            <div class="ms-auto"> {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{ user.votesCasted }}</span></div>
          </div>
       </MDBCardBody>
    </MDBCard>
@@ -34,22 +37,10 @@ export default {
       MDBBadge
     },
    props: {
-      accountId:{
-         type: String,
+      user: {
+         type: Object,
          required: true
       },
-      bio:{
-         type: String,
-         required: false
-      },
-      tag:{
-         type: String,
-         required: false
-      },
-      amount:{
-         type: [Number, String],
-         required: true
-      }
    },
       
    setup () {

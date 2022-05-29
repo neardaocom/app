@@ -35,7 +35,7 @@
          <h5 class="text-start mb-3">{{t('default.users_to_delegate')}}</h5>
          <div class="row g-2">
             <div v-for="user in dao.staking.usersToDelegate" :key="user.id" class="col-md-4">
-               <UsersToDelegate :accountId="user.accountId" :bio="user.bio" :tag="user.tag" :amount="user.votesCasted"/>
+               <UsersToDelegate :user="user" />
             </div>
          </div>
       </div>
