@@ -64,6 +64,7 @@ import DaoAsset from '@/components/dao/dashboard/DaoAsset.vue'
 import Incentives from '@/components/dao/dashboard/Incentives.vue';
 
 
+
 export default {
   components: {
     Proposal,
@@ -73,7 +74,7 @@ export default {
     GovernanceToken,
     ActiveProposals,
     DaoAsset,
-    Incentives,
+    Incentives
   },
   props: {
     walletId: {

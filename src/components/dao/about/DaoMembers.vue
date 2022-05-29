@@ -39,7 +39,7 @@ export default {
    setup () {
       const dao = inject('dao')
       const { t, n } = useI18n()
-      const { council, councilPercent } = useGroups(dao.value)
+      const { council, councilPercent } = useGroups(dao)
 
       return {t, n, council, councilPercent}
    }

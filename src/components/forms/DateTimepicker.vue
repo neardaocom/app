@@ -1,18 +1,21 @@
 <template>
-    <label v-if="labelName" :for="id" class="form-label">
-        {{ labelName }}
-        <TooltipLabel v-if="tooltip" :description="tooltip"/>
-    </label>
+    <div class="text-start">
+        <label v-if="labelName" :for="id" class="form-label">
+            {{ labelName }}
+            <TooltipLabel v-if="tooltip" :description="tooltip"/>
+        </label>
 
-    <MDBDateTimepicker
-        v-model="value"
-        @change="handleChange"
-        @blur="handleBlur($event), handleChange($event)"
-        @input="handleBlur"
-        :timepicker="{ hoursFormat: 24 }"
-        :datepicker="{ format: `${t('default._datepicker_format')}` }"
-    />
-    <FromErrorMessage class="mt-3" :show="errorMessage !== null" :message="errorMessage"/>
+        <MDBDateTimepicker
+            class=""
+            v-model="value"
+            @change="handleChange"
+            @blur="handleBlur($event), handleChange($event)"
+            @input="handleBlur"
+            :timepicker="{ hoursFormat: 24 }"
+            :datepicker="{ format: `${t('default._datepicker_format')}` }"
+        />
+        <FromErrorMessage class="mt-3 mb-4" :show="errorMessage !== null" :message="errorMessage"/>
+    </div>
 
 </template>
 
