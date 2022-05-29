@@ -50,9 +50,9 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import NextUnlock from '@/components/dao/walletAccount/NextUnlock.vue'
-import AssetToWithdraw from '@/components/dao/walletAccount/AssetToWithdraw.vue'
-import Incentives from '@/components/dao/walletAccount/Incentives.vue'
+import NextUnlock from '@/components/dao/rewards/NextUnlock.vue'
+import AssetToWithdraw from '@/components/dao/rewards/AssetToWithdraw.vue'
+import Incentives from '@/components/dao/rewards/Incentives.vue'
 import { MDBBtn } from "mdb-vue-ui-kit";
 export default {
     components: {

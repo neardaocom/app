@@ -3,17 +3,19 @@
       <MDBCardBody>
          <div class="d-flex">
             <div class="d-flex align-items-center">
-               <Icon v-if="suffix==='NEAR'"  icon="NEAR" :size="50"/>
-               <Icon v-else :icon="icon" :size="50"/>
+               <slot name="icon">
+                  <Icon v-if="suffix==='NEAR'"  icon="NEAR" :size="50"/>
+                  <Icon v-else :icon="icon" :size="50"/>
+               </slot>
                <div class="text-start">
-                  <div class="fs-5 fw-bold me-1"> {{accountId}} </div>
+                  <div class="fs-5 fw-bold me-1"> {{suffix}} </div>
                   <div class="text-muted small mt-n2">{{type}}</div>
                </div>
             </div>
 
             <div class="ms-auto text-end">
-               <span class="fs-5 fw-bold"><NumberFormatter :amount="amount"/></span><span class="fs-5 ps-1">{{suffix}}</span>
-               <div v-if="usd" class="text-end"><span class="fw-bold"><NumberFormatter :amount="amount"/></span><span class="ps-1">USD</span></div>
+               <NumberFormatter :amount="countingAmount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{suffix}}</span>
+               <div><NumberFormatter :amount="withdrawAmount" class="fw-bold"/><span class="ps-1">{{t('default.to_withdraw')}}</span></div>
             </div>
          </div>
          
@@ -28,7 +30,7 @@ import {
    MDBCardBody
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
-import Icon from '@/components/ui/Icon.vue'
+import Icon from "@/components/ui/Icon.vue"
 
 export default {
    components: {
@@ -46,23 +48,18 @@ export default {
          type: String,
          required: false
       },
-      accountId:{
-         type: String,
-         required: false
+      countingAmount:{
+         type: [Number, String],
+         required: true
       },
-      amount:{
+      withdrawAmount:{
          type: [Number, String],
          required: true
       },
       suffix:{
          type: String,
          required: true
-      },
-      usd:{
-         type: Boolean,
-         required: false,
-         default: false
-      },
+      }
    },
    setup () {
       const {t} = useI18n()

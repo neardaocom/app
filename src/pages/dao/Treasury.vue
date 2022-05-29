@@ -6,7 +6,7 @@
             <InfoAmountCard :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
             <InfoAmountCard :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol" style="min-width: 283px" :icon="treasuryToken.asset.icon"/>
             <InfoAmountCard v-for="(ftAsset, index) in treasuryFtAssets" :key="index"
-               :amount="ftAsset.value.amount - ftAsset.value.amountLockedInLocks" :suffix="ftAsset.asset.symbol" style="min-width: 283px" :icon="ftAsset.asset.symbol">
+               :amount="ftAsset.amount - ftAsset.amountLockedInLocks" :suffix="ftAsset.asset.symbol" style="min-width: 283px" :icon="ftAsset.asset.symbol">
             </InfoAmountCard>
          </div>
       </div>
