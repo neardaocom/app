@@ -47,4 +47,8 @@ export default class DaoTreasury {
 
         return this.daoService.proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
     }
+
+    async unlock(lockId: number) {
+        return this.daoService.unlockPartitionAssets(lockId, NearUtils.toTGas(50))
+    }
 }

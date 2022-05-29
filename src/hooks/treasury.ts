@@ -2,10 +2,11 @@
 import { DAO } from "@/models/dao/types/dao";
 import { onMounted, Ref, ref, computed } from "vue";
 import CollectionHelper from "@/models/utils/CollectionHelper";
-import { TreasuryLock, TreasuryTotalAsset } from "@/models/dao/types/treasury"
+import { TreasuryLock, TreasuryLockAsset, TreasuryTotalAsset } from "@/models/dao/types/treasury"
 import { Loader } from "@/loader";
 import TreasuryAnalytics from "@/models/dao/analytics/TreasuryAnalytics";
 import DaoTreasury from "@/models/dao/DaoTreasury";
+import TreasuryHelper from "@/models/dao/TreasuryHelper";
 
 export const useAnalytics = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const dataLoaded = ref<boolean>(false)
@@ -40,6 +41,17 @@ export const useTreasury = (dao: Ref<DAO>, loader: Ref<Loader>) => {
 
     const createLockSimple = (name: string, amountNear: number | null, amountToken: number | null) =>
         daoTreasury.value.createLockSimple(dao.value, name, amountNear, amountToken)
+    const unlock = (lockId: number) =>
+        daoTreasury.value.unlock(lockId)
 
-    return { daoTreasury, createLockSimple }
+    return { daoTreasury, createLockSimple, unlock }
+}
+
+export const useTreasuryLock = (lock: Ref<TreasuryLock>) => {
+    const isUnlocked = computed(() => TreasuryHelper.isUnlocked(lock.value))
+    const canUnlock = computed(() => TreasuryHelper.canUnlock(lock.value))
+
+    const computeUnlocked = (lockAsset: TreasuryLockAsset) => TreasuryHelper.getLocked(lockAsset)
+
+    return { isUnlocked, canUnlock, computeUnlocked }
 }

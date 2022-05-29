@@ -15,7 +15,7 @@
          <h5 class="text-start me-auto">{{t('default.locks')}}</h5>
          <div class="row g-3">
             <div v-for="lock in treasuryLocks" :key="lock.id" class="col-md-6">
-               <TreasuryLock :lock="lock"/>
+               <TreasuryLock :lock="lock" :unlock="unlock"/>
             </div>
          </div>
       </div>
@@ -30,7 +30,7 @@ import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
 import { inject } from '@vue/runtime-core';
-import {useAnalytics} from '@/hooks/treasury'
+import {useAnalytics, useTreasury} from '@/hooks/treasury'
 export default {
    components: {
       InfoAmountCard,
@@ -42,10 +42,11 @@ export default {
       const dao = inject('dao')
       const loader = inject('loader')
       const { dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets, availableNearAmount,  availableTokenAmount } = useAnalytics(dao, loader)
+      const { unlock } = useTreasury(dao, loader)
 
       return {
          t, dao, dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets,
-         availableNearAmount, availableTokenAmount
+         availableNearAmount, availableTokenAmount, unlock
       }
    }
 }

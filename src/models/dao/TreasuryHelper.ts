@@ -1,7 +1,7 @@
 
 import Decimal from "decimal.js";
 import moment from "moment";
-import { TreasuryLockAsset, TreasuryAssetUnlocking } from "./types/treasury";
+import { TreasuryLockAsset, TreasuryAssetUnlocking, TreasuryLock } from "./types/treasury";
 
 export default class TreasuryHelper {
 
@@ -56,5 +56,17 @@ export default class TreasuryHelper {
     }
 
     return nextUnlock
+  }
+
+  static canUnlock(lock: TreasuryLock): boolean {
+    return lock.nextUnlock !== null && Date.now().valueOf() > lock.nextUnlock?.valueOf()
+  }
+
+  static isUnlocked(lock: TreasuryLock): boolean {
+    return lock.nextUnlock === null || Date.now().valueOf() > lock.nextUnlock?.valueOf()
+  }
+
+  static getLocked(lockAsset: TreasuryLockAsset): number {
+    return lockAsset.totalLocked - lockAsset.totalUnlocked
   }
 }
