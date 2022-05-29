@@ -4,6 +4,7 @@ import NearUtils from "../nearBlockchain/Utils";
 import DaoUtils from "../dao/Utils";
 import DaoContractService from "../nearBlockchain/DaoContractService";
 import WfProviderContractService from "../nearBlockchain/WfProviderContractService";
+import { RewardPricelist } from "./types/rewards";
 
 export default class DaoRewards {
     private daoService: DaoContractService;
@@ -51,5 +52,9 @@ export default class DaoRewards {
         console.log(createArgs)
 
         return this.daoService.proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
+    }
+
+    static getList(dao: DAO, type: string): RewardPricelist[] {
+        return dao.rewards.filter((item) => item.type === type)
     }
 }

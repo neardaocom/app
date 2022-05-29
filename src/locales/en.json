@@ -502,6 +502,7 @@
   "salary": "Salary",
   "event": "Event",
   "detail": "Detail",
+  "rewards": "Rewards",
   "treasury_locked": "Locked",
   "treasury_unlock": "Unlock",
   "unlocking_token": "Unlocking token",

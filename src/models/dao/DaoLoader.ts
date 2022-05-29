@@ -36,6 +36,8 @@ import ProposalTransformer from "./transformers/ProposalTransformer";
 import WFInstanceTransformer from "./transformers/WFInstanceTransformer";
 import TreasuryAnalytics from "./analytics/TreasuryAnalytics";
 import PromiseHelper from "../utils/PromiseHelper";
+import { RewardPricelist } from "./types/rewards";
+import RewardPricelistTransformer from "./transformers/RewardPricelistTransformer";
 
 export default class DaoLoader {
     private id: string;
@@ -96,6 +98,7 @@ export default class DaoLoader {
         const tags = this.getGlobalTags()
         const staking = await this.getStaking(walletId)
         const treasuryLocks = await this.getTreasuryLocks()
+        const rewards = await this.getRewards(groups)
 
         // token holders 
         // TODO: Is it good way to find members, form proposals??
@@ -149,6 +152,7 @@ export default class DaoLoader {
             staking: staking,
             settings: this.dataChain[7],
             statistics: this.dataChain[8],
+            rewards: rewards,
         }
     }
 
@@ -176,6 +180,7 @@ export default class DaoLoader {
           this.stakingService.daoFtTotalSupply(this.id),
           this.stakingService.daoUserList(this.id),
           this.daoService.partitionList(0, 1000), // 15: treasury
+          this.daoService.rewardList(1, 1000)// 16: reward list
         ]).catch((e) => {
           throw new Error(`DataChain[${this.id}] not loaded: ${e}`);
         });
@@ -233,6 +238,20 @@ export default class DaoLoader {
             locks.push(await transformer.transform(lockItem))
         }
         return locks
+    }
+
+    /**
+     * Transform rewards
+     * @returns 
+     */
+     async getRewards(groups: DAOGroup[]): Promise<RewardPricelist[]> {
+        const rewards: RewardPricelist[] = []
+        const transformer = new RewardPricelistTransformer(this.ftMetadataLoader, groups)
+        for (let i = 0; i < this.dataChain[16].length; i++) {
+            // console.log(lockItem)
+            rewards.push(await transformer.transform(this.dataChain[16][i]))
+        }
+        return rewards
     }
 
     /**

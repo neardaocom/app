@@ -1,3 +1,5 @@
+import { DaoAsset } from "./asset";
+
 export type TreasuryLockCategory = 'salary' | 'event' | 'activity'
 export type TreasuryAssetUnlockingType = 'linear' | 'none'
 
@@ -11,7 +13,7 @@ export type TreasuryLock = {
 }
 
 export type TreasuryLockAsset = {
-    asset: TreasuryAsset;
+    asset: DaoAsset;
     startFrom: Date;
     totalLocked: number;
     totalUnlocked: number;
@@ -19,15 +21,7 @@ export type TreasuryLockAsset = {
     unlocking: TreasuryAssetUnlocking[];
 }
 
-export type TreasuryAsset = {
-    type: string; // near, ft, nft
-    accountId: string;
-    name: string;
-    symbol: string;
-    icon: string|null;
-    decimals: number;
-    priceInUSD?: number;
-}
+
 
 export type TreasuryAssetUnlocking = {
     targetDate: Date;
@@ -36,7 +30,7 @@ export type TreasuryAssetUnlocking = {
 }
 
 export type TreasuryTotalAsset = {
-    asset: TreasuryAsset;
+    asset: DaoAsset;
     amount: number; // amount owned by DAO
     amountLockedInLocks: number;
 }

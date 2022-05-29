@@ -1,5 +1,5 @@
 import { DAO } from "@/models/dao/types/dao";
-import { onMounted, Ref, ref, computed } from "vue";
+import { Ref, ref, computed } from "vue";
 import { Loader } from "@/loader";
 import DaoRewards from "@/models/dao/DaoRewards";
 
@@ -11,4 +11,12 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
         daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, new Date())
 
     return { daoRewards, createSalary }
+}
+
+export const useRewardsList = (dao: Ref<DAO>) => {
+    const rewardsSalary = computed(() => DaoRewards.getList(dao.value, 'salary'))
+    const rewardsActivity = computed(() => DaoRewards.getList(dao.value, 'activity'))
+    const rewardsEvent = computed(() => DaoRewards.getList(dao.value, 'event'))
+
+    return { rewardsSalary, rewardsActivity, rewardsEvent }
 }
