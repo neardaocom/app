@@ -19,17 +19,17 @@
     </div> 
 
     <h5 class="text-start">{{t('default.dao_assets')}}</h5>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAsset />
+        <DaoAsset  :accountId="treasuryNear.asset.symbol" :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" :icon="treasuryNear.asset.icon" type="Token"/>
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAsset />
+        <DaoAsset  :accountId="treasuryToken.asset.accountId" :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol" :icon="treasuryToken.asset.icon" type="Token"/>
       </div>
-      <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <DaoAsset />
+      <div v-for="(ftAsset, index) in treasuryFtAssets" :key="index" class="col-12 col-md-6 col-lg-5 mb-4">
+        <DaoAsset :accountId="ftAsset.asset.accountId" :amount="ftAsset.amount - ftAsset.amountLockedInLocks" :suffix="ftAsset.asset.symbol" :icon="ftAsset.asset.icon" type="Token"/>
       </div>
-    </div>
+    </div> -->
 
     <hr/>
     <div class="row mt-2">
@@ -60,8 +60,9 @@ import _ from "lodash"
 // import loFind from "lodash/find"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
-import DaoAsset from '@/components/dao/dashboard/DaoAsset.vue'
+// import DaoAsset from '@/components/dao/dashboard/DaoAsset.vue'
 import Incentives from '@/components/dao/dashboard/Incentives.vue';
+import { useAnalytics } from '@/hooks/treasury';
 
 
 
@@ -73,7 +74,7 @@ export default {
     DashboardOverview,
     GovernanceToken,
     ActiveProposals,
-    DaoAsset,
+    // DaoAsset,
     Incentives
   },
   props: {
@@ -93,8 +94,9 @@ export default {
   setup() {
     const { t, n } = useI18n();
     const dao = inject('dao')
+    const loader = inject('loader')
     // const { walletId, walletRights, daoRights } = toRefs(props)
-
+    const { dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets, availableNearAmount,  availableTokenAmount } = useAnalytics(dao, loader)
     const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
     // console.log(dao, walletId, walletRights, daoRights, d)
     // proposals
@@ -107,7 +109,10 @@ export default {
 
 
     return {
-      dao, t, n, proposals, skywardSaleIds
+      dao, t, n, proposals, skywardSaleIds,
+      treasuryNear, availableNearAmount, treasuryFtAssets,
+      treasuryToken, treasuryTotalAssets, treasuryLocks,
+      dataLoaded, availableTokenAmount
     };
   },
   computed: {
