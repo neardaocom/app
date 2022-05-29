@@ -14,8 +14,8 @@
             </div>
 
             <div class="ms-auto text-end">
-               <NumberFormatter :amount="countingAmount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{suffix}}</span>
-               <div><NumberFormatter :amount="withdrawAmount" class="fw-bold"/><span class="ps-1">{{t('default.to_withdraw')}}</span></div>
+               <NumberFormatter :amount="withdrawAmount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{suffix}}</span>
+               <div><NumberFormatter :amount="countingAmount" class="fw-bold"/><span class="ps-1">{{t('default.to_withdraw')}}</span></div>
             </div>
          </div>
          
