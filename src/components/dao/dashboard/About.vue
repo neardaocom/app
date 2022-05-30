@@ -24,8 +24,11 @@
             </div>
 
             <div class="fw-bold mb-2">
-                <i class="bi bi-people me-2 text-info"/>
-                {{`${n(users)} ${t('default.members')} | ${councilPercent || "-"}% ${t('default.council')}`}} 
+                <i class="bi bi-people me-2 text-info"/>{{ n(users) }} {{ t('default.members')}}<br/>
+                <i class="bi bi-diagram-3 me-2 text-info"/>
+                <template v-for="(group, index) in groupNames" :key="index">
+                    <span v-if="index > 0"> | </span>{{ group }}
+                </template>
             </div>
 
 
@@ -129,7 +132,7 @@
 import { inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBBadge } from 'mdb-vue-ui-kit'
-import { useGroups, useLinks, useStats } from "@/hooks/dao";
+import { useLinks, useStats } from "@/hooks/dao";
 import { useIPFS, useNear } from "@/hooks/vuex";
 import { fetch } from "@/models/ipfs";
 import Icon from '@/components/ui/Icon.vue'
@@ -147,7 +150,6 @@ export default {
         const { t, n } = useI18n()
         const dao = inject('dao')
         const { ipfsService } = useIPFS()
-        const { councilPercent } = useGroups(dao)
 
         const {
             web, whitepaper, wiki, sourceCode,
@@ -176,8 +178,8 @@ export default {
         if (chatDiscord) fetch(chatDiscord, ipfsService.value).then(r => {chatDiscordLink.value = r})
 
         const {
-            users
-        } = useStats(dao.value)
+            users, groupNames
+        } = useStats(dao)
 
         const { walletUrl } = useNear()
 
@@ -187,7 +189,7 @@ export default {
 
         return {
             dao, t, n,
-            users,
+            users, groupNames,
             web, whitepaper, wiki, sourceCode,
             kycStatus, kycDocument,
             socialTwitter, socialFacebook,
@@ -198,7 +200,6 @@ export default {
             chatDiscordLink,
             walletUrl,
             kycDropdown, socialDropdown, chatDropdown,
-            councilPercent
         }
     }
 }

@@ -23,6 +23,7 @@ import { keys } from 'lodash'
 import near from '@/store/modules/near'
 import NearUtils from "@/models/nearBlockchain/Utils"
 import { basicStaking } from '../../tests/fixtures/staking'
+import GroupHelper from './dao/GroupHelper'
 
 export const transTags = (tags: string[], t: any) => tags.map(tag => t('default.' + tag));
 
@@ -45,12 +46,12 @@ export const transform = (list: any[], tags: string[], t: any, n: any) => list.m
 
 export const getAccountId = (accountId: string): string => accountId.split('.')[0];
 
-export const getGroupCouncil = (dao: DAO, t: any): DAOGroup | undefined => lodashFind(dao.groups, {name: t('default.council')}) ?? lodashFind(dao.groups, {name: 'council'}); // TODO: Move to translate by lang of DAO
+
 
 export const getMemberFromGroup = (group: DAOGroup, walletId: string): DAOGroupMember | undefined => lodashFind(group.members, {accountId: walletId});
 
 export const isWalletInCouncil = (dao: DAO, walletId: string, t: any): boolean => {
-    const group: DAOGroup | undefined = getGroupCouncil(dao, t)
+    const group: DAOGroup | undefined = GroupHelper.getGroupCouncil(dao, t)
     return group ? getMemberFromGroup(group, walletId) !== undefined : false
 };
 
