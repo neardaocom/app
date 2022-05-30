@@ -31,8 +31,9 @@
 <script>
 import { useI18n } from 'vue-i18n'
 import DateHelper from "@/models/utils/DateHelper";
-import NearBlockchainUtils from '@/models/nearBlockchain/Utils'
+import {useRewards} from '@/hooks/rewards'
 import { MDBTable } from "mdb-vue-ui-kit";
+import { inject } from '@vue/runtime-core';
 export default {
    components:{
       MDBTable
@@ -46,16 +47,9 @@ export default {
    setup () {
       const {t} = useI18n() 
       const formatDate = (date) => (DateHelper.format(date, 'DD.MM.YYYY'))
-      const frequencyToTime = (frequency) => {
-         const time =  NearBlockchainUtils.durationFromChain(frequency)
-         const years =  `${time.years ? time.years + 'years' : '' }`
-         const months =  `${time.months ? time.months + 'months' : '' }`
-         const days =  `${time.days ? time.days + 'days' : '' }`
-         const hours =  `${time.hours ? time.hours + 'h' : '' }`
-         const minutes = `${time.minutes ? time.minutes + 'm' : '' }`
-         const seconds = `${time.seconds ? time.seconds + 's' : '' }`
-         return years + months + days + hours + minutes + seconds
-      }      
+      const dao = inject('dao')
+      const loader = inject('loader')
+      const {frequencyToTime} = useRewards(dao, loader)     
 
       return {
          t, formatDate, frequencyToTime

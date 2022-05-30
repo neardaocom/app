@@ -18,6 +18,7 @@ export type Translate = {
  * Comes form https://momentjs.com/docs/#/durations/
  */
 export type Interval = {
+    seconds?: number;
     minutes?: number;
     hours?: number;
     days?: number;

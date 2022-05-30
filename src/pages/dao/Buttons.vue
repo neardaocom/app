@@ -72,7 +72,7 @@
                   </template>
                 </template>
               </template>
-              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 3)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
+              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 2)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
               <MDBDropdownItem tag="button" @click.prevent="createLockSimple('Council commissions', 5, 100000)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.lock_simple') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>

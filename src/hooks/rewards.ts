@@ -8,17 +8,30 @@ import { Reward, RewardAssetStats } from "@/models/dao/types/rewards";
 import loMin from 'lodash/min'
 import RewardsAnalytics from "@/models/dao/analytics/RewardsAnalytics";
 import { DaoAsset } from "@/models/dao/types/asset";
+import NearBlockchainUtils from '@/models/nearBlockchain/Utils'
 
 export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
     const daoRewards = ref(new DaoRewards(servicePool.value))
+
+    const frequencyToTime = (frequency) => {
+        const time =  NearBlockchainUtils.durationFromChain(frequency)
+        const years =  `${time.years ? time.years + 'years' : '' }`
+        const months =  `${time.months ? time.months + 'months' : '' }`
+        const days =  `${time.days ? time.days + 'days' : '' }`
+        const hours =  `${time.hours ? time.hours + 'h' : '' }`
+        const minutes = `${time.minutes ? time.minutes + 'm' : '' }`
+        const seconds = `${time.seconds ? time.seconds + 's' : '' }`
+        return years + months + days + hours + minutes + seconds
+    }  
 
     const createSalary = (groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number) =>
         daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, new Date())
     const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
         daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)
 
-    return { daoRewards, createSalary, withdraw }
+
+    return { daoRewards, createSalary, withdraw, frequencyToTime }
 }
 
 export const useRewardsList = (dao: Ref<DAO>) => {
@@ -56,7 +69,7 @@ export const useClaimableRewards = (dao: Ref<DAO>, walled: Ref<Account>, daoRewa
     }
     const rewardsCountingTurnOff = () => {
         window.clearInterval(rewardsCountingIntervalId.value)
-    }
+    }   
 
     return {
         rewardsClaimable, rewardsLoadClaimable, rewardsAssetStats,

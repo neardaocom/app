@@ -9,32 +9,34 @@
          </div>
       </div>
 
-      <div v-if="rewardsAssetsStats?.length > 0" class="mb-7 mt-4">
+      <div class="mb-7 mt-4">
          <div class="d-flex mb-4">
             <h5 class="text-start me-auto">{{t('default.assets_to_withdraw')}}</h5>
             <MDBBtn v-show="false" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
          </div>
-         <div class="row g-2">
-            <div v-for="reward in rewardsAssetsStats" :key="reward.id" class="col-md-4">
-               <AssetToWithdraw :rewardAsset="reward" :withdraw="withdraw" :daoAccountId="dao.wallet"/>
+
+         <template v-if="rewardsAssetsStats !== null">
+            <div v-if="rewardsAssetsStats?.length > 0" class="row g-2">
+               <div v-for="reward in rewardsAssetsStats" :key="reward.id" class="col-md-4">
+                  <AssetToWithdraw :rewardAsset="reward" :withdraw="withdraw" :daoAccountId="dao.wallet"/>
+               </div>
             </div>
-         </div>
+            <div v-else class="row g-2">
+               <div class="col-md-4">
+                  <div class="skeleton rounded w-100" style="height: 142px"/>
+               </div>
+               <div class="col-md-4">
+                  <div class="skeleton rounded w-100" style="height: 142px"/>
+               </div>
+            </div>
+         </template>
       </div>
 
       <div>
          <h5 class="text-start mb-4">{{t('default.incentives')}}</h5>
          <div class="row g-3">
-            <div class="col-md-6">
-               <Incentives/>
-            </div>
-            <div class="col-md-6">
-               <Incentives/>
-            </div>           
-            <div class="col-md-6">
-               <Incentives/>
-            </div>
-            <div class="col-md-6">
-               <Incentives/>
+            <div v-for="reward in rewardsClaimable" :key="reward.id" class="col-md-6">
+               <Incentives :reward="reward"/>
             </div>
          </div>
       </div>
@@ -62,6 +64,8 @@ export default {
       const loader = inject('loader')
       const rewardsClaimable = inject('rewardsClaimable')
       const rewardsAssetsStats = inject('rewardsAssetsStats')
+
+      console.log(rewardsClaimable.value);
 
       const { withdraw } = useRewards(dao, loader)
 

@@ -68,6 +68,7 @@ export default class Utils {
     static durationFromChain(value: number): Interval {
         const duration = moment.duration(value, 'seconds')
         return {
+            seconds: duration.seconds(),
             minutes: duration.minutes(),
             hours: duration.hours(),
             days: duration.days(),
