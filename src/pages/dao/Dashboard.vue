@@ -9,7 +9,7 @@
         <GovernanceToken />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <Incentives />
+        <Rewards />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
         <ActiveProposals />
@@ -44,7 +44,7 @@ import { inject, ref } from "vue"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
 import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
-import Incentives from '@/components/dao/dashboard/Incentives.vue';
+import Rewards from '@/components/dao/dashboard/Rewards.vue';
 import { useAnalytics } from '@/hooks/treasury';
 
 
@@ -57,7 +57,7 @@ export default {
     GovernanceToken,
     ActiveProposals,
     InfoAmountCard,
-    Incentives
+    Rewards
   },
   props: {
   },

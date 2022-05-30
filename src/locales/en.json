@@ -507,6 +507,7 @@
   "asset_type_ft": "FT",
   "asset_type_nft": "NFT",
   "rewards": "Rewards",
+  "nothing_to_withdraw": "Nothing to withdraw",
   "treasury_locked": "Locked",
   "treasury_unlock": "Unlock",
   "unlocking_token": "Unlocking token",

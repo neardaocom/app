@@ -8,10 +8,12 @@
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
          <!-- Proposal -->
-         <div v-for="proposal in proposals" :key="proposal.id" class="d-flex justify-content-between align-items-center mb-3">
-            <ActiveProposalsItem :proposal="proposal" />
+         <div v-if="proposals.length > 0">
+            <div v-for="proposal in proposals" :key="proposal.id" class="d-flex justify-content-between align-items-center mb-3">
+               <ActiveProposalsItem :proposal="proposal" />
+            </div>
          </div>
-         <div v-if="proposals.length === 0" class="d-flex">
+         <div v-else class="d-flex">
             <h5>{{ t('default.no_active_proposal') }}</h5>
          </div>
       </MDBCardBody>
