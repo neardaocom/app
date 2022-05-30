@@ -11,11 +11,11 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                <div>
                   <div class="fw-bold">{{t('default.total_voting_power')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5" :amount="allVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="allVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
                </div>
                <div>
                   <div class="fw-bold">{{t('default.my_vote_power')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5" :amount="walletVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
                 </div>
             </div>
 
@@ -26,15 +26,15 @@
             <div class="d-flex justify-content-between align-items-center">
                <div>
                   <div class="fw-bold">{{t('default.owned')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5" :amount="walletVotePowerOwned"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerOwned"/>{{ dao.treasury.token.meta.symbol }}</div>
                </div>
                <div>
                   <div class="fw-bold">{{t('default.from_delegators')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5" :amount="walletVotePowerDelegators"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerDelegators"/>{{ dao.treasury.token.meta.symbol }}</div>
                 </div>
                 <div>
                   <div class="fw-bold">{{t('default.delegated')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5" :amount="walletVotePowerDelegated"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerDelegated"/>{{ dao.treasury.token.meta.symbol }}</div>
                 </div>
             </div>
            

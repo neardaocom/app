@@ -21,6 +21,7 @@ import { DAO, DAORights } from '@/models/dao/types/dao'
 import DaoWorkflow from '@/models/dao/DaoWorkflow'
 import { Account } from 'near-api-js'
 import { template } from 'lodash'
+import WorkflowHelper from '@/models/dao/WorkflowHelper'
 
 export const useDaoWorkflow = (loader: Ref<Loader>, dao: Ref<DAO>, workflow: Ref<WFInstance>) => {
     const servicePool = loader.value.load('dao/ServicePool')
@@ -28,6 +29,14 @@ export const useDaoWorkflow = (loader: Ref<Loader>, dao: Ref<DAO>, workflow: Ref
 
     return {
         daoWorkflow
+    }
+}
+
+export const useDaoWorkflowComputed = (dao: Ref<DAO>) => {
+    const installedWorkflow = (code: string) => WorkflowHelper.isWorkflowInstalled(dao.value, code)
+
+    return {
+        installedWorkflow
     }
 }
 

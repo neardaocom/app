@@ -72,8 +72,8 @@
                   </template>
                 </template>
               </template>
-              <MDBDropdownItem tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 3)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.salary') }}</MDBDropdownItem>
-              <MDBDropdownItem tag="button" @click.prevent="createLockSimple('Council commissions', 5, 100000)"><MDBIcon icon="user-plus" class="pe-2"/>{{ t('default.lock_simple') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('lock1') === true" tag="button" @click.prevent="createLockSimple('Council commissions', 5, 100000)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.test_lock_simple') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true" tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 2)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.test_salary') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -108,6 +108,7 @@ import {
 import Rights from "@/models/dao/Rights";
 import { useRewards } from '@/hooks/rewards'
 import { useTreasury } from '@/hooks/treasury';
+import { useDaoWorkflowComputed } from '@/hooks/workflow';
 
 export default {
   components: {
@@ -150,6 +151,7 @@ export default {
 
     const { daoRewards, createSalary } = useRewards(dao, loader)
     const { daoTreasury, createLockSimple } = useTreasury(dao, loader)
+    const { installedWorkflow } = useDaoWorkflowComputed(dao)
 
     const form = ref()
 
@@ -182,6 +184,7 @@ export default {
       activeTabId1,
       daoRewards, createSalary,
       daoTreasury, createLockSimple,
+      installedWorkflow,
     };
   },
 

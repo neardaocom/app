@@ -180,7 +180,8 @@ export default class DaoLoader {
           this.stakingService.daoFtTotalSupply(this.id),
           this.stakingService.daoUserList(this.id),
           this.daoService.partitionList(0, 1000), // 15: treasury
-          this.daoService.rewardList(1, 1000)// 16: reward list
+          this.daoService.rewardList(1, 1000),// 16: reward list
+          this.ftService.ftTotalSupply(), // 17: staking
         ]).catch((e) => {
           throw new Error(`DataChain[${this.id}] not loaded: ${e}`);
         });
@@ -343,8 +344,9 @@ export default class DaoLoader {
     getFtDecimals() { return this.dataChain[9].decimals }
 
     getTreasuryToken(): number { return new Decimal(NearUtils.amountFromDecimals(this.dataChain[12], this.dataChain[9].decimals)).toNumber() }
+    getTreasuryTotalSupply(): number { return new Decimal(NearUtils.amountFromDecimals(this.dataChain[17], this.dataChain[9].decimals)).toNumber() }
 
-    getFtTreasuryHolded(staking: Staking): number { return staking.totalVoteAmount }
+    getFtTreasuryHolded(staking: Staking): number { return this.getTreasuryTotalSupply() - this.getTreasuryToken() }
     getFtTreasuryFree(treasuryLocks: TreasuryLock[]): number {
         const stats = TreasuryAnalytics.computeLockAssetStat(treasuryLocks, this.ftAccountId)
         return new Decimal(this.getTreasuryToken()).minus(stats.locked).toNumber()
