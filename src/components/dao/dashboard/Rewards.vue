@@ -7,11 +7,11 @@
          </div>
 
          <template v-if="rewardsAssetsStats?.length > 0">
-            <div v-for="rewardAsset in rewardsAssetsStats" :key="rewardAsset.id" class="d-flex align-items-center">
+            <div v-for="rewardAsset in rewardsAssetsStats" :key="rewardAsset.id" class="d-flex align-items-center mt-2">
                <template v-if="rewardAsset.amount > 0.01">
                   <Icon v-if="rewardAsset.asset.type === 'near'"  icon="NEAR" :size="25"/>
                   <Icon v-else :icon="rewardAsset.asset.icon" :size="25"/>
-                  <NumberFormatter :amount="rewardAsset.amount" class="text-success fw-bold fs-5"/><span class="fs-6 ps-1">{{ rewardAsset.asset.symbol }}</span>
+                  <NumberFormatter :amount="rewardAsset.amount" class="text-success fw-bold fs-5 mt-n1"/><span class="fs-6">{{ rewardAsset.asset.symbol }}</span>
                </template>
             </div>
          </template>

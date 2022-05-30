@@ -121,7 +121,7 @@
                     </li>
                 </ul>
             </div>
-            <div class="float-end mt-3">
+            <div v-show="false" class="float-end mt-3">
                 <MDBBtn tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" size="sm" style="width: 120px"  color="primary" rounded> {{ t('default.about') }} </MDBBtn>
             </div>
         </div>

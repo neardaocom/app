@@ -6,7 +6,7 @@
         <About />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
-        <GovernanceToken />
+        <Governance />
       </div>
       <div class="col-12 col-md-6 col-lg-5 mb-4">
         <Rewards />
@@ -37,7 +37,7 @@
 import SkywardFinance from "@/components/dao/dashboard/SkywardFinance.vue";
 import About from "@/components/dao/dashboard/About.vue";
 import Bounty from "@/components/dao/dashboard/Bounty.vue";
-import GovernanceToken from "@/components/dao/dashboard/GovernanceToken.vue";
+import Governance from "@/components/dao/dashboard/Governance.vue";
 import { useI18n } from "vue-i18n";
 import Auction from '@/models/auction';
 import { inject, ref } from "vue"
@@ -54,7 +54,7 @@ export default {
     About,
     SkywardFinance, Bounty,
     DashboardOverview,
-    GovernanceToken,
+    Governance,
     ActiveProposals,
     InfoAmountCard,
     Rewards
