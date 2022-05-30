@@ -7,57 +7,47 @@
             </h6>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
-          <!-- v-for -->
-         <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-               <div class="small text-muted mb-n2">Marketplace</div>
-               <div>Buying Skyward</div>
-            </div>
-            <div>
-               <div class="small mb-n1"><i class="bi bi-calendar4 text-gradient-180 "/> 2022/05/05 - 6:00PM </div>
-               <MDBProgress :height="15" class="rounded">
-                  <MDBProgressBar class="bg-gradient-270 rounded" :value="25" :style="1">
-                     25%
-                  </MDBProgressBar>
-               </MDBProgress>
+         <!-- Proposal -->
+         <div v-if="proposals.length > 0">
+            <div v-for="proposal in proposals" :key="proposal.id" class="d-flex justify-content-between align-items-center mb-3">
+               <ActiveProposalsItem :proposal="proposal" />
             </div>
          </div>
-
-
-         <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-               <div class="small mb-n2 text-muted">Marketplace</div>
-               <div>Buying Skyward</div>
-            </div>
-            <div>
-               <div class="small mb-n1"><i class="bi bi-calendar4 text-gradient-180 "/> 2022/05/05 - 6:00PM </div>
-               <MDBProgress :height="15" class="rounded">
-                  <MDBProgressBar class="bg-gradient-270 rounded" :value="25" :style="1">
-                     25%
-                  </MDBProgressBar>
-               </MDBProgress>
-            </div>
+         <div v-else class="d-flex">
+            <h5>{{ t('default.no_active_proposal') }}</h5>
          </div>
-
-
       </MDBCardBody>
    </MDBCard>
 </template>
 
 <script>
-import { MDBCard, MDBCardBody, MDBProgress, MDBProgressBar } from "mdb-vue-ui-kit";
+import { MDBCard, MDBCardBody } from "mdb-vue-ui-kit";
+import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
-import Tooltip from '@/components/ui//Tooltip.vue'
+import Tooltip from '@/components/ui/Tooltip.vue'
+import ActiveProposalsItem from './ActiveProposalsItem.vue'
+import { useList } from '@/hooks/proposal'
 
 export default {
    components:{
-      MDBCard, MDBCardBody, MDBProgress, MDBProgressBar,Tooltip
+      MDBCard, MDBCardBody, Tooltip,
+      ActiveProposalsItem,
    },
    setup () {
-      const {t} = useI18n()
+      const { t } = useI18n()
+
+      const dao = inject('dao')
+      const loader = inject('loader')
+      const wallet = inject('wallet')
+      const walletRights = inject('walletRights')
+      const templateMeta = inject('templateMeta')
+
+      const { list, activeProposals } = useList(dao, templateMeta, wallet, walletRights, loader)
+
+      const proposals = activeProposals()
 
       return {
-         t
+         t, list, proposals,
       }
    }
 }

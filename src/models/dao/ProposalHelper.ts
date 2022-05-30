@@ -13,6 +13,7 @@ import { UnsupportedError } from '@/models/utils/errors'
 import CollectionHelper from "../utils/CollectionHelper";
 import { CodeValue } from "../utils/types/generics";
 import ObjectHelper from "../utils/ObjectHelper";
+import { ProposalVoting } from "./types/proposal";
 
 export default class ProposalHelper {
 
@@ -155,6 +156,10 @@ export default class ProposalHelper {
             break;
         }
         return kind_to_choice;
+    }
+
+    static isInVoting(proposal: ProposalVoting): boolean {
+      return proposal.stateCode === 'in_progress'
     }
 
     static isVoted(proposal: DAOProposal, accountId: string): boolean {
