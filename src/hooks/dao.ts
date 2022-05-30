@@ -2,7 +2,6 @@ import { computed, ref, Ref } from "vue";
 import { DAO, DAORights } from "@/models/dao/types/dao";
 import loGet from "lodash/get";
 import { Translate } from "@/models/utils/types/generics";
-import { getGroupCouncil } from '@/models/dao'
 import Rights from '@/models/dao/Rights'
 import { getFile } from "@/models/document"
 import { useI18n } from "vue-i18n";
@@ -10,6 +9,7 @@ import { useRoute } from "vue-router";
 import { Config } from "@/config";
 import loIsNil from 'lodash/isNil'
 import CollectionHelper from "@/models/utils/CollectionHelper";
+import GroupHelper from "@/models/dao/GroupHelper";
 
 export const useRouter = (config: Config) => {
     const route = useRoute()
@@ -45,7 +45,7 @@ export const useLinks = (dao: DAO) => {
 export const useGroups = (dao: Ref<DAO>) => {
     const { t } = useI18n()
 
-    const council = computed(() => getGroupCouncil(dao.value, t))
+    const council = computed(() => GroupHelper.getGroupCouncil(dao.value, t))
     const councilPercent = computed(() => undefined) // TODO: Move to lock
     const groupsOptions =  computed(() => CollectionHelper.toOptions(dao.value.groups, ['name'], ['id']))
 
@@ -62,11 +62,12 @@ export const useLocks = (dao: Ref<DAO>) => {
     }
 }
 
-export const useStats = (dao: DAO) => {
-    const users = computed(() => dao.tokenHolders.length)
+export const useStats = (dao: Ref<DAO>) => {
+    const users = computed(() => dao.value.tokenHolders.length)
+    const groupNames = computed(() => dao.value.groups.map((group) => group.name))
 
     return {
-        users
+        users, groupNames
     }
 }
 

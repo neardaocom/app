@@ -32,6 +32,7 @@ import { MDBBadge } from 'mdb-vue-ui-kit'
 import { computed, inject } from '@vue/runtime-core'
 import InfoItem from "@/components/ui/InfoItem.vue"
 import Decimal from 'decimal.js'
+import { useStake } from '@/hooks/staking'
 
 export default {
    components:{
@@ -47,7 +48,8 @@ export default {
    setup () {
       const dao = inject('dao')
       const { t } = useI18n()
-      const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(dao.value.treasury.token.owned || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
+      const { walletTokenAmount } = useStake(dao)
+      const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(walletTokenAmount.value || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
    
       return {
          dao, t, myTokensShare
