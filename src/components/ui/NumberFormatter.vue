@@ -1,6 +1,7 @@
 <template>
   <span>
-    <template v-if="number !== null">{{ n(number) }}</template>
+    <template v-if="number < 0.0009">{{number}}</template>
+    <template v-else-if="number !== null">{{ n(number) }}</template>
     <template v-else>—</template>
   </span>
 </template>

@@ -35,8 +35,7 @@
                         <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="asset.amount"/><span class="fs-5 fw-bold" >{{asset.asset.symbol}}</span></span>
                      </div>
                      <div v-if="reward.pricelist.type === 'salary'"  class="mt-n2" style="margin-left: 33px">
-                        <NumberFormatter v-if="asset.asset.accountId < 0.0009" :amount="amountFromPricelist(asset.asset.accountId)"/>
-                        <span v-else>{{amountFromPricelist(asset.asset.accountId)}}</span> <span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>
+                        <NumberFormatter :amount="amountFromPricelist(asset.asset.accountId)"/><span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>
                      </div>
                   </template>
                </MDBCardText>

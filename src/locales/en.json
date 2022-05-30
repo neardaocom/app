@@ -62,6 +62,7 @@
   "active_proposals": "Active proposals",
   "no_active_proposal": "DAO does not have any active proposals.",
   "no_active_activities": "DAO does not have any active activities.",
+  "no_claim_rewards": "You don't have any rewards",
   "account_id": "Account ID",
   "amount": "Amount",
   "total_supply":"Total supply",

@@ -47,6 +47,7 @@
   "no_doc_files": "DAO zatím nemá žádné dokumenty.",
   "active_proposals": "Aktivní hlasování",
   "no_active_proposal": "DAO nemá žádný aktivní hlasování.",
+  "no_claim_rewards": "Nemáte žádné odměny",
   "account_id": "Účet ID",
   "amount": "Částka",
   "about": "O nás",
