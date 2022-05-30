@@ -110,7 +110,7 @@ export default {
     const {
       rewardsClaimable, rewardsLoadClaimable, rewardsAssetStats,
       rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsLoadTurnOn, rewardsLoadTurnOff,
-      rewardsCountingIntervalId, rewardsCountingTurnOn, rewardsCountingTurnOff,
+      rewardsCounting, rewardsCountingIntervalId, rewardsCountingTurnOn, rewardsCountingTurnOff,
     } = useClaimableRewards(
       dao, wallet, daoRewards, loader
     )
@@ -135,6 +135,7 @@ export default {
 
       // rewards
       rewardsLoadClaimable()
+      rewardsCounting()
       rewardsLoadTurnOn()
       rewardsCountingTurnOn()
     })

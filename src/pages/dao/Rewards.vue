@@ -12,11 +12,11 @@
       <div v-if="rewardsAssetsStats?.length > 0" class="mb-7 mt-4">
          <div class="d-flex mb-4">
             <h5 class="text-start me-auto">{{t('default.assets_to_withdraw')}}</h5>
-            <MDBBtn color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
+            <MDBBtn v-show="false" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
          </div>
          <div class="row g-2">
             <div v-for="reward in rewardsAssetsStats" :key="reward.id" class="col-md-4">
-               <AssetToWithdraw :countingAmount="reward.amountCounting" :withdrawAmount="reward.amount" :icon="reward.asset.icon" :suffix="reward.asset.symbol" type="Token"/>
+               <AssetToWithdraw :rewardAsset="reward" :withdraw="withdraw" :daoAccountId="dao.wallet"/>
             </div>
          </div>
       </div>
@@ -48,6 +48,7 @@ import AssetToWithdraw from '@/components/dao/rewards/AssetToWithdraw.vue'
 import Incentives from '@/components/dao/rewards/Incentives.vue'
 import { MDBBtn } from "mdb-vue-ui-kit";
 import { inject } from '@vue/runtime-core'
+import { useRewards } from '@/hooks/rewards'
 export default {
     components: {
       NextUnlock,
@@ -57,11 +58,15 @@ export default {
     },
    setup () {
       const {t} = useI18n()
+      const dao = inject('dao')
+      const loader = inject('loader')
       const rewardsClaimable = inject('rewardsClaimable')
       const rewardsAssetsStats = inject('rewardsAssetsStats')
 
+      const { withdraw } = useRewards(dao, loader)
+
       return {
-         t, rewardsClaimable, rewardsAssetsStats
+         t, withdraw, dao, rewardsClaimable, rewardsAssetsStats
       }
    }
 }

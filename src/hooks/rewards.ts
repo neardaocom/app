@@ -7,6 +7,7 @@ import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import { Reward, RewardAssetStats } from "@/models/dao/types/rewards";
 import loMin from 'lodash/min'
 import RewardsAnalytics from "@/models/dao/analytics/RewardsAnalytics";
+import { DaoAsset } from "@/models/dao/types/asset";
 
 export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
@@ -14,8 +15,10 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
 
     const createSalary = (groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number) =>
         daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, new Date())
+    const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
+        daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)
 
-    return { daoRewards, createSalary }
+    return { daoRewards, createSalary, withdraw }
 }
 
 export const useRewardsList = (dao: Ref<DAO>) => {
@@ -49,7 +52,7 @@ export const useClaimableRewards = (dao: Ref<DAO>, walled: Ref<Account>, daoRewa
     }
     const rewardsCountingIntervalId = ref<number|undefined>()
     const rewardsCountingTurnOn = () => {
-        rewardsCountingIntervalId.value = window.setInterval(rewardsCounting, 5_000)
+        rewardsCountingIntervalId.value = window.setInterval(rewardsCounting, 2_000)
     }
     const rewardsCountingTurnOff = () => {
         window.clearInterval(rewardsCountingIntervalId.value)

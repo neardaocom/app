@@ -8,6 +8,8 @@ import FtMetadataLoader from "../ft/FtMetadataLoader";
 import ServicePool from "./ServicePool";
 import loGet from 'lodash/get'
 import RewardsHelper from "./RewardsHelper";
+import { DaoAsset } from "./types/asset";
+import DaoAssetToChainAssetTransformer from "./transformers/DaoAssetToChainAssetTransformer";
 
 export default class DaoRewards {
     private servicePool: ServicePool
@@ -91,5 +93,12 @@ export default class DaoRewards {
         })
     }
 
-    
+    /**
+     * Withdraw rewards
+     * @returns Promise
+     */
+    async withdraw(daoAccountId: string, asset: DaoAsset, rewardIds: number[]) {
+        const transformer = new DaoAssetToChainAssetTransformer()
+        return this.servicePool.getContract(daoAccountId).withdrawRewards(rewardIds, transformer.transform(asset), NearUtils.toTGas(100))
+    }
 }

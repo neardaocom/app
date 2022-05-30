@@ -4,18 +4,23 @@
          <div class="d-flex">
             <div class="d-flex align-items-center">
                <slot name="icon">
-                  <Icon v-if="suffix==='NEAR'"  icon="NEAR" :size="50"/>
-                  <Icon v-else :icon="icon" :size="50"/>
+                  <Icon v-if="rewardAsset.asset.type === 'near'"  icon="NEAR" :size="50"/>
+                  <Icon v-else :icon="rewardAsset.asset.icon" :size="50"/>
                </slot>
                <div class="text-start">
-                  <div class="fs-5 fw-bold me-1"> {{suffix}} </div>
-                  <div class="text-muted small mt-n2">{{type}}</div>
+                  <div class="fs-5 fw-bold me-1">{{ rewardAsset.asset.symbol }}</div>
+                  <div class="text-muted small mt-n2">{{ t('default.asset_type_' + rewardAsset.asset.type) }}</div>
                </div>
             </div>
 
             <div class="ms-auto text-end">
-               <NumberFormatter :amount="withdrawAmount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{suffix}}</span>
-               <div class="fw-bold text-success">+<NumberFormatter :amount="countingAmount"/></div>
+               <NumberFormatter :amount="rewardAsset.amount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{ rewardAsset.asset.symbol }}</span>
+               <div class="fw-bold text-success">+<NumberFormatter :amount="rewardAsset.amountCounting"/></div>
+            </div>
+         </div>
+         <div class="d-flex">
+            <div class="ms-auto text-end mt-2">
+               <MDBBtn @click="withdraw(rewardAsset.asset, rewardAsset.pricelistIds)" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
             </div>
          </div>
          
@@ -27,7 +32,8 @@
 import { useI18n } from 'vue-i18n'
 import {
    MDBCard,
-   MDBCardBody
+   MDBCardBody,
+   MDBBtn,
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import Icon from "@/components/ui/Icon.vue"
@@ -36,30 +42,19 @@ export default {
    components: {
       MDBCard,
       MDBCardBody,
+      MDBBtn,
       Icon,
       NumberFormatter
    },
    props: {
-      type:{
-         type: String,
-         required: false
+      rewardAsset: {
+         type: Object,
+         required: true,
       },
-      icon:{
-         type: String,
-         required: false
+      withdraw: {
+         type: Function,
+         required: true,
       },
-      countingAmount:{
-         type: [Number, String],
-         required: true
-      },
-      withdrawAmount:{
-         type: [Number, String],
-         required: true
-      },
-      suffix:{
-         type: String,
-         required: true
-      }
    },
    setup () {
       const {t} = useI18n()
