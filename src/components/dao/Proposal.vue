@@ -26,15 +26,15 @@
         v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
         :height="3"
       >
-        <MDBProgressBar bg="secondary" :value="progress" />
+        <MDBProgressBar bg="secondary" :value="proposalProgress" />
       </MDBProgress>
       <hr v-else class="my-1">
 
       <!-- about -->
       <ul class="my-2 list-unstyled list-inline">
         <li class="list-inline-item me-4 h6">
-          <i class="bi bi-calendar4 text-secondary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
-          <span>{{ proposal.duration.time }}</span>
+          <i class="bi bi-calendar4 text-secondary me-1"/>
+          <span>{{ proposalDate }} - {{ proposalTime }}</span>
         </li>
         <li class="list-inline-item me-4">  
           <i class="far fa-handshake fa-fw text-secondary me-2 mb-3"></i>
@@ -117,13 +117,13 @@ import {
   // , MDBCollapse, MDBBtn, MDBIcon
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { ref, toRefs, onMounted, onUnmounted, inject } from "vue";
+import { ref, toRefs, inject } from "vue";
 import _ from "lodash";
 
 import TextCollapse from '@/components/ui/TextCollapse.vue';
 import ProposalHelper from "@/models/dao/ProposalHelper"
 import moment from 'moment'
-import { useProposal } from '@/hooks/proposal';
+import { useProposal, useProposalCounter, useProposalComputed } from '@/hooks/proposal';
 
 export default {
   components: {
@@ -154,25 +154,12 @@ export default {
     const collapseDescription = ref(false)
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
-    const progress = ref(proposal.value.progress)
-    // console.log('Progress: ' + progress.value)
+    const { proposalProgress, proposalProgressIntervalId } = useProposalCounter(proposal)
+    const { proposalDate, proposalTime } = useProposalComputed(proposal)
 
-    const progressCounter = () => {
-      progress.value = ProposalHelper.getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration.value)
-    }
-    const progressInterval = ref(null);
+    
 
-    onMounted(() => {
-      progressInterval.value = setInterval(progressCounter, 5_000)
-      //console.log('mounted')
-    })
-
-    onUnmounted(() => {
-      clearInterval(progressInterval.value)
-      //console.log('unmounted')
-    })
-
-    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval, moment, vote, finish };
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, moment, vote, finish, proposalDate, proposalTime };
   },
   computed: {
     accountId(){
@@ -185,8 +172,8 @@ export default {
       return this.$store.getters['ipfs/getService']
     },
     workflowCode() {
-      // console.log(this.proposal, this.progress)
-      return ProposalHelper.getStatus(this.proposal.status, this.progress)
+      // console.log(this.proposal, this.proposalProgress)
+      return ProposalHelper.getStatus(this.proposal.status, this.proposalProgress)
     }
   },
   mounted() {

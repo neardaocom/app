@@ -26,7 +26,7 @@
     <section>
       <div class="container">
         <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Voting v-if="loaded === true && rPage === 'voting'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && rPage === 'voting'" />
         <Activities v-if="loaded === true && rPage === 'activities'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <DeFi v-if="loaded === true && rPage === 'defi'"/>
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />

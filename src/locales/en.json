@@ -60,7 +60,7 @@
   "version": "Version",
   "no_doc_files": "DAO does not have any documents yet.",
   "active_proposals": "Active proposals",
-  "no_active_proposal": "DAO does not have any active proposals.",
+  "no_active_proposal": "No active voting",
   "no_active_activities": "DAO does not have any active activities.",
   "account_id": "Account ID",
   "amount": "Amount",

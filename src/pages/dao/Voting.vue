@@ -57,7 +57,7 @@
 
 <script>
 import { MDBCheckbox, MDBSelect } from "mdb-vue-ui-kit";
-import { inject, ref, toRefs } from "vue"
+import { inject, ref } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
 import Proposal from "@/components/dao/Proposal.vue"
@@ -66,7 +66,6 @@ import loOrderBy from "lodash/orderBy"
 import StringHelper from '@/models/utils/StringHelper'
 import Search from "@/components/ui/Search.vue";
 import { useList } from "@/hooks/proposal"
-import { useRights } from '@/hooks/dao';
 
 export default {
   components: {
@@ -74,29 +73,16 @@ export default {
     , Proposal, Search
   },
   props: {
-    walletId: {
-      type: String,
-      required: false,
-    },
-    walletRights: {
-      type: Object,
-      required: true,
-    },
-    daoRights: {
-      type: Object,
-      required: true,
-    },
   },
-  setup(props) {
-    const { walletId } = toRefs(props)
+  setup() {
     const dao = inject('dao')
     const loader = inject('loader')
+    const wallet = inject('wallet')
+    const walletRights = inject('walletRights')
     const templateMeta = inject('templateMeta')
     const { t } = useI18n();
 
-    const { walletRights } = useRights(dao, walletId.value)
-
-    const { list } = useList(dao, templateMeta, walletId.value, walletRights.value, loader)
+    const { list } = useList(dao, templateMeta, wallet, walletRights, loader)
 
     const searchQuery = ref('')
     const filterState = reactive({

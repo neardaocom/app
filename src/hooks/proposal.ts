@@ -1,20 +1,27 @@
 import { Loader } from "@/loader";
+import loOrderBy from "lodash/orderBy"
 import DaoProposal from "@/models/dao/DaoProposal";
-import ServicePool from "@/models/dao/ServicePool";
 import { DAO, DAORights } from "@/models/dao/types/dao";
 import { MarketTemplate } from "@/models/dao/types/market";
-import { ref, Ref} from "vue";
+import { ref, Ref, onMounted, onUnmounted, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import ProposalHelper from "@/models/dao/ProposalHelper";
+import { Account } from "near-api-js";
+import { ProposalVoting } from "@/models/dao/types/proposal";
+import DateHelper from "@/models/utils/DateHelper";
+import Decimal from "decimal.js";
 
-export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, walletId: string, walletRights: DAORights[], loader: Ref<Loader>) => {
+export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>, loader: Ref<Loader>) => {
     const { t, d, n } = useI18n()
 
     const servicePool = loader.value.load('dao/ServicePool')
     const daoProposal = new DaoProposal(dao.value, servicePool.value.getContract(dao.value.wallet))
 
-    const list = ref(daoProposal.list(templatesMeta.value, walletId, walletRights, t, d, n))
+    const list = ref<ProposalVoting[]>(daoProposal.list(templatesMeta.value, wallet.value.accountId, walletRights.value, t, d, n))
 
-    return { list }
+    const activeProposals = () => loOrderBy(list.value.filter((item) => ProposalHelper.isInVoting(item as ProposalVoting)), ['id'], ['desc'])
+
+    return { list, activeProposals }
 }
 
 export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
@@ -44,4 +51,34 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     }
 
     return { daoProposal, vote, finish }
+}
+
+export const useProposalComputed = (proposal: Ref<ProposalVoting>) => {
+    const proposalDate = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatDateLong))
+    const proposalTime = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatTime))
+
+    return {
+        proposalDate, proposalTime,
+    }
+}
+
+export const useProposalCounter = (proposal: Ref<ProposalVoting>) => {
+    const proposalProgress = ref(proposal.value.progress)
+
+    const progressCounter = () => {
+        proposalProgress.value = new Decimal(ProposalHelper.getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration?.value)).round().toNumber()
+    }
+    const proposalProgressIntervalId = ref<number|undefined>();
+
+    onMounted(() => {
+        proposalProgressIntervalId.value = window.setInterval(progressCounter, 2_000)
+    })
+
+    onUnmounted(() => {
+      window.clearInterval(proposalProgressIntervalId.value)
+    })
+
+    return {
+        proposalProgress, progressCounter, proposalProgressIntervalId
+    }
 }
