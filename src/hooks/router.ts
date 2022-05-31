@@ -1,6 +1,15 @@
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed } from "vue";
 import loGet from "lodash/get";
+
+export const useLinks = () => {
+    const router = useRouter()
+    const createDaoPage = () => router.push({name: 'dao-create'})
+
+    return {
+        createDaoPage
+    }
+}
 
 export const useRouteFilter = () => {
     const route = useRoute()

@@ -15,19 +15,19 @@
           
           <MDBNavbarItem class="mx-2" :to="{name: 'market', params: {id: daoId}, query: {}}" :title="t('default.market')"><i class="bi bi-bag"/> <span class="fw-bold">{{ t('default.market') }}</span></MDBNavbarItem>
           
-          <MDBNavbarItem  v-if="isAccountSigned" class="mx-2">
+          <MDBNavbarItem  v-if="isSignedIn" class="mx-2">
             <!-- Navbar dropdown -->
             <MDBDropdown class="nav-item" align="end" v-model="dropdown">
-              <MDBDropdownToggle tag="a" class="nav-link" @click="dropdown = !dropdown"> <i class="bi bi-wallet2"/> <span class="d-lg-nonee"> {{ walletId }} </span> </MDBDropdownToggle>
+              <MDBDropdownToggle tag="a" class="nav-link" @click="dropdown = !dropdown"> <i class="bi bi-wallet2"/> <span class="d-lg-nonee"> {{ wallet.accountId }} </span> </MDBDropdownToggle>
               <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
-                <MDBDropdownItem :href="walletUrl">{{t('default.wallet')}}</MDBDropdownItem>
+                <MDBDropdownItem :href="config.near.walletUrl">{{t('default.wallet')}}</MDBDropdownItem>
                 <MDBDropdownItem tag="button" @click="logout()">{{t('default.log_out') }}</MDBDropdownItem>
               </MDBDropdownMenu>
             </MDBDropdown>
           </MDBNavbarItem>
         </MDBNavbarNav>
-          <MDBBtn v-if="isAccountSigned" @click="createDaoPage"  color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2"><i class="bi bi-plus me-1"/>{{ t('default.create_dao') }}</MDBBtn>
-          <MDBBtn v-else @click="login" color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
+          <MDBBtn v-if="isSignedIn" @click="createDaoPage()"  color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2"><i class="bi bi-plus me-1"/>{{ t('default.create_dao') }}</MDBBtn>
+          <MDBBtn v-else @click="login()" color="primary" rounded class="bg-gradient-100 fs-6 text-uppercase mx-2" data-mdb-toggle="tooltip" data-mdb-placement="bottom" title="Log In">{{ t('default.log_in') }}</MDBBtn>
       </MDBCollapse>
     </MDBNavbar>
   </header>
@@ -48,10 +48,11 @@
     MDBDropdownToggle,
     MDBDropdownMenu,
     MDBDropdownItem
-  } from 'mdb-vue-ui-kit';
-  //import { mapGetters } from 'vuex'
+} from 'mdb-vue-ui-kit';
 
-  import { useI18n } from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
+import { useWalletAuth } from '@/hooks/wallet';
+import { useLinks } from '@/hooks/router';
 
   export default {
     components: {
@@ -70,47 +71,24 @@
     setup() {
       const config = inject('config')
       const wallet = inject('wallet')
+      const loader = inject('loader')
       const collapse = ref(false);
       const dropdown = ref(false);
       const { t } = useI18n();
+      const { createDaoPage } = useLinks()
+
+      const { isSignedIn, login, logout } = useWalletAuth(loader, config)
+
       return {
         t,
         config,
         collapse,
         dropdown,
         wallet,
+        createDaoPage,
+        isSignedIn, login, logout,
       }
     },
-    computed: {
-      walletId() {
-        return this.$store.getters['near/getAccountId']
-      },
-      walletUrl() {
-        return this.$store.getters['near/getWalletUrl']
-      },
-      isAccountSigned() {
-        return this.$store.getters['near/isSignedIn']
-      },
-      contractName() {
-        return this.config.near.domainAccountId
-      }
-    },
-    methods: {
-        login() {
-            this.$store.commit('near/signIn')
-        },
-        logout() {
-          this.$logger.info('B', 'User', 'Logout', `Wallet ${this.walletId} is logged out`)
-          //this.wallet.
-          this.$store.commit('near/signOut')
-          if (this.$route.name === "dao-create"){
-            this.$router.push({name: 'landing-page'})
-          }
-        },
-        createDaoPage() {
-          this.$router.push({name: 'dao-create'})
-        }
-    }
   };
 </script>
 
