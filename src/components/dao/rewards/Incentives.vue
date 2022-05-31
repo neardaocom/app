@@ -35,7 +35,7 @@
                         <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="asset.amount"/><span class="fs-5 fw-bold" >{{asset.asset.symbol}}</span></span>
                      </div>
                      <div v-if="reward.pricelist.type === 'salary'"  class="mt-n2" style="margin-left: 33px">
-                        <NumberFormatter :amount="amountFromPricelist(asset.asset.accountId)"/><span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>
+                        <NumberFormatter :amount="amountFromPricelist(reward.pricelist.amounts,asset.asset.accountId)"/><span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>
                      </div>
                   </template>
                </MDBCardText>
@@ -62,8 +62,6 @@ import {
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import Icon from '@/components/ui/Icon.vue'
 import loGet from 'lodash/get'
-import CollectionHelper from "@/models/utils/CollectionHelper";
-import { toRefs } from '@vue/reactivity'
 import {useRewards} from '@/hooks/rewards'
 import { inject } from '@vue/runtime-core'
 
@@ -85,17 +83,11 @@ export default {
          required: true
       }
    },
-   setup (props) {
+   setup () {
       const { t } = useI18n()
-      const {reward} = toRefs(props)
       const dao = inject('dao')
       const loader = inject('loader')
-      const {frequencyToTime} = useRewards(dao, loader)  
-
-      const amountFromPricelist = (value) => {
-         const asset = CollectionHelper.findDeep(reward.value.pricelist.amounts, ['asset', 'accountId'], value)
-         return asset.amount
-      }
+      const {frequencyToTime, amountFromPricelist} = useRewards(dao, loader)  
 
       return {
          t, amountFromPricelist, loGet, frequencyToTime

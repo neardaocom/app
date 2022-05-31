@@ -8,11 +8,17 @@ import { Reward, RewardAssetStats } from "@/models/dao/types/rewards";
 import loMin from 'lodash/min'
 import RewardsAnalytics from "@/models/dao/analytics/RewardsAnalytics";
 import { DaoAsset } from "@/models/dao/types/asset";
+import CollectionHelper from "@/models/utils/CollectionHelper";
 import NearBlockchainUtils from '@/models/nearBlockchain/Utils'
 
 export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
     const daoRewards = ref(new DaoRewards(servicePool.value))
+
+    const createSalary = (groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number) =>
+        daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, new Date())
+    const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
+        daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)
 
     const frequencyToTime = (frequency) => {
         const time =  NearBlockchainUtils.durationFromChain(frequency)
@@ -24,14 +30,15 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
         const seconds = `${time.seconds ? time.seconds + 's' : '' }`
         return years + months + days + hours + minutes + seconds
     }  
+    
+        
+    const amountFromPricelist = (pricelistAmounts, accountId) => {
+        const asset = CollectionHelper.findDeep(pricelistAmounts, ['asset', 'accountId'], accountId)
+        return asset.amount
+        }
 
-    const createSalary = (groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number) =>
-        daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, new Date())
-    const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
-        daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)
 
-
-    return { daoRewards, createSalary, withdraw, frequencyToTime }
+    return { daoRewards, createSalary, withdraw, frequencyToTime, amountFromPricelist }
 }
 
 export const useRewardsList = (dao: Ref<DAO>) => {

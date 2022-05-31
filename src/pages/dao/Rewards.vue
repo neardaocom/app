@@ -41,7 +41,7 @@
          </div>
       </template>
       <div v-else>
-         {{t('default.no_claim_rewards')}}
+         <h6>{{t('default.no_claim_rewards')}}</h6>
       </div>
    </div>
 </template>
