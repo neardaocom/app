@@ -109,10 +109,10 @@ export default class DaoWorkflow {
       form: {},
    })
 
-    return this.service.workflowRunActivity(this.workflow.id, activityId, actionInputs, NearUtils.toTGas(200))
+    return this.service.workflowRunActivity(this.workflow.id, activityId, actionInputs, 200).actionsRun()
   }
 
   async finish() {
-    return this.service.workflowFinish(this.workflow.id, NearUtils.toTGas(50))
+    return this.service.workflowFinish(this.workflow.id, 50).actionsRun()
   }
 }

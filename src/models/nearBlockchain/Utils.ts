@@ -10,6 +10,8 @@ import ObjectHelper from "../utils/ObjectHelper";
 export default class Utils {
 
     static yoctoNear: string = '1000000000000000000000000'; // 10^24 yocto
+    
+    static oneYoctoNear: string = '0.000000000000000000000001'; // 10^24 yocto
 
     static tGas: string = '1000000000000'; // 10^12
 

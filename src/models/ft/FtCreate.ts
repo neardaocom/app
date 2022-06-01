@@ -33,6 +33,6 @@ export default class FtCreate {
 
         console.log(token)
 
-        this.service.create(tokenId, ObjectHelper.toBase64(token), NearUtils.toTGas(100), NearUtils.nearToYocto(2.5))
+        this.service.create(tokenId, ObjectHelper.toBase64(token), 100, 2.5).actionsRun()
     }
 }

@@ -45,10 +45,10 @@ export default class DaoTreasury {
 
         console.log(createArgs)
 
-        return this.daoService.proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
+        return this.daoService.proposalCreate(createArgs, 10, 1).actionsRun()
     }
 
     async unlock(lockId: number) {
-        return this.daoService.unlockPartitionAssets(lockId, NearUtils.toTGas(50))
+        return this.daoService.unlockPartitionAssets(lockId, 50).actionsRun()
     }
 }

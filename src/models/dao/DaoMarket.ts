@@ -57,7 +57,7 @@ export default class DaoMarket {
 
         console.log(createArgs)
 
-        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(price))
+        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, 10, price).actionsRun()
     }
 
 

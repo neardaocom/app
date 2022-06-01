@@ -72,6 +72,87 @@ export default class DaoContractService extends ContractService {
     }));
   }
 
+  /*****************
+    *    Change     *
+    ****************/
+
+  /**
+   * Create proposal
+   * 
+   * @return this
+   */
+    proposalCreate(proposalInputs: ProposalInputs, tGas: number, nearDeposit: number): this {
+      this.actionsAdd('proposal_create', proposalInputs, tGas, nearDeposit)
+      return this
+    }
+  
+    /**
+     * Vote
+     * 
+     * @return this
+     */
+    proposalVote(id: number, vote: number, tGas: number, nearDeposit: number): this {
+      this.actionsAdd('proposal_vote', { id, vote }, tGas, nearDeposit)
+      return this
+    }
+  
+    /**
+     * Finish proposal
+     * 
+     * @return this
+     */
+    proposalFinish(id: number, tGas: number): this {
+      this.actionsAdd('proposal_finish', { id }, tGas)
+      return this
+    }
+
+      /**
+   * WorkFlow run activity
+   * 
+   * @return this
+   */
+  workflowRunActivity(proposalId: number, activityId: number, actionsInputs: ActionInput[] | null, tGas: number): this {
+    this.actionsAdd('workflow_run_activity', { proposal_id: proposalId, activity_id: activityId, actions_inputs: actionsInputs }, tGas)
+    return this
+  }
+
+  /**
+   * WorkFlow finish
+   * 
+   * @return this
+   */
+  workflowFinish(proposalId: number, tGas: number): this {
+    this.actionsAdd('workflow_finish', { proposal_id: proposalId }, tGas)
+    return this
+  }
+
+  /**
+   * Unlock all partition assets with lock for given partition id
+   * 
+   * @return this
+   */
+  unlockPartitionAssets(id: number, tGas: number): this {
+    this.actionsAdd('unlock_partition_assets', { id }, tGas)
+    return this
+  }
+
+  /**
+     * Withdraw rewards
+     * user is supposed to have all provided reward_ids otherwise panic
+     * max available amount of each reward is withdraw
+     * 
+     * @return this
+     */
+   withdrawRewards(rewardIds: number[], asset: Asset, tGas: number): this {
+    this.actionsAdd('withdraw_rewards', { reward_ids: rewardIds, asset }, tGas)
+    return this
+  }
+
+
+  /*****************
+    *    Views      *
+    ****************/
+
   /**
    * Group list
    * 
@@ -124,37 +205,6 @@ export default class DaoContractService extends ContractService {
    */
   async proposal(id: number) {
     return this.contract.proposal({ id })
-  }
-
-  /**
-   * Create proposal
-   * 
-   * @return Promise
-   */
-  async proposalCreate(
-    proposalInputs: ProposalInputs,
-    gas: string,
-    yoctoNear: string
-  ) {
-    return this.contract.proposal_create(proposalInputs, gas, yoctoNear)
-  }
-
-  /**
-   * Vote
-   * 
-   * @return Promise
-   */
-  async proposalVote(id: number, vote: number, gas: string, yoctoNear: string): Promise<VoteResult> {
-    return this.contract.proposal_vote({ id, vote }, gas, yoctoNear)
-  }
-
-  /**
-   * Finish proposal
-   * 
-   * @return Promise
-   */
-  async proposalFinish(id: number, gas: string): Promise<ProposalState> {
-    return this.contract.proposal_finish({ id }, gas);
   }
 
   /**
@@ -230,42 +280,6 @@ export default class DaoContractService extends ContractService {
   }
 
   /**
-   * WorkFlow run activity
-   * 
-   * @return Promise
-   */
-  async workflowRunActivity(
-    proposalId: number,
-    activityId: number,
-    actionsInputs: ActionInput[] | null,
-    gas: string
-  ) {
-    return this.contract.workflow_run_activity({
-      proposal_id: proposalId,
-      activity_id: activityId,
-      actions_inputs: actionsInputs,
-    }, gas);
-  }
-
-  /**
-   * WorkFlow finish
-   * 
-   * @return Promise
-   */
-  async workflowFinish(
-    proposalId: number,
-    gas: string
-  ) {
-    return this.contract.workflow_finish({
-      proposal_id: proposalId,
-    }, gas);
-  }
-
-  async storageBuckets() {
-    return this.contract.storage_buckets()
-  }
-
-  /**
    * All storage data in bucket if bucket exists
    * 
    * @param bucketId 
@@ -308,6 +322,10 @@ export default class DaoContractService extends ContractService {
     return result
   }
 
+  async storageBuckets() {
+    return this.contract.storage_buckets()
+  }
+
   /**
    * All storage bucket ids
    * 
@@ -323,15 +341,6 @@ export default class DaoContractService extends ContractService {
    */
   async partition(id: number): Promise<TreasuryPartition | null> {
     return this.contract.partition({ id })
-  }
-
-  /**
-     * Unlock all partition assets with lock for given partition id
-     * 
-     * @return Promise
-     */
-  async unlockPartitionAssets(id: number, gas: string) {
-    return this.contract.unlock_partition_assets({ id }, gas);
   }
 
   /**
@@ -368,17 +377,6 @@ export default class DaoContractService extends ContractService {
    */
   async claimableRewards(accountId: string): Promise<Record<string, ClaimbleReward[]>> {
     return this.contract.claimable_rewards({ account_id: accountId })
-  }
-
-  /**
-     * Withdraw rewards
-     * user is supposed to have all provided reward_ids otherwise panic
-     * max available amount of each reward is withdraw
-     * 
-     * @return Promise
-     */
-  async withdrawRewards(rewardIds: number[], asset: Asset, gas: string) {
-    return this.contract.withdraw_rewards({ reward_ids: rewardIds, asset }, gas);
   }
 
   /**
@@ -445,8 +443,9 @@ export default class DaoContractService extends ContractService {
   // * 
   // * @return Promise
   // */
-  // async upgradeDownload(accountId: string, gas: string) {
-  ////return this.contract.download_new_version({ account_id: accountId }, gas);
+  // upgradeDownload(accountId: string, tGas: number): this {
+  //this.actionsAdd('t', download_new_version({ account_id: accountId }, tGas);
+  // return this
   //}
 
   ///**
@@ -454,8 +453,9 @@ export default class DaoContractService extends ContractService {
   // * 
   // * @return Promise
   // */
-  // async upgradeMigrate(accountId: string, gas: string) {
-  ////return this.contract.upgrade_self({ account_id: accountId }, gas);
+  // upgradeMigrate(accountId: string, tGas: number): this {
+  //this.actionsAdd('t', upgrade_self({ account_id: accountId }, tGas);
+  // return this
   //}
 
   //async getDaoVersionHash() {

@@ -174,7 +174,7 @@ export default class DaoLoader {
           this.daoService.settings(),
           this.daoService.statistics(), // 8: this.daoService.statistics(),
           this.ftService.ftMetadata(),
-          this.accountService.getState(),
+          this.accountService.state(),
           this.daoService.storage(),
           this.ftService.ftBalanceOf(this.id), // 12: staking
           this.stakingService.daoFtTotalSupply(this.id),

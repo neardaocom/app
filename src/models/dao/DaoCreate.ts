@@ -77,6 +77,6 @@ export default class DaoCreate {
 
         console.log(createArgs, dao)
 
-        this.service.create(createArgs, NearUtils.toTGas(300), NearUtils.nearToYocto(10))
+        this.service.create(createArgs, 300, 10).actionsRun()
     }
 }

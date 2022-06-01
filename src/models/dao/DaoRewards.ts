@@ -54,7 +54,7 @@ export default class DaoRewards {
 
         console.log(createArgs)
 
-        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, NearUtils.toTGas(10), NearUtils.nearToYocto(1))
+        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, 10, 1).actionsRun()
     }
 
     static getList(dao: DAO, type: string): RewardPricelist[] {
@@ -99,6 +99,6 @@ export default class DaoRewards {
      */
     async withdraw(daoAccountId: string, asset: DaoAsset, rewardIds: number[]) {
         const transformer = new DaoAssetToChainAssetTransformer()
-        return this.servicePool.getContract(daoAccountId).withdrawRewards(rewardIds, transformer.transform(asset), NearUtils.toTGas(100))
+        return this.servicePool.getContract(daoAccountId).withdrawRewards(rewardIds, transformer.transform(asset), 100).actionsRun()
     }
 }

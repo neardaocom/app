@@ -6,14 +6,6 @@ export default class StakingContractService extends ContractService {
 
    constructor(account: Account, contractId: string) {
       super(new Contract(account, contractId, {
-         viewMethods: [
-            'dao_ft_total_supply',
-            'dao_ft_balance_of',
-            'dao_get_user',
-            'dao_user_list',
-            'storage_balance_bounds',
-            'storage_balance_of',
-         ],
          changeMethods: [
             'new',
             'storage_deposit',
@@ -27,6 +19,14 @@ export default class StakingContractService extends ContractService {
             'storage_withdraw',
             'storage_unregister',
          ],
+         viewMethods: [
+            'dao_ft_total_supply',
+            'dao_ft_balance_of',
+            'dao_get_user',
+            'dao_user_list',
+            'storage_balance_bounds',
+            'storage_balance_of',
+         ],
       }));
    }
 
@@ -37,10 +37,11 @@ export default class StakingContractService extends ContractService {
    /**
     * Inits contract
     * 
-    * @return Promise
+    * @return void
     */
-   async new(registerId: string, gas: string) {
-      return this.contract.new({ registrar_id: registerId }, gas)
+   new(registerId: string, tGas: number): this {
+      this.actionsAdd('new', { registrar_id: registerId }, tGas)
+      return this
    }
 
    /**
@@ -48,88 +49,97 @@ export default class StakingContractService extends ContractService {
     * Must be called before "register_in_dao"
     * If dao is already registered and registration_only is false, then provided deposit is added to its storage deposit
     * 
-    * @return Promise
+    * @return void
     */
-   async storageDeposit(accountId: string | null, registrationOnly: boolean | null, gas: string, deposit: string) {
-      return this.contract.storage_deposit({ account_id: accountId, registration_only: registrationOnly }, gas, deposit);
+   storageDeposit(accountId: string | null, registrationOnly: boolean | null, tGas: number, nearDeposit: number): this {
+      this.actionsAdd('storage_deposit', { account_id: accountId, registration_only: registrationOnly }, tGas, nearDeposit);
+      return this
    }
 
    /**
     * Registers dao in staking service
     * Only registrar can call this function
     * 
-    * @return Promise
+    * @return void
     */
-   async registerNewDao(daoId: string, voteTokenId: string, gas: string) {
-      return this.contract.register_new_dao({ dao_id: daoId, vote_token_id: voteTokenId }, gas);
+   registerNewDao(daoId: string, voteTokenId: string, tGas: number, nearDeposit: number): this {
+      this.actionsAdd('register_new_dao', { dao_id: daoId, vote_token_id: voteTokenId }, tGas, nearDeposit);
+      return this
    }
 
    /**
     * Registers caller in dao
     * Requires reversible deposit
     * 
-    * @return Promise
+    * @return void
     */
-   async registerInDao(daoId: string, gas: string, deposit: string) {
-      return this.contract.register_in_dao({ dao_id: daoId }, gas, deposit);
+   registerInDao(daoId: string, tGas: number, nearDeposit: number): this {
+      this.actionsAdd('register_in_dao', { dao_id: daoId }, tGas, nearDeposit);
+      return this
    }
 
    /**
     * Delegates caller's amount vote tokens to delegate in the dao
     * Delegate must be registered in the dao
     * 
-    * @return Promise
+    * @return void
     */
-   async delegateOwned(daoId: string, delegateId: string, amount: string, gas: string) {
-      return this.contract.delegate_owned({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
+   delegateOwned(daoId: string, delegateId: string, amount: string, tGas: number): this {
+      this.actionsAdd('delegate_owned', { dao_id: daoId, delegate_id: delegateId, amount: amount }, tGas);
+      return this
    }
 
    /**
     * Delegates all delegated tokens to delegate ~ Forwarding
     * Delegate must be registered in the dao
     * 
-    * @return Promise
+    * @return void
     */
-   async delegate(daoId: string, delegateId: string, gas: string) {
-      return this.contract.delegate({ dao_id: daoId, delegate_id: delegateId }, gas);
+   delegate(daoId: string, delegateId: string, tGas: number): this {
+      this.actionsAdd('delegate', { dao_id: daoId, delegate_id: delegateId }, tGas);
+      return this
    }
 
    /**
     * Undelegates amount from delegate back to delegator
     * 
-    * @return Promise
+    * @return void
     */
-   async undelegate(daoId: string, delegateId: string, amount: string, gas: string) {
-      return this.contract.undelegate({ dao_id: daoId, delegate_id: delegateId, amount: amount }, gas);
+   undelegate(daoId: string, delegateId: string, amount: string, tGas: number): this {
+      this.actionsAdd('undelegate', { dao_id: daoId, delegate_id: delegateId, amount: amount }, tGas);
+      return this
    }
 
    /**
     * Withdraws free amount of staked vote tokens from dao back to caller
     * 
-    * @return Promise
+    * @return void
     */
-   async withdraw(daoId: string, amount: string, gas: string) {
-      return this.contract.withdraw({ dao_id: daoId, amount: amount }, gas);
+   withdraw(daoId: string, amount: string, tGas: number): this {
+      this.actionsAdd('withdraw', { dao_id: daoId, amount: amount }, tGas);
+      return this
    }
 
    /**
     * Unregister caller in dao if he has zero owned vote tokens and zero delegated vote tokens
     * Returns register deposit
     * 
-    * @return Promise
+    * @return void
     */
-   async unregisterInDao(daoId: string, gas: string) {
-      return this.contract.unregister_in_dao({ dao_id: daoId }, gas);
+   unregisterInDao(daoId: string, tGas: number): this {
+      this.actionsAdd('unregister_in_dao', { dao_id: daoId }, tGas);
+      return this
    }
 
    /**
     * Returns provided amount or all available amount (if null) of NEAR paid for storage
     * Panics if amount is greater than available
     * 
-    * @return Promise
+    * @return void
     */
-   async storageWithdraw(amount: string | null, gas: string) {
-      return this.contract.storage_withdraw({ amount: amount }, gas);
+   storageWithdraw(amount: string | null, tGas: number): this {
+      this.actionsAdd('storage_withdraw', { amount: amount }, tGas);
+      return this
    }
 
    /**
@@ -138,10 +148,11 @@ export default class StakingContractService extends ContractService {
     * Dao is required to have zero registered users
     *! Force is not currently supported
     * 
-    * @return Promise
+    * @return void
     */
-   async storageUnregister(force: boolean | null, gas: string) {
-      return this.contract.storage_unregister({ force: force }, gas);
+   storageUnregister(force: boolean | null, tGas: number): this {
+      this.actionsAdd('storage_unregister', { force: force }, tGas);
+      return this
    }
 
 
