@@ -42,7 +42,7 @@
             </li>
             <li>
                <i class="bi bi-cash-coin text-muted me-2"/>
-               <span class="text-reset">{{ n(dao.treasury.token.meta.amount) }}</span> {{ dao.treasury.token.meta.symbol }}
+               <InfoAmount :amount="dao.treasury.token.meta.amount" :suffix="dao.treasury.token.meta.symbol" class="text-reset"/> 
             </li>
          </ul>
       </div>
@@ -59,12 +59,15 @@ import Tooltip from '@/components/ui//Tooltip.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { MDBBadge } from 'mdb-vue-ui-kit'
 import { useStore } from 'vuex';
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 
 export default {
    components:{
       Tooltip,
       Icon,
-      MDBBadge
+      MDBBadge,
+      InfoAmount
    },
    setup () {
       const dao = inject('dao')

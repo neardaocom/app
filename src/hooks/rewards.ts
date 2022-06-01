@@ -4,12 +4,13 @@ import { Loader } from "@/loader";
 import DaoRewards from "@/models/dao/DaoRewards";
 import { Account } from "near-api-js";
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
-import { Reward, RewardAssetStats } from "@/models/dao/types/rewards";
+import { Reward, RewardAssetStats, RewardPricelist } from "@/models/dao/types/rewards";
 import loMin from 'lodash/min'
 import RewardsAnalytics from "@/models/dao/analytics/RewardsAnalytics";
 import { DaoAsset } from "@/models/dao/types/asset";
 import CollectionHelper from "@/models/utils/CollectionHelper";
 import NearBlockchainUtils from '@/models/nearBlockchain/Utils'
+import DateHelper from "@/models/utils/DateHelper";
 
 export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
@@ -35,10 +36,58 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const amountFromPricelist = (pricelistAmounts, accountId) => {
         const asset = CollectionHelper.findDeep(pricelistAmounts, ['asset', 'accountId'], accountId)
         return asset.amount
-        }
+    }
+
+    const rewardsDateFormat = (date :Date) => DateHelper.format(date, DateHelper.formatDateLong)
 
 
-    return { daoRewards, createSalary, withdraw, frequencyToTime, amountFromPricelist }
+    return { daoRewards, createSalary, withdraw, frequencyToTime, amountFromPricelist, rewardsDateFormat }
+}
+
+export const useRewardComputed = (rewards: Ref<RewardPricelist[]>) => {
+    const rewardsStartAtDate = computed (() => {
+        const  rewardsDateFormat: string[] = []
+        rewards.value.forEach(reward => {
+            rewardsDateFormat.push(DateHelper.format(reward.startAt, DateHelper.formatDateLong))
+        })
+        return rewardsDateFormat 
+    })
+
+    const rewardsStartAtTime = computed (() => {
+        const  rewardsDateFormat: string[] = []
+        rewards.value.forEach(reward => {
+            rewardsDateFormat.push(DateHelper.format(reward.startAt, DateHelper.formatTime))
+        })
+        return rewardsDateFormat 
+    })
+
+    const rewardsEndsDate = computed (() => {
+        const  rewardsDateFormat: string[] = []
+        rewards.value.forEach(reward => {
+            if(reward.endAt !== null)
+                rewardsDateFormat.push(DateHelper.format(reward.endAt, DateHelper.formatTime))
+            else
+                rewardsDateFormat.push('∞') 
+        })
+        return rewardsDateFormat 
+    })
+
+    const rewardsEndsTime = computed (() => {
+        const  rewardsDateFormat: string[] = []
+        rewards.value.forEach(reward => {
+            if(reward.endAt !== null)
+                rewardsDateFormat.push(DateHelper.format(reward.endAt, DateHelper.formatTime))
+            else
+                rewardsDateFormat.push('∞') 
+        })
+        return rewardsDateFormat 
+    })
+
+       
+
+    return {
+        rewardsStartAtDate, rewardsStartAtTime, rewardsEndsDate, rewardsEndsTime
+    }
 }
 
 export const useRewardsList = (dao: Ref<DAO>) => {

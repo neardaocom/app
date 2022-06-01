@@ -25,10 +25,10 @@
                      <MDBBadge color="muted" pill class="me-2" style="padding: 0.3rem" ><i class="bi bi-unlock"/></MDBBadge>
                      <div>
                         <div class="fw-bold">
-                           {{lock.nextUnlock?.getUTCHours()}}:{{lock.nextUnlock?.getUTCMinutes()}} <small class="fw-normal">UTC</small>
+                           {{nextUnlockTime}}
                         </div>
                         <div class="text-muted text-end mt-n2">
-                           {{lock.nextUnlock?.getUTCMonth()}}/{{lock.nextUnlock?.getUTCDate()}}/{{lock.nextUnlock?.getUTCFullYear()}}
+                           {{nextUnlockDate}}
                         </div>
                      </div>
                   </div>
@@ -103,11 +103,11 @@ export default {
       const { t } = useI18n()
       const {lock} = toRefs(props)
       
-      const { isUnlocked, canUnlock, computeUnlocked } = useTreasuryLock(lock)
+      const { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime } = useTreasuryLock(lock)
 
       return {
          t,
-         isUnlocked, canUnlock, computeUnlocked
+         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime
       }
    }
 }
