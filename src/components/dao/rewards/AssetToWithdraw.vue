@@ -13,8 +13,8 @@
                </div>
             </div>
 
-            <div class="ms-auto text-end">
-               <NumberFormatter :amount="rewardAsset.amount" class="fs-5 fw-bold"/><span class="fs-5 ps-1">{{ rewardAsset.asset.symbol }}</span>
+            <div class="ms-auto text-start">
+               <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" class="fs-5 fw-bold" suffixNormal/>     
                <div class="fw-bold text-success">+<NumberFormatter :amount="rewardAsset.amountCounting"/></div>
             </div>
          </div>
@@ -37,6 +37,8 @@ import {
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import Icon from "@/components/ui/Icon.vue"
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 
 export default {
    components: {
@@ -44,7 +46,8 @@ export default {
       MDBCardBody,
       MDBBtn,
       Icon,
-      NumberFormatter
+      NumberFormatter,
+      InfoAmount
    },
    props: {
       rewardAsset: {

@@ -7,6 +7,7 @@ import { Loader } from "@/loader";
 import TreasuryAnalytics from "@/models/dao/analytics/TreasuryAnalytics";
 import DaoTreasury from "@/models/dao/DaoTreasury";
 import TreasuryHelper from "@/models/dao/TreasuryHelper";
+import DateHelper from "@/models/utils/DateHelper";
 
 export const useAnalytics = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const dataLoaded = ref<boolean>(false)
@@ -53,5 +54,18 @@ export const useTreasuryLock = (lock: Ref<TreasuryLock>) => {
 
     const computeUnlocked = (lockAsset: TreasuryLockAsset) => TreasuryHelper.getLocked(lockAsset)
 
-    return { isUnlocked, canUnlock, computeUnlocked }
+    const nextUnlockDate = computed(() => {
+        if(lock.value.nextUnlock)
+           return DateHelper.format(lock.value.nextUnlock, DateHelper.formatDateLong)
+        else
+            return ''
+    })
+    const nextUnlockTime = computed(() => {
+        if(lock.value.nextUnlock)
+           return DateHelper.format(lock.value.nextUnlock, DateHelper.formatTime)
+        else
+            return ''
+    })
+
+    return { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime }
 }

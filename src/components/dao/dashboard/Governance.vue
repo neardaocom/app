@@ -11,11 +11,11 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                <div>
                   <div class="fw-bold">{{t('default.total_voting_power')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="allVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <InfoAmount :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
                </div>
                <div>
                   <div class="fw-bold">{{t('default.my_vote_power')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePower"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <InfoAmount :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
                 </div>
             </div>
 
@@ -26,16 +26,15 @@
             <div class="d-flex justify-content-between align-items-center">
                <div>
                   <div class="fw-bold">{{t('default.owned')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerOwned"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
                </div>
                <div>
                   <div class="fw-bold">{{t('default.from_delegators')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerDelegators"/>{{ dao.treasury.token.meta.symbol }}</div>
+                  <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
                 </div>
                 <div>
                   <div class="fw-bold">{{t('default.delegated')}}</div>
-                  <div class="mt-n1"><NumberFormatter class="me-0 fw-bold fs-5 text-success" :amount="walletVotePowerDelegated"/>{{ dao.treasury.token.meta.symbol }}</div>
-                </div>
+                  <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                                  </div>
             </div>
            
             <div v-show="false" class="float-end mt-2">
@@ -49,15 +48,15 @@
 import { useI18n } from 'vue-i18n'
 import { MDBBtn } from 'mdb-vue-ui-kit'
 import { inject } from '@vue/runtime-core'
-import NumberFormatter from '@/components/ui/NumberFormatter.vue'
 import Tooltip from '@/components/ui//Tooltip.vue'
 import { useStake } from '@/hooks/staking'
+import InfoAmount from '@/components/ui/InfoAmount.vue'
 
 export default {
    components: {
       MDBBtn, 
-      NumberFormatter,
-      Tooltip
+      Tooltip,
+      InfoAmount
    },
    setup() {
       const { t, n } = useI18n()

@@ -34,6 +34,7 @@ import InfoItem from "@/components/ui/InfoItem.vue"
 import Decimal from 'decimal.js'
 import { useStake } from '@/hooks/staking'
 
+
 export default {
    components:{
       MDBBadge,

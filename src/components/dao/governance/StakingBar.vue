@@ -6,29 +6,25 @@
             <div class="align-items-center">
                <div class="fw-600 mb-n2">{{t('default.staked')}}</div>
                <span class="fs-2 fw-800">
-               <NumberFormatter :amount="walletTokenAmount" />
-               /
-               <NumberFormatter :amount="walletTokenStaked"/>
+                  <NumberFormatter :amount="walletTokenAmount" />
+                  /
+                  <InfoAmount :amount="walletTokenStaked" :suffix="dao.treasury.token.meta.symbol" :suffixSize="50"/>    
                </span>
-               <span class="fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
             </div>
          </div>
 
          <div class="col-md-6 d-flex align-items-center justify-content-evenly text-start  p-3">
             <div>
                <div class="fw-600 mb-n2">{{t('default.owned')}}</div>
-               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerOwned"/>
-               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+               <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
                <div class="fw-600 mb-n2">{{t('default.from_delegators')}}</div>
-               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerDelegators"/>
-               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+               <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
                <div class="fw-600 mb-n2">{{t('default.delegated')}}</div>
-               <NumberFormatter class="fs-2 fw-800" :amount="walletVotePowerDelegated"/>
-               <span class="text-primary fw-800 ms-1">{{dao.treasury.token.meta.symbol}}</span>
+               <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
          </div>
 
@@ -59,6 +55,8 @@ import FormDelegateOwned from '@/components/dao/staking/forms/FormDelegate.vue'
 import { useStake, useStakeAction } from '@/hooks/staking';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import Tooltip from '@/components/ui//Tooltip.vue'
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 export default {
    components: {
       MDBCard,
@@ -68,7 +66,8 @@ export default {
       FormDelegateOwned,
       ModalProposal,
       NumberFormatter,
-      Tooltip
+      Tooltip,
+      InfoAmount
     },
     props:{
     },

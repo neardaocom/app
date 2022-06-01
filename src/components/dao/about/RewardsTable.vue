@@ -11,18 +11,17 @@
          </tr>
       </thead>
       <tbody>
-         <tr v-for="reward in rewards" :key="reward.id">
+         <tr v-for="(reward) in rewards" :key="reward.id">
             <th scope="row">{{reward.id}}</th>
             <td>{{reward.targetGroup.name}}</td>
             <td>
                <div v-for="(asset, index) in reward.amounts" :key="index">
-                  <span class="fw-bold me-1">{{asset.amount}}</span>
-                   {{asset.asset.symbol}}
+                  <InfoAmount :amount="asset.amount" :suffix="asset.asset.symbol" suffixNormal class="fw-bold"/> 
                </div>
             </td>
             <td>{{frequencyToTime(reward.unitSeconds)}}</td>
-            <td>{{formatDate(new Date(reward.startAt))}}</td>
-            <td>{{reward.endAt ? formatDate(new Date(reward.endAt)) : '∞'}}</td>
+            <td>{{rewardsDateFormat(new Date(reward.startAt))}}</td>
+            <td>{{ reward.endAt ? rewardsDateFormat(new Date(reward.endAt)) : '∞'}}</td>
          </tr>
       </tbody>
    </MDBTable>
@@ -30,13 +29,16 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import DateHelper from "@/models/utils/DateHelper";
+// import DateHelper from "@/models/utils/DateHelper";
 import {useRewards} from '@/hooks/rewards'
 import { MDBTable } from "mdb-vue-ui-kit";
 import { inject } from '@vue/runtime-core';
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 export default {
    components:{
-      MDBTable
+      MDBTable,
+      InfoAmount
    },
    props:{
       rewards:{
@@ -46,13 +48,12 @@ export default {
    },
    setup () {
       const {t} = useI18n() 
-      const formatDate = (date) => (DateHelper.format(date, 'DD.MM.YYYY'))
       const dao = inject('dao')
       const loader = inject('loader')
-      const {frequencyToTime} = useRewards(dao, loader)     
+      const {frequencyToTime, rewardsDateFormat} = useRewards(dao, loader)   
 
       return {
-         t, formatDate, frequencyToTime
+         t, frequencyToTime, rewardsDateFormat
       }
    }
 }

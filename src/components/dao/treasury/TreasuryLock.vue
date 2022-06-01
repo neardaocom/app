@@ -25,10 +25,10 @@
                      <MDBBadge color="muted" pill class="me-2" style="padding: 0.3rem" ><i class="bi bi-unlock"/></MDBBadge>
                      <div>
                         <div class="fw-bold">
-                           {{lock.nextUnlock?.getUTCHours()}}:{{lock.nextUnlock?.getUTCMinutes()}} <small class="fw-normal">UTC</small>
+                           {{nextUnlockTime}}
                         </div>
                         <div class="text-muted text-end mt-n2">
-                           {{lock.nextUnlock?.getUTCMonth()}}/{{lock.nextUnlock?.getUTCDate()}}/{{lock.nextUnlock?.getUTCFullYear()}}
+                           {{nextUnlockDate}}
                         </div>
                      </div>
                   </div>
@@ -36,9 +36,8 @@
                <MDBCardText  class="mb-5">
                   <div v-for="(asset, index) in lock.assets" :key="index">
                      <div class="d-flex align-items-center">
-                        <Icon v-if="asset.asset.symbol==='NEAR'" icon="NEAR" :size="25"/>
-                        <Icon v-else :icon="asset.asset.icon" :size="25"/>
-                        <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="asset.unlocked"/><span class="fs-5 fw-bold" >{{asset.asset.symbol}}</span></span>
+                        <Icon :icon="asset.asset.type === 'near' ? 'near' : asset.asset.icon" :size="25"/>
+                        <InfoAmount :amount="asset.unlocked" :suffix="asset.asset.symbol" class="fs-4 fw-bold"/>    
                      </div>
                      <div class="mt-n2" style="margin-left: 33px">
                         <NumberFormatter :amount="computeUnlocked(asset)"/> <span class="text-muted small"> {{t('default.treasury_locked')}} </span>
@@ -74,6 +73,7 @@ import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { toRefs } from '@vue/reactivity'
 import Icon from '@/components/ui/Icon.vue'
 import { useTreasuryLock } from '@/hooks/treasury'
+import InfoAmount from '@/components/ui/InfoAmount.vue'
 
 export default {
    components: {
@@ -86,7 +86,8 @@ export default {
       MDBCol,
       Icon,
       MDBBtn,
-      NumberFormatter
+      NumberFormatter,
+      InfoAmount
    },
    props: {
       lock:{
@@ -102,11 +103,11 @@ export default {
       const { t } = useI18n()
       const {lock} = toRefs(props)
       
-      const { isUnlocked, canUnlock, computeUnlocked } = useTreasuryLock(lock)
+      const { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime } = useTreasuryLock(lock)
 
       return {
          t,
-         isUnlocked, canUnlock, computeUnlocked
+         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime
       }
    }
 }

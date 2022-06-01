@@ -3,7 +3,7 @@
       <div> 
          <h6> {{ header }} </h6>
          <div class="border-start border-secondary border-3 ps-2">
-            <NumberFormatter class="h2" :amount="amount"/><span class="fs-5 text-secondary" style="font-weight: 800 !important;">{{suffix}}</span>
+            <InfoAmount :amount="amount" :suffix="suffix" suffixColor="secondary" class="fs-2 fw-800"/> 
             <slot></slot>
          </div>
       </div>
@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 export default {
    props:{
       header:{
@@ -19,7 +20,7 @@ export default {
          required: false,
       },
       amount:{
-         type: [Number, String],
+         type: [Object, Number, String],
          required: false,
       },
       suffix:{
@@ -28,7 +29,7 @@ export default {
       },
    },
    components:{
-      NumberFormatter
+      InfoAmount
    },
    setup () {
       
