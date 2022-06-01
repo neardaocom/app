@@ -39,8 +39,8 @@ export default {
          required: false
       },
       amount:{
-         type: [Number, String],
-         required: true
+         type: [Object, Number, String],
+         required: false
       },
       suffix:{
          type: String,

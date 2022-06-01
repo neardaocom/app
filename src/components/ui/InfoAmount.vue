@@ -14,7 +14,7 @@ export default {
    props:{
       amount: {
          type: [Object, Number, String],
-         required: true,
+         required: false,
       },
       suffix:{
          type: String,
