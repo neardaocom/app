@@ -11,7 +11,7 @@
                <template v-if="rewardAsset.amount > 0.01">
                   <Icon v-if="rewardAsset.asset.type === 'near'"  icon="NEAR" :size="25"/>
                   <Icon v-else :icon="rewardAsset.asset.icon" :size="25"/>
-                  <NumberFormatter :amount="rewardAsset.amount" class="text-success fw-bold fs-5 mt-n1"/><span class="fs-6">{{ rewardAsset.asset.symbol }}</span>
+                  <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
                </template>
             </div>
          </template>
@@ -25,16 +25,16 @@
 
 <script>
 import { MDBCard, MDBCardBody } from "mdb-vue-ui-kit";
-import NumberFormatter from '@/components/ui/NumberFormatter.vue'
 import { inject } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from "@/components/ui/Icon.vue"
 import Tooltip from '@/components/ui//Tooltip.vue'
+import InfoAmount from '@/components/ui/InfoAmount.vue'
    export default {
       components:{
          MDBCard, MDBCardBody, Icon,
-         NumberFormatter,
-         Tooltip
+         Tooltip,
+         InfoAmount
       },
       setup(){
          const {t} = useI18n()

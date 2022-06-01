@@ -32,7 +32,7 @@
                   <template v-for="(asset, index) in reward.amounts" :key="index">
                      <div class="d-flex align-items-center">
                         <Icon :icon="asset.asset.type === 'near' ? 'near' : asset.asset.icon" :size="25"/>
-                        <span><NumberFormatter class="fs-4 fw-bold me-1" :amount="asset.amount"/><span class="fs-5 fw-bold" >{{asset.asset.symbol}}</span></span>
+                        <InfoAmount :amount="asset.amount" :suffix="asset.asset.symbol" class="fs-4 fw-bold"/>     
                      </div>
                      <div v-if="reward.pricelist.type === 'salary'"  class="mt-n2" style="margin-left: 33px">
                         <NumberFormatter :amount="amountFromPricelist(reward.pricelist.amounts,asset.asset.accountId)"/><span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>
@@ -64,6 +64,8 @@ import Icon from '@/components/ui/Icon.vue'
 import loGet from 'lodash/get'
 import {useRewards} from '@/hooks/rewards'
 import { inject } from '@vue/runtime-core'
+import InfoAmount from '@/components/ui/InfoAmount.vue'
+
 
 export default {
    components: {
@@ -75,7 +77,8 @@ export default {
       MDBRow,
       MDBCol,
       Icon,
-      NumberFormatter
+      NumberFormatter,
+      InfoAmount
    },
    props: {
       reward:{
