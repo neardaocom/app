@@ -519,6 +519,7 @@
   "incentives": "Incentives",
   "dao_wallet": "DAO wallet",
   "to_withdraw": "To withdraw",
+  "total_amount": "Total amount",
   "vote_amount": "Vote amount",
   "delegated": "Delegated",
   "total_delegated": "Total delegated",

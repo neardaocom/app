@@ -1,4 +1,4 @@
-import { Account, Contract} from 'near-api-js';
+import { Account, Contract } from 'near-api-js';
 import { factoryDaoList } from '../../../tests/fixtures/dao'
 import { DaoInfo } from './types/admin';
 import ContractService from './ContractService';
@@ -20,13 +20,31 @@ export default class AdminContractService extends ContractService {
     }))
   }
 
+  /*****************
+   *    Change     *
+   ****************/
+
+  /**
+   * Create DAO by factory
+   * 
+   * @return Promise
+   */
+  create(args: any, tGas: number, nearDeposit: number): this {
+    this.actionsAdd('create', args, tGas, nearDeposit)
+    return this
+  }
+
+  /*****************
+ *    Views      *
+ ****************/
+
   /**
    * DAO List
    * @returns Promise
    */
   async getDaoList(from: number = 0, limit: number = 100): Promise<[string, DaoInfo][]> {
     //return factoryDaoList(); // TODO: local
-    return this.contract.get_dao_list({from_index: from, limit: limit});
+    return this.contract.get_dao_list({ from_index: from, limit: limit });
   }
 
   /**
@@ -38,21 +56,12 @@ export default class AdminContractService extends ContractService {
     return this.contract.get_tags();
   }
 
-///**
-// * Get newest version hash of contract
-// * 
-// * @returns Promise
-// */
-//async getNewestVersionHash(version: number = 0) {
-//  return this.contract.version_hash({version: version});
-//}
-
-  /**
-   * Create DAO by factory
-   * 
-   * @return Promise
-   */
-  async create(args: any, gas: string, yoctoNear: string) {
-    return this.contract.create(args, gas, yoctoNear)
-  }
+  ///**
+  // * Get newest version hash of contract
+  // * 
+  // * @returns Promise
+  // */
+  //async getNewestVersionHash(version: number = 0) {
+  //  return this.contract.version_hash({version: version});
+  //}
 }

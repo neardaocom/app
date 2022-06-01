@@ -14,21 +14,30 @@ export default class FtFactoryContractService extends ContractService {
     }));
   }
 
-  /**
-   * Accounts List
-   * @returns Promise
-   */
-  async getAccounts(): Promise<string[]> {
-    //return factoryDaoList(); // TODO: local
-    return this.contract.accounts({});
-  }
+  /*****************
+   *    Change     *
+   ****************/
 
   /**
    * Create Token by factory
    * 
-   * @return Promise
+   * @return this
    */
-  async create(name: string, args: string, gas: string, yoctoNear: string): Promise<any> {
-    return this.contract.create({name, args}, gas, yoctoNear)
+   create(name: string, args: string, tGas: number, nearDeposit: number | string): this {
+    this.actionsAdd('create', {name, args}, tGas, nearDeposit)
+    return this
+  }
+
+  /*****************
+ *    Views      *
+ ****************/
+
+  /**
+   * Accounts List
+   * @returns Promise
+   */
+  async accounts(): Promise<string[]> {
+    //return factoryDaoList(); // TODO: local
+    return this.contract.accounts({});
   }
 }

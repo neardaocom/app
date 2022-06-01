@@ -28,10 +28,10 @@ export default class DaoProposal {
   }
 
   async vote(id: number, choice: number) {
-    return this.service.proposalVote(id, choice, NearUtils.toTGas(10), NearUtils.nearToYocto(0.00125))
+    return this.service.proposalVote(id, choice, 10, 0.00125).actionsRun()
   }
 
   async finish(id: number) {
-    return this.service.proposalFinish(id, NearUtils.toTGas(100))
+    return this.service.proposalFinish(id, 100).actionsRun()
   }
 }

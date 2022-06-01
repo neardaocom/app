@@ -12,7 +12,7 @@ export default class NearAccountService {
    * 
    * @return Promise
    */
-  async getState() {
+  async state() {
     //return { amount: '24000000000000000000000000' } // TODO: local
     return this.account.state();
   }

@@ -20,13 +20,14 @@
                {{t('default.delegated')}}
                <NumberFormatter class="fw-bold ms-1" :amount="amount"/>
             </span>
-            <MDBBtn @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
+            <MDBBtn @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.forward')}}</MDBBtn>
+            <MDBBtn v-if="false" @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
          </div>
       </MDBCardBody>
    </MDBCard>
 
-   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="t('default.undelegate')">
-      <FormUndelegate ref="form" v-bind="formProps"/>
+   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="submitText">
+      <component ref="form" :is="activeForm" v-bind="formProps"></component>
    </ModalProposal>
 </template>
 
@@ -36,6 +37,7 @@ import { useI18n } from 'vue-i18n';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import ModalProposal from '@/components/proposal/Modal.vue'
 import FormUndelegate from '@/components/dao/staking/forms/FormUndelegate.vue'
+import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useStore } from 'vuex';
 export default {
@@ -45,6 +47,7 @@ export default {
       MDBBtn,
       NumberFormatter,
       FormUndelegate,
+      FormPredelegate,
       ModalProposal,
     },
    props: {
@@ -65,7 +68,9 @@ export default {
 
       const modalProposal = ref(0)
       const form = ref(null)
-       const formProps = ref({})
+      const formProps = ref({})
+      const submitText = ref('')
+      const activeForm = ref('')
 
       const undelegate = () => {
          modalProposal.value += 1
@@ -73,6 +78,18 @@ export default {
             accountId:  accountId.value,
             amount: amount
          }
+         submitText.value = t('default.undelegate')
+         activeForm.value = 'FormUndelegate'
+      }
+
+      const predelegate = () => {
+         modalProposal.value += 1
+         formProps.value = {
+            accountId:  accountId.value,
+            amount: amount
+         }
+         submitText.value = t('default.forward')
+         activeForm.value = 'FormPredelegate'
       }
 
       const submitModal = () => {
@@ -84,9 +101,12 @@ export default {
          nearWalletUrl,
          modalProposal,
          undelegate,
+         predelegate,
          submitModal,
          form,
-         formProps
+         formProps,
+         submitText,
+         activeForm,
       }
    }
 }

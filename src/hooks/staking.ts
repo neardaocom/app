@@ -1,6 +1,5 @@
 import { Loader } from "@/loader";
 import DaoStaking from "@/models/dao/DaoStaking";
-import Staking from "@/models/nearBlockchain/Staking";
 import StakingTransformer from "@/models/dao/transformers/StakingTransformer";
 import { UserInfoStaking } from "@/models/nearBlockchain/types/staking";
 import { StorageBalance, StorageBalanceBounds } from "@/models/nearBlockchain/types/storageManagement";
@@ -35,11 +34,10 @@ export const useStakeAction = (dao: Ref<DAO>, loader: Ref<Loader>) => {
    const runAction = async (action: string, args: object) => {
       const nearFactory = await loader.value.get('nearBlockchain/Factory')
       const account = await loader.value.get('near/WalletAccount')
-      const walletConnection = await loader.value.get('near/WalletConnection')
       const service = nearFactory.value.createStakingContractService(account.value)
       const ftService = nearFactory.value.createFtContractService(account.value, dao.value.settings.token_id)
       // console.log(account, config.value.near.ftFactoryAccountId)
-      const daoStaking = new DaoStaking(dao.value.wallet, service, ftService, walletConnection.value)
+      const daoStaking = new DaoStaking(dao.value.wallet, service, ftService)
 
       switch (action) {
          case 'register': {
@@ -47,11 +45,15 @@ export const useStakeAction = (dao: Ref<DAO>, loader: Ref<Loader>) => {
             }
             break;
          case 'stake': {
-               await daoStaking.stake(loGet(args, ['amount']) || 0)
+               await daoStaking.stake(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
             }
             break;
          case 'delegate': {
                await daoStaking.delegate(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
+            }
+            break;
+         case 'predelegate': {
+               await daoStaking.predelegate(loGet(args, ['delegateFromId']) || '', loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
             }
             break;
          case 'undelegate': {
@@ -63,7 +65,7 @@ export const useStakeAction = (dao: Ref<DAO>, loader: Ref<Loader>) => {
             }
             break;
          case 'withdraw': {
-               await daoStaking.withdraw(loGet(args, ['amount']) || 0)
+               await daoStaking.withdraw(loGet(args, ['delegateId']) || '', loGet(args, ['amount']) || 0)
             }
             break;
          case 'unregistred': {
@@ -84,11 +86,10 @@ export const useRegisterToken = (loader: Ref<Loader>) => {
    const registerToken = async (daoAccountId: string, tokenAccountId: string) => {
       const nearFactory = await loader.value.get('nearBlockchain/Factory')
       const account = await loader.value.get('near/WalletAccount')
-      const walletConnection = await loader.value.get('near/WalletConnection')
       const service = nearFactory.value.createStakingContractService(account.value)
       const ftService = nearFactory.value.createFtContractService(account.value, null)
       // console.log(account, config.value.near.ftFactoryAccountId)
-      const daoStaking = new DaoStaking(daoAccountId, service, ftService, walletConnection.value)
+      const daoStaking = new DaoStaking(daoAccountId, service, ftService)
 
       daoStaking.registerToken(tokenAccountId, 1)
    }
@@ -99,7 +100,7 @@ export const useRegisterToken = (loader: Ref<Loader>) => {
 }
 
 
-export const useStaking = (daoId: string, accountId: string, staking: Staking) => {
+export const useStaking = (daoId: string, accountId: string, staking: any) => {
    const logger: any = inject("logger");
    const notify: any = inject("notify");
    const { t, n } = useI18n();

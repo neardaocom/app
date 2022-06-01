@@ -29,9 +29,98 @@ export default class FtContractService extends ContractService {
     }));
   }
 
+  /*****************
+   *    Change     *
+   ****************/
+
+  /**
+   * FT Transfer
+   * 
+   * @return this
+   */
+   ftTranser(receiverId: string, amount: string, memo: string|null, tGas: number): this {
+     this.actionsAdd('ft_transfer', {receiver_id: receiverId, amount, memo}, tGas)
+     return this
+  }
+
+  /**
+   * FT Transfer Call
+   * 
+   * @return this
+   */
+   ftTranserCall(receiverId: string, amount: string, memo: string|null, msg: string, tGas: number, nearDeposit: number | string): this {
+     // console.log({receiver_id: receiverId, amount, memo, msg})
+     this.actionsAdd('ft_transfer_call', {receiver_id: receiverId, amount: amount, memo, msg}, tGas, nearDeposit)
+     return this
+   }
+
+   /**
+   * FT On transfer
+   * 
+   * @return this
+   */
+    ftOnTransfer(senderId: string, amount: string, msg: string, tGas: number, nearDeposit: number): this {
+       this.actionsAdd('ft_on_transfer', {sender_id: senderId, amount, msg}, tGas, nearDeposit)
+       return this
+    }
+
+  /**
+   * Change settings
+   * 
+   * @return this
+   */
+   changeSettings(ownerId: string, totalSupply: string, metadata: FungibleTokenMetadata, settings: Settings|null, initDistribution: InitDistribution[], tGas: number, nearDeposit: number): this {
+     this.actionsAdd('change_settings', {owner_id: ownerId, total_supply: totalSupply, metadata, settings, init_distribution: initDistribution}, tGas, nearDeposit)
+     return this
+  }
+
+  /**
+   * Mint new FT
+   * 
+   * @return this
+   */
+   mintNewFt(amount: string, msg: string|null, tGas: number, nearDeposit: number): this {
+     this.actionsAdd('change_settings', {amount, msg}, tGas, nearDeposit)
+     return this
+  }
+
+  /**
+   * Payable method that receives an attached deposit of Ⓝ for a given account.
+   * 
+   * @return this
+   */
+   storageDeposit(accountId: string|null, registrationOnly: boolean|null, tGas: number, nearDeposit: number): this {
+     this.actionsAdd('change_settings', {account_id: accountId, registration_only: registrationOnly}, tGas, nearDeposit)
+     return this
+  }
+
+  /**
+   * Withdraw specified amount of available Ⓝ for predecessor account.
+   * 
+   * @return this
+   */
+   storageWithdraw(amount: string|null, tGas: number): this {
+     this.actionsAdd('storage_withdraw', {amount}, tGas)
+     return this
+  }
+
+  /**
+   * Unregisters the predecessor account and returns the storage NEAR deposit.
+   * 
+   * @return this
+   */
+   storageUnregister(force: boolean|null, tGas: number): this {
+     this.actionsAdd('storage_unregister', {force}, tGas)
+     return this
+  }
+
+  /*****************
+ *    Views      *
+ ****************/
+
   /**
    * Total supply
-   * @returns Promise
+   * @returns this
    */
   async ftTotalSupply() {
     return this.contract.ft_total_supply();
@@ -67,79 +156,6 @@ export default class FtContractService extends ContractService {
    */
    async settings(): Promise<Settings> {
     return this.contract.settings();
-  }
-
-  /**
-   * FT Transfer
-   * 
-   * @return Promise
-   */
-  async ftTranser(receiverId: string, amount: string, memo: string|null, gas: string) {
-    return this.contract.ft_transfer({receiver_id: receiverId, amount, memo}, gas)
-  }
-
-  /**
-   * FT Transfer Call
-   * 
-   * @return Promise
-   */
-   async ftTranserCall(receiverId: string, amount: string, memo: string|null, msg: string, gas: string, yoctoNear: string) {
-     console.log({receiver_id: receiverId, amount, memo, msg})
-    return this.contract.ft_transfer_call({receiver_id: receiverId, amount: amount, memo, msg}, gas, yoctoNear)
-   }
-
-   /**
-   * FT On transfer
-   * 
-   * @return Promise
-   */
-    async ftOnTransfer(senderId: string, amount: string, msg: string, gas: string, yoctoNear: string) {
-      return this.contract.ft_on_transfer({sender_id: senderId, amount, msg}, gas, yoctoNear)
-    }
-
-  /**
-   * Change settings
-   * 
-   * @return Promise
-   */
-   async changeSettings(ownerId: string, totalSupply: string, metadata: FungibleTokenMetadata, settings: Settings|null, initDistribution: InitDistribution[], gas: string, yoctoNear: string) {
-    return this.contract.change_settings({owner_id: ownerId, total_supply: totalSupply, metadata, settings, init_distribution: initDistribution}, gas, yoctoNear)
-  }
-
-  /**
-   * Mint new FT
-   * 
-   * @return Promise
-   */
-   async mintNewFt(amount: string, msg: string|null, gas: string, yoctoNear: string) {
-    return this.contract.change_settings({amount, msg}, gas, yoctoNear)
-  }
-
-  /**
-   * Payable method that receives an attached deposit of Ⓝ for a given account.
-   * 
-   * @return Promise
-   */
-   async storageDeposit(accountId: string|null, registrationOnly: boolean|null, gas: string, yoctoNear: string): Promise<StorageBalance> {
-    return this.contract.change_settings({account_id: accountId, registration_only: registrationOnly}, gas, yoctoNear)
-  }
-
-  /**
-   * Withdraw specified amount of available Ⓝ for predecessor account.
-   * 
-   * @return Promise
-   */
-   async storageWithdraw(amount: string|null, gas: string): Promise<StorageBalance> {
-    return this.contract.storage_withdraw({amount}, gas)
-  }
-
-  /**
-   * Unregisters the predecessor account and returns the storage NEAR deposit.
-   * 
-   * @return Promise
-   */
-   async storageUnregister(force: boolean|null, gas: string): Promise<boolean> {
-    return this.contract.storage_unregister({force}, gas)
   }
 
   /**

@@ -1,5 +1,5 @@
 <template>
-   <InputNumber :labelName="t('default.amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
+   <InputNumber :labelName="t('default.amount')" :balance="walletVotePowerOwned" :max="walletVotePowerOwned" id="amount" :addon="dao.treasury.token.meta.symbol"/>
 </template>
 
 <script>
@@ -17,20 +17,21 @@ export default {
       const {t} = useI18n()
       const dao = inject('dao')
       const loader = inject('loader')
+      const wallet = inject('wallet')
 
-      const { walletTokenFree } = useStake(dao)
+      const { walletVotePowerOwned } = useStake(dao)
       const { runAction } = useStakeAction(dao, loader)
 
       const schema = computed(() => {
          return {
-               amount: `required|strIsNumber|strNumMax:${walletTokenFree.value}`
+               amount: `required|strIsNumber|strNumMax:${walletVotePowerOwned.value}`
          }
       });
 
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async (values) => {
-            runAction('withdraw', { amount: values.amount })
+            runAction('withdraw', { delegateId: wallet.value.accountId, amount: values.amount })
         }, () => {
                 console.log(errors.value)
         });
@@ -38,7 +39,7 @@ export default {
       return {
          t,
          dao,
-         walletTokenFree,
+         walletVotePowerOwned,
          onSubmit
       }
    }

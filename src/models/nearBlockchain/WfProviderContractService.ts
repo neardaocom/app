@@ -20,6 +20,10 @@ export default class WfProviderContract extends ContractService {
     }));
   }
 
+  /*****************
+    *    Views      *
+    ****************/
+
   /**
    * List of templates
    * @return Metadata[]

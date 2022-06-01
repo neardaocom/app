@@ -17,6 +17,7 @@ export default {
       const {t} = useI18n()
       const dao = inject('dao')
       const loader = inject('loader')
+      const wallet = inject('wallet')
       const { walletTokenAmount, walletTokenStaked } = useStake(dao)
       const { runAction } = useStakeAction(dao, loader)
 
@@ -30,7 +31,7 @@ export default {
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async (values) => {
-            runAction('stake', { amount: values.amount })
+            runAction('stake', { delegateId: wallet.value.accountId, amount: values.amount })
          }, () => {
             console.log(errors.value)
          });

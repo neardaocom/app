@@ -4,7 +4,7 @@
          <div class="col-md-4 d-flex align-items-center position-relative bg-gradient-120 text-white text-start p-3" style="border-radius: 0.5rem 0 0 0.5rem">
             <Tooltip class="position-absolute top-0 end-0 mt-1 me-2" color="white" text="Tooltip" />
             <div class="align-items-center">
-               <div class="fw-600 mb-n2">{{t('default.staked')}}</div>
+               <div class="fw-600 mb-n2">{{t('default.total_amount')}} / {{t('default.staked')}}</div>
                <span class="fs-2 fw-800">
                   <NumberFormatter :amount="walletTokenAmount" />
                   /
@@ -31,7 +31,7 @@
          <div class="col-md-2 d-flex flex-column align-items-center justify-content-center p-2">
             <template v-if="canStake">
                <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.stake')}}</MDBBtn>
-               <MDBBtn @click="delegate" :disabled="walletTokenStaked == 0" color="primary" size="sm" rounded  style="width: 144px">{{t('default.delegate')}}</MDBBtn>
+               <MDBBtn v-show="false" @click="delegate" :disabled="walletTokenStaked == 0" color="primary" size="sm" rounded  style="width: 144px">{{t('default.delegate')}}</MDBBtn>
                <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded  style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
             </template>
             <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>

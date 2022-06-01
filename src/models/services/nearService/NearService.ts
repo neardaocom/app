@@ -460,8 +460,8 @@ class NearService {
 
     return this.factoryContract.create(
       callArgs,
-      NearUtils.toTGas(300),
-      NearUtils.nearToYocto(amountToTransfer)
+      300,
+      amountToTransfer
     );
   }  
 
@@ -760,7 +760,7 @@ class NearService {
     proposalId: number,
     vote: number
   ) {
-    return this.contractPool.getContract(contractId).proposalVote(proposalId, vote, NearUtils.toTGas(10), NearUtils.nearToYocto(0.00125));
+    return this.contractPool.getContract(contractId).proposalVote(proposalId, vote, 10, 0.00125).actionsRun();
   }
 
   /**
@@ -770,7 +770,7 @@ class NearService {
     contractId: string,
     proposalId: number
   ) {
-    return this.contractPool.getContract(contractId).proposalFinish(proposalId, NearUtils.toTGas(100));
+    return this.contractPool.getContract(contractId).proposalFinish(proposalId, 100).actionsRun();
   }
 
   async wfFinish(contractId: string, proposalId: number) {

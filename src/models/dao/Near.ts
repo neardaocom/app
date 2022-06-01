@@ -17,7 +17,7 @@ export default class Near {
 
         for (let i = 0; i < contractIds.length; i++) {
             const account = await this.pool.getAccount(contractIds[i]);
-            promises.push(account.getState())
+            promises.push(account.state())
         }
         //console.log(promises)
         const states = await Promise.all(promises).catch((e) => {
