@@ -69,7 +69,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
         const trans = {
             id: value.id,
             code: template.code,
-            title: this.t('default.wf_templ_' + template.code + '_title', args),
+            title: this.t('default.wf_templ_' + template.code + '_v' + template.version + '_s' + value.workflowScenarioId + '_title', args),
             description: '', // TODO: From IPFS
             typeCode: template.code,
             type: this.t('default.wf_templ_' + template.code),

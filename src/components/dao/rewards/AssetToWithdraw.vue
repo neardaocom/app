@@ -20,7 +20,7 @@
          </div>
          <div class="d-flex">
             <div class="ms-auto text-end mt-2">
-               <MDBBtn @click="withdraw(rewardAsset.asset, rewardAsset.pricelistIds)" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
+               <MDBBtn @click="withdraw(rewardAsset.asset, rewardAsset.pricelistIds)" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.claim')}}</MDBBtn>
             </div>
          </div>
          

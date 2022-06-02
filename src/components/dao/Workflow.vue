@@ -31,12 +31,12 @@
             </div>
             <div class="col-10 mb-3">
                 <div class="text-muted small">{{ toDate(log.txSignedAt) }} - {{ toTime(log.txSignedAt) }}</div>
-                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
+                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code) }}</div>
                 <div class="mt-n1 small">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
-                  <template v-if="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args).length > 0">
+                  <template v-if="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args).length > 0">
                     <span class="mx-2 text-muted">|</span>
-                    <span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
+                    <span v-html="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args)" />
                   </template>
                 </div>
             </div>
@@ -101,25 +101,11 @@ import {
   MDBBtnGroup, MDBRadio, MDBBadge,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-//import ArrayHelper from '@/models/utils/ArrayHelper'
 import { toRefs, inject, ref } from "vue";
-//import { ref, toRefs, reactive, inject } from "vue";
-// import padEnd from "lodash/padEnd";
-//import loLast from "lodash/last";
-//import loGet from "lodash/get";
 import loToNumber from "lodash/toNumber";
-//import { canFinish, getSettings, runActivity, getNextActivities, getActivityRights, transformLogs, metaGetActivityForm } from "@/models/workflow";
 import { metaGetActivityForm } from "@/models/workflow";
-// import { getArgs as getProposalArgs } from "@/models/dao/DaoProposal";
-//import { useNear } from '@/hooks/vuex';
-//import Date from "@/models/utils/DateHelper";
 import Rights from "@/models/dao/Rights";
-//import loFlatten from "lodash/flatten"
 import DateHelper from '@/models/utils/DateHelper'
-
-//import WfNearSendNearSend from './workflows/wf_near_send/NearSend.vue'
-//import WfSkywardRegisterTokens from './workflows/wf_skyward/RegisterTokens.vue'
-//import WfTreasurySendFtTreasurySendFt from './workflows/wf_treasury_send_ft/TreasurySendFt.vue'
 import { useDaoWorkflow, useWorkflow } from '@/hooks/workflow'
 
 export default {
@@ -148,40 +134,6 @@ export default {
     const check = Rights.check
 
     const formNextActivityId = ref(nextActivitiesOptions.value.length > 0 ? nextActivitiesOptions.value[0].value.toString() : '')
-
-    //const activityNexts = ref([])
-    //const activityNextsRights = ref([])
-    // const activityLogs = ref(transformLogs(workflow.value.actionLogs, template.value))
-    /*
-    const settings = reactive(getSettings(template.value, workflow.value.settingsId))
-
-    const data = {
-        daoId: accountId.value,
-        proposalId: workflow.value.id,
-        constants: settings.constants,
-        inputs: workflow.value.inputs,
-        storageDao: [],
-        storage: loGet(daoStorage.value, [workflow.value.storage]),
-        form: {},
-    }
-
-    // const activityLogs = ref(getActivities(template.value, workflow.value.activityLogs.map( activity => activity.activityId )))
-    
-    const activityNexts = ref(getNextActivities(template.value, workflow.value.actionLastId) || [])
-    const activityNextsRights = ref(loFlatten(activityNexts.value.map((activity) => {
-      return getActivityRights(settings, activity)
-    })))
-
-    // console.log('Check rights', activityNextsRights.value, walletRights.value, check(activityNextsRights.value, walletRights.value))
-
-    const optionsNextActivities = ref(activityNexts.value.map( (activity) => {
-      return { text: t('default.wf_templ_' + template.value.code + '__' + activity.code), value: activity.code, rights: getActivityRights(settings, activity)}
-    }))
-
-    
-     return { t, d, n, daoWorkflow, proposalVoting, data, settings, check, formNextActivityId, optionsNextActivities, activityNexts, activityNextsRights, canFinish, activityLogs, nearService, moment };
-    */
-
 
     return {
       t, d, n, daoWorkflow, proposalVoting, template, check,

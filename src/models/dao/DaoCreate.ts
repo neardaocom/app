@@ -46,15 +46,15 @@ export default class DaoCreate {
         builder.addGroup(this.t("default.council"), council, null, 0)
         // workflow
         const standardFncalls = await this.provider.standardFncalls()
-        const workflowWfAdd = await this.provider.defaultWfAdd()
-        // console.log(workflowWfAdd)
+        const workflowBasicPackage = await this.provider.wfBasicPackage()
+        // console.log(workflowBasicPackage)
         // setup vote settings
-        workflowWfAdd[3][0].scenario = "token_weighted"
-        workflowWfAdd[3][0].approve_threshold = voteApproveThreshold
-        workflowWfAdd[3][0].quorum = voteQuorum
-        workflowWfAdd[3][0].duration = voteDuration
-        // console.log(workflowWfAdd)
-        builder.addWorkflow(standardFncalls.map((item) => item[0]), standardFncalls.map((item) => item[1]), workflowWfAdd[1], workflowWfAdd[2], [workflowWfAdd[0]], [workflowWfAdd[3]]);
+        workflowBasicPackage[3][0].scenario = "token_weighted"
+        workflowBasicPackage[3][0].approve_threshold = voteApproveThreshold
+        workflowBasicPackage[3][0].quorum = voteQuorum
+        workflowBasicPackage[3][0].duration = voteDuration
+        // console.log(workflowBasicPackage)
+        builder.addWorkflow(standardFncalls.map((item) => item[0]), standardFncalls.map((item) => item[1]), workflowBasicPackage[1], workflowBasicPackage[2], [workflowBasicPackage[0]], [workflowBasicPackage[3]]);
         // treasury lock
         const assetAmount = Utils.getLockDistributionAmount(ftAmount.toString(), councilSharePercent, councilSharePercentInit)
         builder.addTreasuryPartitionFt(this.t("default.council") + ' - ' + this.t("default.allocation"), ftAccountId, ftDecimals, new Decimal(assetAmount).toNumber(), councilUnlokingDuration)

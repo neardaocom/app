@@ -482,8 +482,8 @@ export default class DaoLoader {
         let proposalInputs: CodeValue[]
         let actionLogs: WFInstanceLog[]
 
-        const proposalTransformer = new ProposalTransformer(executes.templates)
-        const wfInstanceTransformer = new WFInstanceTransformer(executes.templates)
+        const proposalTransformer = new ProposalTransformer()
+        const wfInstanceTransformer = new WFInstanceTransformer()
     
         //console.log(this.dataChain[6])
         for (let i = 0; i < this.dataChain[6].length; i++) {

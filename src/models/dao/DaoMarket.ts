@@ -30,16 +30,20 @@ export default class DaoMarket {
         const wfTemplate = await this.servicePool.getWfProvider(this.wfProviderAccountId).wfTemplate(workflowId)
         // console.log(workflowId, proposeRights, voteRight , activityDefaultRights)
 
-        const builder = new ProposalBuilder(this.servicePool.getWfProvider(this.wfProviderAccountId))
-        builder.addTemplateId(1)
+        const builder = new ProposalBuilder(this.servicePool.getWfProvider(this.wfProviderAccountId), dao.templates)
+        builder.addTemplateByCode('basic_pkg1')
         builder.addTemplateSettingsId(0)
-        builder.addConstantNumber('workflow_id', workflowId)
-        builder.addConstantString('provider_id', this.wfProviderAccountId)
-        builder.addActivity()
-        builder.addTemplateWorflowId(workflowId)
-        builder.addTemplateVoteLevel(dao.voteLevels[0])
-        builder.addTemplateProposeRights(proposeRights)
-        builder.addTemplateVoteRights(voteRight)
+        builder.addProposeSettingsScenario(1)
+        builder.addActivity(1)
+        builder.addActivityActionConstantNumber(0, 'id', workflowId)
+        builder.addActivityActionConstantString(0, 'provider_id', this.wfProviderAccountId)
+        builder.addActivityEmpty()
+        builder.addActivityEmpty()
+        // builder.addActivityEmpty()
+        builder.addTemplateSettingsWorflowId(workflowId)
+        builder.addTemplateSettingsVoteLevel(dao.voteLevels[0])
+        builder.addTemplateSettingsProposeRights(proposeRights)
+        builder.addTemplateSettingsVoteRights(voteRight)
 
         // setup default rights
         console.log(Array(wfTemplate[0].activities.length - 1))
@@ -47,9 +51,9 @@ export default class DaoMarket {
         for (let i = 0; i < activitiesNumber; i++) {
             console.log(i)
             if (activityRights[i + 1] !== undefined) {
-                builder.addTemplateActivity(activityRights[i + 1])
+                builder.addTemplateSettingsActivity(activityRights[i + 1])
             } else {
-                builder.addTemplateActivity(activityDefaultRights)
+                builder.addTemplateSettingsActivity(activityDefaultRights)
             }
         }
 
