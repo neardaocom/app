@@ -1,15 +1,6 @@
 <template>
     <InputString :labelName="t('default.account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
-    <InputNumber :labelName="t('default.amount')" id="amount" :addon="amountPostfix"/>
-
-    <!-- <div class="text-center mt-2">
-        <MDBBtnGroup>
-            <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" label="NEAR" name="options" value="near"
-            v-model="formAsset" />
-            <MDBRadio :btnCheck="true" :wrap="false" labelClass="btn btn-secondary" :label="tokenName" name="options" value="token"
-            v-model="formAsset" />
-        </MDBBtnGroup>
-    </div> -->
+    <InputNumber :labelName="t('default.amount')" id="amount" :balance="availableNearAmount" :max="availableNearAmount" addon="Ⓝ"/>
 
     <br/>
     <div class="text-start">
@@ -31,6 +22,7 @@ import NearUtils from '@/models/nearBlockchain/Utils';
 import moment from 'moment'
 import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
+import { useAnalytics } from '@/hooks/treasury';
 
 // import {
 //   MDBRadio,
@@ -50,54 +42,34 @@ export default {
             type: String,
             required: true
         },
-        tokenName: {
-            type: String,
-            required: true
-        },
         template: {
             type: Object,
             required: true
-        },
+        }
     },
     setup (props) {
-        const { tokenName, contractId, template } = toRefs(props)
+        const { contractId, template } = toRefs(props)
         const {t} = useI18n()
+        const dao = inject('dao')
+        const loader = inject('loader')
+        const {availableNearAmount} = useAnalytics(dao, loader)
 
         const { nearService, adminAccountId, accountId } = useNear()
         const { ipfsService } = useIPFS()
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
-        //const accountId = computed(() => ( store.getters['near/getAccountId']))
-        //const logger = inject('logger')
         const notify = inject('notify')
-
-        const formAsset = ref('near')
         const refWysiwyg = ref(null)
-
-
-        const amountPostfix = computed(() => {
-            let postfix = 'Ⓝ'
-            if (formAsset.value == 'token') {
-                postfix = tokenName.value
-            }
-            return postfix
-        })
 
         const schema = computed(() => {
             return {
                 account_id: `required|accountExists:${accountPostfix.value}`,
-                amount: 'required|strIsNumber|strNumMin:0|strNumMax:1000000.0'
+                amount: `required|strIsNumber|strNumMin:0|strNumMax:${availableNearAmount.value}`
             }
         });
 
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async () => {
-            // if(formAsset.value === 'near'){
-            //     values.nearAmount = values.amount
-            // }else{
-            //     values.tokenAmount = values.amount
-            // }
-
             let ipfs_cid = ''
             if(refWysiwyg.value.getCode()){
                 try {
@@ -131,8 +103,7 @@ export default {
 
         return {
             t,
-            formAsset,
-            amountPostfix,
+            dao,
             accountPostfix,
             onSubmit,
             refWysiwyg,

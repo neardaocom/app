@@ -220,7 +220,6 @@ export default {
       switch (templ.code) {
         case 'wf_near_send':
           this.formProps = {
-            tokenName: this.dao.treasury.token.meta.name, 
             contractId: this.dao.wallet, 
             template: loFind(this.dao.templates, {code: templ.code}),
           }

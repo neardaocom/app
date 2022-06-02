@@ -1,6 +1,6 @@
 <template>
     <InputString :labelName="t('default.account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
-    <InputNumber :labelName="t('default.amount')" id="amount" :addon="tokenName"/>
+    <InputNumber :labelName="t('default.amount')" id="amount" :balance="availableTokenAmount" :max="availableTokenAmount" :addon="tokenName"/>
 
     <br/>
     <div class="text-start">
@@ -22,6 +22,7 @@ import NearUtils from "@/models/nearBlockchain/Utils";
 import moment from 'moment'
 import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
+import { useAnalytics } from '@/hooks/treasury';
 
 export default {
     components:{
@@ -46,8 +47,9 @@ export default {
     setup (props) {
         const { contractId, template } = toRefs(props)
         const {t} = useI18n()
-
-         console.log(contractId.value);
+        const dao = inject('dao')
+        const loader = inject('loader')
+        const {availableTokenAmount} = useAnalytics(dao, loader)
 
         const { nearService, adminAccountId, accountId } = useNear()
         const  ipfsService  = useIPFS()
@@ -56,13 +58,12 @@ export default {
         //const logger = inject('logger')
         const notify = inject('notify')
 
-        const formAsset = ref('near')
         const refWysiwyg = ref(null)    
 
         const schema = computed(() => {
             return {
                 account_id: `required|accountExists:${accountPostfix.value}`,
-                amount: 'required|strIsNumber|strNumMin:0|strNumMax:1000000.0'
+                amount: `required|strIsNumber|strNumMin:0|strNumMax:${availableTokenAmount.value}`
             }
         });
 
@@ -102,7 +103,6 @@ export default {
 
         return {
             t,
-            formAsset,
             accountPostfix,
             onSubmit,
             refWysiwyg
