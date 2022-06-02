@@ -49,11 +49,12 @@ export default {
         const {t} = useI18n()
         const dao = inject('dao')
         const loader = inject('loader')
+        const config = inject('config')
         const {availableTokenAmount} = useAnalytics(dao, loader)
 
-        const { nearService, adminAccountId, accountId } = useNear()
+        const { nearService, accountId } = useNear()
         const  ipfsService  = useIPFS()
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
 
         //const logger = inject('logger')
         const notify = inject('notify')
@@ -105,7 +106,8 @@ export default {
             t,
             accountPostfix,
             onSubmit,
-            refWysiwyg
+            refWysiwyg,
+            availableTokenAmount
         }
     }
 }
