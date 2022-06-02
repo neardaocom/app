@@ -220,26 +220,27 @@ export default {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalOpen(templ, templSettings, scenarioId){
+    modalOpen(templ, templSettings, scenarioId){ 
+      const templCode = templ.code + '_v' + templ.version + '_s' + scenarioId 
+
       this.modalProposal += 1
       this.dropdownAction = false
-      this.modalTitle = this.t('default.wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId)
+      this.modalTitle = this.t('default.wf_templ_' + templCode)
       this.activeFormCode = templ.code
 
-      switch (templ.code) {
-        case 'wf_near_send':
+      switch (templCode) {
+        case 'basic_pkg1_v1_s3':
           this.formProps = {
-            tokenName: this.dao.treasury.token.meta.name, 
             contractId: this.dao.wallet, 
             template: loFind(this.dao.templates, {code: templ.code}),
           }
           this.activeForm = 'Payout'
           break
-        case 'wf_treasury_send_ft':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.name, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+        case 'basic_pkg1_v1_s4':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'SendToken'
           break
-        case 'wf_add':
+        case 'basic_pkg1_v1_s1':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'AddWorkflow'
           console.log('wf_add');
@@ -248,7 +249,7 @@ export default {
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
           this.activeForm = 'GeneralProposal'
           break
-        case 'wf_media_add':
+        case 'basic_pkg1_v1_s2':
           this.formProps = {contractId: this.dao.wallet, docs: this.dao.docs, template: loFind(this.dao.templates, {code: templ.code})}
           this.activeForm = 'AddMedia'
           break
