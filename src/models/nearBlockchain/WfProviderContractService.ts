@@ -1,4 +1,5 @@
 import { Account, Contract} from 'near-api-js';
+import { DeprecatedError } from '../utils/errors';
 import ContractService from './ContractService';
 
 export default class WfProviderContract extends ContractService {
@@ -14,6 +15,7 @@ export default class WfProviderContract extends ContractService {
         'fncall_metadata',
         'standard_fncalls',
         'default_wf_add',
+        'wf_basic_package',
       ],
       changeMethods: [
       ],
@@ -85,6 +87,15 @@ export default class WfProviderContract extends ContractService {
    * @return [Template, FnCallId, ObjectMetadata[], TemplateSettings[]]
    */
    async defaultWfAdd() {
-    return this.contract.default_wf_add();
+     throw new DeprecatedError('DefaultWfAdd is deprecated')
+    // return this.contract.default_wf_add();
+  }
+
+  /**
+   * Default basic package
+   * @return [Template, FnCallId, ObjectMetadata[], TemplateSettings[]]
+   */
+   async wfBasicPackage() {
+    return this.contract.wf_basic_package();
   }
 }

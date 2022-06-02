@@ -2,142 +2,180 @@ import { ProposalInputs } from "../nearBlockchain/types/dao";
 import { TemplateSettings, TransitionLimit } from "../nearBlockchain/types/workflow";
 
 import loSet from "lodash/set";
+import loFind from "lodash/find";
+import loTimes from "lodash/times";
 import loUnset from "lodash/unset";
 import { DAORights, DAOVoteLevel } from "./types/dao";
-import { AppError } from "../utils/errors";
+import { AppError, NotFoundError } from "../utils/errors";
 import NearUtils from "../nearBlockchain/Utils";
 import Rights from "./Rights";
 import WfProviderContract from "../nearBlockchain/WfProviderContractService";
+import { WFSettings, WFTemplate } from "./types/workflow";
 
 export default class ProposalBuilder {
     private service: WfProviderContract;
+    private daoTemplates: Record<number, WFTemplate>;
 
+    // basic
+    private template?: WFTemplate;
+    private templateSettings?: WFSettings;
     private description?: number;
-    private templateId?: number;
-    private templateSettingsId?: number;
-    private storageKey?: string;
     private schedulerMsg?: string;
-    private constants: Record<string, any> = {};
-    private activityConstants: any[] = [];
     
-    // template
-    private templateWorkflowId?: number;
-    private templateProposeRights?: DAORights[];
-    private templateVoteRight?: DAORights;
-    private templateVoteLevel?: DAOVoteLevel;
-    private templateActivitiesRights: DAORights[][] = [];
+    // propose settings
+    private proposeSettingsConstants: Record<string, any> = {};
+    private proposeSettingsActivity: any[] = [];
+    private proposeSettingsStorageKey?: string;
 
-    constructor(service: WfProviderContract) {
+
+    
+    // template settings
+    private templateSettingsWorkflowId?: number;
+    private templateSettingsProposeRights?: DAORights[];
+    private templateSettingsVoteRight?: DAORights;
+    private templateSettingsVoteLevel?: DAOVoteLevel;
+    private templateSettingsActivitiesRights: DAORights[][] = [];
+
+    constructor(service: WfProviderContract, daoTemplates: Record<number, WFTemplate>) {
         this.service = service
+        this.daoTemplates = daoTemplates
     }
 
-    addTemplateId(templateId: number) {
-        this.templateId = templateId
+    addTemplateByCode(templateCode: string) {
+        this.template = loFind(this.daoTemplates, {code: templateCode})
+        if (this.template === undefined) {
+            throw new NotFoundError('TemplateCode[' + templateCode + '] not found in DAO')
+        }
     }
 
     addTemplateSettingsId(templateSettingsId: number) {
-        this.templateSettingsId = templateSettingsId
-    }
-
-    addStorageKey(key: string) {
-        this.storageKey = key
+        this.templateSettings = loFind(this.template?.settings, {id: templateSettingsId})
+        if (this.templateSettings === undefined) {
+            throw new NotFoundError('TemplateSettingsId[' + templateSettingsId + '] not found in DAO Template')
+        }
     }
 
     addSchedulerMsg(msg: string) {
         this.schedulerMsg = msg
     }
-
-    addConstantString(key: string, value: string) {
-        loSet(this.constants, key, {'string': value})
+    
+    addProposeSettingsScenario(scenarioId: number) {
+        loSet(this.proposeSettingsConstants, 's', {'u64': scenarioId})
     }
 
-    addConstantNumber(key: string, value: number) {
-        loSet(this.constants, key, {'u64': value})
+    addProposeSettingsStorageKey(key: string) {
+        this.proposeSettingsStorageKey = key
     }
 
-    addConstantBigNumber(key: string, value: string) {
-        loSet(this.constants, key, {'u128': value})
+    addProposeSettingsConstantString(key: string, value: string) {
+        loSet(this.proposeSettingsConstants, key, {'string': value})
     }
 
-    addActivity() {
-        this.activityConstants.push({
+    addProposeSettingsConstantNumber(key: string, value: number) {
+        loSet(this.proposeSettingsConstants, key, {'u64': value})
+    }
+
+    addProposeSettingsConstantBigNumber(key: string, value: string) {
+        loSet(this.proposeSettingsConstants, key, {'u128': value})
+    }
+
+    addActivity(actionCount: number = 1) {
+        this.proposeSettingsActivity.push({
             constants: null,
-            actions_constants: [{
-                map: {}
-            }]
+            actions_constants: loTimes(actionCount, () => ({ map: {} }))
         })
     }
 
-    addActivityActionConstant(key: string, value: object) {
-        loSet(this.activityConstants[this.activityConstants.length - 1].actions_constants[0].map, [key], value)
+    addActivityEmpty() {
+        this.proposeSettingsActivity.push(null)
     }
 
-    addActivityActionConstantString(key: string, value: string) {
-        this.addActivityActionConstant(key, {'string': value})
+    addActivityConstant(key: string, value: object) {
+        loSet(this.proposeSettingsActivity[this.proposeSettingsActivity.length - 1].constants, ['map', key], value)
     }
 
-    addActivityActionConstantNumber(key: string, value: number) {
-        this.addActivityActionConstant(key, {'u64': value})
+    addActivityConstantString(key: string, value: string) {
+        this.addActivityConstant(key, {'string': value})
     }
 
-    addActivityActionConstantBigNumber(key: string, value: string) {
-        this.addActivityActionConstant(key, {'u128': value})
+    addActivityConstantNumber(key: string, value: number) {
+        this.addActivityConstant(key, {'u64': value})
     }
 
-    addTemplateWorflowId(workflowId: number) {
-        this.templateWorkflowId = workflowId
+    addActivityConstantBigNumber(key: string, value: string) {
+        this.addActivityConstant(key, {'u128': value})
     }
 
-    addTemplateVoteLevel(templateVoteLevel: DAOVoteLevel) {
-        this.templateVoteLevel = templateVoteLevel
+    addActivityActionConstant(id: number, key: string, value: object) {
+        loSet(this.proposeSettingsActivity[this.proposeSettingsActivity.length - 1].actions_constants, [id, 'map', key], value)
     }
 
-    addTemplateProposeRights(templateProposeRights: DAORights[]) {
-        this.templateProposeRights = templateProposeRights
+    addActivityActionConstantString(id: number, key: string, value: string) {
+        this.addActivityActionConstant(id, key, {'string': value})
     }
 
-    addTemplateVoteRights(templateVoteRight: DAORights) {
-        this.templateVoteRight = templateVoteRight
+    addActivityActionConstantNumber(id: number, key: string, value: number) {
+        this.addActivityActionConstant(id, key, {'u64': value})
     }
 
-    addTemplateActivity(rights: DAORights[]) {
-        this.templateActivitiesRights.push(rights)
+    addActivityActionConstantBigNumber(id: number, key: string, value: string) {
+        this.addActivityActionConstant(id, key, {'u128': value})
+    }
+
+    addTemplateSettingsWorflowId(workflowId: number) {
+        this.templateSettingsWorkflowId = workflowId
+    }
+
+    addTemplateSettingsVoteLevel(templateSettingsVoteLevel: DAOVoteLevel) {
+        this.templateSettingsVoteLevel = templateSettingsVoteLevel
+    }
+
+    addTemplateSettingsProposeRights(templateSettingsProposeRights: DAORights[]) {
+        this.templateSettingsProposeRights = templateSettingsProposeRights
+    }
+
+    addTemplateSettingsVoteRights(templateSettingsVoteRight: DAORights) {
+        this.templateSettingsVoteRight = templateSettingsVoteRight
+    }
+
+    addTemplateSettingsActivity(rights: DAORights[]) {
+        this.templateSettingsActivitiesRights.push(rights)
     }
 
 
     async create(): Promise<ProposalInputs> {
-        if (this.templateId === undefined) {
-            throw new Error("TemplateId is not defined");
+        if (this.template === undefined) {
+            throw new Error("Template is not defined");
         }
 
-        if (this.templateSettingsId === undefined) {
-            throw new Error("TemplateSettingsId is not defined");
+        if (this.templateSettings === undefined) {
+            throw new Error("TemplateSettings is not defined");
         }
 
         let templateSettings: TemplateSettings[] | null = null
-        if ( this.templateWorkflowId !== undefined || this.templateVoteLevel !== undefined || this.templateVoteRight !== undefined || this.templateProposeRights !== undefined ) {
+        if ( this.templateSettingsWorkflowId !== undefined || this.templateSettingsVoteLevel !== undefined || this.templateSettingsVoteRight !== undefined || this.templateSettingsProposeRights !== undefined ) {
             // check
-            if (this.templateWorkflowId === undefined || this.templateVoteLevel === undefined || this.templateVoteRight === undefined || this.templateProposeRights === undefined) {
-                throw new AppError("templateWorkflowId and templateVoteLevel and this.templateVoteRight and this.templateProposeRights must be added")
+            if (this.templateSettingsWorkflowId === undefined || this.templateSettingsVoteLevel === undefined || this.templateSettingsVoteRight === undefined || this.templateSettingsProposeRights === undefined) {
+                throw new AppError("templateSettingsWorkflowId and templateSettingsVoteLevel and this.templateSettingsVoteRight and this.templateSettingsProposeRights must be added")
             }
 
             // load template from provider
-            const templateProvider = await this.service.wfTemplate(this.templateWorkflowId)
+            const templateProvider = await this.service.wfTemplate(this.templateSettingsWorkflowId)
             // console.log(templateProvider[0].transitions)
 
             templateSettings = [{
-                allowed_proposers: this.templateProposeRights.map((item) => Rights.toObject(item)),
-                allowed_voters: Rights.toObject(this.templateVoteRight!),
-                activity_rights: this.templateActivitiesRights.map((item) => item.map((right) => Rights.toObject(right))),
+                allowed_proposers: this.templateSettingsProposeRights.map((item) => Rights.toObject(item)),
+                allowed_voters: Rights.toObject(this.templateSettingsVoteRight!),
+                activity_rights: this.templateSettingsActivitiesRights.map((item) => item.map((right) => Rights.toObject(right))),
                 transition_limits: templateProvider[0].transitions.map((transition) =>
                     transition.map((transitionItem) => ({ to: transitionItem.activity_id, limit: 100})
                 )),
-                scenario: this.templateVoteLevel!.type === 0 ? 'democratic' : 'token_weighted',
-                duration: NearUtils.durationToChain(this.templateVoteLevel!.duration),
-                quorum: this.templateVoteLevel!.quorum,
-                approve_threshold: this.templateVoteLevel!.approveThreshold,
-                spam_threshold: this.templateVoteLevel!.spamThreshold || 80,
-                vote_only_once: this.templateVoteLevel!.voteOnlyOnce,
+                scenario: this.templateSettingsVoteLevel!.type === 0 ? 'democratic' : 'token_weighted',
+                duration: NearUtils.durationToChain(this.templateSettingsVoteLevel!.duration),
+                quorum: this.templateSettingsVoteLevel!.quorum,
+                approve_threshold: this.templateSettingsVoteLevel!.approveThreshold,
+                spam_threshold: this.templateSettingsVoteLevel!.spamThreshold || 80,
+                vote_only_once: this.templateSettingsVoteLevel!.voteOnlyOnce,
                 deposit_propose: NearUtils.nearToYocto(1),
                 deposit_vote: '1',
                 deposit_propose_return: 0,
@@ -148,17 +186,17 @@ export default class ProposalBuilder {
 
         return {
             description: this.description || null,
-            template_id: this.templateId,
-            template_settings_id: this.templateSettingsId,
+            template_id: this.template.id,
+            template_settings_id: this.templateSettings.id,
             propose_settings: {
                 constants: {
-                    map: this.constants
+                    map: this.proposeSettingsConstants
                 },
                 activity_constants: [ // TODO: add activity constants
                     null,
-                    ...this.activityConstants,
+                    ...this.proposeSettingsActivity,
                 ],
-                storage_key: this.storageKey || null,
+                storage_key: this.proposeSettingsStorageKey || null,
             },
             template_settings: templateSettings,
             scheduler_msg: this.schedulerMsg || null,

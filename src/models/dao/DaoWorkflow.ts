@@ -30,9 +30,12 @@ export default class DaoWorkflow {
     return transformer.transform(this.getProposal())
   }
 
-  getTemplate = (): WFTemplate | undefined => {
+  getTemplate = (): WFTemplate => {
     if (!this.template) {
       this.template = loFind(this.dao.templates, { 'id': this.workflow.templateId })
+    }
+    if (!this.template) {
+      throw new NotFoundError('Template[' + this.workflow.templateId + '] not found')
     }
     return this.template;
   }
@@ -67,9 +70,13 @@ export default class DaoWorkflow {
   getNextActivities(): WFActivity[] {
     const activities: WFActivity[] = []
 
-    this.getTransitionNextIds().forEach((activityId) => {
-      this.template?.activities.filter((activity) => activity.id === activityId).forEach((activity) => activities.push(activity))
-    })
+    if (this.workflow.activityLastId === 0) {
+        this.getTemplate().activities.filter((activity) => activity.id == this.workflow.workflowScenarioId).forEach((activity) => activities.push(activity))
+    } else {
+      this.getTransitionNextIds().forEach((activityId) => {
+        this.getTemplate().activities.filter((activity) => activity.id === activityId).forEach((activity) => activities.push(activity))
+      })
+    }
 
     return activities
   }
@@ -102,7 +109,7 @@ export default class DaoWorkflow {
     const actionInputs = metadataActivity.args({
       daoId: this.service.getContractId(),
       proposalId: this.workflow.id,
-      constants: [],
+      constants: this.workflow.constants,
       inputs: this.workflow.inputs,
       storageDao: [],
       storage: [],

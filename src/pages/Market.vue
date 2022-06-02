@@ -142,7 +142,7 @@ export default {
     },
     open(template){
       if (this.rDaoId) {
-        const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
+        const rights = loFind(this.dao.templates, {code: 'basic_pkg1'})?.settings[0].proposeRights ?? []
         if (Rights.check(this.walletRights, rights)) {
           this.modalProposal += 1
           this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.value.code) + ' ' + this.t('default.feature')

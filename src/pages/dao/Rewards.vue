@@ -13,7 +13,7 @@
          <div class="mb-7 mt-4">
             <div class="d-flex mb-4">
                <h5 class="text-start me-auto">{{t('default.assets_to_withdraw')}}</h5>
-               <MDBBtn v-show="false" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
+               <MDBBtn v-show="false" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.claim')}}</MDBBtn>
             </div>
 
             <div v-if="rewardsAssetsStats?.length > 0" class="row g-2">

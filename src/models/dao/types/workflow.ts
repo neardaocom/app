@@ -34,6 +34,7 @@ export type WFMetaTemplate = {
     inputs: WFMetaAttribute[];
     activities: WFMetaActivity[];
     actions: WFMetaAction[];
+
 };
 
 export type WFAttribute = {
@@ -136,6 +137,7 @@ export type WFInstance = {
     storage: string;
     inputs: CodeValue[];
     constants: CodeValue[];
+    workflowScenarioId: number | null;
     activityLastId: number;
     activityLogs: WFInstanceLog[];
     search: string;

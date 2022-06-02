@@ -1,28 +1,29 @@
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
-import { DAOProposal } from "../types/dao";
 import NearUtils from "@/models/nearBlockchain/Utils";
 import { CodeValue } from "@/models/utils/types/generics";
-import { WFInstance, WFInstanceLog, WFTemplate } from "../types/workflow";
-import ProposalHelper from "../ProposalHelper";
+import { WFInstance, WFInstanceLog } from "../types/workflow";
 import StringHelper from "@/models/utils/StringHelper";
+import ProposalConstantsTransformer from "./ProposalConstantsTransformer";
+import ProposalInputsTransformer from "./ProposalInputsTransformer";
+import loGet from "lodash/get"
 
 export default class WFInstanceTransformer implements TransformerInterface {
-    private templates: Record<number, WFTemplate>;
 
-    constructor(templates: Record<number, WFTemplate>) {
-        this.templates = templates
+    private constantsTransformer: TransformerInterface;
+    private inputsTransformer: TransformerInterface;
+
+    constructor() {
+        this.constantsTransformer = new ProposalConstantsTransformer()
+        this.inputsTransformer = new ProposalInputsTransformer()
     }
 
     transform(value: any): WFInstance {
         // console.log(value)
 
-        const proposalConstants: CodeValue[] = []
-            //proposalConstants = templateMeta?.constants.map((attr) => {
-            //    return { code: attr.code, value: loGet(proposalSettings?.constants, [attr.bindId])?.value}
-            //}) ?? []
-    
-        const proposalInputs: CodeValue[] = ProposalHelper.transformInputs(value[2].constants)
-    
+        const proposalConstants: CodeValue[] = this.constantsTransformer.transform(value[2].constants)
+
+        const proposalInputs: CodeValue[] = this.inputsTransformer.transform(value[2].activity_constants)
+
         const activityLogs: WFInstanceLog[] = []
 
         value[4]?.forEach((log, index) => {
@@ -41,10 +42,11 @@ export default class WFInstanceTransformer implements TransformerInterface {
             id: value[0],
             templateId: value[3].template_id,
             settingsId: value[1].current.workflow_settings_id,
+            workflowScenarioId: loGet(value[2], ['constants', 'map', 's', 'u64']) || 1,
             state: value[3].state,
             storage: value[2].storage_key,
-            inputs: proposalInputs,
             constants: proposalConstants,
+            inputs: proposalInputs,
             activityLastId: value[3].current_activity_id || 0,
             activityLogs: activityLogs,
             search: [StringHelper.toSearch('#' + value[0])].join('-'), // TODO: Complete seach: proposalTemplate?.search ?? '' 

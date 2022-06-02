@@ -68,7 +68,16 @@
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
                   <template v-if="[''].includes(templ.code) === false">
-                    <MDBDropdownItem v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'" tag="button" @click.prevent="modalOpen(templ, templSettings)"><MDBIcon v-if="false" icon="user-plus" class="pe-2"/>{{ t('default.wf_templ_' + templ.code) }}</MDBDropdownItem>
+                    <template v-for="scenarioId in templ.startActivityIds" :key="scenarioId">
+                      <MDBDropdownItem
+                        v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'"
+                        tag="button"
+                        @click.prevent="modalOpen(templ, templSettings, scenarioId)"
+                      >
+                        <MDBIcon v-if="false" icon="user-plus" class="pe-2"/>
+                        {{ t('default.wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId) }}
+                      </MDBDropdownItem>
+                    </template>
                   </template>
                 </template>
               </template>
@@ -211,10 +220,10 @@ export default {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalOpen(templ, templSettings){
+    modalOpen(templ, templSettings, scenarioId){
       this.modalProposal += 1
       this.dropdownAction = false
-      this.modalTitle = this.t('default.wf_templ_' + templ.code)
+      this.modalTitle = this.t('default.wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId)
       this.activeFormCode = templ.code
 
       switch (templ.code) {

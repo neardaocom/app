@@ -167,6 +167,7 @@ export type DAOProposal = {
   state: string;
   templateId: number;
   settingsId: number;
+  workflowScenarioId: number | null;
   inputs: CodeValue[];
   storageKey?: string | null;
   constants: CodeValue[];
