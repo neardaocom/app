@@ -31,12 +31,12 @@
             </div>
             <div class="col-10 mb-3">
                 <div class="text-muted small">{{ toDate(log.txSignedAt) }} - {{ toTime(log.txSignedAt) }}</div>
-                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '__' + log.activity.code) }}</div>
+                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code) }}</div>
                 <div class="mt-n1 small">
                   {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
-                  <template v-if="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args).length > 0">
+                  <template v-if="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args).length > 0">
                     <span class="mx-2 text-muted">|</span>
-                    <span v-html="t('default.wf_templ_' + template.code + '__' + log.activity.code + '_title', log.args)" />
+                    <span v-html="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args)" />
                   </template>
                 </div>
             </div>
