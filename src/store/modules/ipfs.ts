@@ -1,5 +1,5 @@
 import { getConfig } from "@/config/ipfs"
-import { IpfsService } from "@/models/services/ipfsService/IpfsService.js"
+import Web3StorageService from "@/models/services/ipfs/Web3StorageService"
 import { Commit } from "vuex"
 
 
@@ -19,7 +19,7 @@ const getters = {
 const actions = {
   async init({ commit }: { commit: Commit }) {
     const config = getConfig(process.env.NODE_ENV || "development")
-    const service = new IpfsService(config.token)
+    const service = new Web3StorageService(config.token)
     //console.log(service)
     commit('setState', { service: service })
   }

@@ -102,8 +102,8 @@ import { inject, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import ModalProposal from '@/components/proposal/Modal.vue'
 import loFind from "lodash/find";
-import Payout from '@/components/dao/workflows/wf_near_send/Proposal.vue'
-import SendToken from '@/components/dao/workflows/wf_treasury_send_ft/Proposal.vue'
+import Payout from '@/components/dao/workflows/basic_pkg/ProposalNearSend.vue'
+import SendToken from '@/components/dao/workflows/basic_pkg/ProposalTokenSend.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'

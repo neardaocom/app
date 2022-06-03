@@ -23,8 +23,8 @@ export default class DaoAssetTransformer implements TransformerInterface {
         let ftMetadata: FungibleTokenMetadata | null = null
 
         // FT
-        if (loGet(value, ['f_t']) !== undefined) {
-            ftAccountId = loGet(value, ['f_t', 'account_id'])
+        if (loGet(value, ['ft']) !== undefined) {
+            ftAccountId = loGet(value, ['ft', 'account_id'])
             ftMetadata = await this.ftMetadataLoader.load(ftAccountId!)
             daoAsset = {
                 type: 'ft',
@@ -47,7 +47,7 @@ export default class DaoAssetTransformer implements TransformerInterface {
                 decimals: ftMetadata.decimals,
             }
         // nft
-        } else if (loGet(value, ['n_f_t']) !== undefined) {
+        } else if (loGet(value, ['nft']) !== undefined) {
             throw new NotImplementedError('NFT Asset not implemented')
         } else {
             console.log(loToPairs(value))

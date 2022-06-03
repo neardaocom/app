@@ -60,7 +60,7 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
-import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
+import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import VersionHelper from '@/models/utils/VersionHelper'
 import {
     MDBSwitch,
@@ -166,13 +166,13 @@ export default {
                     ipfsData = uploadFiles.value
                     break;
                 case 'flush-url':
-                    ipfsData = makeFileFromString(values.url, getFullname())
+                    ipfsData = IpfsUtils.makeFileFromString(values.url, getFullname())
                     break;
                 case 'flush-html':
-                    ipfsData = makeFileFromString(refWysiwyg.value.getCode(), getFullname())
+                    ipfsData = IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), getFullname())
                     break;
                 case 'flush-plain':
-                    ipfsData = makeFileFromString(values.plain, getFullname())
+                    ipfsData = IpfsUtils.makeFileFromString(values.plain, getFullname())
                     break;
                 default:
                     break;
@@ -257,7 +257,7 @@ export default {
 
             if(values.description){
                 const name = `${contractId.value}-wf_media_add-proposal-desc-${moment().valueOf()}`
-                ipfsPromises.push(ipfsService.value.storeFiles(makeFileFromString(values.description, name), name))
+                ipfsPromises.push(ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(values.description, name), name))
                 ipfsSet[0] = true
             }
             

@@ -69,7 +69,7 @@ export type GroupInput = {
     member_roles: { name: string, members: string[]}[]; // keys are group role names, values are account ids for the role
 }
 
-export type Asset = "near" | {"f_t": AssetFT} | {"n_f_t": AssetNFT}
+export type Asset = "near" | {"ft": AssetFT} | {"nft": AssetNFT}
 
 export type AssetFT = {
     account_id: string;

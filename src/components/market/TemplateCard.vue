@@ -17,7 +17,7 @@
             <MDBCardTitle class="h4">{{ t('default.wf_templ_' + template.code) }}</MDBCardTitle>
             <MDBCardText class="mb-5">
                <small class="text-muted">
-                  {{ t('default.wf_templ_' + template.code + '_' + template.version + '_description') }}
+                  {{ t('default.wf_templ_' + template.code + '_v' + template.version + '_description') }}
                </small>
             </MDBCardText>
             <MDBCardText>

@@ -2,6 +2,9 @@ import { WFMetaTemplate, WFData } from "@/models/dao/types/workflow"
 import GenericsHelper from "@/models/utils/GenericsHelper"
 import ObjectHelper from "@/models/utils/ObjectHelper"
 import loToNumber from "lodash/toNumber";
+import loToString from "lodash/toString";
+import loSet from "lodash/set"
+import NearUtils from "@/models/nearBlockchain/Utils";
 
 export const templateBasicPkg: WFMetaTemplate = {
     id: 0,
@@ -17,7 +20,7 @@ export const templateBasicPkg: WFMetaTemplate = {
                         action: {
                             fn_call: [
                                 'workflow-provider.v1.neardao.testnet',
-                                'wf_template'
+                                'wf_template',
                             ]
                         },
                         values: {
@@ -34,6 +37,62 @@ export const templateBasicPkg: WFMetaTemplate = {
                 return {
                     "templateId": ObjectHelper.first(args[0][0]),
                 }
+            },
+        },
+        {
+            id: 3,
+            args: (data: WFData) => {
+                return [
+                    {
+                        action: 'send_near',
+                        values: {
+                            map: {
+                                receiver_id: {
+                                    string: loToString(GenericsHelper.getValueByCode(data.inputs, 'receiver_id'))
+                                },
+                                amount: {
+                                    string: loToString(GenericsHelper.getValueByCode(data.inputs, 'amount'))
+                                },
+                            }
+                        }
+                    }
+                ]
+            },
+            log: (args: any) => {
+                loSet(args, ['amount'], NearUtils.amountFromDecimals(loToString(args.amount) || '0', 24))
+                return args
+            },
+        },
+        {
+            id: 4,
+            args: (data: WFData) => {
+                return [
+                    {
+                        action: {
+                            fn_call: [
+                                loToString(GenericsHelper.getValueByCode(data.inputs, 'token_id')),
+                                'ft_transfer',
+                            ]
+                        },
+                        values: {
+                            map: {
+                                receiver_id: {
+                                    string: loToString(GenericsHelper.getValueByCode(data.inputs, 'receiver_id'))
+                                },
+                                amount: {
+                                    u128: loToString(GenericsHelper.getValueByCode(data.inputs, 'amount'))
+                                },
+                                memo: {
+                                    string: ''
+                                },
+                            }
+                        }
+                    }
+                ]
+            },
+            log: (args: any) => {
+                loSet(args, ['amount'], NearUtils.amountFromDecimals(loToString(args.amount) || '0', 24))
+                return args
             },
         },
     ],

@@ -17,7 +17,7 @@ export default class DaoAssetToChainAssetTransformer implements TransformerInter
                 break;
             case 'ft':
                     asset = {
-                        f_t: {
+                        ft: {
                             account_id: data.accountId,
                             decimals: data.decimals,
                         }

@@ -5,6 +5,7 @@ export default class DateHelper {
 
     static formatTime: string = 'H:mm'
 
+    static formatDate: string = 'YYYY-MM-DD'
     static formatDateLong: string = 'MMMM D, YYYY'
 
     static parse(value: string, format: string): Date {
