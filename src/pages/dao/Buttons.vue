@@ -67,10 +67,10 @@
             <MDBDropdownMenu>
               <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
-                  <template v-if="[''].includes(templ.code) === false">
+                  <template v-if="['basic_pkg1'].includes(templ.code) === true">
                     <template v-for="scenarioId in templ.startActivityIds" :key="scenarioId">
                       <MDBDropdownItem
-                        v-if="check(walletRights, templSettings.proposeRights) && templ.code!=='wf_ft_distribute' && templ.code!=='wf_add'"
+                        v-if="check(walletRights, templSettings.proposeRights) && [2,3,4].includes(scenarioId)"
                         tag="button"
                         @click.prevent="modalOpen(templ, templSettings, scenarioId)"
                       >
