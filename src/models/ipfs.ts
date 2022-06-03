@@ -3,6 +3,7 @@ import IpfsService from "@/models/services/ipfs/Web3StorageService";
 import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import { DAODocsFile, DAODocsFileType } from "@/models/dao/types/dao";
 import lodashToString from "lodash/toString";
+import loGet from "lodash/get"
 
 export const fetch = async (file: DAODocsFile, service?: IpfsService): Promise<string | undefined> => {
     let value: string | undefined = undefined
@@ -11,22 +12,24 @@ export const fetch = async (file: DAODocsFile, service?: IpfsService): Promise<s
     // console.log(DAODocsFileType[DAODocsFileType.url])
     switch (lodashToString(file.type)) {
         case lodashToString(DAODocsFileType.url): // TODO: move to plain after refact smart contract
+            value = loGet(file, ['value', 'link'])
+            break;
         case lodashToString(DAODocsFileType.plain): {
-            if (typeof file.value !== 'string') throw new Error("Unexpected type of attribure");
-            value = file.value
+            // if (typeof file.value !== 'string') throw new Error("Unexpected type of attribure");
+            value = loGet(file, ['value', 'text'])
             break;
         }
         case lodashToString(DAODocsFileType.html): {
             if (service === undefined) throw new Error("service is undefined");
-            if (typeof file.value === 'string') throw new Error("Unexpected type of attribure");
-            const fetched: any = await service.retrieve(file.value.cid)
+            //if (typeof file.value === 'string') throw new Error("Unexpected type of attribure");
+            const fetched: any = await service.retrieve(value = loGet(file, ['value', 'cid', 'cid']))
             value = await fetched[0].text()
             break;
         }
         case lodashToString(DAODocsFileType.binaryPdf): {
             if (service === undefined) throw new Error("service is undefined");
-            if (typeof file.value === 'string') throw new Error("Unexpected type of attribure");
-            const fetchedBinary: any = await service.retrieve(file.value.cid)
+            //if (typeof file.value === 'string') throw new Error("Unexpected type of attribure");
+            const fetchedBinary: any = await service.retrieve(loGet(file, ['value', 'cid', 'cid']))
             value = URL.createObjectURL(fetchedBinary[0])
             break;
         }
