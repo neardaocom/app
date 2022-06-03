@@ -104,11 +104,11 @@ import ModalProposal from '@/components/proposal/Modal.vue'
 import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/basic_pkg/ProposalNearSend.vue'
 import SendToken from '@/components/dao/workflows/basic_pkg/ProposalTokenSend.vue'
+import AddMedia from '@/components/dao/workflows/basic_pkg/ProposalMediaAdd.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
 import BountyProposal from '@/components/dao/workflows/wf_bounty/Proposal.vue'
-import AddMedia from '@/components/dao/workflows/wf_media_add/Proposal.vue'
 import {
   MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem,
   MDBBtn, MDBBtnGroup,

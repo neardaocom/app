@@ -9,7 +9,7 @@
     </div>    
     <div class="row">
         <div class="col-12 mt-1 mb-4">
-          <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('default.upgrade_version', {version: getNewVersion}) : t('default.update_version', {version: getNewVersion})" v-model="formVersionUpgrageMajor"/>
+          <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('default.upgrade_version', {version: newVersion}) : t('default.update_version', {version: newVersion})" v-model="formVersionUpgrageMajor"/>
         </div>
     </div>
     <div class="row">
@@ -55,12 +55,10 @@
 <script>
 import InputString from '@/components/forms/InputString.vue'
 import Autocomplete from '@/components/forms/Autocomplete.vue'
-import { toRefs } from 'vue';
+import { computed, ref, toRefs, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
-import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import VersionHelper from '@/models/utils/VersionHelper'
 import {
     MDBSwitch,
@@ -70,8 +68,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
-import { useIPFS, useNear } from '@/hooks/vuex';
-import moment from 'moment';
+import { useProposalBasic } from '@/hooks/proposal';
 
 
 export default {
@@ -100,9 +97,11 @@ export default {
     },
     setup (props) {
         const { t } = useI18n()
-        const { contractId, docs, template } = toRefs(props)
-        const { nearService } = useNear()  
-        const { ipfsService }= useIPFS()
+        const { docs } = toRefs(props)
+        const dao = inject('dao')
+        const loader = inject('loader')
+        const config = inject('config')
+        const { proposalBasic } = useProposalBasic(loader, config)
 
         console.log(docs.value);
         //const files = transform(docs.value)
@@ -152,6 +151,7 @@ export default {
 
 
 
+        /*
         const getExt = () => {
             return formDocumentType.value.replace('flush-', '')
         }
@@ -169,7 +169,7 @@ export default {
                     ipfsData = IpfsUtils.makeFileFromString(values.url, getFullname())
                     break;
                 case 'flush-html':
-                    ipfsData = IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), getFullname())
+                    ipfsData = IpfsUtils.makeFileFromHtml(refWysiwyg.value.getCode(), getFullname())
                     break;
                 case 'flush-plain':
                     ipfsData = IpfsUtils.makeFileFromString(values.plain, getFullname())
@@ -212,6 +212,7 @@ export default {
             }
             return mediaType
         }
+        */
 
 
         //switch
@@ -219,7 +220,7 @@ export default {
         const isNewFile = computed(() => (getIndexOfFile.value == -1 )) 
         const formVersionUpgrageMajor = ref(true)
         const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? docs.value[getIndexOfFile.value].version : undefined)) 
-        const getNewVersion = computed(() => {
+        const newVersion = computed(() => {
             let version = '1.0'
             if (isNewFile.value === false) {
                 if (formVersionUpgrageMajor.value === true) {
@@ -250,61 +251,9 @@ export default {
 
         
         
-        const onSubmit = handleSubmit( async values => {
-
-            const ipfsPromises = []
-            const ipfsSet = [false,false]
-
-            if(values.description){
-                const name = `${contractId.value}-wf_media_add-proposal-desc-${moment().valueOf()}`
-                ipfsPromises.push(ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(values.description, name), name))
-                ipfsSet[0] = true
-            }
-            
-            if (formDocumentType.value == 'flush-pdf' || formDocumentType.value == 'flush-html'){
-                ipfsPromises.push(ipfsService.value.storeFiles(getIpfsData(), values.fileName))
-                ipfsSet[1] = true
-            }
-
-            const ipfsCids = await Promise.all(    
-                ipfsPromises
-            ).catch((e) => {
-                // logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                // logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                // notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
-                // notify.flush()
-                throw new Error("Ipfs not working" + e);
-            });
-
-
-            const ipfscCdDesc = ipfsSet[0] ? ipfsCids[0] : ''
-            const ipfsCidDocument = ipfsSet[1] && ipfsSet[0] ? ipfsCids[1] 
-                                        : ipfsSet[1] ? ipfsCids[0] : '' 
-
-            let mediaType = getMediaType(ipfsCidDocument)
-            
-            const content = {
-                Media: {
-                    name: values.fileName,
-                    proposal_id: 0,
-                    category: values.fileCategory,
-                    media_type: mediaType,
-                    tags: [],
-                    version: getNewVersion.value,
-                    valid: true
-                }
-            }
-
-            nearService.value.addProposal(
-                content, 
-                contractId.value,
-                template.value.id,
-                template.value.settings[0].id,
-                ipfscCdDesc,
-                [],
-                `wf-media-add-${moment().valueOf()}`,
-                1.0
-            )
+        const onSubmit = handleSubmit( async (values) => {
+            const types = formDocumentType.value.split('-')
+            proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, null, types[1], values.plain, values.url, refWysiwyg.value.getCode(), uploadFiles.value)
         }, () => {
                 console.log(errors.value)
         });
@@ -320,7 +269,7 @@ export default {
             categoryOptions,
             formVersionUpgrageMajor,
             isNewFile,
-            getNewVersion,
+            newVersion,
             formDocumentType,
             documentTypeDropdown,
             fileUploadMsg,

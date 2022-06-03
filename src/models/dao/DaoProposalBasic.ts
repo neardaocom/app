@@ -7,6 +7,9 @@ import NearUtils from "../nearBlockchain/Utils";
 import MediaBuilder from "./MediaBuilder";
 import IpfsService from "../interfaces/IpfsService.interface";
 import DaoResource from "./DaoResource";
+import { Media } from "../nearBlockchain/types/resource";
+import { ValidationError } from "../utils/errors";
+import loGet from 'lodash/get'
 
 export default class DaoProposalBasic {
     private wfProviderAccountId: string;
@@ -55,6 +58,59 @@ export default class DaoProposalBasic {
         builder.addActivityActionConstantString(0, 'token_id', dao.settings.token_id)
         builder.addActivityActionConstantString(0, 'receiver_id', receiverId)
         builder.addActivityActionConstantString(0, 'amount', NearUtils.nearToYocto(amount))
+        const createArgs = await builder.create()
+
+        console.log(createArgs)
+
+        return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, 50, 1).actionsRun()
+    }
+
+    async mediaAdd(
+        dao: DAO, name: string, category: string, version: string, description: string
+        , fileType: string, filePlain: string|null, fileUrl: string|null, fileHtml: string|null, filePdf: File[]|null
+    ) {
+        const proposalDesc = null // await this.resource.storeDescription(dao, description)
+        const resourceType = await this.resource.storeFile(dao, name, category, fileType, filePlain, fileUrl, fileHtml, filePdf)
+
+        const builder = new ProposalBuilder(this.servicePool.getWfProvider(this.wfProviderAccountId), dao.templates)
+        builder.addDescription(proposalDesc)
+        builder.addTemplateByCode('basic_pkg1')
+        builder.addTemplateSettingsId(0)
+        builder.addProposeSettingsScenario(2)
+        builder.addActivityEmpty()
+        builder.addActivity(1)
+        builder.addActivityActionConstantString(0, 'name', name)
+        builder.addActivityActionConstantString(0, 'category', category)
+        builder.addActivityActionConstantString(0, 'version', version)
+        builder.addActivityActionConstantBoolean(0, 'valid', true)
+        builder.addActivityActionConstantNumbers(0, 'tags', [])
+        switch (fileType) {
+            case 'plain': {
+                    builder.addActivityActionConstantString(0, 'type.text', loGet(resourceType, ['text']))
+                }
+                break;
+            case 'url': {
+                    builder.addActivityActionConstantString(0, 'type.link', loGet(resourceType, ['link']))
+                }
+                break;
+            case 'html': {
+                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(resourceType, ['cid', 'cid']))
+                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(resourceType, ['cid', 'mimetype']))
+                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(resourceType, ['cid', 'ipfs']))
+                }
+                break;
+            case 'pdf': {
+                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(resourceType, ['cid', 'cid']))
+                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(resourceType, ['cid', 'mimetype']))
+                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(resourceType, ['cid', 'ipfs']))
+                }
+                break;
+            default:
+                break;
+        }
+
+        builder.addActivityEmpty()
+        builder.addActivityEmpty()
         const createArgs = await builder.create()
 
         console.log(createArgs)

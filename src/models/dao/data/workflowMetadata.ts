@@ -40,6 +40,32 @@ export const templateBasicPkg: WFMetaTemplate = {
             },
         },
         {
+            id: 2,
+            args: (data: WFData) => {
+                return [
+                    {
+                        action: {
+                            dao_action: 'media_add',
+                        },
+                        values: {
+                            map: {
+                                name: {
+                                    string: loToString(GenericsHelper.getValueByCode(data.inputs, 'name'))
+                                },
+                                category: {
+                                    string: loToString(GenericsHelper.getValueByCode(data.inputs, 'category'))
+                                },
+                            }
+                        }
+                    }
+                ]
+            },
+            log: (args: any) => {
+                loSet(args, ['amount'], NearUtils.amountFromDecimals(loToString(args.amount) || '0', 24))
+                return args
+            },
+        },
+        {
             id: 3,
             args: (data: WFData) => {
                 return [

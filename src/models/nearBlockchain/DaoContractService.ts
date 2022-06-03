@@ -425,7 +425,7 @@ export default class DaoContractService extends ContractService {
    * @return Promise
    */
   async mediaList(fromId: number, limit: number) {
-    return this.contract.mediaList({ from_id: fromId, limit })
+    return this.contract.media_list({ from_id: fromId, limit })
   }
 
   /**

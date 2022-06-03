@@ -164,11 +164,7 @@ export default class DaoLoader {
           this.daoService.groups(),
           this.daoService.tags('group'),
           this.daoService.tags('media'),
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              resolve([]);
-            }, 10);
-          }), // 4: TODO: Migrate media list to resource this.daoService.getMediaList()
+          this.daoService.mediaList(0, 1000), // 4: TODO: Migrate media list to resource this.daoService.getMediaList()
           this.daoService.tags('global'),
           this.daoService.proposals(0, 1000),
           this.daoService.settings(),

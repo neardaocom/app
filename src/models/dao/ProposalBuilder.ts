@@ -10,7 +10,7 @@ import NearUtils from "../nearBlockchain/Utils";
 import Rights from "./Rights";
 import WfProviderContract from "../nearBlockchain/WfProviderContractService";
 import { WFSettings, WFTemplate } from "./types/workflow";
-import { Media } from "../nearBlockchain/types/resource";
+import { ResourceType } from "../nearBlockchain/types/resource";
 
 export default class ProposalBuilder {
     protected service: WfProviderContract;
@@ -19,7 +19,7 @@ export default class ProposalBuilder {
     // basic
     protected template?: WFTemplate;
     protected templateSettings?: WFSettings;
-    protected description?: Media | null;
+    protected description?: ResourceType | null;
     protected schedulerMsg?: string;
     
     // propose settings
@@ -55,7 +55,7 @@ export default class ProposalBuilder {
         }
     }
 
-    addDescription(media: Media | null) {
+    addDescription(media: ResourceType | null) {
         this.description = media
     }
 
@@ -124,6 +124,26 @@ export default class ProposalBuilder {
 
     addActivityActionConstantBigNumber(id: number, key: string, value: string) {
         this.addActivityActionConstant(id, key, {'u128': value})
+    }
+
+    addActivityActionConstantBoolean(id: number, key: string, value: boolean) {
+        this.addActivityActionConstant(id, key, {'bool': value})
+    }
+
+    addActivityActionConstantStrings(id: number, key: string, value: string[]) {
+        this.addActivityActionConstant(id, key, {'vec_string': value})
+    }
+
+    addActivityActionConstantNumbers(id: number, key: string, value: number[]) {
+        this.addActivityActionConstant(id, key, {'vec_u64': value})
+    }
+
+    addActivityActionConstantBigNumbers(id: number, key: string, value: string[]) {
+        this.addActivityActionConstant(id, key, {'vec_u128': value})
+    }
+
+    addActivityActionConstantBooleans(id: number, key: string, value: boolean[]) {
+        this.addActivityActionConstant(id, key, {'vec_bool': value})
     }
 
     addTemplateSettingsWorflowId(workflowId: number) {
