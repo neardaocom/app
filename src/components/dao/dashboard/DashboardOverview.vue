@@ -2,7 +2,7 @@
    <div class="d-flex flex-wrap justify-content-evenly align-items-stretch mt-5">
 
       <InfoItem v-if="nearPrice" :header="t('default.dao_funds')" :amount="dao.treasury.near * nearPrice" suffix="USD"/>
-      <InfoItem :header="t('default.my_share')" :amount="myTokensShare" suffix="%"/>
+      <InfoItem :header="t('default.my_share')" :amount="myTokensShare" :digits="0" suffix="%"/>
       <InfoItem :header="t('default.tokens')" :amount="dao.treasury.token.free" :suffix="dao.treasury.token.meta.symbol"/>
 
 

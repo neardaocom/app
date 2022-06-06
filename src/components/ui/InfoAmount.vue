@@ -1,6 +1,6 @@
 <template>
    <span>
-      <NumberFormatter :class="`text-${amountColor}`" :amount="amount"/>
+      <NumberFormatter :class="`text-${amountColor}`" :amount="amount" :digits="digits"/>
       <span :class="[`text-${suffixColor}`, { 'fw-normal': suffixNormal }]" :style="`font-size:${suffixSize}%`">{{suffix}}</span>
    </span>
 </template>
@@ -40,6 +40,11 @@ export default {
          required: false,
          default: false
       },
+      digits: {
+        type: Number,
+        required: false,
+        default: 2
+      }
    },
    setup () {
       

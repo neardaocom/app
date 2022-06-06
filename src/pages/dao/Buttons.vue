@@ -28,10 +28,6 @@
           <i class="bi bi-graph-up me-1"/>
           {{ t('default.dApps') }}
         </router-link>
-        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'resources' }}" :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          <i class="bi bi-files me-1"/>
-          {{ t('default.resources') }}
-        </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
@@ -47,6 +43,10 @@
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'governance' }}" :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-hammer me-1"/>
           {{ t('default.governance') }}
+        </router-link>
+        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'resources' }}" :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-files me-1"/>
+          {{ t('default.resources') }}
         </router-link>
       </div>
       <!-- Left -->

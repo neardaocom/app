@@ -33,6 +33,7 @@ export default {
       const config = inject('config')
       const dao = inject('dao')
       const loader = inject('loader')
+      const wallet = inject('wallet')
       const { runAction } = useStakeAction(dao, loader)
       
       const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
@@ -45,10 +46,10 @@ export default {
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async (values) => {
-            runAction('undelegate', { delegateId: accountId.value, amount: values.amount })
-        }, () => {
-                console.log(errors.value)
-        });
+            runAction('predelegate', { delegateFromId: accountId.value, delegateId: wallet.value?.accountId, amount: values.amount })
+         }, () => {
+            console.log(errors.value)
+      });
 
       return {
          t, accountPostfix, onSubmit

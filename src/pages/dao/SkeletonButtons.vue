@@ -31,10 +31,6 @@
           <i class="bi bi-graph-up me-1"/>
           {{ t('default.dApps') }}
         </a>
-        <a :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          <i class="bi bi-files me-1"/>
-          {{ t('default.resources') }}
-        </a>
         <a  v-if="false" :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>
           {{ t('default.about') }}
@@ -50,6 +46,10 @@
         <a :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-hammer me-1"/>
           {{ t('default.governance') }}
+        </a>
+        <a :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+          <i class="bi bi-files me-1"/>
+          {{ t('default.resources') }}
         </a>
       </div>
       <!-- Left -->
