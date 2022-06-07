@@ -4,37 +4,37 @@ import { TemplateSettings, TransitionLimit } from "../nearBlockchain/types/workf
 import loSet from "lodash/set";
 import loFind from "lodash/find";
 import loTimes from "lodash/times";
-import loUnset from "lodash/unset";
 import { DAORights, DAOVoteLevel } from "./types/dao";
 import { AppError, NotFoundError } from "../utils/errors";
 import NearUtils from "../nearBlockchain/Utils";
 import Rights from "./Rights";
 import WfProviderContract from "../nearBlockchain/WfProviderContractService";
 import { WFSettings, WFTemplate } from "./types/workflow";
+import { ResourceType } from "../nearBlockchain/types/resource";
 
 export default class ProposalBuilder {
-    private service: WfProviderContract;
-    private daoTemplates: Record<number, WFTemplate>;
+    protected service: WfProviderContract;
+    protected daoTemplates: Record<number, WFTemplate>;
 
     // basic
-    private template?: WFTemplate;
-    private templateSettings?: WFSettings;
-    private description?: number;
-    private schedulerMsg?: string;
+    protected template?: WFTemplate;
+    protected templateSettings?: WFSettings;
+    protected description?: ResourceType | null;
+    protected schedulerMsg?: string;
     
     // propose settings
-    private proposeSettingsConstants: Record<string, any> = {};
-    private proposeSettingsActivity: any[] = [];
-    private proposeSettingsStorageKey?: string;
+    protected proposeSettingsConstants: Record<string, any> = {};
+    protected proposeSettingsActivity: any[] = [];
+    protected proposeSettingsStorageKey?: string;
 
 
     
     // template settings
-    private templateSettingsWorkflowId?: number;
-    private templateSettingsProposeRights?: DAORights[];
-    private templateSettingsVoteRight?: DAORights;
-    private templateSettingsVoteLevel?: DAOVoteLevel;
-    private templateSettingsActivitiesRights: DAORights[][] = [];
+    protected templateSettingsWorkflowId?: number;
+    protected templateSettingsProposeRights?: DAORights[];
+    protected templateSettingsVoteRight?: DAORights;
+    protected templateSettingsVoteLevel?: DAOVoteLevel;
+    protected templateSettingsActivitiesRights: DAORights[][] = [];
 
     constructor(service: WfProviderContract, daoTemplates: Record<number, WFTemplate>) {
         this.service = service
@@ -53,6 +53,10 @@ export default class ProposalBuilder {
         if (this.templateSettings === undefined) {
             throw new NotFoundError('TemplateSettingsId[' + templateSettingsId + '] not found in DAO Template')
         }
+    }
+
+    addDescription(media: ResourceType | null) {
+        this.description = media
     }
 
     addSchedulerMsg(msg: string) {
@@ -122,6 +126,26 @@ export default class ProposalBuilder {
         this.addActivityActionConstant(id, key, {'u128': value})
     }
 
+    addActivityActionConstantBoolean(id: number, key: string, value: boolean) {
+        this.addActivityActionConstant(id, key, {'bool': value})
+    }
+
+    addActivityActionConstantStrings(id: number, key: string, value: string[]) {
+        this.addActivityActionConstant(id, key, {'vec_string': value})
+    }
+
+    addActivityActionConstantNumbers(id: number, key: string, value: number[]) {
+        this.addActivityActionConstant(id, key, {'vec_u64': value})
+    }
+
+    addActivityActionConstantBigNumbers(id: number, key: string, value: string[]) {
+        this.addActivityActionConstant(id, key, {'vec_u128': value})
+    }
+
+    addActivityActionConstantBooleans(id: number, key: string, value: boolean[]) {
+        this.addActivityActionConstant(id, key, {'vec_bool': value})
+    }
+
     addTemplateSettingsWorflowId(workflowId: number) {
         this.templateSettingsWorkflowId = workflowId
     }
@@ -152,7 +176,7 @@ export default class ProposalBuilder {
             throw new Error("TemplateSettings is not defined");
         }
 
-        let templateSettings: TemplateSettings[] | null = null
+        const templateSettings: TemplateSettings[] = []
         if ( this.templateSettingsWorkflowId !== undefined || this.templateSettingsVoteLevel !== undefined || this.templateSettingsVoteRight !== undefined || this.templateSettingsProposeRights !== undefined ) {
             // check
             if (this.templateSettingsWorkflowId === undefined || this.templateSettingsVoteLevel === undefined || this.templateSettingsVoteRight === undefined || this.templateSettingsProposeRights === undefined) {
@@ -163,7 +187,7 @@ export default class ProposalBuilder {
             const templateProvider = await this.service.wfTemplate(this.templateSettingsWorkflowId)
             // console.log(templateProvider[0].transitions)
 
-            templateSettings = [{
+            templateSettings.push({
                 allowed_proposers: this.templateSettingsProposeRights.map((item) => Rights.toObject(item)),
                 allowed_voters: Rights.toObject(this.templateSettingsVoteRight!),
                 activity_rights: this.templateSettingsActivitiesRights.map((item) => item.map((right) => Rights.toObject(right))),
@@ -180,7 +204,7 @@ export default class ProposalBuilder {
                 deposit_vote: '1',
                 deposit_propose_return: 0,
                 constants: null
-            }]
+            })
         }
     
 

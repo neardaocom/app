@@ -10,6 +10,8 @@ import { Account } from "near-api-js";
 import { ProposalVoting } from "@/models/dao/types/proposal";
 import DateHelper from "@/models/utils/DateHelper";
 import Decimal from "decimal.js";
+import { Config } from "@/config";
+import DaoProposalBasic from "@/models/dao/DaoProposalBasic";
 
 export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>, loader: Ref<Loader>) => {
     const { t, d, n } = useI18n()
@@ -81,4 +83,12 @@ export const useProposalCounter = (proposal: Ref<ProposalVoting>) => {
     return {
         proposalProgress, progressCounter, proposalProgressIntervalId
     }
+}
+
+export const useProposalBasic = (loader: Ref<Loader>, config: Ref<Config>) => {
+    const { t } = useI18n()
+    const servicePool = loader.value.load('dao/ServicePool')
+    const ipfsService = loader.value.load('services/ipfs')
+    const proposalBasic = ref(new DaoProposalBasic(config.value.near.wfProviderAccountId, servicePool.value, ipfsService.value, t))
+    return { proposalBasic }
 }

@@ -51,7 +51,7 @@ import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
 import { useNear, useIPFS } from "@/hooks/vuex";
 import { inject } from '@vue/runtime-core';
-import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
+import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
@@ -176,7 +176,7 @@ export default {
             if(refWysiwyg.value.getCode()){
                 try {
                     const name = `${accountId.value}-wf_add-proposal-desc-${moment().valueOf()}`
-                    ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
+                    ipfs_cid = await ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), name), name)
                 } catch(e){
                     //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
                     //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')

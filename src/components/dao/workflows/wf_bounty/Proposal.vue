@@ -22,7 +22,6 @@ import { useForm } from 'vee-validate';
 import decimal from "decimal.js";
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useNear } from "@/hooks/vuex";
-// import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 //import { inject } from '@vue/runtime-core';
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import ProposalHelper from '@/models/dao/ProposalHelper';

@@ -32,13 +32,20 @@ export default {
     // loader
     const loader = ref(new Loader(new Register(), config.value))
     provide('loader', loader)
+    // init Near
     loader.value.get('near/WalletAccount').then((walletAccount) => {
       wallet.value = walletAccount.value
-    }).catch((reason) => { // init Near
+    }).catch((reason) => {
       // TODO: Error catch
       console.log(reason)
     })
-    loader.value.get('dao/ServicePool').then(() => {}).catch((reason) => { // init ServicePool
+    // init ServicePool
+    loader.value.get('dao/ServicePool').then(() => {}).catch((reason) => {
+      // TODO: Error catch
+      console.log(reason)
+    })
+    // init ipfs
+    loader.value.get('services/ipfs').then(() => {}).catch((reason) => {
       // TODO: Error catch
       console.log(reason)
     })

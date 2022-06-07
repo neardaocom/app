@@ -15,14 +15,12 @@ import InputNumber from '@/components/forms/InputNumber.vue'
 import InputString from '@/components/forms/InputString.vue'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
-import { useNear, useIPFS } from "@/hooks/vuex";
-import { computed, ref, toRefs } from '@vue/reactivity';
+import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import NearUtils from "@/models/nearBlockchain/Utils";
-import moment from 'moment'
-import { makeFileFromString } from "@/models/services/ipfsService/IpfsService.js"
 import { inject } from '@vue/runtime-core';
 import { useAnalytics } from '@/hooks/treasury';
+import { useProposalBasic } from '@/hooks/proposal';
 
 export default {
     components:{
@@ -44,22 +42,19 @@ export default {
             required: true
         },
     },
-    setup (props) {
-        const { contractId, template } = toRefs(props)
+    setup () {
         const {t} = useI18n()
         const dao = inject('dao')
         const loader = inject('loader')
         const config = inject('config')
+        //const logger = inject('logger')
+        //const notify = inject('notify')
         const {availableTokenAmount} = useAnalytics(dao, loader)
-
-        const { nearService, accountId } = useNear()
-        const  ipfsService  = useIPFS()
+        const { proposalBasic } = useProposalBasic(loader, config)
+    
         const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
 
-        //const logger = inject('logger')
-        const notify = inject('notify')
-
-        const refWysiwyg = ref(null)    
+        const refWysiwyg = ref(null)
 
         const schema = computed(() => {
             return {
@@ -70,35 +65,10 @@ export default {
 
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
-        const onSubmit = handleSubmit(async values => {
-            let ipfs_cid = ''
-            if(refWysiwyg.value.getCode()){
-                try {
-                    const name = `${accountId.value}-wf_treasury_send_ft-proposal-desc-${moment().valueOf()}`
-                    ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
-                } catch(e){
-                    //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                    //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                    notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
-                    notify.flush()
-                    console.log(e);
-                    return
-                }
-            }
-
-            nearService.value.addProposal(
-                null,
-                contractId.value,
-                template.value.id,
-                template.value.settings[0].id,
-                ipfs_cid,
-                [{"String":`${contractId.value}`},{"String": `${values.account_id}.${accountPostfix.value}`}, {"U128": values.amount}],
-                `wf_treasury_send_ft-${moment().valueOf()}`,
-                1.0
-            )
-            
+        const onSubmit = handleSubmit(async (values) => {
+            proposalBasic.value.tokenSend(dao.value, values.account_id + '.' + accountPostfix.value, values.amount, refWysiwyg.value.getCode())
         }, () => {
-                console.log(errors.value)
+            console.log(errors.value)
         });
         
 

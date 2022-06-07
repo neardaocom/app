@@ -7,6 +7,7 @@ import { UnsupportedError } from "@/models/utils/errors";
 import NearBlockchainFactory from "@/models/nearBlockchain/Factory";
 import DaoFactory from "@/models/dao/Factory";
 import { NearConfig } from "@/config/near";
+import Web3StorageService from "@/models/services/ipfs/Web3StorageService";
 
 export default class Loader {
     private register: Register;
@@ -34,6 +35,10 @@ export default class Loader {
 
         if (objectRef === undefined) {
             switch (key) {
+                case 'services/ipfs': {
+                        objectRef = ref(new Web3StorageService(this.config.ipfs.token))
+                    }
+                    break;
                 case 'nearBlockchain/Factory': {
                         const factory = new NearBlockchainFactory(this.config.near as NearConfig)
                         objectRef = ref(factory)

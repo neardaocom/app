@@ -10,7 +10,7 @@
       <MDBModalTitle class="ms-3" id="modalDocumentLabel">{{ doc.name }} <small class="ms-4">{{ doc.category }} | v{{ doc.version }}</small></MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-      <p v-if="['application/pdf', 'text/html'].includes(doc.type)" class="text-center"><strong>IPFS:</strong> {{doc.value.source}} [{{doc.value.cid}}]</p>
+      <p v-if="['application/pdf', 'text/html'].includes(doc.type)" class="text-center">IPFS: <strong>{{doc.value.cid.ipfs}}</strong> [{{doc.value.cid.cid}}]</p>
       <pdf class="m-3" v-if="doc.type == 'application/pdf'" :src="content" :page="1"></pdf>
       <section class="m-3" v-else-if="doc.type == 'text/html'" v-html="content"></section>
       <section class="m-3" v-else-if="doc.type == 'text/plain'">{{content}}</section>

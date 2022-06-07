@@ -2,6 +2,7 @@ import TransformerInterface from "@/models/interfaces/Transformer.interface";
 import loToNumber from "lodash/toNumber"
 import loToString from "lodash/toString"
 import loGet from "lodash/get"
+import loSet from "lodash/set"
 import loFind from "lodash/find"
 import loAssign from "lodash/assign"
 import { WFTemplate } from "../types/workflow";
@@ -68,6 +69,14 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                                     values.source = loGet(value, ['content', 'Media', 'media_type', 'Text'])
                                 }
                                 */
+                            }
+                            break;
+                        case '3': {
+                                loSet(values, ['amount'], NearUtils.amountFromDecimals(loToString(values.amount) || '0', 24))
+                            }
+                            break;
+                        case '4': {
+                                loSet(values, ['amount'], NearUtils.amountFromDecimals(loToString(values.amount) || '0', 24))
                             }
                             break;
                         default:

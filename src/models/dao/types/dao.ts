@@ -6,6 +6,7 @@ import { TreasuryLock } from "./treasury";
 import { Staking } from "./staking";
 import { Settings } from "@/models/nearBlockchain/types/dao";
 import { RewardPricelist } from "./rewards";
+import { ResourceType, ResourceTypeCid } from "@/models/nearBlockchain/types/resource";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -92,13 +93,14 @@ export enum DAODocsFileType {
 }
 
 export type DAODocsFile = {
+  id: number;
   name: string;
   type: DAODocsFileType;
   categoryId: number;
   category: string,
   version: string;
   valid: boolean;
-  value: string | IPFSFile;
+  value: ResourceType;
   tagIds: number[];
 }
 

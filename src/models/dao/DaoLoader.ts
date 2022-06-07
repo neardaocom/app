@@ -164,11 +164,7 @@ export default class DaoLoader {
           this.daoService.groups(),
           this.daoService.tags('group'),
           this.daoService.tags('media'),
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              resolve([]);
-            }, 10);
-          }), // 4: TODO: Migrate media list to resource this.daoService.getMediaList()
+          this.daoService.mediaList(0, 1000), // 4: Media
           this.daoService.tags('global'),
           this.daoService.proposals(0, 1000),
           this.daoService.settings(),
@@ -387,11 +383,11 @@ export default class DaoLoader {
         const categories: IDValue[] = []
         let i = 0
         this.dataChain[4].forEach((item) => { 
-            const bool = categories.some(category => category.value === item.category)
+            const bool = categories.some(category => category.value === item[1].category)
             if(bool === false){
                 categories.push({
                     id: i,
-                    value: item.category
+                    value: item[1].category
                 })
                 i++
             }
@@ -408,8 +404,8 @@ export default class DaoLoader {
 
         const transformer = new DaoDocsTransformer(docs.categories, docs.tags)
 
-        this.dataChain[4].forEach((element) => {
-            docs.files.push(transformer.transform(element, {}))
+        this.dataChain[4].forEach((fileChain) => {
+            docs.files.push(transformer.transform(fileChain))
         });
 
         return docs

@@ -8,6 +8,18 @@ export type Media = {
     valid: boolean;
 }
 
-export type ResourceType = {
-    
+export type ResourceType = ResourceTypeText | ResourceTypeLink | ResourceTypeCid
+
+export type ResourceTypeText = {
+    text: string;
+}
+export type ResourceTypeLink = {
+    link: string;
+}
+export type ResourceTypeCid = {
+    cid: {
+        cid: string;
+        ipfs: string;
+        mimetype: string;
+    }
 }

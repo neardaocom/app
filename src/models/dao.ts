@@ -457,6 +457,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
             
 
         docs.files.push({
+          id: 0,
           name: element.name,
           type: type,
           categoryId: loFind(docs.categories, { value: element.category })?.id ?? -1,

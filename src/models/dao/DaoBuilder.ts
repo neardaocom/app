@@ -91,7 +91,7 @@ export default class DaoBuilder {
 
     addTreasuryPartitionFt(name: string, assetId: string, assetDecimals: number, assetAmount: number, lockDuration: number) {
         this.treasuryPartitions.push({name, assets: [{
-            asset_id: {"f_t": {account_id: assetId, decimals: assetDecimals}},
+            asset_id: { ft: {account_id: assetId, decimals: assetDecimals} },
             unlocking: {
                 amount_init_unlock: 0,
                 lock: {
