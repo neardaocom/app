@@ -2,7 +2,7 @@
   <MDBTooltip v-model="tooltip" tag="a">
     <template #reference>
       <span>
-        <template v-if="number !== null">{{shortNumber}}</template>
+        <template v-if="shortNumber !== null">{{shortNumber}}</template>
         <template v-else>—</template>
       </span>
     </template>
