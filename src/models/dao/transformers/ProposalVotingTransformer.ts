@@ -91,6 +91,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             progress: ProposalHelper.getProgress(value.state, settings!, value.end),
             quorum: settings?.voteLevel.quorum,
             templateSettings: settings!,
+            workflowScenarioId: value.workflowScenarioId,
             search: '',
         }
 

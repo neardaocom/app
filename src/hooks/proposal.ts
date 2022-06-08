@@ -12,6 +12,7 @@ import DateHelper from "@/models/utils/DateHelper";
 import Decimal from "decimal.js";
 import { Config } from "@/config";
 import DaoProposalBasic from "@/models/dao/DaoProposalBasic";
+import loFind from "lodash/find";
 
 export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>, loader: Ref<Loader>) => {
     const { t, d, n } = useI18n()
@@ -55,12 +56,13 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     return { daoProposal, vote, finish }
 }
 
-export const useProposalComputed = (proposal: Ref<ProposalVoting>) => {
+export const useProposalComputed = (proposal: Ref<ProposalVoting>, dao: Ref<DAO>) => {
     const proposalDate = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatDateLong))
     const proposalTime = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatTime))
+    const proposalWorkflow = computed(() => loFind(dao.value.workflows, ['workflowScenarioId', proposal.value.workflowScenarioId]))
 
     return {
-        proposalDate, proposalTime,
+        proposalDate, proposalTime, proposalWorkflow
     }
 }
 

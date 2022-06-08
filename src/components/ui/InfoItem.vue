@@ -3,7 +3,7 @@
       <div> 
          <h6> {{ header }} </h6>
          <div class="border-start border-secondary border-3 ps-2">
-            <InfoAmount :amount="amount" :suffix="suffix" suffixColor="secondary" class="fs-2 fw-800"/> 
+            <InfoAmount :amount="amount" :suffix="suffix" :digits="digits" suffixColor="secondary" class="fs-2 fw-800"/> 
             <slot></slot>
          </div>
       </div>
@@ -27,6 +27,11 @@ export default {
          type: String,
          required: false,
       },
+      digits: {
+        type: Number,
+        required: false,
+        default: 2
+      }
    },
    components:{
       InfoAmount

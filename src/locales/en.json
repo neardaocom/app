@@ -540,6 +540,7 @@
   "total_voting_power": "Total voting power",
   "next_unlock": "Next unlock",
   "assets_to_withdraw": "Assets to withdraw",
+  "rewards_to_withdraw": "Rewards to withdraw",
   "claim": "Claim",
   "incentives": "Incentives",
   "dao_wallet": "DAO wallet",

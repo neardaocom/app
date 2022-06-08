@@ -81,6 +81,13 @@
       </MDBProgress>
       <br/>
 
+      <!-- Workflow -->
+      <MDBAccordion v-if="workflowCode === 'accepted'" v-model="activeItem" flush>
+        <MDBAccordionItem :headerTitle="t('default.workflow')" collapseId="workflow">
+          <Workflow :workflow="proposalWorkflow" />
+        </MDBAccordionItem>
+      </MDBAccordion>
+
       <!-- Vote -->
       <div
         v-if="
@@ -113,7 +120,8 @@
 
 <script>
 import {
-  MDBProgress, MDBProgressBar, MDBBadge
+  MDBProgress, MDBProgressBar, MDBBadge,
+  MDBAccordion, MDBAccordionItem 
   // , MDBCollapse, MDBBtn, MDBIcon
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
@@ -124,10 +132,12 @@ import TextCollapse from '@/components/ui/TextCollapse.vue';
 import ProposalHelper from "@/models/dao/ProposalHelper"
 import moment from 'moment'
 import { useProposal, useProposalCounter, useProposalComputed } from '@/hooks/proposal';
+import Workflow from "@/components/dao/Workflow.vue"
 
 export default {
   components: {
     MDBProgress, MDBProgressBar, MDBBadge,
+    MDBAccordion, MDBAccordionItem, Workflow,
     // MDBCollapse, MDBBtn, MDBIcon,
     TextCollapse
   },
@@ -155,11 +165,16 @@ export default {
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
     const { proposalProgress, proposalProgressIntervalId } = useProposalCounter(proposal)
-    const { proposalDate, proposalTime } = useProposalComputed(proposal)
+    const { proposalDate, proposalTime, proposalWorkflow } = useProposalComputed(proposal, dao)
+
+    const activeItem = ref('none');
 
     
 
-    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, moment, vote, finish, proposalDate, proposalTime };
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
+      proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, 
+      moment, vote, finish, proposalDate, proposalTime, proposalWorkflow, activeItem
+    };
   },
   computed: {
     accountId(){

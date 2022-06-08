@@ -21,4 +21,14 @@ export default class NumberHelper {
     static toPercent(value: number, decimals: number = 2): string {
         return new Decimal(value).mul(100).toFixed(decimals);
     }
+
+    static numFormatter(value: number, digits: number): string {
+        if(value >= 999.9 && value < 999999){
+            return (value/1000).toFixed(digits) + 'K';
+        }else if(value >= 999999){
+            return (value/1000000).toFixed(digits) + 'M';
+        }else{
+            return value.toFixed(digits);
+        }
+    }
 }

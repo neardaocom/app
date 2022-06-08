@@ -2,7 +2,7 @@
    <MDBCard>
       <MDBCardBody class="text-start">
          <div class="d-flex">
-            <h6 class="text-muted">{{t('default.assets_to_withdraw')}}</h6>
+            <h6 class="text-muted">{{t('default.rewards_to_withdraw')}}</h6>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
 

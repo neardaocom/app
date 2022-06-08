@@ -5,7 +5,7 @@
          <InfoItem :header="t('default.total_voting_power')" :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol"/>
          <InfoItem :header="t('default.my_vote_power')" :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol">
             <div>
-               <NumberFormatter :amount="walletVotePowerPercent"/><span class="ms-1">%</span>
+               <NumberFormatter :amount="walletVotePowerPercent" :digits="0"/><span class="ms-1">%</span>
             </div>
          </InfoItem>
       </div>

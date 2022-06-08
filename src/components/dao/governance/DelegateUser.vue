@@ -20,7 +20,8 @@
                {{t('default.delegated')}}
                <NumberFormatter class="fw-bold ms-1" :amount="amount"/>
             </span>
-            <MDBBtn @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.forward')}}</MDBBtn>
+            <MDBBtn v-if="accountId === wallet?.accountId" @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.delegate')}}</MDBBtn>
+            <MDBBtn v-else @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
             <MDBBtn v-if="false" @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
          </div>
       </MDBCardBody>
@@ -40,6 +41,7 @@ import FormUndelegate from '@/components/dao/staking/forms/FormUndelegate.vue'
 import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useStore } from 'vuex';
+import { inject } from 'vue';
 export default {
    components: {
       MDBCard,
@@ -64,6 +66,7 @@ export default {
       const {accountId, amount} = toRefs(props)
       const {t} = useI18n()
       const store = useStore()
+      const wallet = inject('wallet')
       const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])
 
       const modalProposal = ref(0)
@@ -88,7 +91,7 @@ export default {
             accountId:  accountId.value,
             amount: amount
          }
-         submitText.value = t('default.forward')
+         submitText.value = t('default.delegate')
          activeForm.value = 'FormPredelegate'
       }
 
@@ -99,6 +102,7 @@ export default {
       return {
          t,
          nearWalletUrl,
+         wallet,
          modalProposal,
          undelegate,
          predelegate,
