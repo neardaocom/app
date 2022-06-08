@@ -59,10 +59,9 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
 export const useProposalComputed = (proposal: Ref<ProposalVoting>, dao: Ref<DAO>) => {
     const proposalDate = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatDateLong))
     const proposalTime = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatTime))
-    const proposalWorkflow = computed(() => loFind(dao.value.workflows, ['workflowScenarioId', proposal.value.workflowScenarioId]))
 
     return {
-        proposalDate, proposalTime, proposalWorkflow
+        proposalDate, proposalTime
     }
 }
 

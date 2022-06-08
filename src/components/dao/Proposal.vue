@@ -84,7 +84,7 @@
       <!-- Workflow -->
       <MDBAccordion v-if="workflowCode === 'accepted'" v-model="activeItem" flush>
         <MDBAccordionItem :headerTitle="t('default.workflow')" collapseId="workflow">
-          <Workflow :workflow="proposalWorkflow" />
+          <Workflow :workflow="proposal.workflow" />
         </MDBAccordionItem>
       </MDBAccordion>
 
@@ -165,7 +165,7 @@ export default {
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
     const { proposalProgress, proposalProgressIntervalId } = useProposalCounter(proposal)
-    const { proposalDate, proposalTime, proposalWorkflow } = useProposalComputed(proposal, dao)
+    const { proposalDate, proposalTime } = useProposalComputed(proposal, dao)
 
     const activeItem = ref('none');
 
@@ -173,7 +173,7 @@ export default {
 
     return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
       proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, 
-      moment, vote, finish, proposalDate, proposalTime, proposalWorkflow, activeItem
+      moment, vote, finish, proposalDate, proposalTime, activeItem
     };
   },
   computed: {
@@ -187,7 +187,7 @@ export default {
       return this.$store.getters['ipfs/getService']
     },
     workflowCode() {
-      // console.log(this.proposal, this.proposalProgress)
+      console.log(this.proposal, this.proposalProgress)
       return ProposalHelper.getStatus(this.proposal.status, this.proposalProgress)
     }
   },
