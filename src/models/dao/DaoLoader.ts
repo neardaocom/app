@@ -180,7 +180,7 @@ export default class DaoLoader {
           this.ftService.ftTotalSupply(), // 17: staking
         ]).catch((e) => {
           throw new Error(`DataChain[${this.id}] not loaded: ${e}`);
-        });
+        });        
 
         // load proposal settings
         const dataChainProposalSettings = await Promise.all(
@@ -188,6 +188,8 @@ export default class DaoLoader {
         ).catch((e) => {
             throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
         })
+
+        
         // save it to proposals
         dataChainProposalSettings.forEach((proposalSettings, index) => {
             this.dataChain[6][index][2] = proposalSettings

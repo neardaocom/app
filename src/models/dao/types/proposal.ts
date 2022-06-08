@@ -22,5 +22,6 @@ export type ProposalVoting = {
     progress: number;
     quorum?: number;
     templateSettings: WFSettings;
+    workflowScenarioId:  number | null;
     search: string;
 }
