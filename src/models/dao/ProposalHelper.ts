@@ -1,5 +1,5 @@
 import { DAOProposal, DAOTokenHolder } from "./types/dao";
-import { WFSettings } from "./types/workflow";
+import { WFInstance, WFSettings } from "./types/workflow";
 import GenericsHelper from "../utils/GenericsHelper";
 import Decimal from "decimal.js";
 import moment from "moment";
@@ -171,5 +171,9 @@ export default class ProposalHelper {
             item.value = ObjectHelper.first(item.value)
             return item
         })
+    }
+
+    static getWorkflows(proposals: DAOProposal[]): WFInstance[] {
+      return proposals.filter((proposal) => proposal.workflow !== undefined).map((proposal) => proposal.workflow!) || []
     }
 }

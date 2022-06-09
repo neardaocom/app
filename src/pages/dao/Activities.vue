@@ -39,6 +39,7 @@ import { getTemplate } from "@/models/workflow";
 import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
+import ProposalHelper from '@/models/dao/ProposalHelper';
 
 export default {
   components: {
@@ -79,9 +80,9 @@ export default {
   },
   computed: {
     results() {
-      let results = this.dao.workflows
+      let results = ProposalHelper.getWorkflows(this.dao.proposals)
       // filter
-      results = results.filter((item) => item.state !== 'Waiting')
+      results = results.filter((item) => item.state !== 'waiting')
 
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
@@ -102,7 +103,7 @@ export default {
       return results
     },
     workflowsNum(){
-      return this.dao.workflows.filter((item) => item.state !== 'waiting').length
+      return ProposalHelper.getWorkflows(this.dao.proposals).filter((item) => item.state !== 'waiting').length
     }
   },
   methods: {

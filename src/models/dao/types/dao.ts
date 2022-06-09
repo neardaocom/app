@@ -173,14 +173,9 @@ export type DAOProposal = {
   inputs: CodeValue[];
   storageKey?: string | null;
   constants: CodeValue[];
+  workflow?: WFInstance;
   content?: Record<string, unknown>; // Deprecated?
   workflowAddSettingsId?: number; // Deprecated?
-}
-
-export type DAOExecute = {
-  templates?: Record<number, WFTemplate>;
-  proposals?: DAOProposal[];
-  workflows?: WFInstance[];
 }
 
 
@@ -201,7 +196,6 @@ export type DAO = {
   tokenHolders: DAOTokenHolder[];
   templates: Record<number, WFTemplate>;
   proposals: DAOProposal[];
-  workflows: WFInstance[];
   treasuryLocks: TreasuryLock[];
   staking: Staking;
   settings: Settings;

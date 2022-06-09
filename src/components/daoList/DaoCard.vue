@@ -21,16 +21,16 @@
          </div>
          <div class="d-flex justify-content-between mt-4">
             <div>
-               <div class="small">{{t('default.tags')}}</div>
-               <MDBBadge v-for="(tag, index) in dao.tags" :key="index" color="info" class="mt-2">{{ tag }}</MDBBadge>
+               <template  v-if="dao.tags.length > 0">
+                  <div class="small">{{t('default.tags')}}</div>
+                  <MDBBadge v-for="(tag, index) in dao.tags" :key="index" color="info" class="mt-2">{{ tag }}</MDBBadge>
+               </template>
             </div>
-            <div>
+            <div v-if="dao.treasuryAmountUsd">
                <div class="small">{{t('default.dao_funds')}}</div>
-               <span class="fw-bold fs-4 me-1">{{ dao.amount }}</span><span class="fs-4" v-if="dao.amount">USD</span>
-               
+               <InfoAmount :amount="dao.treasuryAmountUsd" suffix="USD" suffixNormal class="fs-4 fw-bold" />
             </div>
          </div>
-
       </MDBCardBody>
    </MDBCard>
 </template>
@@ -46,13 +46,15 @@ import {
 import { useStore } from 'vuex'
 import { computed } from '@vue/reactivity'
 import Icon from "@/components/ui/Icon.vue"
+import InfoAmount from '@/components/ui/InfoAmount.vue'
 
 export default {
    components: {
       MDBCard,
       MDBCardBody,
       MDBBadge, 
-      Icon
+      Icon, 
+      InfoAmount,
    },
    props: {
       dao: {

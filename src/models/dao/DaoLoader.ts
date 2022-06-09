@@ -1,7 +1,7 @@
 import DaoGroupTransformer from "./transformers/DaoGroupTransformer";
 import DaoDocsTransformer from "./transformers/DaoDocsTransformer";
 import VoteLevelTransformer from "./transformers/VoteLevelTransformer";
-import { DAO, DAODocs, DAOExecute, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from "./types/dao";
+import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from "./types/dao";
 import { WFSettings, WFTemplate, WFInstance, WFInstanceLog, WFMetaTemplate } from "./types/workflow";
 import Decimal from "decimal.js";
 import { IDValue, CodeValue } from "../utils/types/generics";
@@ -112,7 +112,8 @@ export default class DaoLoader {
         });
     
         // templates
-        const execute = await this.getExecute()
+        const templates = this.getTemplates()
+        const proposals = await this.getProposals()
 
         return {
             name: this.dataChain[7].name,
@@ -145,9 +146,8 @@ export default class DaoLoader {
             groups: groups,
             tags: tags,
             tokenHolders: tokenHolders,
-            templates: execute.templates || {},
-            proposals: execute.proposals || [],
-            workflows: execute.workflows || [],
+            templates: templates || {},
+            proposals: proposals || [],
             treasuryLocks: treasuryLocks, //listEmpty()
             staking: staking,
             settings: this.dataChain[7],
@@ -460,42 +460,24 @@ export default class DaoLoader {
         return tokenHolders
     }
 
-    async getExecute(): Promise<DAOExecute> {
-        const executes: DAOExecute = {}
-
-        // Templates
-        executes.templates = this.getTemplates()
-        let templateMeta: WFMetaTemplate | undefined
-        // console.log('Templates', executes.templates)
-    
-        // Proposals
+    async getProposals(): Promise<DAOProposal[]> {
         const proposals: DAOProposal[] = []
-        const workflows: WFInstance[] = []
-    
-        let workflowInstance: any
-        let workflowLog: any
-        let proposalTemplate: WFTemplate | undefined
-        let proposalSettings: WFSettings | undefined
-        let proposalConstants: CodeValue[]
-        let proposalInputs: CodeValue[]
-        let actionLogs: WFInstanceLog[]
+        let proposal: DAOProposal
 
         const proposalTransformer = new ProposalTransformer()
         const wfInstanceTransformer = new WFInstanceTransformer()
     
         //console.log(this.dataChain[6])
         for (let i = 0; i < this.dataChain[6].length; i++) {
-            proposals.push(proposalTransformer.transform(this.dataChain[6][i]))
+            proposal = proposalTransformer.transform(this.dataChain[6][i])
             if (this.dataChain[6][i][3] !== null) {
-                workflows.push(wfInstanceTransformer.transform(this.dataChain[6][i]))
+                proposal.workflow = wfInstanceTransformer.transform(this.dataChain[6][i])
             }
+            proposals.push(proposal)
         }
 
-        executes.proposals = proposals
-        executes.workflows = workflows
+        //console.log(proposals)
 
-        //console.log(executes.proposals, executes.workflows)
-
-        return executes
+        return proposals
     }
 }

@@ -1,5 +1,5 @@
 import { DateFormated } from "@/models/utils/types/generics";
-import { WFSettings } from "./workflow";
+import { WFInstance, WFSettings } from "./workflow";
 
 export type ProposalVoting = {
     id: number;
@@ -22,6 +22,6 @@ export type ProposalVoting = {
     progress: number;
     quorum?: number;
     templateSettings: WFSettings;
-    workflowScenarioId:  number | null;
+    workflow?: WFInstance;
     search: string;
 }
