@@ -82,18 +82,10 @@ export default {
         MDBWysiwyg
     },
     props:{
-        contractId: {
-            type: String,
-            required: false
-        },
         docs: {
             type: Object,
             required: false
         },
-        template: {
-            type: Object,
-            required: false
-        }
     },
     setup (props) {
         const { t } = useI18n()

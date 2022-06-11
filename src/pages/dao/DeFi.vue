@@ -31,6 +31,8 @@
       v-if="dao.storage.skywardFinance"
       :nearService="nearService"
     />
+    <NoData v-if="!dao.storage.skywardFinance && !refFinanceFounds" :text="t('default.no_defi')" hint="This is a hint" />
+
   </div>
 </template>
 
@@ -48,13 +50,15 @@ import ModalRefWithdrawDaoToken from './modals/ModalRefWithdrawDaoToken.vue'
 import ModalRefWithdrawNear from './modals/ModalRefWithdrawNear.vue'
 import Decimal from 'decimal.js'
 import { useRefFinance } from "@/hooks/market";
+import NoData from '@/components/ui/NoData.vue'
 
 export default {
   components: {
     MDBBtn,
     AuctionList, SalesList,
     NumberFormatter,
-    ModalRefWithdrawDaoToken, ModalRefWithdrawNear
+    ModalRefWithdrawDaoToken, ModalRefWithdrawNear,
+    NoData
   },
   setup() {
     const dao = inject('dao')

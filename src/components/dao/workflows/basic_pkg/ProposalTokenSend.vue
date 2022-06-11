@@ -29,16 +29,8 @@ export default {
         MDBWysiwyg,
     },
     props:{
-        contractId: {
-            type: String,
-            required: true
-        },
         tokenName: {
             type: String,
-            required: true
-        },
-        template: {
-            type: Object,
             required: true
         },
     },

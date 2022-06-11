@@ -33,6 +33,7 @@
       <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
         <small> <MDBCheckbox  :label="filterState.inProgress.name" inline v-model="filterState.inProgress.active" class="rounded-3"/> </small>
         <small> <MDBCheckbox  :label="filterState.accepted.name" inline v-model="filterState.accepted.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterState.invalid.name" inline v-model="filterState.invalid.active" class="rounded-3"/> </small>
       </div>
       <div class="col-6 col-md-4 col-lg-2 text-end">
         <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
@@ -40,10 +41,7 @@
     </div>
 
     <!-- Proposals -->
-    <section v-if="list.length == 0">
-      <hr>
-      <h6 class="mb-0 text-start">{{ t("default.no_active_proposal") }}</h6>
-    </section>
+    <NoData  v-if="list.length == 0" :text="t('default.no_active_proposal')" hint="This is a hint" />
 
     <div class="row">
       <div v-for="(proposal) in results" :key="proposal.id" class="col-12 col-md-6 mb-4 mb-md-0">
@@ -66,11 +64,12 @@ import loOrderBy from "lodash/orderBy"
 import StringHelper from '@/models/utils/StringHelper'
 import Search from "@/components/ui/Search.vue";
 import { useList } from "@/hooks/proposal"
+import NoData from '@/components/ui/NoData.vue'
 
 export default {
   components: {
     MDBCheckbox, MDBSelect
-    , Proposal, Search
+    , Proposal, Search, NoData
   },
   props: {
   },
@@ -96,6 +95,11 @@ export default {
         state: 'accepted',
         active: false,
       },
+      invalid: {
+        name: t('default.proposal_state_invalid'),
+        state: 'invalid',
+        active: false,
+      },
     })
     const order = reactive({
       selected: 'created_desc',
@@ -109,6 +113,7 @@ export default {
   computed: {
     results() {
       let results = this.list
+
       // filter
       const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
       if (filterStates.length > 0) {
@@ -131,6 +136,14 @@ export default {
         default:
           break;
       }
+
+      //sort
+      const sortValue = {
+        'in_progress': 0,
+        'accepted': 1,
+        'invalid': 2,
+      }
+      results = results.sort((x, y) => sortValue[x.stateCode] - sortValue[y.stateCode])
 
       return results
     },

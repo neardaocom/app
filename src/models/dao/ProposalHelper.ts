@@ -30,7 +30,7 @@ export default class ProposalHelper {
         },
         accepted: {
             color: 'success',
-            icon: 'bi bi-Rights.check-circle me-2',
+            icon: 'bi bi-check-circle me-2',
         },
         rejected: {
             color: 'danger',

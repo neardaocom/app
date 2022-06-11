@@ -47,7 +47,7 @@
                <MDBCardText>
                   <div class="d-flex justify-content-between">
                      <MDBBtn v-if="canUnlock" @click="unlock(lock.id)" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{ t('default.treasury_unlock') }}</MDBBtn>
-                     <a href="#" class="text-dark text-decoration-underline ms-auto">{{t('default.detail')}}</a>
+                     <a v-show="false" href="#" class="text-dark text-decoration-underline ms-auto">{{t('default.detail')}}</a>
                   </div>
                   
                </MDBCardText>

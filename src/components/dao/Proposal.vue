@@ -3,13 +3,13 @@
     <div class="card-body">
 
       <!-- header -->
-      <div class="d-flex mb-2">
-        <span class="fs-6 text-muted p-2 text-center">
+      <div class="d-flex">
+        <span class="fs-5 text-muted p-2 text-center">
           #{{ proposal.id }}
         </span>
         
         <div class="p-2">
-           <div class="mt-n2 fs-5" v-html="proposal.title"></div>
+           <div class="fs-5" v-html="proposal.title"></div>
            <div class="mt-n2 small">{{ proposal.type }}</div>
         </div>
 

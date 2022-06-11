@@ -24,7 +24,7 @@ export default class NumberHelper {
 
     static numFormatter(value: number, digits: number): string {
         if(value >= 999.9 && value < 999999){
-            return (value/1000).toFixed(digits) + 'K';
+            return (value/1000).toFixed(digits) + 'k';
         }else if(value >= 999999){
             return (value/1000000).toFixed(digits) + 'M';
         }else{

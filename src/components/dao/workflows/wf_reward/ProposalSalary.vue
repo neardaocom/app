@@ -27,7 +27,9 @@ import { useGroups, useLocks } from '@/hooks/dao';
 import { inject } from '@vue/runtime-core';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import { useI18n } from 'vue-i18n';
-// import DateHelper from '@/models/utils/DateHelper';
+import { useRewards } from '@/hooks/rewards'
+import Decimal from 'decimal.js'
+import NearUtils from '@/models/nearBlockchain/Utils';
 export default {
    components:{
       Select,
@@ -36,9 +38,11 @@ export default {
    },
    setup () {
       const dao = inject('dao')
+      const loader = inject('loader')
       const {t} = useI18n()
       const {locksOptions} = useLocks(dao)
       const {groupsOptions} = useGroups(dao)
+      const { createSalary } = useRewards(dao, loader)
 
       const schema = computed(() => {
          return {
@@ -49,17 +53,23 @@ export default {
             near_amount: `required|strIsNumber`,
             token_amount: `required|strIsNumber`,
             start_at: 'required',
-            ends: 'required',
+            ends: '',
 
          }
       });
 
       const { handleSubmit, errors } = useForm({ validationSchema: schema})
 
-      const onSubmit = handleSubmit(async () => {
-         // const startAt = DateHelper.toSeconds(new Date(values.start_at)) 
-         // const ends = DateHelper.toSeconds(new Date(values.ends)) 
-         //runAction('delegate', { delegateId: delegateId.accountId, amount: values.amount})
+      const onSubmit = handleSubmit(async (values) => {
+         createSalary(
+            values.group_id,
+            new Decimal(values.near_amount).toNumber(), 
+            new Decimal(values.token_amount).toNumber(), 
+            NearUtils.durationToChain({days: values.frequency_days, hours: values.frequency_hours}),
+            values.lock, 
+            new Date(values.start_at), 
+            values.ends ? new Date(values.ends) : null
+         )
       }, () => {
          console.log(errors.value)
       });
