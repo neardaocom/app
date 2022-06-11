@@ -1,23 +1,24 @@
 <template>
-  <div class="card">
-    <div class="card-body">
-      <div class="row">
+      <div class="d-flex">
         <!-- left -->
-        <div class="col-1 text-center">
-          <span class="fs-6 text-muted text-center">#{{ workflow.id }}</span>
+        <div class="">
+          <span class="fs-5 text-muted text-center">#{{ workflow.id }}</span>
         </div>
         <!-- body -->
-        <div class="col-11">
+        <div class="flex-fill ms-3">
           <!-- HEAD -->
           <div class="row">
             <div class="col-10">
-              <div class="mt-n2 fs-5" v-html="proposalVoting.title"></div>
+              <div class="fs-5" v-html="proposalVoting.title"></div>
               <div class="mt-n2 small">{{ proposalVoting.type }}</div>
             </div>
             <div class="col-2 text-right">
               <!-- TODO: Voting -->
             </div>
           </div>
+        </div>
+              </div>
+          
           <!-- End HEAD -->
           <!-- Activities -->
           <div class="row">
@@ -90,10 +91,6 @@
             </div>
           </div>
           <!-- NEXT Activity -->
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>

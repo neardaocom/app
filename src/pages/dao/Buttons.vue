@@ -65,14 +65,14 @@
               <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
             </MDBDropdownToggle>
             <MDBDropdownMenu>
-              <template v-for="templ in dao.templates" :key="templ.id">
+              <!-- <template v-for="templ in dao.templates" :key="templ.id">
                 <template v-for="templSettings in templ.settings" :key="templSettings.id">
                   <template v-if="['basic_pkg1'].includes(templ.code) === true">
                     <template v-for="scenarioId in templ.startActivityIds" :key="scenarioId">
                       <MDBDropdownItem
                         v-if="check(walletRights, templSettings.proposeRights) && [2,3,4].includes(scenarioId)"
                         tag="button"
-                        @click.prevent="modalOpen(templ, templSettings, scenarioId)"
+                        @click.prevent="modalOpen(templ, scenarioId)"
                       >
                         <MDBIcon v-if="false" icon="user-plus" class="pe-2"/>
                         {{ t('default.wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId) }}
@@ -80,9 +80,12 @@
                     </template>
                   </template>
                 </template>
-              </template>
-              <MDBDropdownItem v-if="installedWorkflow('lock1') === true" tag="button" @click.prevent="createLockSimple('Council commissions', 5, 100000)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.test_lock_simple') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('reward2') === true" tag="button" @click.prevent="createSalary(1, 0.0001, 1, 60, 2)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.test_salary') }}</MDBDropdownItem>
+              </template> -->
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 2)">{{ t('default.wf_templ_basic_pkg1_v1_s2') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 3)">{{ t('default.wf_templ_basic_pkg1_v1_s3') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 4)">{{ t('default.wf_templ_basic_pkg1_v1_s4') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -105,6 +108,8 @@ import loFind from "lodash/find";
 import Payout from '@/components/dao/workflows/basic_pkg/ProposalNearSend.vue'
 import SendToken from '@/components/dao/workflows/basic_pkg/ProposalTokenSend.vue'
 import AddMedia from '@/components/dao/workflows/basic_pkg/ProposalMediaAdd.vue'
+import SimpleLock from '@/components/dao/workflows/wf_lock/Proposal.vue'
+import Salary from '@/components/dao/workflows/wf_reward/ProposalSalary.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
@@ -136,6 +141,8 @@ export default {
     AddMedia,
     SkywardProposal,
     BountyProposal,
+    SimpleLock,
+    Salary
   },
   props: {
     accountRole: {
@@ -160,7 +167,9 @@ export default {
 
     const { daoRewards, createSalary } = useRewards(dao, loader)
     const { daoTreasury, createLockSimple } = useTreasury(dao, loader)
-    const { installedWorkflow } = useDaoWorkflowComputed(dao)
+    const { installedWorkflow, workflowSettings } = useDaoWorkflowComputed(dao)
+
+    console.log(workflowSettings('lock1'));
 
     const form = ref()
 
@@ -194,6 +203,7 @@ export default {
       daoRewards, createSalary,
       daoTreasury, createLockSimple,
       installedWorkflow,
+      workflowSettings
     };
   },
 
@@ -220,45 +230,50 @@ export default {
     isActive(button_page) {
       return button_page === (this.$route.query.page || 'overview')
     },
-    modalOpen(templ, templSettings, scenarioId){ 
-      const templCode = templ.code + '_v' + templ.version + '_s' + scenarioId 
+    modalOpen(templCode, templVersion, scenarioId){ 
+      const workflowCode = templCode + '_v' + templVersion + '_s' + scenarioId 
 
       this.modalProposal += 1
       this.dropdownAction = false
-      this.modalTitle = this.t('default.wf_templ_' + templCode)
-      this.activeFormCode = templ.code
+      this.modalTitle = this.t('default.wf_templ_' + workflowCode)
+      this.activeFormCode = templCode
 
-      switch (templCode) {
+      switch (workflowCode) {
         case 'basic_pkg1_v1_s3':
-          this.formProps = {
-            contractId: this.dao.wallet, 
-            template: loFind(this.dao.templates, {code: templ.code}),
-          }
+          this.formProps = {}
           this.activeForm = 'Payout'
           break
         case 'basic_pkg1_v1_s4':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code})}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol}
           this.activeForm = 'SendToken'
           break
         case 'basic_pkg1_v1_s1':
-          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templ.code})}
+          this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights, template: loFind(this.dao.templates, {code: templCode})}
           this.activeForm = 'AddWorkflow'
           console.log('wf_add');
+          break
+        case 'basic_pkg1_v1_s2':
+          this.formProps = {docs: this.dao.docs}
+          this.activeForm = 'AddMedia'
+          break
+        case 'lock1_v1_s1':
+          this.formProps = {}
+          this.activeForm = 'SimpleLock'
+          break
+        case 'reward2_v1_s1':
+          this.formProps = {}
+          this.activeForm = 'Salary'
           break
         case 'wf_general':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
           this.activeForm = 'GeneralProposal'
           break
-        case 'basic_pkg1_v1_s2':
-          this.formProps = {contractId: this.dao.wallet, docs: this.dao.docs, template: loFind(this.dao.templates, {code: templ.code})}
-          this.activeForm = 'AddMedia'
-          break
         case 'wf_skyward':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
+          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templCode}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'SkywardProposal'
           break 
         case 'wf_bounty':
-          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templ.code}), proposalCount: this.dao.proposals.length}
+          this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templCode}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'BountyProposal'
           break;
         default:
@@ -266,8 +281,6 @@ export default {
             this.activeForm = ''
             this.activeFormCode = ''
       }
-      console.log(templ);
-      console.log(templSettings);
     },
 
     vote(){

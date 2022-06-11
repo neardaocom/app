@@ -34,9 +34,10 @@ export const useDaoWorkflow = (loader: Ref<Loader>, dao: Ref<DAO>, workflow: Ref
 
 export const useDaoWorkflowComputed = (dao: Ref<DAO>) => {
     const installedWorkflow = (code: string) => WorkflowHelper.isWorkflowInstalled(dao.value, code)
+    const workflowSettings = (code: string) => WorkflowHelper.workflowSettingsFromDao(dao.value, code)
 
     return {
-        installedWorkflow
+        installedWorkflow, workflowSettings
     }
 }
 

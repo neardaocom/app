@@ -25,11 +25,14 @@
          <tr v-for="(doc, index) in resources" :key="index">
             <td>{{ doc.index + 1 }}</td>
             <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
-            <td class="fw-bold text-start"><a href="#"  @click.prevent="open(doc.index)">
-            {{ doc.name }}&nbsp;
-            <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
-            <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
-            </a></td>
+            <td class="fw-bold text-start">
+               <a href="#"  @click.prevent="open(doc.index)">
+                  {{ doc.name }} 
+                  <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
+                  <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
+               </a> 
+               <MDBSpinner :style="{visibility: fileLoading && fileClicked === doc.index ? 'visible' : 'hidden'}" size="sm" color="primary" class="ms-2"/>  
+            </td>
             <td class="text-start">{{ doc.category }}</td>
             <td v-if="false" class="text-truncate">{{ doc.description }}</td>
             <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
@@ -50,12 +53,13 @@
 import { useI18n } from 'vue-i18n';
 import { DAODocsFileType } from '@/models/dao/types/dao';
 import {
-  MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn
+  MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn, MDBSpinner 
 } from 'mdb-vue-ui-kit'
+import { ref } from '@vue/reactivity';
 
 export default {
    components: { 
-      MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn
+      MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn, MDBSpinner
    },
    props:{
       resources:{
@@ -65,10 +69,16 @@ export default {
       progress: {
          type: Number,
          required: true,
+      },
+      fileLoading: {
+         type: Boolean,
+         required: false,
+         default: false
       }
    },
    setup ( _props , { emit }) {
       const { t } = useI18n() 
+      const fileClicked = ref(0)
 
       const getIcon = (type) => {
          let icon = ''
@@ -91,10 +101,11 @@ export default {
 
       const open = (index) => {
          emit('openResource', index)
+         fileClicked.value = index
       }
 
       return {
-         t, getIcon, open
+         t, getIcon, open, fileClicked
       }
    }
 }

@@ -28,16 +28,6 @@ export default {
         InputNumber,
         MDBWysiwyg,
     },
-    props:{
-        contractId: {
-            type: String,
-            required: true
-        },
-        template: {
-            type: Object,
-            required: true
-        }
-    },
     setup () {
         const {t} = useI18n()
         const dao = inject('dao')

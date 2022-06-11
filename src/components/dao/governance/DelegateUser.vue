@@ -10,7 +10,7 @@
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
             </span>   
-            <div class="ms-auto text-danger">
+            <div v-if="wallet.accountId !== accountId" class="ms-auto text-danger">
                <i class="bi bi-arrow-left fs-5"/>
                <i class="bi bi-person fs-4"/>
             </div>

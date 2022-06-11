@@ -11,15 +11,16 @@
       </div>
     </div>
 
-    <section v-if="workflowsNum == 0">
-      <hr>
-      <h6 class="mb-0 text-start">{{ t("default.no_active_activities") }}</h6>
-    </section>
+    <NoData v-if="workflowsNum == 0" :text="t('default.no_active_activities')" hint="This is a hint" />
 
     <div class="row">
       <div v-for="workflow in results" :key="workflow.id" class="col-12 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Workflow :workflow="workflow" />
+          <MDBCard>
+            <MDBCardBody>
+              <Workflow :workflow="workflow" />
+            </MDBCardBody>
+          </MDBCard>
           <!-- :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" :walletRights="walletRights" :daoStorage="dao.storage" -->
         </section>
       </div>
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { MDBSelect } from "mdb-vue-ui-kit";
+import { MDBSelect, MDBCard, MDBCardBody } from "mdb-vue-ui-kit";
 import { inject, ref } from "vue"
 import { reactive } from "@vue/reactivity"
 import { useI18n } from "vue-i18n"
@@ -40,10 +41,12 @@ import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
 import ProposalHelper from '@/models/dao/ProposalHelper';
+import NoData from '@/components/ui/NoData.vue'
 
 export default {
   components: {
-    MDBSelect, Workflow, Search
+    MDBSelect, Workflow, Search, NoData,
+    MDBCard, MDBCardBody
   },
   props: {
     walletId: {

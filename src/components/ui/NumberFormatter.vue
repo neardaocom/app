@@ -43,7 +43,7 @@
       const shortNumber = computed(() => loIsNil(amount.value) ? null : NumberHelper.numFormatter(new Decimal(amount.value).toNumber(), digits.value), locale.value)
       const fullNumber = computed(() => loIsNil(amount.value) ? null : LocaleHelper.stringNumberToLocale(new Decimal(amount.value).toFixed(), locale.value))
 
-       const tooltip = ref(false);
+      const tooltip = ref(false);
       return {
         shortNumber, fullNumber, tooltip
       }

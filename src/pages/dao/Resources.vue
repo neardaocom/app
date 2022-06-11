@@ -1,31 +1,29 @@
 <template>
   <div class="container mb-2 text-start">
-  <div v-if="docs.files.length > 0" >
-    <div class="row my-4 mx-4">
-      <div class="col-6 col-md-4 col-lg-3">
-        <Search v-model="searchQuery"/>
+    <div v-if="docs.files.length > 0" >
+      <div class="row my-4 mx-4">
+        <div class="col-6 col-md-4 col-lg-3">
+          <Search v-model="searchQuery"/>
+        </div>
+        <div v-if="false" class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
+          <MDBCheckbox :label="filterType.pdf.name" inline v-model="filterType.pdf.active"/>
+          <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
+          <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>
+        </div>
+        <div class="col-12 col-md-6 col-lg-9 text-end pt-1 ps-4">
+        </div>
       </div>
-      <div v-if="false" class="col-12 col-md-6 col-lg-9 text-start pt-1 ps-4">
-        <MDBCheckbox :label="filterType.pdf.name" inline v-model="filterType.pdf.active"/>
-        <MDBCheckbox :label="filterType.link.name" inline v-model="filterType.link.active"/>
-        <MDBCheckbox :label="filterType.html.name" inline v-model="filterType.html.active"/>
-      </div>
-      <div class="col-12 col-md-6 col-lg-9 text-end pt-1 ps-4">
-      </div>
+
+      <MDBCard>
+        <MDBCardBody>
+            <ResourcesTable :resources="results" @openResource="open" :progress="loadingProgress"  :fileLoading="fileLoading"/>
+        </MDBCardBody>
+      </MDBCard>
     </div>
 
-    <MDBCard>
-      <MDBCardBody>
-          <ResourcesTable :resources="results" @openResource="open" :progress="loadingProgress"/>
-      </MDBCardBody>
-    </MDBCard>
-
-
+    <NoData v-if="docs.files.length == 0" :text="t('default.no_doc_files')" hint="This is a hint" />
   </div>
-    <section class="text-center my-4" v-if="docs.files.length == 0">
-      <h6 class="mb-0">{{ t("default.no_doc_files") }}</h6>
-    </section>
-  </div>
+
   <ModalDocument :show="modalDocument" :doc="selectedDoc" :data="docData"/>
 </template>
 
@@ -48,11 +46,13 @@ import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
 import ResourcesTable from '@/components/dao/resources/ResourcesTable.vue'
 import IntegerHelper from '@/models/utils/IntegerHelper';
+import NoData from '@/components/ui/NoData.vue'
 
 export default {
   components: {
     MDBCard, MDBCardBody, MDBCheckbox,
-    ModalDocument, Search, ResourcesTable
+    ModalDocument, Search, ResourcesTable,
+    NoData
   },
   props: {
     docs: {
@@ -74,6 +74,7 @@ export default {
     const selectedDoc = ref({})
     const { ipfsService } = useIPFS()
     const loadingProgress = ref(0)
+    const fileLoading = ref(false)
 
     const { rSearch } = useRouter(config)
 
@@ -121,11 +122,13 @@ export default {
     }
 
     const open = async (index) => {
+      fileLoading.value = true
       const doc = docs.value.files[index]
       fetch(doc, ipfsService.value).then(r => {
         console.log(doc);
         switch (doc.type) {
           case DAODocsFileType.url: {
+            fileLoading.value = false
             window.open(r, "_blank");
             break;
           }
@@ -134,10 +137,12 @@ export default {
           case DAODocsFileType.html: {
             selectedDoc.value = doc;
             docData.value = r
+            fileLoading.value = false
             modalDocument.value += 1;
             break;
           }
           default:
+            fileLoading.value = false
             console.log('Undefined doc.ext: ' + doc.ext);
         }
       })
@@ -147,7 +152,8 @@ export default {
       t, files, modalDocument, fetchedDocs, selectedDoc, openOldVersion,
       searchQuery, filterType,
       ipfsService, docData,
-      rSearch, results, getLastVersions, open, loadingProgress
+      rSearch, results, getLastVersions, open, loadingProgress,
+      fileLoading
     };
   }
 };

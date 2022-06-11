@@ -18,6 +18,9 @@
                <TreasuryLock :lock="lock" :unlock="unlock"/>
             </div>
          </div>
+         <div>
+            <NoData v-if="treasuryLocks.length === 0" :text="t('default.no_locks')" hint="This is a hint" />
+         </div>
       </div>
    </div>
 
@@ -31,10 +34,12 @@ import TreasuryLock from '@/components/dao/treasury/TreasuryLock.vue'
 // import ModalTreasuryLocks from '@/pages/dao/modals/ModalTreasuryLocks.vue'
 import { inject } from '@vue/runtime-core';
 import {useAnalytics, useTreasury} from '@/hooks/treasury'
+import NoData from '@/components/ui/NoData.vue'
 export default {
    components: {
       InfoAmountCard,
       TreasuryLock,
+      NoData
       // ModalTreasuryLocks, 
    },
    setup () {

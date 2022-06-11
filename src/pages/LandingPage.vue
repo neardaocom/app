@@ -1,11 +1,5 @@
 <template>
   <main>
-    <!-- <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-      <MDBSpinner>
-        <span class="sr-only">{{ t('default.loading') }}...</span>
-      </MDBSpinner>
-    </div> -->
-
   <MDBContainer style="max-width: 630px;">
     <div class="row">
       <div class="col-12">
@@ -17,33 +11,27 @@
     <div class="row">
       <div class="col-12">
         <MDBBtn @click="createDao" color="primary" rounded size="lg" class="fs-6 fw-bold bg-gradient-100 m-2 mb-5" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.strat_a_dao') }}</MDBBtn>
-        
-        <!-- <div v-if="topDaos" class="d-flex flex-wrap justify-content-around mb-4" >
-          <router-link v-for="(dao, index) in topDaos" :key="index" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" class="text-reset" > 
-            <MDBCard >
-              <MDBCardBody>
-                <h5>{{index+1}}.</h5>
-                <h5 class="text-primary"> {{dao[1].name}} </h5>
-                <p class="fst-italic"><small>"{{dao[1].description}}"</small></p>
-                <span class="fw-bold">{{dao.amount.toFixed(2)}}</span> USD
-              </MDBCardBody>
-            </MDBCard>
-          </router-link>
-        </div> -->
 
+        <h3 v-if="topList" class="mb-3"> Top 3 DAOs </h3>
         <div v-if="topList" class="row g-1 justify-content-center mb-2" >
-          <h3 class="mb-3"> Top 3 DAOs </h3>
-          <router-link v-for="(dao) in topList" :key="dao.index" :to="{ name: 'dao', params: {id: dao.walletId}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset mb-2" > 
-            <MDBCard class="h-100">
-              <MDBCardBody>
-                <!-- <h5 style="height: 15%">{{index+1}}.</h5> -->
-                <MDBBadge color="black" class="mb-1 p-2"><img width="20" height="20" :src="'/img/near_logo.svg'"/></MDBBadge>
-                <h5 class="text-primary h-25"> {{ (dao.name.length > 37) ? dao.name.substring(0, 37) + "..." : dao.name }} </h5>
-                <p class="fst-italic h-25"><small>"{{ (dao.description.length > 65) ? dao.description.substring(0, 65) + "..." : dao.description}}"</small></p>
-                <div class="h-25"> <span class="fw-bold">{{ dao.treasuryAmountUsd }}</span> USD </div>
-              </MDBCardBody>
-            </MDBCard>
-          </router-link>
+          <template v-if="topList.length > 0">
+            <router-link  v-for="(dao) in topList" :key="dao.index" :to="{ name: 'dao', params: {id: dao.walletId}, query: {page: 'overview' }}" class="col-10 col-md-4 text-reset mb-2" > 
+              <MDBCard class="h-100">
+                <MDBCardBody>
+                  <!-- <h5 style="height: 15%">{{index+1}}.</h5> -->
+                  <MDBBadge color="black" class="mb-1 p-2"><img width="20" height="20" :src="'/img/near_logo.svg'"/></MDBBadge>
+                  <h5 class="text-primary h-25"> {{ (dao.name.length > 37) ? dao.name.substring(0, 37) + "..." : dao.name }} </h5>
+                  <p class="fst-italic h-25"><small>"{{ (dao.description.length > 65) ? dao.description.substring(0, 65) + "..." : dao.description}}"</small></p>
+                  <div class="h-25"> <span class="fw-bold">{{ dao.treasuryAmountUsd }}</span> USD </div>
+                </MDBCardBody>
+              </MDBCard>
+            </router-link>
+          </template>
+          <template v-else>
+            <div class="skeleton rounded col-10 col-md-4" style="height: 190px"/>
+            <div class="skeleton rounded col-10 col-md-4" style="height: 190px"/>
+            <div class="skeleton rounded col-10 col-md-4" style="height: 190px"/>
+          </template>
         </div>
 
         <MDBBtn @click="organizations"  color="primary" rounded size="lg" class="fs-6 bg-gradient-100 m-2 mb-5" style="width:228px">{{ t('default.see_organizations') }}</MDBBtn>

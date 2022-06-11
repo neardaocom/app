@@ -40,9 +40,8 @@
             </div>
          </div>
       </template>
-      <div v-else>
-         <h6>{{t('default.no_claim_rewards')}}</h6>
-      </div>
+      
+      <NoData v-else :text="t('default.no_claim_rewards')" hint="This is a hint" />
    </div>
 </template>
 
@@ -54,12 +53,14 @@ import Incentives from '@/components/dao/rewards/Incentives.vue'
 import { MDBBtn } from "mdb-vue-ui-kit";
 import { inject } from '@vue/runtime-core'
 import { useRewards } from '@/hooks/rewards'
+import NoData from '@/components/ui/NoData.vue'
 export default {
     components: {
       NextUnlock,
       AssetToWithdraw,
       Incentives,
-      MDBBtn
+      NoData,
+      MDBBtn,
     },
    setup () {
       const {t} = useI18n()
