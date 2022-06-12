@@ -19,9 +19,9 @@ export default class RewardsHelper {
 
   static getAmountCounting(rewardAmount: RewardAmount): number | null {
     let amountCounting: number | null = null
-    if (rewardAmount.lastWithdraw && rewardAmount.amountDelta && rewardAmount.amount) {
+    if (rewardAmount.lastWithdraw && rewardAmount.amountDelta) {
       const fromLastWithdrawInSeconds = moment(new Date()).diff(rewardAmount.lastWithdraw, 'seconds')
-      amountCounting = new Decimal(rewardAmount.amountDelta).mul(fromLastWithdrawInSeconds).minus(rewardAmount.amount).toNumber()
+      amountCounting = new Decimal(rewardAmount.amountDelta).mul(fromLastWithdrawInSeconds).minus(rewardAmount.amount || 0).toNumber()
     }
     return amountCounting
   }
