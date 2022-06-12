@@ -183,7 +183,7 @@ export default {
       return this.$store.getters['ipfs/getService']
     },
     workflowCode() {
-      console.log(this.proposal, this.proposalProgress)
+      //console.log(this.proposal, this.proposalProgress)
       return ProposalHelper.getStatus(this.proposal.status, this.proposalProgress)
     }
   },

@@ -1,8 +1,11 @@
 import ResourceTypeBuilder from "./ResourceTypeBuilder"
 import IpfsService from "../interfaces/IpfsService.interface"
-import { ResourceType } from "../nearBlockchain/types/resource"
+import { ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource"
 import IpfsUtils from "../services/ipfs/IpfsUtils"
 import StringHelper from "../utils/StringHelper"
+import { DAODocsFile, DAODocsFileType } from "../dao/types/dao"
+import loToString from "lodash/toString"
+import loGet from "lodash/get"
 
 export default class Resource {
 
@@ -42,5 +45,23 @@ export default class Resource {
         const resourceTypeBuiler = new ResourceTypeBuilder()
         resourceTypeBuiler.addText(text)
         return resourceTypeBuiler.create()
+    }
+
+    async retriveHtml(resource: ResourceTypeCid): Promise<string | undefined> {
+        const fetched: any = await this.ipfsService.retrieve(loGet(resource, ['cid', 'cid']))
+        return fetched[0].text()
+    }
+
+    async retrivePdf(resource: ResourceTypeCid): Promise<string | undefined> {
+        const fetched: any = await this.ipfsService.retrieve(loGet(resource, ['cid', 'cid']))
+        return URL.createObjectURL(fetched[0])
+    }
+
+    async retriveLink(resource: ResourceTypeLink): Promise<string | undefined> {
+        return loGet(resource, ['link'])
+    }
+
+    async retriveText(resource: ResourceTypeText): Promise<string | undefined> {
+        return loGet(resource, ['text'])
     }
 }

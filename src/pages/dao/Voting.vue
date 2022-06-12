@@ -139,8 +139,8 @@ export default {
             const sortValue = {
               'in_progress': 0,
               'accepted': 1,
-              'invalid': 2,
-              'rejected': 3,
+              'rejected': 2,
+              'invalid': 3,
             }
             results = results.sort((x, y) => sortValue[x.stateCode] - sortValue[y.stateCode])
           }

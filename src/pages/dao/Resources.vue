@@ -34,15 +34,12 @@ import {
   MDBCard, MDBCardBody, MDBCheckbox
 } from 'mdb-vue-ui-kit'
 import { useI18n } from "vue-i18n";
-// import DocumentVersion from './DocumentVersion'
 import ModalDocument from './modals/ModalDocument.vue'
-import { transform } from "@/models/document"
 import StringHelper from '@/models/utils/StringHelper'
 import _ from 'lodash'
-import { useIPFS } from "@/hooks/vuex";
-import { fetch } from "@/models/ipfs";
 import { DAODocsFileType } from '@/models/dao/types/dao';
 import { useRouter } from "@/hooks/dao";
+import { useResource } from "@/hooks/docs";
 import Search from "@/components/ui/Search.vue"
 import ResourcesTable from '@/components/dao/resources/ResourcesTable.vue'
 import IntegerHelper from '@/models/utils/IntegerHelper';
@@ -62,17 +59,21 @@ export default {
   },
   setup(props) {
     const config = inject('config')
+    const loader = inject('loader')
+
+    const ipfsService = loader.value.load('services/ipfs')
+
+    const { daoResource } = useResource(ipfsService)
 
     const { docs } = toRefs(props)
     //console.log(docs.value);
-    const files = transform(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
+    const files = daoResource.value.list(docs.value) // _.sortBy(transform(docs.value), ['category', 'name'])
     const { t } = useI18n();
     const modalDocument = ref(0)
     const openOldVersion = ref(0)
     const docData = ref(null)
     const fetchedDocs = ref({})
     const selectedDoc = ref({})
-    const { ipfsService } = useIPFS()
     const loadingProgress = ref(0)
     const fileLoading = ref(false)
 
@@ -124,7 +125,7 @@ export default {
     const open = async (index) => {
       fileLoading.value = true
       const doc = docs.value.files[index]
-      fetch(doc, ipfsService.value).then(r => {
+      daoResource.value.fetch(doc).then(r => {
         console.log(doc);
         switch (doc.type) {
           case DAODocsFileType.url: {
