@@ -105,6 +105,7 @@ export default class ProposalHelper {
     static getVotingStats(proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) {
         //console.log(token_holders, token_blocked)
         const results = loClone(this.voteMapper)
+        let amountSum: number = 0
         //console.log(results)
         if (proposal.state === 'in_progress') { // compute stats
           Object.keys(proposal.votes).forEach((voter: string) => {
@@ -121,23 +122,24 @@ export default class ProposalHelper {
               default:
                 throw new UnsupportedError('Undefined voting stat: ' + loToInteger(proposal.votes[voter]))
             }
+            amountSum += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0
           });
         } else { // get stats from results
           results[1] += proposal.votingResults?.yes || 0;
           results[2] += proposal.votingResults?.no || 0;
-          tokenBlocked = proposal.votingResults?.amount || 0;
+          amountSum = results[1] + results[2];
         }
 
         return [
             {
                 choice: "yes",
-                percent: new Decimal(results[1]).div(tokenBlocked).times(100).round().toNumber(),
+                percent: new Decimal(results[1]).div(amountSum).times(100).round().toNumber() || 0,
                 amount: new Decimal(results[1]).toNumber(),
                 bg: "primary",
             },
             {
                 choice: "no",
-                percent: new Decimal(results[2]).div(tokenBlocked).times(100).round().toNumber(),
+                percent: new Decimal(results[2]).div(amountSum).times(100).round().toNumber() || 0,
                 amount: new Decimal(results[2]).toNumber(),
                 bg: "muted",
             },

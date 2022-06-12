@@ -36,7 +36,6 @@ export default class DaoTreasury {
             builder.addActivityActionConstantNumber(0, "assets.0.unlocking.amount_init_unlock", amountToken)
         }
         builder.addActivityEmpty()
-        builder.addActivityEmpty()
 
         const createArgs = await builder.create()
 

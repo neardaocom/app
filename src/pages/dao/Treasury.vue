@@ -12,7 +12,7 @@
       </div>
       
       <div>
-         <h5 class="text-start me-auto">{{t('default.locks')}}</h5>
+         <h5 class="text-start me-auto">{{t('default.partitions')}}</h5>
          <div class="row g-3">
             <div v-for="lock in treasuryLocks" :key="lock.id" class="col-md-6">
                <TreasuryLock :lock="lock" :unlock="unlock"/>

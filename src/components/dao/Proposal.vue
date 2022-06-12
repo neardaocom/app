@@ -39,7 +39,7 @@
         <li class="list-inline-item me-4">  
           <i class="far fa-handshake fa-fw text-secondary me-2 mb-3"></i>
           <span class="h6"
-            >{{ proposal.quorum }}%</span
+            >{{ proposal.approveThreshold }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
