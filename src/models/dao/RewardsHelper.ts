@@ -8,11 +8,13 @@ export default class RewardsHelper {
   static getAmountDeltaInSecond(asset: DaoAsset, pricelist: RewardPricelist): number | null {
     let getAmountDeltaInSecond: number | null = null
 
-    pricelist.amounts.forEach((item) => {
-      if (item.asset.accountId === asset.accountId) {
-        getAmountDeltaInSecond = new Decimal(item.amount).div(pricelist.unitSeconds).mul(100_000_000).round().div(100_000_000).toNumber()
-      }
-    })
+    if (pricelist.type === 'salary') {
+      pricelist.amounts.forEach((item) => {
+        if (item.asset.accountId === asset.accountId && pricelist.unitSeconds) {
+          getAmountDeltaInSecond = new Decimal(item.amount).div(pricelist.unitSeconds).mul(100_000_000).round().div(100_000_000).toNumber()
+        }
+      })
+    }
 
     return getAmountDeltaInSecond
   }

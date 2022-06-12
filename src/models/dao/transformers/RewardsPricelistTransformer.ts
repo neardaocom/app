@@ -24,15 +24,18 @@ export default class RewardsPricelistTransformer implements TransformerInterface
 
     async transform(value: any): Promise<RewardPricelist> {
         let type: RewardType
-        let group: DAOGroup | undefined
-        let unitSeconds: number
+        let group: DAOGroup | undefined = undefined
+        let unitSeconds: number | undefined = undefined
 
         if (loGet(value, [1, 'type', 'wage']) !== undefined) {
             type = 'salary'
             group = loFind(this.daoGroups, {id: value[1].group_id})
             unitSeconds = loGet(value, [1, 'type', 'wage', 'unit_seconds'])
+        } else if (loGet(value, [1, 'type', 'user_activity']) !== undefined) {
+            type = 'activity'
+            group = loFind(this.daoGroups, {id: value[1].group_id})
         } else {
-            // console.log(loToPairs(value))
+            console.log(loToPairs(value))
             throw new NotImplementedError('This asset type not implemented: ' + loToPairs(value))
         }
 
@@ -55,7 +58,7 @@ export default class RewardsPricelistTransformer implements TransformerInterface
             name: value[1].name,
             targetGroup: group,
             amounts: amounts,
-            unitSeconds,
+            unitSeconds: unitSeconds,
             startAt: NearUtils.dateFromChain(value[1].time_valid_from),
             endAt: (value[1].time_valid_to !== NearUtils.dateIninity) ? NearUtils.dateFromChain(value[1].time_valid_to) : null,
         }

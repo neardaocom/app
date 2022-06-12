@@ -57,11 +57,12 @@ export default class DaoRewards {
         return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, 10, 1).actionsRun()
     }
 
-    async createActivity(dao: DAO, name: string, amountNear: number | null, amountToken: number | null, activityIds: number[], lockId: number, startAt: Date, endAt?: Date) {
+    async createActivity(dao: DAO, name: string, groupId: number, amountNear: number | null, amountToken: number | null, activityIds: number[], lockId: number, startAt: Date, endAt?: Date) {
         const builder = new ProposalBuilder(this.servicePool.getWfProvider(dao.settings.workflow_provider), dao.templates)
         builder.addTemplateByCode('reward2')
         builder.addTemplateSettingsId(0)
         builder.addProposeSettingsScenario(2)
+        builder.addActivityEmpty()
         builder.addActivity()
         builder.addActivityActionConstantString(0, 'name', name)
         builder.addActivityActionConstantNumber(0, 'partition_id', lockId)
@@ -84,7 +85,8 @@ export default class DaoRewards {
             builder.addActivityActionConstantBigNumber(0, "reward_amounts.0.1", NearUtils.amountToDecimals(amountToken.toString(), 24))
         }
         builder.addActivityActionConstantNumbers(0, "type.user_activity.activity_ids", activityIds)
-        builder.addActivityEmpty()
+        builder.addActivityActionConstantNumber(0, "group_id", groupId)
+        builder.addActivityActionConstantNumber(0, "role_id", 0)
         builder.addActivityEmpty()
 
         const createArgs = await builder.create()
@@ -110,7 +112,7 @@ export default class DaoRewards {
                 console.log(e)
                 // throw new Error(`DataChain not loaded: ${e}`);
             })
-            // console.log(dataChain)
+            console.log('Reward', dataChain)
             const transformer = new RewardsClaimableTransformer(dao.rewardsPricelists, dao.treasuryLocks, ftMetadataLoader)
             list = await transformer.transform({
                 rewards: loGet(dataChain, [0, 'rewards']) || [],
@@ -136,6 +138,6 @@ export default class DaoRewards {
      */
     async withdraw(daoAccountId: string, asset: DaoAsset, rewardIds: number[]) {
         const transformer = new DaoAssetToChainAssetTransformer()
-        return this.servicePool.getContract(daoAccountId).withdrawRewards(rewardIds, transformer.transform(asset), 100).actionsRun()
+        return this.servicePool.getContract(daoAccountId).claimRewards(rewardIds, transformer.transform(asset), 100).actionsRun()
     }
 }

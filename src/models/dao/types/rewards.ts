@@ -26,7 +26,7 @@ export type RewardPricelist = {
     targetGroup?: RewardTargetGroup;
     targetActivities?: number[];
     amounts: RewardPricelistAmount[]
-    unitSeconds: number;
+    unitSeconds?: number;
     startAt: Date;
     endAt: Date | null;
 }

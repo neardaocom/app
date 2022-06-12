@@ -1,6 +1,8 @@
 <template>
       <InputString :labelName="t('default.name')" id="name" />
 
+      <Select :labelName="t('default.group')" id="group_id" :options="groupsOptions" filter/>
+
       <Select :labelName="t('default.activity')" id="activity_ids" :options="activityOptions" filter multiple />
 
       <Select :labelName="t('default.lock')" id="lock" :options="locksOptions" filter/>
@@ -19,7 +21,7 @@ import Select from '@/components/forms/Select.vue'
 import DateTimepicker from '@/components/forms/DateTimepicker.vue'
 import { computed } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useLocks } from '@/hooks/dao';
+import { useGroups, useLocks } from '@/hooks/dao';
 import { inject } from '@vue/runtime-core';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import InputString from '@/components/forms/InputString.vue'
@@ -39,11 +41,13 @@ export default {
       const loader = inject('loader')
       const {t} = useI18n()
       const {locksOptions} = useLocks(dao)
+      const {groupsOptions} = useGroups(dao)
       const { createActivity, activityOptions } = useRewards(dao, loader)
 
       const schema = computed(() => {
          return {
             name: 'required',
+            group_id: 'required',
             activity_ids: 'required',
             lock: 'required',
             near_amount: `strIsNumber`, // TODO: One of near_amount/token_amount is required
@@ -58,6 +62,7 @@ export default {
       const onSubmit = handleSubmit(async (values) => {
          createActivity(
             values.name,
+            values.group_id,
             values.near_amount ? new Decimal(values.near_amount).toNumber() : null,
             values.token_amount ? new Decimal(values.token_amount).toNumber() : null,
             values.activity_ids.split(',').map((id) => NumberHelper.parseNumber(id)),
@@ -74,7 +79,7 @@ export default {
       }
 
       return {
-         t, activityOptions, locksOptions, onSubmit, click, values,
+         t, groupsOptions, activityOptions, locksOptions, onSubmit, click, values,
       }
    }
 }

@@ -14,7 +14,7 @@
                             - {{ reward.pricelist.targetGroup?.name }}
                         </template>
                      </small>
-                     <MDBCardTitle v-if="reward.pricelist.type === 'salary'" >
+                     <MDBCardTitle>
                         <div> {{ reward.pricelist.name }}</div>
                         <div class="fw-normal">Lock: {{reward.lock.name}} </div>
                       </MDBCardTitle>

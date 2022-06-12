@@ -23,8 +23,8 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const createSalary = (name: string, groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number, startAt: Date, endAt?: Date) =>
         daoRewards.value.createSalary(dao.value, name, groupId, amountNear, amountToken, timeUnit, lockId, startAt, endAt)
 
-    const createActivity = (name: string, amountNear: number | null, amountToken: number | null, activityIds: number[], lockId: number, startAt: Date, endAt?: Date) =>
-        daoRewards.value.createActivity(dao.value, name, amountNear, amountToken, activityIds, lockId, startAt, endAt)
+    const createActivity = (name: string, groupId: number, amountNear: number | null, amountToken: number | null, activityIds: number[], lockId: number, startAt: Date, endAt?: Date) =>
+        daoRewards.value.createActivity(dao.value, name, groupId, amountNear, amountToken, activityIds, lockId, startAt, endAt)
     
     const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
         daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)

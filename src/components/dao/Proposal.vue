@@ -79,22 +79,18 @@
           >
           </MDBProgressBar>
       </MDBProgress>
-      <br/>
 
       <!-- Workflow -->
       <MDBAccordion v-if="workflowCode === 'accepted'" v-model="activeItem" flush>
-        <MDBAccordionItem :headerTitle="t('default.workflow')" collapseId="workflow">
+        <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
           <Workflow :workflow="proposal.workflow" />
         </MDBAccordionItem>
       </MDBAccordion>
 
       <!-- Vote -->
       <div
-        v-if="
-          workflowCode === 'in_progress'
-          && proposal.canVote === true
-          && proposal.isVoted === false
-        "
+        v-if="workflowCode === 'in_progress' && proposal.canVote === true && proposal.isVoted === false"
+        class="mt-2"
       >
         <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
@@ -110,7 +106,7 @@
         v-else-if="workflowCode === 'finishing'"
         role="group"
       >
-        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded">
+        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded mt-2">
           <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
         </button>
       </div>
