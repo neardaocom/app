@@ -17,9 +17,9 @@ export default class DaoDocsTransformer implements TransformerInterface {
     transform(value: any): DAODocsFile {
         let type: DAODocsFileType
 
-        if (loGet(value[1], ['text'])) {
+        if (loGet(value[1], ['type', 'text'])) {
             type = DAODocsFileType.plain
-        } else if (loGet(value[1], ['link'])) {
+        } else if (loGet(value[1], ['type', 'link'])) {
             type = DAODocsFileType.url
         } else {
             type = DAODocsFileType[loFindKey(DAODocsFileType, (key) => key === value[1].type.cid.mimetype ) || '']

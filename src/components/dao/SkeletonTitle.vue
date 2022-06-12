@@ -4,7 +4,7 @@
           <div class="mask">
             <div class="d-flex position-absolute top-0 end-0 me-4 mt-3">
               <MDBDropdown btnGroup v-model="dropdown1" >
-                <MDBDropdownToggle @click="dropdown1 = !dropdown1" size="sm" class="text-secondary">
+                <MDBDropdownToggle @click="dropdown1 = !dropdown1" size="sm" color="secondary" >
                   <span class="me-1">{{t('default.dao_wallet')}}</span>
                 </MDBDropdownToggle>
                 <MDBDropdownMenu>

@@ -159,6 +159,12 @@ export type DAOTokenHolder = {
   amount: number;
 }
 
+export type DAOVotingResults = {
+  amount: number;
+  yes: number;
+  no: number;
+}
+
 export type DAOProposal = {
   id: number;
   created: Date;
@@ -166,6 +172,7 @@ export type DAOProposal = {
   end?: Date; // TODO: Move to required
   description?: any | null; // TODO: Description from media
   votes: DAOVote[];
+  votingResults?: DAOVotingResults;
   state: string;
   templateId: number;
   settingsId: number;

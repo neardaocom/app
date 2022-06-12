@@ -16,7 +16,7 @@ const stringLocaleNumber = (value, [localeString]) => {
 
 const strIsNumber = (value) => {
     if (typeof value !== 'number')
-        return value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g)
+        return (value !== undefined && value.length > 0) ? value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g) : true
     else
         return true
 }

@@ -52,6 +52,7 @@ export default class RewardsPricelistTransformer implements TransformerInterface
         const pricelist: RewardPricelist = {
             id: value[0],
             type,
+            name: value[1].name,
             targetGroup: group,
             amounts: amounts,
             unitSeconds,

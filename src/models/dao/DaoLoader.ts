@@ -198,7 +198,7 @@ export default class DaoLoader {
         // load workflow instance
         const dataChainWfInstance = await Promise.all(
             this.dataChain[6].map((proposalChain) =>
-                proposalChain[1].current.state === 'accepted' ? this.daoService.wfInstance(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
+                proposalChain[1].v1.state === 'accepted' ? this.daoService.wfInstance(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
             )
         ).catch((e) => {
             throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
@@ -211,7 +211,7 @@ export default class DaoLoader {
         // load workflow log
         const dataChainWfLog = await Promise.all(
             this.dataChain[6].map((proposalChain) =>
-                proposalChain[1].current.state === 'accepted' ? this.daoService.wfLog(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
+                proposalChain[1].v1.state === 'accepted' ? this.daoService.wfLog(proposalChain[0]) : PromiseHelper.createPromiseTimeout(null)
             )
         ).catch((e) => {
             throw new Error(`DataChainProposalSettings[${this.id}] not loaded: ${e}`);
@@ -363,7 +363,7 @@ export default class DaoLoader {
         // search in voters
         this.dataChain[6].forEach((proposal) => { // get list of voting token holders
             // voters
-            Object.keys(proposal[1].current.votes).forEach((voter: string) => {
+            Object.keys(proposal[1].v1.votes).forEach((voter: string) => {
                 if (members.includes(voter) === false) {
                     members.push(voter)
                 }

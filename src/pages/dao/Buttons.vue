@@ -81,11 +81,12 @@
                   </template>
                 </template>
               </template> -->
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 2)">{{ t('default.wf_templ_basic_pkg1_v1_s2') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 3)">{{ t('default.wf_templ_basic_pkg1_v1_s3') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 4)">{{ t('default.wf_templ_basic_pkg1_v1_s4') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><MDBIcon icon="vote-yea" class="pe-2"/>{{ t('default.wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 2)"><i class="bi bi-bag pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s2') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 3)"><i class="bi bi-cash pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s3') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 4)"><i class="bi bi-coin pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s4') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><MDBIcon icon="wallet" class="pe-2"/>{{ t('default.wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><MDBIcon icon="wallet" class="pe-2"/>{{ t('default.wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 2)"><MDBIcon icon="wallet" class="pe-2"/>{{ t('default.wf_templ_reward2_v1_s2') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -110,6 +111,7 @@ import SendToken from '@/components/dao/workflows/basic_pkg/ProposalTokenSend.vu
 import AddMedia from '@/components/dao/workflows/basic_pkg/ProposalMediaAdd.vue'
 import SimpleLock from '@/components/dao/workflows/wf_lock/Proposal.vue'
 import Salary from '@/components/dao/workflows/wf_reward/ProposalSalary.vue'
+import Activity from '@/components/dao/workflows/wf_reward/ProposalActivity.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/Proposal.vue'
 import GeneralProposal from '@/components/dao/workflows/wf_add/Proposal.vue'
 import SkywardProposal from '@/components/dao/workflows/wf_skyward/Proposal.vue'
@@ -142,7 +144,8 @@ export default {
     SkywardProposal,
     BountyProposal,
     SimpleLock,
-    Salary
+    Salary,
+    Activity,
   },
   props: {
     accountRole: {
@@ -263,6 +266,10 @@ export default {
         case 'reward2_v1_s1':
           this.formProps = {}
           this.activeForm = 'Salary'
+          break
+        case 'reward2_v1_s2':
+          this.formProps = {}
+          this.activeForm = 'Activity'
           break
         case 'wf_general':
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}

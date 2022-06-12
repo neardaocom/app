@@ -185,6 +185,23 @@ export const templateReward: WFMetaTemplate = {
                 }
             },
         },
+        {
+            id: 2,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        dao_action: 'reward_add'
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
     ],
     actions: [],
 }

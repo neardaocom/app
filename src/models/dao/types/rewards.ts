@@ -21,8 +21,10 @@ export type RewardTargetGroup = DAOGroup
 
 export type RewardPricelist = {
     id: number;
+    name?: string;
     type: RewardType;
     targetGroup?: RewardTargetGroup;
+    targetActivities?: number[];
     amounts: RewardPricelistAmount[]
     unitSeconds: number;
     startAt: Date;

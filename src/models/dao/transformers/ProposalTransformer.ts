@@ -5,15 +5,18 @@ import { CodeValue } from "@/models/utils/types/generics";
 import loGet from "lodash/get"
 import ProposalConstantsTransformer from "./ProposalConstantsTransformer";
 import ProposalInputsTransformer from "./ProposalInputsTransformer";
+import VotingResultsTransformer from "./VotingResultsTransformer";
 
 export default class ProposalTransformer implements TransformerInterface {
 
     private constantsTransformer: TransformerInterface;
     private inputsTransformer: TransformerInterface;
+    private votingResultsTransformer: TransformerInterface;
 
     constructor() {
         this.constantsTransformer = new ProposalConstantsTransformer()
         this.inputsTransformer = new ProposalInputsTransformer()
+        this.votingResultsTransformer = new VotingResultsTransformer()
     }
 
     transform(value: any): DAOProposal {
@@ -25,14 +28,15 @@ export default class ProposalTransformer implements TransformerInterface {
 
         return {
             id: value[0],
-            created: NearUtils.dateFromChain(value[1].current.created),
-            createdBy: value[1].current.created_by,
-            end: NearUtils.dateFromChain(value[1].current.end),
-            description: value[1].current.desc,
-            votes: value[1].current.votes,
-            state: value[1].current.state,
-            templateId: value[1].current.workflow_id,
-            settingsId: value[1].current.workflow_settings_id,
+            created: NearUtils.dateFromChain(value[1].v1.created),
+            createdBy: value[1].v1.created_by,
+            end: NearUtils.dateFromChain(value[1].v1.end),
+            description: value[1].v1.desc,
+            votes: value[1].v1.votes,
+            votingResults: this.votingResultsTransformer.transform(value[1].v1.voting_results),
+            state: value[1].v1.state,
+            templateId: value[1].v1.workflow_id,
+            settingsId: value[1].v1.workflow_settings_id,
             workflowScenarioId: loGet(value[2], ['constants', 'map', 's', 'u64']) || 1,
             constants: proposalConstants,
             inputs: proposalInputs,

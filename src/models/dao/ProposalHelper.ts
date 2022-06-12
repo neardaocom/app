@@ -106,21 +106,27 @@ export default class ProposalHelper {
         //console.log(token_holders, token_blocked)
         const results = loClone(this.voteMapper)
         //console.log(results)
-        Object.keys(proposal.votes).forEach((voter: string) => {
-          switch (loToInteger(proposal.votes[voter])) {
-            case 0:
-              results[0] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
-              break;
-            case 1:
-              results[1] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
-              break;
-            case 2:
-              results[2] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
-              break;
-            default:
-              throw new UnsupportedError('Undefined voting stat: ' + loToInteger(proposal.votes[voter]))
-          }
-        });
+        if (proposal.state === 'in_progress') { // compute stats
+          Object.keys(proposal.votes).forEach((voter: string) => {
+            switch (loToInteger(proposal.votes[voter])) {
+              case 0:
+                results[0] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                break;
+              case 1:
+                results[1] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                break;
+              case 2:
+                results[2] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                break;
+              default:
+                throw new UnsupportedError('Undefined voting stat: ' + loToInteger(proposal.votes[voter]))
+            }
+          });
+        } else { // get stats from results
+          results[1] += proposal.votingResults?.yes || 0;
+          results[2] += proposal.votingResults?.no || 0;
+          tokenBlocked = proposal.votingResults?.amount || 0;
+        }
 
         return [
             {
