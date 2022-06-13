@@ -307,6 +307,7 @@
   "vote_token": "Hlasovací token",
   "delegate_id": "Učet delegáta",
   "stake": "Stake",
+  "unstake": "Unstake",
   "staked": "Staked",
   "forward": "Forward",
   "delegate": "Delegovat",

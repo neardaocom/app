@@ -10,7 +10,7 @@
           <i class="bi bi-bar-chart me-1"/>
           {{ t('default.voting') }}
         </a>
-        <a :class="[isActive('activities') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
+        <a v-if="false" :class="[isActive('activities') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-check2-circle me-1"/>
           {{ t('default.in_progress') }}
         </a>

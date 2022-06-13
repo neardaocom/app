@@ -1,6 +1,6 @@
 <template>
-   <h6>{{`${t('default.account_id')}: ${accountId}`}}</h6>
-   <Select :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <h6 v-if="delegateId">{{`${t('default.delegate_id')}: ${delegateId}`}}</h6>
+   <Select v-if="!delegateId" :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
    <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
@@ -22,7 +22,11 @@ export default {
    props: {
       accountId:{
          type: String,
-         required: true
+         required: false
+      },
+      delegateId:{
+         type: String,
+         required: false
       },
       amount:{
          type: [Number, String],
@@ -30,7 +34,7 @@ export default {
       }
    },
    setup (props) {
-      const { accountId, amount } = toRefs(props)
+      const {  amount, delegateId, accountId } = toRefs(props)
 
       const {t} = useI18n()
       const config = inject('config')
@@ -42,15 +46,15 @@ export default {
 
       const schema = computed(() => {
          return {
-            delegate_id: `required`,
+            delegate_id: !delegateId ? `required`: '',
             amount: `required|strIsNumber|strNumMax:${amount.value}`
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
       const onSubmit = handleSubmit(async (values) => {
-         const delegateId = loFind(dao.value.staking.usersToDelegate, { 'value': values.delegate_id })
-         runAction('predelegate', { delegateFromId: accountId.value, delegateId: delegateId.accountId, amount: values.amount })
+         const delegateIdFromForm = loFind(dao.value.staking.usersToDelegate, { 'value': values.delegate_id })
+         runAction('predelegate', { delegateFromId: accountId.value, delegateId: delegateId.value ?? delegateIdFromForm.accountId, amount: values.amount })
       }, () => {
                console.log(errors.value)
       });

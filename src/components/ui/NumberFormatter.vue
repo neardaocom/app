@@ -1,5 +1,5 @@
 <template>
-  <MDBTooltip v-model="tooltip" tag="a">
+  <MDBTooltip v-model="tooltip">
     <template #reference>
       <span>
         <template v-if="shortNumber !== null">{{shortNumber}}</template>
