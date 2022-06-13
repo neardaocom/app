@@ -4,7 +4,7 @@ import GenericsHelper from "@/models/utils/GenericsHelper";
 import { DAODocs, DAODocsFile, DAODocsFileType, DAODocsFilterTypeItem, DAOFile } from "@/models/dao/types/docs"
 import loFilter from "lodash/filter"
 import loOrderBy from "lodash/orderBy"
-// import loGet from "lodash/get"
+import loGet from "lodash/get"
 import loSet from "lodash/set"
 import loFirst from "lodash/first"
 import loFind from "lodash/find"
@@ -156,5 +156,26 @@ export default class DocsHelper {
         active: false,
       },
     }
+  }
+
+  static getSource(file: DAODocsFile): string | undefined {
+    let source: string | undefined = undefined
+
+    switch (file.type) {
+      case DAODocsFileType.url:
+          source = loGet(file, ['value', 'link'])
+        break;
+      case DAODocsFileType.plain:
+          source = loGet(file, ['value', 'text'])
+        break;
+      case DAODocsFileType.html:
+      case DAODocsFileType.binaryPdf:
+          source = loGet(file, ['value', 'cid', 'ipfs']) + ': ' + loGet(file, ['value', 'cid', 'cid'])
+        break;
+      default:
+        break;
+    }
+
+    return source
   }
 }

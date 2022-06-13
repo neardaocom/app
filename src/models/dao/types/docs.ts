@@ -32,6 +32,7 @@ export type DAOFile = {
     name: string;
     categoryId: number;
     category?: string;
+    source?: string;
     type: DAODocsFileType;
     version: string;
     valid: boolean;

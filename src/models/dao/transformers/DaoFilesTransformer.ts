@@ -53,6 +53,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
 
                     files[file_index].id = element.id
                     files[file_index].version = element.version
+                    files[file_index].source = DocsHelper.getSource(element),
                     files[file_index].type = element.type
                     files[file_index].valid = element.valid
                     files[file_index].value = element.value
@@ -75,6 +76,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
                     name: element.name,
                     categoryId: element.categoryId,
                     category: category,
+                    source: DocsHelper.getSource(element),
                     type: element.type,
                     version: element.version,
                     valid: element.valid,

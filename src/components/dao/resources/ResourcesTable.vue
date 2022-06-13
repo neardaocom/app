@@ -5,6 +5,7 @@
             <th scope="col">#</th>
             <th scope="col"></th>
             <th scope="col">{{ t("default.name")}}</th>
+            <th scope="col"></th>
             <th scope="col">{{ t("default.category")}}</th>
             <th v-if="false" scope="col" style="min-width:200px">{{ t("default.description")}}</th>
             <th v-if="false" scope="col" style="min-width:200px">{{ t("default.tags")}}</th>
@@ -33,6 +34,7 @@
                </a> 
                <MDBSpinner :style="{visibility: fileLoading && fileClicked === doc.index ? 'visible' : 'hidden'}" size="sm" color="primary" class="ms-2"/>  
             </td>
+            <td class="text-start"><span class="d-inline-block text-truncate" style="max-width: 250px">{{ doc.source }}</span></td>
             <td class="text-start">{{ doc.category }}</td>
             <td v-if="false" class="text-truncate">{{ doc.description }}</td>
             <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
