@@ -22,11 +22,11 @@
          </td>
       </tr>
 
-         <tr v-for="(doc, index) in resources" :key="index">
-            <td>{{ doc.index + 1 }}</td>
+         <tr v-for="(doc, index) in resources" :key="doc.id">
+            <td>{{ index + 1 }}</td>
             <td><MDBIcon :icon="getIcon(doc.type)" iconStyle="fas" /></td>
             <td class="fw-bold text-start">
-               <a href="#"  @click.prevent="open(doc.index)">
+               <a href="#"  @click.prevent="open(doc.id)">
                   {{ doc.name }} 
                   <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
                   <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
@@ -40,7 +40,7 @@
             <td>
                <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                <MDBBtnGroup size="sm" role="toolbar">
-                  <MDBBtn color="secondary" @click.prevent="open(doc.index)">{{ doc.version }}</MDBBtn>
+                  <MDBBtn color="secondary" @click.prevent="open(doc.id)">{{ doc.version }}</MDBBtn>
                   <!-- <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn> -->
                </MDBBtnGroup>
             </td>
@@ -51,11 +51,11 @@
 
 <script>
 import { useI18n } from 'vue-i18n';
-import { DAODocsFileType } from '@/models/dao/types/dao';
 import {
   MDBTable, MDBProgress, MDBProgressBar, MDBIcon, MDBBtnGroup, MDBBtn, MDBSpinner 
 } from 'mdb-vue-ui-kit'
 import { ref } from '@vue/reactivity';
+import DocsHelper from '@/models/dao/DocsHelper';
 
 export default {
    components: { 
@@ -80,24 +80,7 @@ export default {
       const { t } = useI18n() 
       const fileClicked = ref(0)
 
-      const getIcon = (type) => {
-         let icon = ''
-         switch (type) {
-         case DAODocsFileType.binaryPdf:
-            icon = 'file-pdf'
-            break;
-         case DAODocsFileType.plain:
-         case DAODocsFileType.html:
-            icon = 'file-alt'
-            break;
-         case DAODocsFileType.url:
-            icon = 'link'
-            break;
-         default:
-            break;
-         }
-         return icon
-      }
+      const getIcon = DocsHelper.getIcon
 
       const open = (index) => {
          emit('openResource', index)

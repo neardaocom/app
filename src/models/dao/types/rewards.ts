@@ -2,7 +2,11 @@ import { DaoAsset } from "./asset";
 import { DAOGroup } from "./dao";
 import { TreasuryLock } from "./treasury";
 
-export type RewardType = 'salary' | 'activity' | 'event'
+export enum RewardType {
+    Salary = 'salary',
+    Activity = 'activity',
+    Event = 'event',
+}
 
 export type RewardPricelistAmount = {
     asset: DaoAsset;

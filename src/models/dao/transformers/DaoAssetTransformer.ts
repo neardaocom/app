@@ -6,7 +6,7 @@ import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import { NotImplementedError } from "@/models/utils/errors";
 import { getMetadata } from "../../ft/data";
 import { FungibleTokenMetadata } from "@/models/nearBlockchain/types/ft";
-import { DaoAsset } from "../types/asset";
+import { DaoAsset, DaoAssetType } from "../types/asset";
 
 export default class DaoAssetTransformer implements TransformerInterface {
 
@@ -27,7 +27,7 @@ export default class DaoAssetTransformer implements TransformerInterface {
             ftAccountId = loGet(value, ['ft', 'account_id'])
             ftMetadata = await this.ftMetadataLoader.load(ftAccountId!)
             daoAsset = {
-                type: 'ft',
+                type: DaoAssetType.FT,
                 accountId: ftAccountId!,
                 name: ftMetadata.name,
                 symbol: ftMetadata.symbol,
@@ -39,7 +39,7 @@ export default class DaoAssetTransformer implements TransformerInterface {
             ftAccountId = 'near'
             ftMetadata = getMetadata(ftAccountId)
             daoAsset = {
-                type: 'near',
+                type: DaoAssetType.Near,
                 accountId: 'near',
                 name: ftMetadata.name,
                 symbol: ftMetadata.symbol,

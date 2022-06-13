@@ -6,7 +6,8 @@ import { TreasuryLock } from "./treasury";
 import { Staking } from "./staking";
 import { Settings } from "@/models/nearBlockchain/types/dao";
 import { RewardPricelist } from "./rewards";
-import { ResourceType, ResourceTypeCid } from "@/models/nearBlockchain/types/resource";
+import { Media, ResourceType, ResourceTypeCid } from "@/models/nearBlockchain/types/resource";
+import { DAODocs } from "./docs";
 
 // VOTE LEVEL
 export enum DAOVoteType {
@@ -82,31 +83,6 @@ export type DAORightsGroupRole = {
 
 export type DAORights = DAORightsAnyone | DAORightsMember | DAORightsTokenHolder | DAORightsAccount | DAORightsGroup | DAORightsGroupMember | DAORightsGroupLeader | DAORightsGroupRole;
 
-export enum DAODocsFileType {
-  url = 'url',
-  plain = 'text/plain', 
-  binaryPdf = 'application/pdf', 
-  html = 'text/html',
-}
-
-export type DAODocsFile = {
-  id: number;
-  name: string;
-  type: DAODocsFileType;
-  categoryId: number;
-  category: string,
-  version: string;
-  valid: boolean;
-  value: ResourceType;
-  tagIds: number[];
-}
-
-export type DAODocs = {
-  files: DAODocsFile[];
-  categories: IDValue[];
-  tags: IDValue[];
-}
-
 export type DAOGroupMember = {
   accountId: string;
   roles: string[];
@@ -167,7 +143,7 @@ export type DAOProposal = {
   created: Date;
   createdBy: string;
   end?: Date; // TODO: Move to required
-  description?: any | null; // TODO: Description from media
+  description?: Media | null;
   votes: DAOVote[];
   votingResults?: DAOVotingResults;
   state: string;

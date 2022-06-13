@@ -1,11 +1,10 @@
 import IpfsService from "../interfaces/IpfsService.interface";
 import { ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource";
 import Resource from "../resource/Resource";
-import { DAO, DAODocs, DAODocsFile, DAODocsFileType } from "./types/dao";
+import { DAO } from "./types/dao";
+import { DAODocs, DAODocsFile, DAODocsFileType, DAOFile } from "./types/docs";
 import loMax from 'lodash/max'
-import loToString from 'lodash/toString'
 import { ValidationError } from "../utils/errors";
-import { DAOFile } from "./types/docs";
 import DaoFilesTransformer from "./transformers/DaoFilesTransformer";
 
 
@@ -67,19 +66,19 @@ export default class DaoResource {
     async fetch(file: DAODocsFile): Promise<string | undefined> {
         let value: string | undefined = undefined
 
-        switch (loToString(file.type)) {
-            case loToString(DAODocsFileType.url):
+        switch (file.type) {
+            case DAODocsFileType.url:
                 value = await this.resource.retriveLink(file.value as ResourceTypeLink)
                 break;
-            case loToString(DAODocsFileType.plain): {
+            case DAODocsFileType.plain: {
                 value = await this.resource.retriveText(file.value as ResourceTypeText)
                 break;
             }
-            case loToString(DAODocsFileType.html): {
+            case DAODocsFileType.html: {
                 value = await this.resource.retriveHtml(file.value as ResourceTypeCid)
                 break;
             }
-            case loToString(DAODocsFileType.binaryPdf): {
+            case DAODocsFileType.binaryPdf: {
                 value = await this.resource.retrivePdf(file.value as ResourceTypeCid)
                 break;
             }

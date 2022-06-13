@@ -3,7 +3,7 @@ import { IDValue } from "@/models/utils/types/generics";
 import loFind from "lodash/find"
 import loGet from "lodash/get"
 import loFindKey from "lodash/findKey"
-import { DAODocsFile, DAODocsFileType } from "../types/dao";
+import { DAODocsFile, DAODocsFileType } from "../types/docs";
 import VersionHelper from "@/models/utils/VersionHelper";
 import DocsHelper from "../DocsHelper";
 import GenericsHelper from "@/models/utils/GenericsHelper";
@@ -43,7 +43,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
                 // new/old version
                 if (version > file_version) {
                     files[file_index].versions.push({
-                        index: files[file_index].index,
+                        id: files[file_index].id,
                         version: files[file_index].version,
                         type: files[file_index].type,
                         valid: files[file_index].valid,
@@ -51,7 +51,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
                         tagIds: files[file_index].tagIds,
                     })
 
-                    files[file_index].index = index,
+                    files[file_index].id = element.id
                     files[file_index].version = element.version
                     files[file_index].type = element.type
                     files[file_index].valid = element.valid
@@ -60,7 +60,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
                     files[file_index].search = [StringHelper.toSearch(element.name), StringHelper.toSearch( GenericsHelper.getValueById(this.categories, element.categoryId) ?? '')].join('-') // TODO: .concat(element.tags.map((tag: any) => StringHelper.toSearch(tag)))
                 } else {
                     files[file_index].versions.push({
-                        index: index,
+                        id: element.id,
                         version: element.version,
                         type: element.type,
                         valid: element.valid,
@@ -70,8 +70,7 @@ export default class DaoFilesTransformer implements TransformerInterface {
                 }
             } else {
                 files.push({
-                    id: index,
-                    index: index,
+                    id: element.id,
                     key: key,
                     name: element.name,
                     categoryId: element.categoryId,
