@@ -6,7 +6,7 @@
         <div class="d-flex position-absolute top-0 end-0 me-4 mt-3">
           <MDBDropdown btnGroup v-model="dropdown1" >
             <MDBDropdownToggle @click="dropdown1 = !dropdown1" size="sm" color="secondary" >
-              <span class="me-1">{{t('default.dao_wallet')}}</span>
+              <span class="me-1">{{t('default.dao_account')}}</span>
             </MDBDropdownToggle>
             <MDBDropdownMenu>
               <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}">

@@ -6,18 +6,26 @@ import { Account } from "near-api-js";
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import { Reward, RewardAssetStats, RewardPricelist } from "@/models/dao/types/rewards";
 import loMin from 'lodash/min'
+import loToString from 'lodash/toString'
 import RewardsAnalytics from "@/models/dao/analytics/RewardsAnalytics";
 import { DaoAsset } from "@/models/dao/types/asset";
 import CollectionHelper from "@/models/utils/CollectionHelper";
 import NearBlockchainUtils from '@/models/nearBlockchain/Utils'
 import DateHelper from "@/models/utils/DateHelper";
+import { activities } from "@/models/dao/data/rewards";
+import { useI18n } from "vue-i18n";
 
 export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
+    const { t } = useI18n()
     const servicePool = loader.value.load('dao/ServicePool')
     const daoRewards = ref(new DaoRewards(servicePool.value))
 
-    const createSalary = (groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number, startAt: Date, endAt?: Date) =>
-        daoRewards.value.createSalary(dao.value, groupId, amountNear, amountToken, timeUnit, lockId, startAt, endAt)
+    const createSalary = (name: string, groupId: number, amountNear: number | null, amountToken: number | null, timeUnit: number, lockId: number, startAt: Date, endAt?: Date) =>
+        daoRewards.value.createSalary(dao.value, name, groupId, amountNear, amountToken, timeUnit, lockId, startAt, endAt)
+
+    const createActivity = (name: string, groupId: number, amountNear: number | null, amountToken: number | null, activityIds: number[], lockId: number, startAt: Date, endAt?: Date) =>
+        daoRewards.value.createActivity(dao.value, name, groupId, amountNear, amountToken, activityIds, lockId, startAt, endAt)
+    
     const withdraw = (asset: DaoAsset, rewardsIds: number[]) =>
         daoRewards.value.withdraw(dao.value.wallet, asset, rewardsIds)
 
@@ -30,7 +38,13 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
         const minutes = `${time.minutes ? time.minutes + 'm' : '' }`
         const seconds = `${time.seconds ? time.seconds + 's' : '' }`
         return years + months + days + hours + minutes + seconds
-    }  
+    }
+
+    const activityOptions = computed(() => CollectionHelper.toOptions(activities, ['value'], ['id']).map((item) => {
+        item.text = t('default.reward_' + item.text)
+        item.value = loToString(item.value)
+        return item
+    }))
     
         
     const amountFromPricelist = (pricelistAmounts, accountId) => {
@@ -41,7 +55,7 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const rewardsDateFormat = (date :Date) => DateHelper.format(date, DateHelper.formatDateLong)
 
 
-    return { daoRewards, createSalary, withdraw, frequencyToTime, amountFromPricelist, rewardsDateFormat }
+    return { daoRewards, createSalary, createActivity, withdraw, frequencyToTime, amountFromPricelist, rewardsDateFormat, activityOptions }
 }
 
 export const useRewardComputed = (rewards: Ref<RewardPricelist[]>) => {

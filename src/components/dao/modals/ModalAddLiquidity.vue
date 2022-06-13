@@ -118,7 +118,7 @@ export default {
 
     const maxTokenStr = computed(() => maxToken.value.toFixed().toLocaleString() )
     const nearServiceStr = computed(() => maxNear.value.toFixed().toLocaleString('cs-CZ') )
-    console.log(nearServiceStr.value);
+    //console.log(nearServiceStr.value);
 
     const tokenToMax = () => { amountFormated1.value = maxToken.value.toFixed().toLocaleString() }
     const nearToMax = () => { amountFormated2.value = maxNear.value.toFixed().toLocaleString() }
@@ -136,8 +136,8 @@ export default {
 
     const changeAmount = (event, inputNumber) =>{
         const amount = event.target.value.replace(/[^0-9]/g,'')
-        console.log(new Decimal(amount).toNumber());
-        console.log(new Decimal(amount).toFixed());
+        //console.log(new Decimal(amount).toNumber());
+        //console.log(new Decimal(amount).toFixed());
         event.target.value = BigInt(amount).toLocaleString()
         if(inputNumber === 1){
             amountFormated1.value = amount

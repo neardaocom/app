@@ -39,7 +39,7 @@
         <li class="list-inline-item me-4">  
           <i class="far fa-handshake fa-fw text-secondary me-2 mb-3"></i>
           <span class="h6"
-            >{{ proposal.quorum }}%</span
+            >{{ proposal.approveThreshold }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
@@ -79,22 +79,18 @@
           >
           </MDBProgressBar>
       </MDBProgress>
-      <br/>
 
       <!-- Workflow -->
       <MDBAccordion v-if="workflowCode === 'accepted'" v-model="activeItem" flush>
-        <MDBAccordionItem :headerTitle="t('default.workflow')" collapseId="workflow">
+        <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
           <Workflow :workflow="proposal.workflow" />
         </MDBAccordionItem>
       </MDBAccordion>
 
       <!-- Vote -->
       <div
-        v-if="
-          workflowCode === 'in_progress'
-          && proposal.canVote === true
-          && proposal.isVoted === false
-        "
+        v-if="workflowCode === 'in_progress' && proposal.canVote === true && proposal.isVoted === false"
+        class="mt-2"
       >
         <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
@@ -110,7 +106,7 @@
         v-else-if="workflowCode === 'finishing'"
         role="group"
       >
-        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded">
+        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded mt-2">
           <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
         </button>
       </div>
@@ -187,7 +183,7 @@ export default {
       return this.$store.getters['ipfs/getService']
     },
     workflowCode() {
-      console.log(this.proposal, this.proposalProgress)
+      //console.log(this.proposal, this.proposalProgress)
       return ProposalHelper.getStatus(this.proposal.status, this.proposalProgress)
     }
   },

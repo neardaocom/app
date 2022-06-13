@@ -20,6 +20,7 @@ export type ProposalVoting = {
     choiceIndex: string;
     choice: string;
     progress: number;
+    approveThreshold?: number;
     quorum?: number;
     templateSettings: WFSettings;
     workflow?: WFInstance;

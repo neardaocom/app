@@ -28,7 +28,7 @@ import { useI18n } from 'vue-i18n';
 import { inject } from '@vue/runtime-core';
 import { useForm } from 'vee-validate';
 import { useTreasury } from '@/hooks/treasury';
-import Decimal from 'decimal.js'
+import NumberHelper from '@/models/utils/NumberHelper';
 export default {
    components:{
       // MDBCollapse,
@@ -49,15 +49,19 @@ export default {
       const schema = computed(() => {
          return {
             name:'required',
-            near_amount: `required|strIsNumber|strNumMax:${dao.value.treasury.near}`,
-            token_amount: `required|strIsNumber|strNumMax:${dao.value.treasury.token.free}`
+            near_amount: `strIsNumber|strNumMax:${dao.value.treasury.near}`,
+            token_amount: `strIsNumber|strNumMax:${dao.value.treasury.token.free}`
          }
       }); 
 
       const { handleSubmit, errors } = useForm({ validationSchema: schema})
 
       const onSubmit = handleSubmit(async (values) => {
-         createLockSimple(values.name, values.near_amount ? new Decimal(values.near_amount).toNumber() : null  , values.token_amount ? new Decimal(values.token_amount).toNumber() : null)
+         createLockSimple(
+            values.name,
+            values.near_amount ? NumberHelper.parseNumber(values.near_amount) : null,
+            values.token_amount ? NumberHelper.parseNumber(values.token_amount) : null
+         )
       }, () => {
          console.log(errors.value)
       });

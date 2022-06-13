@@ -133,8 +133,8 @@ import { inject, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBBadge } from 'mdb-vue-ui-kit'
 import { useLinks, useStats } from "@/hooks/dao";
-import { useIPFS, useNear } from "@/hooks/vuex";
-import { fetch } from "@/models/ipfs";
+import { useResource } from "@/hooks/docs";
+import { useNear } from "@/hooks/vuex";
 import Icon from '@/components/ui/Icon.vue'
 import Tooltip from '@/components/ui//Tooltip.vue'
 
@@ -149,7 +149,11 @@ export default {
     setup() {
         const { t, n } = useI18n()
         const dao = inject('dao')
-        const { ipfsService } = useIPFS()
+        const loader = inject('loader')
+
+        const ipfsService = loader.value.load('services/ipfs')
+
+        const { daoResource } = useResource(ipfsService)
 
         const {
             web, whitepaper, wiki, sourceCode,
@@ -159,23 +163,23 @@ export default {
         } = useLinks(dao.value)
 
         const webLink = ref(null)
-        if (web) fetch(web, ipfsService.value).then(r => {webLink.value = r})
+        if (web) daoResource.value.fetch(web).then(r => {webLink.value = r})
         const whitepaperLink = ref(null)
-        if (whitepaper) fetch(whitepaper, ipfsService.value).then(r => {whitepaperLink.value = r})
+        if (whitepaper) daoResource.value.fetch(whitepaper).then(r => {whitepaperLink.value = r})
         const wikiLink = ref(null)
-        if (wiki) fetch(wiki, ipfsService.value).then(r => {wikiLink.value = r})
+        if (wiki) daoResource.value.fetch(wiki).then(r => {wikiLink.value = r})
         const sourceCodeLink = ref(null)
-        if (sourceCode) fetch(sourceCode, ipfsService.value).then(r => {sourceCodeLink.value = r})
+        if (sourceCode) daoResource.value.fetch(sourceCode).then(r => {sourceCodeLink.value = r})
         const kycStatusLink = ref(null)
-        if (kycStatus) fetch(kycStatus, ipfsService.value).then(r => {kycStatusLink.value = r})
+        if (kycStatus) daoResource.value.fetch(kycStatus).then(r => {kycStatusLink.value = r})
         const kycDocumentLink = ref(null)
-        if (kycDocument) fetch(kycDocument, ipfsService.value).then(r => {kycDocumentLink.value = r})
+        if (kycDocument) daoResource.value.fetch(kycDocument).then(r => {kycDocumentLink.value = r})
         const socialTwitterLink = ref(null)
-        if (socialTwitter) fetch(socialTwitter, ipfsService.value).then(r => {socialTwitterLink.value = r})
+        if (socialTwitter) daoResource.value.fetch(socialTwitter).then(r => {socialTwitterLink.value = r})
         const socialFacebookLink = ref(null)
-        if (socialFacebook) fetch(socialFacebook, ipfsService.value).then(r => {socialFacebookLink.value = r})
+        if (socialFacebook) daoResource.value.fetch(socialFacebook).then(r => {socialFacebookLink.value = r})
         const chatDiscordLink = ref(null)
-        if (chatDiscord) fetch(chatDiscord, ipfsService.value).then(r => {chatDiscordLink.value = r})
+        if (chatDiscord) daoResource.value.fetch(chatDiscord).then(r => {chatDiscordLink.value = r})
 
         const {
             users, groupNames

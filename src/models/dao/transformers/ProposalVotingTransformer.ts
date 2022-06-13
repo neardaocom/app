@@ -90,6 +90,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             choice: (choiceIndex) ? this.t("default.vote_type_" + choiceIndex) : null,
             progress: ProposalHelper.getProgress(value.state, settings!, value.end),
             quorum: settings?.voteLevel.quorum,
+            approveThreshold: settings?.voteLevel.approveThreshold,
             templateSettings: settings!,
             workflow: value.workflow,
             search: '',

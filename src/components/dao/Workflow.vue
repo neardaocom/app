@@ -1,96 +1,98 @@
 <template>
-      <div class="d-flex">
-        <!-- left -->
-        <div class="">
-          <span class="fs-5 text-muted text-center">#{{ workflow.id }}</span>
+  <!-- VOTING -->
+  <div v-if="showVoting" class="d-flex">
+    <!-- left -->
+    <div class="">
+      <span class="fs-5 text-muted text-center">#{{ workflow.id }}</span>
+    </div>
+    <!-- body -->
+    <div class="flex-fill ms-3">
+      <!-- HEAD -->
+      <div class="row">
+        <div class="col-10">
+          <div class="fs-5" v-html="proposalVoting.title"></div>
+          <div class="mt-n2 small">{{ proposalVoting.type }}</div>
         </div>
-        <!-- body -->
-        <div class="flex-fill ms-3">
-          <!-- HEAD -->
-          <div class="row">
-            <div class="col-10">
-              <div class="fs-5" v-html="proposalVoting.title"></div>
-              <div class="mt-n2 small">{{ proposalVoting.type }}</div>
-            </div>
-            <div class="col-2 text-right">
-              <!-- TODO: Voting -->
-            </div>
-          </div>
+        <div class="col-2 text-right">
+          <!-- TODO: Voting -->
         </div>
-              </div>
-          
-          <!-- End HEAD -->
-          <!-- Activities -->
-          <div class="row">
-            <div class="col-12">
-              <hr class="mt-1 mb-3"/>
-            </div>
-          </div>
-          <div class="row" v-for="(log) in activityLogs" :key="log.id">
-            <div class="col-1 text-center">
-              <MDBBadge color="info" pill class="p-2 me-3c"><i class="bi bi-box"></i></MDBBadge>
-            </div>
-            <div class="col-10 mb-3">
-                <div class="text-muted small">{{ toDate(log.txSignedAt) }} - {{ toTime(log.txSignedAt) }}</div>
-                <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code) }}</div>
-                <div class="mt-n1 small">
-                  {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
-                  <template v-if="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args).length > 0">
-                    <span class="mx-2 text-muted">|</span>
-                    <span v-html="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args)" />
-                  </template>
-                </div>
-            </div>
-            <div class="col-1">
-            </div>
-          </div>
-          <!-- END Activities -->
+      </div>
+    </div>
+  </div>
+  <div v-if="showVoting" class="row">
+    <div class="col-12">
+      <hr class="mt-1 mb-3"/>
+    </div>
+  </div>
+  <!-- End VOTING -->
 
-          <!-- NEXT Activity-->
-          <div v-if="workflow.state === 'running' && check(walletRights, activityNextsRights)" class="row">
-            <div class="col-1 text-center">
-              <MDBBadge color="muted" pill class="p-2 me-3c"><i class="fas fa-check"></i></MDBBadge>
-            </div>
-            <div class="col-11">
-              <div class="row">
-                <div class="col-12">
-                  <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
-                  <MDBBtnGroup v-if="activityNexts.length > 0">
-                    <template v-for="(option, index) in nextActivitiesOptions" :key="index">
-                      <MDBRadio
-                        v-if="check(walletRights, option.rights)"
-                        :btnCheck="true" :wrap="false" labelClass="btn btn-secondary btn-sm"
-                        :label="option.text"
-                        :name="'nextActivity-' + workflow.id"
-                        :value="option.value"
-                        v-model="formNextActivityId"
-                      />
-                    </template>
-                  </MDBBtnGroup>
-                  <template v-if="workflow.activityLastId !== undefined && canFinish === true">
-                    <span v-if="activityNexts.length > 0" class="ms-3 me-3 text-uppercase">{{ t('default.or') }}</span>
-                    <button class="btn btn-info btn-sm rounded-pill" @click.prevent="finish()">{{ t('default.wf_finish') }}</button>
-                  </template>
-                </div>
-              </div>
-              <!-- FORM -->
+  <!-- Activities -->
+  <div class="row" v-for="(log) in activityLogs" :key="log.id">
+    <div class="col-1 text-center">
+      <MDBBadge color="info" pill class="p-2 me-3c"><i class="bi bi-box"></i></MDBBadge>
+    </div>
+    <div class="col-10 mb-3">
+        <div class="text-muted small">{{ toDate(log.txSignedAt) }} - {{ toTime(log.txSignedAt) }}</div>
+        <div class="fs-5 fw-bold mt-n2">{{ t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code) }}</div>
+        <div class="mt-n1 small">
+          {{ t('default.signed_by') }}<span class="ms-1 fw-bolder">{{ log.txSigner }}</span>
+          <template v-if="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args).length > 0">
+            <span class="mx-2 text-muted">|</span>
+            <span v-html="t('default.wf_templ_' + template.code + '_v' + template.version + '_' + log.activity.code + '_args', log.args)" />
+          </template>
+        </div>
+    </div>
+    <div class="col-1">
+    </div>
+  </div>
+  <!-- END Activities -->
 
-              <component :is="componentName" v-bind="componentProps" @flush="formFlush"></component>
+  <!-- NEXT Activity-->
+  <div v-if="workflow.state === 'running' && check(walletRights, activityNextsRights)" class="row">
+    <div class="col-1 text-center">
+      <MDBBadge color="muted" pill class="p-2 me-3c"><i class="fas fa-check"></i></MDBBadge>
+    </div>
+    <div class="col-11">
+      <div class="row">
+        <div class="col-12">
+          <span v-if="false" class="me-2">{{ t('default.activity') }}:</span>
+          <MDBBtnGroup v-if="activityNexts.length > 0">
+            <template v-for="(option, index) in nextActivitiesOptions" :key="index">
+              <MDBRadio
+                v-if="check(walletRights, option.rights)"
+                :btnCheck="true" :wrap="false" labelClass="btn btn-secondary btn-sm"
+                :label="option.text"
+                :name="'nextActivity-' + workflow.id"
+                :value="option.value"
+                v-model="formNextActivityId"
+              />
+            </template>
+          </MDBBtnGroup>
+          <template v-if="workflow.activityLastId !== undefined && canFinish === true">
+            <span v-if="activityNexts.length > 0" class="ms-3 me-3 text-uppercase">{{ t('default.or') }}</span>
+            <button class="btn btn-info btn-sm rounded-pill" @click.prevent="finish()">{{ t('default.wf_finish') }}</button>
+          </template>
+        </div>
+      </div>
+      <!-- FORM -->
 
-              <!-- END FORM -->
-              <div class="row">
-                <div class="col-12 mt-2" v-if="activityNexts.length > 0">
-                  <button class="btn btn-outline-secondary btn-rounded btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-else-if="workflow.state === 'finished'" class="row">
-            <div class="col-1">
-              <MDBBadge color="info" pill class="p-2 me-3"><i class="fas fa-check me-2"></i> {{ t('default.wf_finished') }}</MDBBadge>
-            </div>
-          </div>
-          <!-- NEXT Activity -->
+      <component :is="componentName" v-bind="componentProps" @flush="formFlush"></component>
+
+      <!-- END FORM -->
+      <div class="row">
+        <div class="col-12 mt-2" v-if="activityNexts.length > 0">
+          <button class="btn btn-outline-secondary btn-rounded btn-sm" @click.prevent="run()"><i class="fas fa-play me-2"></i>{{ t('default.wf_sign_and_execute') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-else-if="workflow.state === 'finished'" class="row">
+    <div class="col-1">
+      <MDBBadge color="info" pill class="p-2 me-3"><i class="fas fa-check me-2"></i> {{ t('default.wf_finished') }}</MDBBadge>
+    </div>
+  </div>
+  <!-- NEXT Activity -->
+
 </template>
 
 <script>
@@ -114,6 +116,11 @@ export default {
       type: Object,
       required: true,
     },
+    showVoting: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
   },
   setup(props) {
     const { t, d, n } = useI18n();

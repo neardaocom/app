@@ -194,7 +194,7 @@ export default class ProposalBuilder {
                 transition_limits: templateProvider[0].transitions.map((transition) =>
                     transition.map((transitionItem) => ({ to: transitionItem.activity_id, limit: 100})
                 )),
-                scenario: this.templateSettingsVoteLevel!.type === 0 ? 'democratic' : 'token_weighted',
+                scenario: this.templateSettingsVoteLevel!.type,
                 duration: NearUtils.durationToChain(this.templateSettingsVoteLevel!.duration),
                 quorum: this.templateSettingsVoteLevel!.quorum,
                 approve_threshold: this.templateSettingsVoteLevel!.approveThreshold,

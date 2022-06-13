@@ -17,7 +17,7 @@ export default class CollectionHelper {
 
     static toOptions(list: object[], textPath: string[], valuePath: string[]): SelectOption[] {
         return list.map((item) => {
-            return {text: loGet(item, textPath) || null, value: loGet(item, valuePath) || null}
+            return {text: loGet(item, textPath) ?? null, value: loGet(item, valuePath) ?? null} // || is no good because of value 0 => null
         })
     }
 }

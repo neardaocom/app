@@ -129,7 +129,7 @@ export default {
     sharesToMax(){
         this.amountFormated = this.n(this.maxShares)
         this.amount = this.maxShares
-        console.log(this.amount);
+        //console.log(this.amount);
     },
 
     validate(){

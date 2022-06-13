@@ -12,7 +12,7 @@ import DaoAssetTransformer from "./DaoAssetTransformer";
 import { DaoAsset } from "../types/asset";
 import { RewardPricelist, RewardAmount, RewardType, Reward } from "../types/rewards";
 import { DAOGroup } from "../types/dao";
-import { NotImplementedError } from "@/models/utils/errors";
+import { NotImplementedError, UnsupportedError } from "@/models/utils/errors";
 import { TreasuryLock } from "../types/treasury";
 import RewardsHelper from "../RewardsHelper";
 import { times } from "lodash";
@@ -58,14 +58,25 @@ export default class RewardsClaimableTransformer implements TransformerInterface
                             reward.amounts.push({
                                 asset,
                                 lastWithdraw: NearUtils.dateFromChain(loMax([valueRewardsItem.time_added, loGet(valueRewardsStats, ['wage', 'timestamp_last_withdraw'])])),
-                                amount: null,
+                                amount: null, // NumberHelper.parseNumber(NearUtils.amountFromDecimals(loGet(valueRewardsStats, ['wage', 'amount']) || 0, asset.decimals)),
+                                amountDelta: null,
+                                amountCounting: null,
+                            })
+                        }
+                        break;
+                    case 'activity': {
+                            asset = await this.daoAssetTransformer.transform(loGet(valueRewardsStats, ['activity', 'asset_id']))
+                            reward.amounts.push({
+                                asset,
+                                lastWithdraw: NearUtils.dateFromChain(loMax([valueRewardsItem.time_added, loGet(valueRewardsStats, ['activity', 'timestamp_last_withdraw'])])),
+                                amount: null, // NumberHelper.parseNumber(NearUtils.amountFromDecimals(loGet(valueRewardsStats, ['activity', 'amount']) || 0, asset.decimals)),
                                 amountDelta: null,
                                 amountCounting: null,
                             })
                         }
                         break;
                     default:
-                        break;
+                        throw new UnsupportedError("Unsupported pricelist type: " + pricelist?.type)
                 }
             }
 

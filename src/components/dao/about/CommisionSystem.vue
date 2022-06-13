@@ -13,11 +13,11 @@
             <RewardsTable :rewards="rewardsSalary"/>
          </div>
          <div v-if="rewardsActivity.length > 0" class="m-4">
-            <h5>{{t('default.event')}}</h5>
+            <h5>{{t('default.activity')}}</h5>
             <RewardsTable :rewards="rewardsActivity"/>
          </div>
          <div v-if="rewardsEvent.length > 0" class="m-4">
-            <h5>{{t('default.activity')}}</h5>
+            <h5>{{t('default.event')}}</h5>
             <RewardsTable :rewards="rewardsEvent"/>
          </div>
          <NoData v-if="rewardsSalary.length === 0 && rewardsActivity.length === 0 && rewardsEvent.length === 0" :text="t('default.no_commision_system')" hint="This is a hint" />

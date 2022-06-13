@@ -41,7 +41,7 @@ export default class WFInstanceTransformer implements TransformerInterface {
         return {
             id: value[0],
             templateId: value[3].template_id,
-            settingsId: value[1].current.workflow_settings_id,
+            settingsId: value[1].v1.workflow_settings_id,
             workflowScenarioId: loGet(value[2], ['constants', 'map', 's', 'u64']) || 1,
             state: value[3].state,
             storage: value[2].storage_key,

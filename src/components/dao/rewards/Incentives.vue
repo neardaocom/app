@@ -10,9 +10,12 @@
                   <div>
                      <small class="text-muted">
                         {{t(`default.${reward.pricelist.type}`)}}
+                        <template v-if="reward.pricelist.type === 'salary'" >
+                            - {{ reward.pricelist.targetGroup?.name }}
+                        </template>
                      </small>
-                     <MDBCardTitle v-if="reward.pricelist.type === 'salary'" >
-                        <div> {{`${t(`default.${reward.pricelist.type}`)} - ${reward.pricelist.targetGroup.name}`}}</div>
+                     <MDBCardTitle>
+                        <div> {{ reward.pricelist.name }}</div>
                         <div class="fw-normal">Lock: {{reward.lock.name}} </div>
                       </MDBCardTitle>
                   </div>

@@ -58,7 +58,7 @@ import Autocomplete from '@/components/forms/Autocomplete.vue'
 import { computed, ref, toRefs, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useForm } from 'vee-validate';
-import { getIndexInFiles, getCategories, getNamesOptions } from "@/models/document"
+import DocsHelper from "@/models/dao/DocsHelper"
 import VersionHelper from '@/models/utils/VersionHelper'
 import {
     MDBSwitch,
@@ -95,13 +95,13 @@ export default {
         const config = inject('config')
         const { proposalBasic } = useProposalBasic(loader, config)
 
-        console.log(docs.value);
+        //console.log(docs.value);
         //const files = transform(docs.value)
         //const files = transform({categories: [], files: [], tags: []})
         //console.log(files);
         // const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
-        const nameOptions = ref(getNamesOptions(docs.value, t))
-        const categoryOptions = ref(getCategories(docs.value, t));
+        const nameOptions = ref(DocsHelper.getNamesOptions(docs.value, t))
+        const categoryOptions = ref(DocsHelper.getCategories(docs.value, t));
 
         const refWysiwyg = ref(null)
         const formHtml = ref('')
@@ -208,7 +208,7 @@ export default {
 
 
         //switch
-        const getIndexOfFile = computed(() => (getIndexInFiles(docs.value, values.fileName, values.formCategory))) 
+        const getIndexOfFile = computed(() => (DocsHelper.getIndexInFiles(docs.value, values.fileName, values.formCategory))) 
         const isNewFile = computed(() => (getIndexOfFile.value == -1 )) 
         const formVersionUpgrageMajor = ref(true)
         const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? docs.value[getIndexOfFile.value].version : undefined)) 

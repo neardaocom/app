@@ -3,7 +3,7 @@ import { DAO, DAORights } from "@/models/dao/types/dao";
 import loGet from "lodash/get";
 import { Translate } from "@/models/utils/types/generics";
 import Rights from '@/models/dao/Rights'
-import { getFile } from "@/models/document"
+import DocsHelper from "@/models/dao/DocsHelper"
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { Config } from "@/config";
@@ -24,15 +24,15 @@ export const useRouter = (config: Config) => {
 }
 
 export const useLinks = (dao: DAO) => {
-    const web = getFile(dao.docs, 'Web', 'Fundamental', 'url')
-    const whitepaper = getFile(dao.docs, 'Whitepaper', 'Fundamental', 'url')
-    const wiki = getFile(dao.docs, 'Wiki', 'Fundamental', 'url')
-    const sourceCode = getFile(dao.docs, 'Source code', 'Fundamental', 'url')
-    const kycStatus = getFile(dao.docs, 'Legal status', 'KYC', 'url')
-    const kycDocument = getFile(dao.docs, 'Legal document', 'KYC', 'url')
-    const socialTwitter = getFile(dao.docs, 'Twitter', 'Social', 'url')
-    const socialFacebook = getFile(dao.docs, 'Facebook', 'Social', 'url')
-    const chatDiscord = getFile(dao.docs, 'Discord', 'Chat', 'url')
+    const web = DocsHelper.getFile(dao.docs, 'Web', 'Fundamental', 'url')
+    const whitepaper = DocsHelper.getFile(dao.docs, 'Whitepaper', 'Fundamental', 'url')
+    const wiki = DocsHelper.getFile(dao.docs, 'Wiki', 'Fundamental', 'url')
+    const sourceCode = DocsHelper.getFile(dao.docs, 'Source code', 'Fundamental', 'url')
+    const kycStatus = DocsHelper.getFile(dao.docs, 'Legal status', 'KYC', 'url')
+    const kycDocument = DocsHelper.getFile(dao.docs, 'Legal document', 'KYC', 'url')
+    const socialTwitter = DocsHelper.getFile(dao.docs, 'Twitter', 'Social', 'url')
+    const socialFacebook = DocsHelper.getFile(dao.docs, 'Facebook', 'Social', 'url')
+    const chatDiscord = DocsHelper.getFile(dao.docs, 'Discord', 'Chat', 'url')
 
     return {
         web, whitepaper, wiki, sourceCode,

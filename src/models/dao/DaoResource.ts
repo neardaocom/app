@@ -1,9 +1,12 @@
 import IpfsService from "../interfaces/IpfsService.interface";
-import { Media, ResourceType } from "../nearBlockchain/types/resource";
+import { ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource";
 import Resource from "../resource/Resource";
-import { DAO } from "./types/dao";
+import { DAO, DAODocs, DAODocsFile, DAODocsFileType } from "./types/dao";
 import loMax from 'lodash/max'
+import loToString from 'lodash/toString'
 import { ValidationError } from "../utils/errors";
+import { DAOFile } from "./types/docs";
+import DaoFilesTransformer from "./transformers/DaoFilesTransformer";
 
 
 export default class DaoResource {
@@ -59,5 +62,36 @@ export default class DaoResource {
                 break;
         }
         return resourceType
+    }
+
+    async fetch(file: DAODocsFile): Promise<string | undefined> {
+        let value: string | undefined = undefined
+
+        switch (loToString(file.type)) {
+            case loToString(DAODocsFileType.url):
+                value = await this.resource.retriveLink(file.value as ResourceTypeLink)
+                break;
+            case loToString(DAODocsFileType.plain): {
+                value = await this.resource.retriveText(file.value as ResourceTypeText)
+                break;
+            }
+            case loToString(DAODocsFileType.html): {
+                value = await this.resource.retriveHtml(file.value as ResourceTypeCid)
+                break;
+            }
+            case loToString(DAODocsFileType.binaryPdf): {
+                value = await this.resource.retrivePdf(file.value as ResourceTypeCid)
+                break;
+            }
+            default:
+                throw new Error("Unsupported scenario: " + file.type);
+        }
+        return value
+    }
+
+    list(daoDocs: DAODocs): DAOFile[] {
+        const transformer = new DaoFilesTransformer(daoDocs.categories, daoDocs.tags)
+
+        return transformer.transform(daoDocs.files)
     }
 }

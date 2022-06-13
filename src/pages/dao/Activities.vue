@@ -18,7 +18,7 @@
         <section class="mb-4 text-start">
           <MDBCard>
             <MDBCardBody>
-              <Workflow :workflow="workflow" />
+              <Workflow :workflow="workflow" showVoting />
             </MDBCardBody>
           </MDBCard>
           <!-- :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" :walletRights="walletRights" :daoStorage="dao.storage" -->

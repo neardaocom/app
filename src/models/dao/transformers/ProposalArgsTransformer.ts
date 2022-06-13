@@ -84,6 +84,21 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                     }
                 }
                 break;
+            case 'reward2': {
+                    switch (value.workflowScenarioId.toString()) {
+                        case '1': {
+                                null;
+                            }
+                            break;
+                        case '2': {
+                                null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
             default:
                 break;
         }

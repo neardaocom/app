@@ -102,8 +102,9 @@ export default {
       },
     })
     const order = reactive({
-      selected: 'created_desc',
+      selected: 'order_default',
       options: [
+        { text: t('default.order_default'), value: 'default' },
         { text: t('default.order_created_desc'), value: 'created_desc' },
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
@@ -133,17 +134,21 @@ export default {
         case 'created_asc':
           results = loOrderBy(results, ['id'], ['asc'])
           break;
+        case 'default': {
+            results = loOrderBy(results, ['id'], ['desc'])
+            //sort
+            const sortValue = {
+              'in_progress': 0,
+              'accepted': 1,
+              'rejected': 2,
+              'invalid': 3,
+            }
+            results = results.sort((x, y) => sortValue[x.stateCode] - sortValue[y.stateCode])
+          }
+          break;
         default:
           break;
       }
-
-      //sort
-      const sortValue = {
-        'in_progress': 0,
-        'accepted': 1,
-        'invalid': 2,
-      }
-      results = results.sort((x, y) => sortValue[x.stateCode] - sortValue[y.stateCode])
 
       return results
     },

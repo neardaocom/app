@@ -63,7 +63,7 @@ export default class DaoContractService extends ContractService {
         // treasury management
         'unlock_partition_assets',
         // wallet
-        'withdraw_rewards',
+        'claim_rewards',
         // 'wf_finish', // TODO: Is it moved to wf_run_activity?
         // upgrade
         'download_new_version', // TODO: What about upgrade
@@ -143,8 +143,8 @@ export default class DaoContractService extends ContractService {
      * 
      * @return this
      */
-   withdrawRewards(rewardIds: number[], asset: Asset, tGas: number): this {
-    this.actionsAdd('withdraw_rewards', { reward_ids: rewardIds, asset }, tGas)
+   claimRewards(rewardIds: number[], asset: Asset, tGas: number): this {
+    this.actionsAdd('claim_rewards', { reward_ids: rewardIds, asset }, tGas)
     return this
   }
 
