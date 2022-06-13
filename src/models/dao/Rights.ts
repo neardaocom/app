@@ -8,7 +8,7 @@ import { ActivityRight } from "../nearBlockchain/types/workflow";
 export default class Rights {
 
     static parse(value: any): DAORights {
-        let right: DAORights = { type: 0 }
+        let right: DAORights | undefined = undefined
 
         if (typeof value === "string") {
             switch (value) {

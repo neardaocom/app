@@ -10,7 +10,8 @@ import { ResourceType, ResourceTypeCid } from "@/models/nearBlockchain/types/res
 
 // VOTE LEVEL
 export enum DAOVoteType {
-  Democratic, TokenWeighted
+  Democratic = 'democratic',
+  TokenWeighted = 'token_weighted',
 }
 
 export type DAOVoteLevel = {
@@ -28,19 +29,15 @@ export type DAOVote = {
 }
 
 // RIGHTS
-/*
-"Anyone",
-"Member",
-"TokenHolder,
-{"Account": "string"},
-{"Group": integer},
-{"GroupMember": [integer, string]},
-{"GroupLeader": integer},
-{"GroupRole": [integer, integer]},
-
-*/
 export enum DAORightsType {
-  Anyone, Member, TokenHolder, Account, Group, GroupMember, GroupLeader, GroupRole
+  Anyone = 'anyone',
+  Member = 'member',
+  TokenHolder = 'token_holder',
+  Account = 'account',
+  Group = 'group',
+  GroupMember = 'group_member',
+  GroupLeader = 'group_leader',
+  GroupRole = 'group_role',
 }
 
 // export type DAORightsAnyone = DAORightsType.Anyone
@@ -89,7 +86,7 @@ export enum DAODocsFileType {
   url = 'url',
   plain = 'text/plain', 
   binaryPdf = 'application/pdf', 
-  html = 'text/html'
+  html = 'text/html',
 }
 
 export type DAODocsFile = {

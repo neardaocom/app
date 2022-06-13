@@ -102,9 +102,9 @@ export default {
       },
     })
     const order = reactive({
-      selected: 'order_active_first',
+      selected: 'order_default',
       options: [
-        { text: t('default.order_active_first'), value: 'active_first' },
+        { text: t('default.order_default'), value: 'default' },
         { text: t('default.order_created_desc'), value: 'created_desc' },
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
@@ -134,7 +134,8 @@ export default {
         case 'created_asc':
           results = loOrderBy(results, ['id'], ['asc'])
           break;
-        case 'active_first': {
+        case 'default': {
+            results = loOrderBy(results, ['id'], ['desc'])
             //sort
             const sortValue = {
               'in_progress': 0,
