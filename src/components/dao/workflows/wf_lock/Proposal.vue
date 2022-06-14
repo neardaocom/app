@@ -37,7 +37,7 @@ export default {
       InputString
       
    },
-   setup () {
+   setup (_props, {emit}) {
       const dao = inject('dao')
       const loader = inject('loader')
       const {t} = useI18n()
@@ -57,12 +57,14 @@ export default {
       const { handleSubmit, errors } = useForm({ validationSchema: schema})
 
       const onSubmit = handleSubmit(async (values) => {
+         emit('isValid', true)
          createLockSimple(
             values.name,
             values.near_amount ? NumberHelper.parseNumber(values.near_amount) : null,
             values.token_amount ? NumberHelper.parseNumber(values.token_amount) : null
          )
       }, () => {
+         emit('isValid', false)
          console.log(errors.value)
       });
    

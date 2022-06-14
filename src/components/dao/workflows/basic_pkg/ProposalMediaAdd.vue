@@ -87,7 +87,7 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { t } = useI18n()
         const { docs } = toRefs(props)
         const dao = inject('dao')
@@ -244,10 +244,12 @@ export default {
         
         
         const onSubmit = handleSubmit( async (values) => {
+            emit('isValid', true)
             const types = formDocumentType.value.split('-')
             proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, null, types[1], values.plain, values.url, refWysiwyg.value.getCode(), uploadFiles.value)
         }, () => {
-                console.log(errors.value)
+            emit('isValid', false)
+            console.log(errors.value)
         });
         
 

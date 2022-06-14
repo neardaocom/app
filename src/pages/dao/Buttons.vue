@@ -97,7 +97,9 @@
 
     <!-- Modals -->
     <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote" :submitText="t('default.vote')" size="lg">
-      <component ref="form" :is="activeForm" v-bind="formProps"></component>
+      <template #default="{ isValid }">
+        <component ref="form" :is="activeForm" @is-valid="isValid" v-bind="formProps"></component>
+      </template>
     </ModalProposal>
 </template>
 

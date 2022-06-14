@@ -85,7 +85,7 @@ export default {
             required: true
         }
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
         const { nearService, accountId } = useNear()
@@ -149,6 +149,7 @@ export default {
         })
 
         const onSubmit = handleSubmit(async (values) => {
+            emit('isValid', true)
             const canProposeArray = loSplit(values.can_propose, ',')
             const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
             const workflowName = loFind(workflowsToAdd.value, { 'value': values.workflow })
@@ -208,7 +209,8 @@ export default {
                 1.0
             )
         }, () => {
-                console.log(errors.value)
+            emit('isValid', false)
+            console.log(errors.value)
         });
         
 

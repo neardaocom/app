@@ -45,7 +45,7 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const {t} = useI18n()
 
         const { contractId, template, proposalCount } = toRefs(props)
@@ -68,6 +68,7 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async values => {
+            emit('isValid', true)
             let ipfs_cid = ''
             /*
             if(refWysiwyg.value.getCode()){
@@ -100,6 +101,7 @@ export default {
                 1.0
             )
         }, () => {
+            emit('isValid', false)
             console.log(errors.value)
         });
         

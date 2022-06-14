@@ -70,7 +70,7 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { t, d } = useI18n()
 
         const { contractId, template, proposalCount } = toRefs(props)
@@ -105,7 +105,7 @@ export default {
         })
 
         const onSubmit = handleSubmit(values => {
-            console.log('Skyward submit')
+            emit('isValid', true)
             nearService.value.addProposal(
                 null,
                 contractId.value,
@@ -124,6 +124,7 @@ export default {
                 1.0
             )
         }, () => {
+            emit('isValid', false)
             console.log(errors.value)
         });
         

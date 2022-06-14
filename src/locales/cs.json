@@ -321,6 +321,7 @@
   "event": "Událost",
   "detail": "Detail",
   "unlocking_token": "Odemikání tokenu",
+  "unlocking_detail": "Unlocking detail",
   "total_token_value": "Total token value",
   "next_unlock": "Příští odemčení",
   "assets_to_withdraw": "Assets to withdraw",
