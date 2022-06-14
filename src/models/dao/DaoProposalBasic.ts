@@ -70,7 +70,7 @@ export default class DaoProposalBasic {
         , fileType: string, filePlain: string|null, fileUrl: string|null, fileHtml: string|null, filePdf: File[]|null
     ) {
         const proposalDesc = await this.resource.storeProposalDescription(dao, description)
-        const resourceType = await this.resource.storeFile(dao, name, category, version, fileType, filePlain, fileUrl, fileHtml, filePdf)
+        const mediaType = await this.resource.storeFile(dao, name, category, version, fileType, filePlain, fileUrl, fileHtml, filePdf)
 
         const builder = new ProposalBuilder(this.servicePool.getWfProvider(this.wfProviderAccountId), dao.templates)
         builder.addDescription(proposalDesc)
@@ -86,23 +86,23 @@ export default class DaoProposalBasic {
         builder.addActivityActionConstantNumbers(0, 'tags', [])
         switch (fileType) {
             case 'plain': {
-                    builder.addActivityActionConstantString(0, 'type.text', loGet(resourceType, ['text']))
+                    builder.addActivityActionConstantString(0, 'type.text', loGet(mediaType, ['type', 'text']))
                 }
                 break;
             case 'url': {
-                    builder.addActivityActionConstantString(0, 'type.link', loGet(resourceType, ['link']))
+                    builder.addActivityActionConstantString(0, 'type.link', loGet(mediaType, ['type', 'link']))
                 }
                 break;
             case 'html': {
-                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(resourceType, ['cid', 'cid']))
-                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(resourceType, ['cid', 'mimetype']))
-                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(resourceType, ['cid', 'ipfs']))
+                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(mediaType, ['type', 'cid', 'cid']))
+                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(mediaType, ['type', 'cid', 'mimetype']))
+                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(mediaType, ['type', 'cid', 'ipfs']))
                 }
                 break;
             case 'pdf': {
-                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(resourceType, ['cid', 'cid']))
-                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(resourceType, ['cid', 'mimetype']))
-                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(resourceType, ['cid', 'ipfs']))
+                    builder.addActivityActionConstantString(0, 'type.cid.cid', loGet(mediaType, ['type', 'cid', 'cid']))
+                    builder.addActivityActionConstantString(0, 'type.cid.mimetype', loGet(mediaType, ['type', 'cid', 'mimetype']))
+                    builder.addActivityActionConstantString(0, 'type.cid.ipfs', loGet(mediaType, ['type', 'cid', 'ipfs']))
                 }
                 break;
             default:
@@ -113,7 +113,7 @@ export default class DaoProposalBasic {
         builder.addActivityEmpty()
         const createArgs = await builder.create()
 
-        console.log(createArgs)
+        //console.log(createArgs)
 
         return this.servicePool.getContract(dao.wallet).proposalCreate(createArgs, 50, 1).actionsRun()
     }

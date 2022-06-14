@@ -133,7 +133,7 @@ export default {
     const templateMeta = inject('templateMeta')
 
     const workflow = ref(proposal.value.workflow)
-    console.log(proposal.value, workflow.value)
+    // console.log(proposal.value, workflow.value)
     const { daoWorkflow } = useDaoWorkflow(loader, dao, workflow)
     const { template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions } = useWorkflow(daoWorkflow, templateMeta, wallet, walletRights)
 

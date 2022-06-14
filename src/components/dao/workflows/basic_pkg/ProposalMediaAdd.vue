@@ -32,30 +32,30 @@
     <MDBTabs v-model="activeTabId">
         <!-- Tabs navs -->
         <MDBTabNav  tabsClasses="mb-3" >
-            <MDBTabItem tabId="ex1-1" href="ex1-1">{{documentTypeDropdown.plain}}</MDBTabItem>
-            <MDBTabItem tabId="ex1-2" href="ex1-2">{{documentTypeDropdown.link}}</MDBTabItem>
-            <MDBTabItem tabId="ex1-3" href="ex1-3">{{documentTypeDropdown.pdf}}</MDBTabItem>
-            <MDBTabItem tabId="ex1-4" href="ex1-4">{{documentTypeDropdown.editor}}</MDBTabItem>
+            <MDBTabItem tabId="flush-plain" href="flush-plain">{{documentTypeDropdown.plain}}</MDBTabItem>
+            <MDBTabItem tabId="flush-url" href="flush-url">{{documentTypeDropdown.link}}</MDBTabItem>
+            <MDBTabItem tabId="flush-pdf" href="flush-pdf">{{documentTypeDropdown.pdf}}</MDBTabItem>
+            <MDBTabItem tabId="flush-html" href="flush-html">{{documentTypeDropdown.editor}}</MDBTabItem>
         </MDBTabNav>
         <!-- Tabs navs -->
         <!-- Tabs content -->
         <MDBTabContent contentClasses="mb-4">
-            <MDBTabPane tabId="ex1-1">
+            <MDBTabPane tabId="flush-plain">
                 <InputString :labelName="t('default.text')" id="plain"/>
             </MDBTabPane>
-            <MDBTabPane tabId="ex1-2">
+            <MDBTabPane tabId="flush-url">
                 <InputString :labelName="t('default.url')" id="url"/>
                 <div class="col-auto">
                     <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
                 </div>
             </MDBTabPane>
-            <MDBTabPane tabId="ex1-3">
+            <MDBTabPane tabId="flush-pdf">
                 <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
                 :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
                 :removeBtn="fileUploadMsg.removeBtn"
                 />
             </MDBTabPane>
-            <MDBTabPane tabId="ex1-4">
+            <MDBTabPane tabId="flush-html">
                 <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwygHtml">
                     <section v-html="formHtml"></section>
                 </MDBWysiwyg>
@@ -114,7 +114,7 @@ export default {
         const loader = inject('loader')
         const config = inject('config')
         const { proposalBasic } = useProposalBasic(loader, config)
-        const activeTabId = ref('ex1-1');
+        const activeTabId = ref('flush-plain');
 
         //console.log(docs.value);
         //const files = transform(docs.value)
@@ -273,8 +273,8 @@ export default {
         
         const onSubmit = handleSubmit( async (values) => {
             emit('isValid', true)
-            const types = formDocumentType.value.split('-')
-            proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, null, types[1], values.plain, values.url, refWysiwygHtml.value.getCode(), uploadFiles.value)
+            const types = activeTabId.value.split('-')
+            proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, refWysiwygDesc.value.getCode(), types[1], values.plain, values.url, refWysiwygHtml.value.getCode(), uploadFiles.value)
         }, () => {
             emit('isValid', false)
             console.log(errors.value)
