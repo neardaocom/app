@@ -59,7 +59,7 @@
                      </div>
                      <MDBCollapse v-if="asset.unlocking.length > 0" :id="`collapsibleContent_${index}`" v-model="collapse[index]">
                         <div class="mt-3">
-                           graf
+                           <MDBChart type="bar" :data="barChartData" />
                         </div>
                      </MDBCollapse>
                   </div>
@@ -88,7 +88,8 @@ import {
    MDBRow,
    MDBCol,
    MDBBtn,
-   MDBCollapse
+   MDBCollapse,
+   MDBChart
 } from 'mdb-vue-ui-kit'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { ref, toRefs } from '@vue/reactivity'
@@ -109,7 +110,8 @@ export default {
       MDBBtn,
       NumberFormatter,
       InfoAmount,
-      MDBCollapse
+      MDBCollapse,
+      MDBChart
    },
    props: {
       lock:{
@@ -131,9 +133,28 @@ export default {
       
       const { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime } = useTreasuryLock(lock)
 
+      const barChartData = ref({
+         labels: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+         ],
+         datasets: [
+            {
+               backgroundColor: ["#6B6EF9"],
+               label: "",
+               data: [2112, 2343, 2545, 3423, 2365, 1985, 987]
+            }
+         ]
+      });
+
       return {
          t,
-         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime, collapse
+         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime, collapse, barChartData
       }
    }
 }
