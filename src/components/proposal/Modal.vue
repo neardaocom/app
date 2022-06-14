@@ -9,11 +9,11 @@
       <MDBModalTitle id="modalProposalLabel"> {{ title }} </MDBModalTitle>
     </MDBModalHeader>
     <MDBModalBody class="text-start">
-        <slot></slot>
+        <slot :isValid="isValidHandler"></slot>
     </MDBModalBody>
     <MDBModalFooter>
       <MDBBtn outline="secondary" rounded @click="close()">{{ t('default.close') }}</MDBBtn>
-      <MDBBtn v-if="submitText" outline="primary" rounded @click="submit()">{{ submitText }}</MDBBtn>
+      <ButtonLoader v-if="submitText" :loading="btnLoad" outline="primary" rounded @click="submit()"> {{ submitText }} </ButtonLoader>
     </MDBModalFooter>
   </MDBModal>
 </template>
@@ -30,6 +30,7 @@ import {
 import { ref, toRefs } from '@vue/reactivity';
 import { watch } from '@vue/runtime-core';
 import { useI18n } from 'vue-i18n';
+import ButtonLoader from '@/components/ui/ButtonLoader.vue'
 
 export default {
   components:{
@@ -38,7 +39,8 @@ export default {
     MDBModalHeader,
     MDBModalBody,
     MDBModalFooter,
-    MDBBtn
+    MDBBtn,
+    ButtonLoader
   },
   props: {
     show: {
@@ -59,8 +61,12 @@ export default {
     const { show } = toRefs(props)
     const {t} = useI18n()
     const active = ref(false)
-    
-    const openModal = () => { active.value = true }
+    const btnLoad = ref(false) 
+
+    const openModal = () => { 
+      btnLoad.value = false
+      active.value = true 
+    }
 
     watch(show, openModal)
 
@@ -71,11 +77,18 @@ export default {
     const submit = () => {
       emit('submit')
     }
+
+    const isValidHandler = (value) => {
+      btnLoad.value = value
+    }
+
     return {
       t,
       active,
       submit,
-      close
+      close,
+      btnLoad,
+      isValidHandler
     }
   }
 }

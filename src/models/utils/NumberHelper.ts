@@ -23,12 +23,13 @@ export default class NumberHelper {
     }
 
     static numFormatter(value: number, digits: number): string {
-        if(value >= 999.9 && value < 999999){
-            return (value/1000).toFixed(digits) + 'k';
-        }else if(value >= 999999){
-            return (value/1000000).toFixed(digits) + 'M';
+        const valueDecimal = new Decimal(value)
+        if(valueDecimal.greaterThanOrEqualTo(999.9) && valueDecimal.lessThan(999999)){
+            return valueDecimal.div(1000).toFixed(digits, Decimal.ROUND_DOWN) + 'k';
+        }else if(valueDecimal.greaterThanOrEqualTo(999999)){
+            return valueDecimal.div(1000000).toFixed(digits, Decimal.ROUND_DOWN) + 'M';
         }else{
-            return value.toFixed(digits);
+            return valueDecimal.toFixed(digits, Decimal.ROUND_DOWN);
         }
     }
 }

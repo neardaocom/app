@@ -12,9 +12,14 @@
           <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('default.upgrade_version', {version: newVersion}) : t('default.update_version', {version: newVersion})" v-model="formVersionUpgrageMajor"/>
         </div>
     </div>
+
     <div class="row">
         <div class="col-12 mb-4">
-            <InputString :labelName="t('default.description')" id="description"/>
+            <div class="text-start">
+                <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+            </div>
+            <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwygDesc">
+            </MDBWysiwyg>
         </div>
     </div>
 
@@ -24,50 +29,62 @@
     <MDBAlert color="danger" static v-if="formDocumentType == 'flush-url' && errors.formUrl != null">{{ errors.formUrl }}</MDBAlert>
     <MDBAlert color="danger" static v-if="formDocumentType == 'flush-html' && errors.formHtml != null">{{ errors.formHtml }}</MDBAlert> -->
 
-    <MDBAccordion v-model="formDocumentType" flush fluid class="mx-4">
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.plain" collapseId="flush-plain" :class="[formDocumentType === 'flush-plain' ? 'accordition-plain-open' : '']">
-            <InputString :labelName="t('default.text')" id="plain"/>
-        </MDBAccordionItem>
-
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.link" collapseId="flush-url" :class="[formDocumentType === 'flush-url' ? 'accordition-url-open' : '']">
-            <InputString :labelName="t('default.url')" id="url"/>
-            <div class="col-auto">
-                <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
-            </div>
-        </MDBAccordionItem>
-
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.pdf" collapseId="flush-pdf" :class="[formDocumentType === 'flush-pdf' ? 'accordition-pdf-open' : '']">
-            <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
+    <MDBTabs v-model="activeTabId">
+        <!-- Tabs navs -->
+        <MDBTabNav  tabsClasses="mb-3" >
+            <MDBTabItem tabId="ex1-1" href="ex1-1">{{documentTypeDropdown.plain}}</MDBTabItem>
+            <MDBTabItem tabId="ex1-2" href="ex1-2">{{documentTypeDropdown.link}}</MDBTabItem>
+            <MDBTabItem tabId="ex1-3" href="ex1-3">{{documentTypeDropdown.pdf}}</MDBTabItem>
+            <MDBTabItem tabId="ex1-4" href="ex1-4">{{documentTypeDropdown.editor}}</MDBTabItem>
+        </MDBTabNav>
+        <!-- Tabs navs -->
+        <!-- Tabs content -->
+        <MDBTabContent contentClasses="mb-4">
+            <MDBTabPane tabId="ex1-1">
+                <InputString :labelName="t('default.text')" id="plain"/>
+            </MDBTabPane>
+            <MDBTabPane tabId="ex1-2">
+                <InputString :labelName="t('default.url')" id="url"/>
+                <div class="col-auto">
+                    <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
+                </div>
+            </MDBTabPane>
+            <MDBTabPane tabId="ex1-3">
+                <MDBFileUpload @change="handleUpload" @remove="handleUpload" accept="application/pdf" :maxFilesQuantity="1" :maxFileSize="10"
                 :defaultMsg="fileUploadMsg.defautlMessage" :maxSizeError="fileUploadMsg.maxSizeError" :previewMsg="fileUploadMsg.previewMsg"
                 :removeBtn="fileUploadMsg.removeBtn"
-            />
-        </MDBAccordionItem>
+                />
+            </MDBTabPane>
+            <MDBTabPane tabId="ex1-4">
+                <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwygHtml">
+                    <section v-html="formHtml"></section>
+                </MDBWysiwyg>
+            </MDBTabPane>
+        </MDBTabContent>
+        <!-- Tabs content -->
+    </MDBTabs>
 
-        <MDBAccordionItem :headerTitle="documentTypeDropdown.editor" collapseId="flush-html">
-            <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
-                <section v-html="formHtml"></section>
-            </MDBWysiwyg>
-        </MDBAccordionItem>
-
-    </MDBAccordion>
 </template>
 
 <script>
 import InputString from '@/components/forms/InputString.vue'
 import Autocomplete from '@/components/forms/Autocomplete.vue'
-import { computed, ref, toRefs, inject } from 'vue';
+import { computed, ref, toRefs, inject, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useForm } from 'vee-validate';
 import DocsHelper from "@/models/dao/DocsHelper"
 import VersionHelper from '@/models/utils/VersionHelper'
+import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import {
     MDBSwitch,
-    MDBAccordion, 
-    MDBAccordionItem,
+    MDBTabs,
+    MDBTabNav,
+    MDBTabContent,
+    MDBTabItem,
+    MDBTabPane,
 //   MDBAlert
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
-import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useProposalBasic } from '@/hooks/proposal';
 
 
@@ -76,10 +93,13 @@ export default {
         Autocomplete,
         MDBSwitch,
         InputString,
-        MDBAccordion, 
-        MDBAccordionItem,
         MDBFileUpload,
-        MDBWysiwyg
+        MDBWysiwyg,
+        MDBTabs,
+        MDBTabNav,
+        MDBTabContent,
+        MDBTabItem,
+        MDBTabPane,
     },
     props:{
         docs: {
@@ -87,13 +107,14 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { t } = useI18n()
         const { docs } = toRefs(props)
         const dao = inject('dao')
         const loader = inject('loader')
         const config = inject('config')
         const { proposalBasic } = useProposalBasic(loader, config)
+        const activeTabId = ref('ex1-1');
 
         //console.log(docs.value);
         //const files = transform(docs.value)
@@ -103,7 +124,8 @@ export default {
         const nameOptions = ref(DocsHelper.getNamesOptions(docs.value, t))
         const categoryOptions = ref(DocsHelper.getCategories(docs.value, t));
 
-        const refWysiwyg = ref(null)
+        const refWysiwygHtml = ref(null)
+        const refWysiwygDesc = ref(null)
         const formHtml = ref('')
 
 
@@ -139,10 +161,16 @@ export default {
                 plain: '',
             }
         });
-        const { values, handleSubmit, errors } = useForm({ validationSchema: schema});
+        const { values, handleSubmit, errors, setFieldValue, setFieldTouched } = useForm({ validationSchema: schema});
 
-
-
+        // fill category if file is known
+        watch(() => [values.fileName], () => {
+            const existingFile = nameOptions.value.find((item) => item.title === values.fileName)
+            if (existingFile){
+                setFieldValue('fileCategory', existingFile.category )
+                setFieldTouched('fileCategory', true)
+            }
+        })
         /*
         const getExt = () => {
             return formDocumentType.value.replace('flush-', '')
@@ -244,10 +272,12 @@ export default {
         
         
         const onSubmit = handleSubmit( async (values) => {
+            emit('isValid', true)
             const types = formDocumentType.value.split('-')
-            proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, null, types[1], values.plain, values.url, refWysiwyg.value.getCode(), uploadFiles.value)
+            proposalBasic.value.mediaAdd(dao.value, values.fileName, values.fileCategory, newVersion.value, null, types[1], values.plain, values.url, refWysiwygHtml.value.getCode(), uploadFiles.value)
         }, () => {
-                console.log(errors.value)
+            emit('isValid', false)
+            console.log(errors.value)
         });
         
 
@@ -268,8 +298,10 @@ export default {
             handleUpload,
             formHtml,
             errors,
-            refWysiwyg,
+            refWysiwygHtml,
+            refWysiwygDesc,
             values,
+            activeTabId
         }
     },
 }

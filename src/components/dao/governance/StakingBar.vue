@@ -31,8 +31,8 @@
          <div class="col-md-2 d-flex flex-column align-items-center justify-content-center p-2">
             <template v-if="canStake">
                <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.stake')}}</MDBBtn>
-               <MDBBtn v-show="false" @click="delegate" :disabled="walletTokenStaked == 0" color="primary" size="sm" rounded  style="width: 144px">{{t('default.delegate')}}</MDBBtn>
-               <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded  style="width: 144px">{{t('default.withdraw')}}</MDBBtn>
+               <MDBBtn @click="predelegate" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.delegate')}}</MDBBtn>
+               <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.unstake')}}</MDBBtn>
             </template>
             <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>
          </div>
@@ -52,6 +52,7 @@ import ModalProposal from '@/components/proposal/Modal.vue'
 import FormStake from '@/components/dao/staking/forms/FormStake.vue'
 import FormWithdraw from '@/components/dao/staking/forms/FormWithdraw.vue'
 import FormDelegateOwned from '@/components/dao/staking/forms/FormDelegate.vue'
+import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
 import { useStake, useStakeAction } from '@/hooks/staking';
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import Tooltip from '@/components/ui//Tooltip.vue'
@@ -67,7 +68,8 @@ export default {
       ModalProposal,
       NumberFormatter,
       Tooltip,
-      InfoAmount
+      InfoAmount,
+      FormPredelegate
     },
     props:{
     },
@@ -75,6 +77,7 @@ export default {
       const {t} = useI18n()
       const dao = inject('dao')
       const loader = inject('loader')
+      const wallet = inject('wallet')
       const {
          canStake, allVotePower, walletVotePower, walletVotePowerPercent, walletTokenAmount, walletTokenStaked, walletVotePowerOwned, walletVotePowerDelegators, walletVotePowerDelegated
       } = useStake(dao)
@@ -105,6 +108,16 @@ export default {
          activeForm.value = 'FormDelegateOwned'
       }
 
+      const predelegate = () => {
+         modalProposal.value += 1
+         formProps.value = {
+            accountId:  wallet.value.accountId,
+            amount: walletVotePowerOwned.value
+         }
+         submitText.value = t('default.delegate')
+         activeForm.value = 'FormPredelegate'
+      }
+
       const submitModal = () => {
          form.value.onSubmit()
       }
@@ -121,6 +134,7 @@ export default {
          stake,
          withdraw,
          delegate,
+         predelegate,
          submitModal,
          form,
          canStake, allVotePower, walletVotePower, walletVotePowerPercent, walletTokenAmount, walletTokenStaked, walletVotePowerOwned, walletVotePowerDelegators, walletVotePowerDelegated,

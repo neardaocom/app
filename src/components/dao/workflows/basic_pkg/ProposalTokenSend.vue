@@ -34,7 +34,7 @@ export default {
             required: true
         },
     },
-    setup () {
+    setup (_props, { emit }) {
         const {t} = useI18n()
         const dao = inject('dao')
         const loader = inject('loader')
@@ -58,8 +58,10 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async (values) => {
+            emit('isValid', true)
             proposalBasic.value.tokenSend(dao.value, values.account_id + '.' + accountPostfix.value, values.amount, refWysiwyg.value.getCode())
         }, () => {
+            emit('isValid', false)
             console.log(errors.value)
         });
         

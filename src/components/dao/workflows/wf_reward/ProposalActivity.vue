@@ -36,7 +36,7 @@ export default {
       InputNumber,
       InputString,
    },
-   setup () {
+   setup (_props, {emit}) {
       const dao = inject('dao')
       const loader = inject('loader')
       const {t} = useI18n()
@@ -60,6 +60,7 @@ export default {
       const { handleSubmit, errors, values } = useForm({ validationSchema: schema})
 
       const onSubmit = handleSubmit(async (values) => {
+         emit('isValid', true)
          createActivity(
             values.name,
             values.group_id,
@@ -71,6 +72,7 @@ export default {
             values.ends ? new Date(values.ends) : null
          )
       }, () => {
+         emit('isValid', false)
          console.log(errors.value)
       });
 
