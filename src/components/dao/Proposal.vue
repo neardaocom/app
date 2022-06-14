@@ -17,24 +17,22 @@
           <MDBBadge :color="workflowCodeMapper[workflowCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[workflowCode].icon"></i>{{ proposal.state }}</MDBBadge>
           <template v-if="proposal.description">
             <br/>
-            <MDBBtn v-if="proposal.description"
+            <MDBBtn
               color="link"
               size="sm"
-              @click="collapseDescription = !collapseDescription"
+              @click="detail()"
               aria-controls="collapsibleDescription"
               :aria-expanded="collapseDescription"
             >
               {{ t('default.detail') }}
+              <MDBSpinner v-if="proposalDescriptionLoading" size="sm" color="primary" class="ms-2"/>
             </MDBBtn>
           </template>
         </div>
       </div>
 
       <!-- Desctiption -->
-      <MDBCollapse
-        id="collapsibleDescription"
-        v-model="collapseDescription"
-      >
+      <MDBCollapse id="collapsibleDescription" v-model="collapseDescription">
         <hr class="mt-0 mb-2"/>
         <p v-html="proposalDescription" />
       </MDBCollapse>
@@ -136,7 +134,7 @@
 import {
   MDBProgress, MDBProgressBar, MDBBadge,
   MDBAccordion, MDBAccordionItem, MDBBtn, MDBCollapse,
-  // , MDBCollapse, MDBBtn, MDBIcon
+  MDBSpinner,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { ref, toRefs, inject } from "vue";
@@ -150,6 +148,7 @@ export default {
     MDBProgress, MDBProgressBar, MDBBadge,
     MDBAccordion, MDBAccordionItem, Workflow,
     MDBBtn, MDBCollapse,
+    MDBSpinner,
   },
   props: {
     proposal: {
@@ -165,12 +164,14 @@ export default {
     const { proposal } = toRefs(props)
     const loader = inject('loader')
     const dao = inject('dao')
+    const logger = inject('logger')
+    const notify = inject('notify')
 
     const { vote, finish, fetchDescription } = useProposal(dao, loader)
 
     const { t } = useI18n();
     const proposalDescription = ref('')
-    const proposalDescriptionLoaded = ref(false)
+    const proposalDescriptionLoading = ref(false)
     const collapseDescription = ref(false)
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
@@ -179,9 +180,31 @@ export default {
 
     const accordionWorkflow = ref('none');
 
+    const detail = () => {
+      if (proposal.value.description && proposalDescription.value === '') {
+        proposalDescriptionLoading.value = true
+        //console.log('loading proposal description')
+        fetchDescription(proposal.value.description)
+        .then(r => {
+            proposalDescription.value = r
+            proposalDescriptionLoading.value = false
+        })
+        .catch((e) => {
+          logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+          notify.flush()
+          console.error(e)
+        })
+      }
+
+      collapseDescription.value = !collapseDescription.value
+    }
+
     return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
-      proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, 
+      proposalDescriptionLoading, proposalProgress, proposalProgressIntervalId, 
       moment, vote, finish, fetchDescription, proposalDate, proposalTime, accordionWorkflow,
+      detail,
     };
   },
   computed: {
@@ -202,23 +225,6 @@ export default {
   mounted() {
     //console.log(this.proposal.description)
     // load description from ipfs
-    if (this.proposal.description) {
-      //console.log('loading proposal description')
-      this.fetchDescription(this.proposal.description)
-      .then(r => {
-          this.proposalDescription = r
-          this.proposalDescriptionLoaded = true
-      })
-      .catch((e) => {
-        this.$logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
-        this.$notify.flush()
-        console.error(e)})
-    } else {
-      this.proposalDescription = ''
-      this.proposalDescriptionLoaded = true
-    }
   }
 };
 </script>
