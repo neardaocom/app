@@ -10,7 +10,7 @@ import NearUtils from "../nearBlockchain/Utils";
 import Rights from "./Rights";
 import WfProviderContract from "../nearBlockchain/WfProviderContractService";
 import { WFSettings, WFTemplate } from "./types/workflow";
-import { ResourceType } from "../nearBlockchain/types/resource";
+import { Media } from "../nearBlockchain/types/resource";
 
 export default class ProposalBuilder {
     protected service: WfProviderContract;
@@ -19,7 +19,7 @@ export default class ProposalBuilder {
     // basic
     protected template?: WFTemplate;
     protected templateSettings?: WFSettings;
-    protected description?: ResourceType | null;
+    protected description?: Media | null;
     protected schedulerMsg?: string;
     
     // propose settings
@@ -55,7 +55,7 @@ export default class ProposalBuilder {
         }
     }
 
-    addDescription(media: ResourceType | null) {
+    addDescription(media: Media | null) {
         this.description = media
     }
 

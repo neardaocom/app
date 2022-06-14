@@ -1,7 +1,8 @@
 import DaoGroupTransformer from "./transformers/DaoGroupTransformer";
 import DaoDocsTransformer from "./transformers/DaoDocsTransformer";
 import VoteLevelTransformer from "./transformers/VoteLevelTransformer";
-import { DAO, DAODocs, DAODocsFile, DAODocsFileType, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from "./types/dao";
+import { DAO, DAOGroup, DAOGroupMember, DAOTokenHolder, DAOVoteLevel, DAOVoteType, DAOProposal } from "./types/dao";
+import { DAODocs, DAODocsFile, DAODocsFileType } from "./types/docs";
 import { WFSettings, WFTemplate, WFInstance, WFInstanceLog, WFMetaTemplate } from "./types/workflow";
 import Decimal from "decimal.js";
 import { IDValue, CodeValue } from "../utils/types/generics";

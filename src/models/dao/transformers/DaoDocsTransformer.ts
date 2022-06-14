@@ -3,7 +3,7 @@ import { IDValue } from "@/models/utils/types/generics";
 import loFind from "lodash/find"
 import loGet from "lodash/get"
 import loFindKey from "lodash/findKey"
-import { DAODocsFile, DAODocsFileType } from "../types/dao";
+import { DAODocsFile, DAODocsFileType } from "../types/docs";
 
 export default class DaoDocsTransformer implements TransformerInterface {
     private categories: IDValue[];
@@ -35,6 +35,7 @@ export default class DaoDocsTransformer implements TransformerInterface {
             valid: value[1].valid,
             value: value[1].type,
             tagIds: value[1].tags,
+            proposalId: value[1].proposal_id,
         };
     }
 }

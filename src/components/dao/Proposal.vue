@@ -15,11 +15,27 @@
 
         <div class="ms-auto p-2">
           <MDBBadge :color="workflowCodeMapper[workflowCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[workflowCode].icon"></i>{{ proposal.state }}</MDBBadge>
+          <template v-if="proposal.description">
+            <br/>
+            <MDBBtn
+              color="link"
+              size="sm"
+              @click="detail()"
+              aria-controls="collapsibleDescription"
+              :aria-expanded="collapseDescription"
+            >
+              {{ t('default.detail') }}
+              <MDBSpinner v-if="proposalDescriptionLoading" size="sm" color="primary" class="ms-2"/>
+            </MDBBtn>
+          </template>
         </div>
       </div>
 
       <!-- Desctiption -->
-      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription || ''"/>
+      <MDBCollapse id="collapsibleDescription" v-model="collapseDescription">
+        <hr class="mt-0 mb-2"/>
+        <p v-html="proposalDescription" />
+      </MDBCollapse>
 
       <!-- progress or status -->
       <MDBProgress
@@ -81,9 +97,9 @@
       </MDBProgress>
 
       <!-- Workflow -->
-      <MDBAccordion v-if="workflowCode === 'accepted'" v-model="activeItem" flush>
+      <MDBAccordion v-if="workflowCode === 'accepted'" v-model="accordionWorkflow" flush>
         <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
-          <Workflow :workflow="proposal.workflow" />
+          <Workflow :proposal="proposal" />
         </MDBAccordionItem>
       </MDBAccordion>
 
@@ -117,14 +133,11 @@
 <script>
 import {
   MDBProgress, MDBProgressBar, MDBBadge,
-  MDBAccordion, MDBAccordionItem 
-  // , MDBCollapse, MDBBtn, MDBIcon
+  MDBAccordion, MDBAccordionItem, MDBBtn, MDBCollapse,
+  MDBSpinner,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
 import { ref, toRefs, inject } from "vue";
-import _ from "lodash";
-
-import TextCollapse from '@/components/ui/TextCollapse.vue';
 import ProposalHelper from "@/models/dao/ProposalHelper"
 import moment from 'moment'
 import { useProposal, useProposalCounter, useProposalComputed } from '@/hooks/proposal';
@@ -134,8 +147,8 @@ export default {
   components: {
     MDBProgress, MDBProgressBar, MDBBadge,
     MDBAccordion, MDBAccordionItem, Workflow,
-    // MDBCollapse, MDBBtn, MDBIcon,
-    TextCollapse
+    MDBBtn, MDBCollapse,
+    MDBSpinner,
   },
   props: {
     proposal: {
@@ -151,25 +164,47 @@ export default {
     const { proposal } = toRefs(props)
     const loader = inject('loader')
     const dao = inject('dao')
+    const logger = inject('logger')
+    const notify = inject('notify')
 
-    const { vote, finish } = useProposal(dao, loader)
+    const { vote, finish, fetchDescription } = useProposal(dao, loader)
 
     const { t } = useI18n();
     const proposalDescription = ref('')
-    const proposalDescriptionLoaded = ref(false)
+    const proposalDescriptionLoading = ref(false)
     const collapseDescription = ref(false)
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
     const { proposalProgress, proposalProgressIntervalId } = useProposalCounter(proposal)
     const { proposalDate, proposalTime } = useProposalComputed(proposal, dao)
 
-    const activeItem = ref('none');
+    const accordionWorkflow = ref('none');
 
-    
+    const detail = () => {
+      if (proposal.value.description && proposalDescription.value === '') {
+        proposalDescriptionLoading.value = true
+        //console.log('loading proposal description')
+        fetchDescription(proposal.value.description)
+        .then(r => {
+            proposalDescription.value = r
+            proposalDescriptionLoading.value = false
+        })
+        .catch((e) => {
+          logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+          notify.flush()
+          console.error(e)
+        })
+      }
+
+      collapseDescription.value = !collapseDescription.value
+    }
 
     return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
-      proposalDescriptionLoaded, proposalProgress, proposalProgressIntervalId, 
-      moment, vote, finish, proposalDate, proposalTime, activeItem
+      proposalDescriptionLoading, proposalProgress, proposalProgressIntervalId, 
+      moment, vote, finish, fetchDescription, proposalDate, proposalTime, accordionWorkflow,
+      detail,
     };
   },
   computed: {
@@ -190,26 +225,6 @@ export default {
   mounted() {
     //console.log(this.proposal.description)
     // load description from ipfs
-    if (_.toString(this.proposal.description).length == 59) {
-      //console.log('loading proposal description')
-      this.ipfsService.retrieveFiles(this.proposal.description)
-      .then(r => {
-        //console.log(r)
-        r[0].text().then(text => {
-          this.proposalDescription = text
-          this.proposalDescriptionLoaded = true
-        })
-      })
-      .catch((e) => {
-        this.$logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
-        this.$notify.flush()
-        console.error(e)})
-    } else {
-      this.proposalDescription = '' // this.proposal.description
-      this.proposalDescriptionLoaded = true
-    }
   }
 };
 </script>

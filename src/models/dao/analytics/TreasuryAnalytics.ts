@@ -8,6 +8,7 @@ import FtContractService from "@/models/nearBlockchain/FtContractService";
 import NearUtils from "@/models/nearBlockchain/Utils";
 import NumberHelper from "@/models/utils/NumberHelper";
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
+import { DaoAssetType } from "../types/asset";
 
 export default class TreasuryAnalytics {
     private servicePool: ServicePool;
@@ -24,7 +25,7 @@ export default class TreasuryAnalytics {
             const nearMetadata = getMetadata('near')
             assets.push({
                 asset: {
-                    type: 'near',
+                    type: DaoAssetType.Near,
                     accountId: 'near',
                     name: nearMetadata.name,
                     symbol: nearMetadata.symbol,
@@ -44,7 +45,7 @@ export default class TreasuryAnalytics {
             const tokenMetadata = await metadataLoader.load(dao.settings.token_id)
             assets.push({
                 asset: {
-                    type: 'ft',
+                    type: DaoAssetType.FT,
                     accountId: dao.settings.token_id,
                     name: tokenMetadata.name,
                     symbol: tokenMetadata.symbol,
@@ -68,11 +69,11 @@ export default class TreasuryAnalytics {
 
         for (lockAsset of assets) {
             switch (lockAsset.asset.type) {
-                case 'near': {
+                case DaoAssetType.Near: {
                         assetAmount = dao.treasury.near
                     }
                     break;
-                case 'ft': {
+                case DaoAssetType.FT: {
                         ftService = this.servicePool.getFt(lockAsset.asset.accountId)
                         assetAmountString = await ftService.ftBalanceOf(dao.wallet)
                         assetAmount = NumberHelper.parseNumber(NearUtils.amountFromDecimals(assetAmountString, lockAsset.asset.decimals))

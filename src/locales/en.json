@@ -588,5 +588,7 @@
   "rewards_start_at": "Start at",
   "rewards_ends": "Ends",
   "test_lock_simple": "TEST: Simple lock",
-  "test_salary": "TEST: Simple salary"
+  "test_salary": "TEST: Simple salary",
+  "media_description": "Description",
+  "media_proposal": "Proposal"
 }

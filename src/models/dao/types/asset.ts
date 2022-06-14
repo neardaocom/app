@@ -1,5 +1,11 @@
+export enum DaoAssetType {
+    Near = 'near',
+    FT = 'ft',
+    NFT = 'nft',
+}
+
 export type DaoAsset = {
-    type: string; // near, ft, nft
+    type: DaoAssetType;
     accountId: string;
     name: string;
     symbol: string;

@@ -1,10 +1,10 @@
 
 import StringHelper from "@/models/utils/StringHelper";
 import GenericsHelper from "@/models/utils/GenericsHelper";
-import { DAODocs, DAODocsFile } from "@/models/dao/types/dao";
+import { DAODocs, DAODocsFile, DAODocsFileType, DAODocsFilterTypeItem, DAOFile } from "@/models/dao/types/docs"
 import loFilter from "lodash/filter"
 import loOrderBy from "lodash/orderBy"
-// import loGet from "lodash/get"
+import loGet from "lodash/get"
 import loSet from "lodash/set"
 import loFirst from "lodash/first"
 import loFind from "lodash/find"
@@ -12,7 +12,7 @@ import loIndexOf from "lodash/indexOf"
 import loSortedUniq from "lodash/sortedUniq"
 import loIsEqual from "lodash/isEqual"
 import loFindIndex from "lodash/findIndex"
-import { DAOFile } from "./types/docs";
+import { UnsupportedError } from "../utils/errors";
 
 export default class DocsHelper {
   static initStructure: any[] = [
@@ -21,7 +21,7 @@ export default class DocsHelper {
         { name: 'wiki', type: 'url' },
         { name: 'whitepaper', type: 'url' },
         { name: 'source_code', type: 'url' },
-        { name: 'domain', type: 'plain' },
+        { name: 'domain', type: 'plain/text' },
         { name: 'logo', type: 'binaryImage' },
         { name: 'cover', type: 'binaryImage' },
       ],
@@ -33,7 +33,7 @@ export default class DocsHelper {
       ]
     },
     { category: 'kyc', items: [
-        { name: 'legal_status', type: 'plain' },
+        { name: 'legal_status', type: 'plain/text' },
         { name: 'legal_document', type: 'url' },
       ]
     },
@@ -44,6 +44,25 @@ export default class DocsHelper {
       ]
     },
   ]
+
+  static getIcon(type: string): string {
+    let icon = ''
+    switch (type as DAODocsFileType) {
+    case DAODocsFileType.binaryPdf:
+       icon = 'file-pdf'
+       break;
+    case DAODocsFileType.plain:
+    case DAODocsFileType.html:
+       icon = 'file-alt'
+       break;
+    case DAODocsFileType.url:
+       icon = 'link'
+       break;
+    default:
+       throw new UnsupportedError('File type: ' + type)
+    }
+    return icon
+ }
 
   static getFile(docs: DAODocs, name: string, category?: string, type?: string, version?: string): DAODocsFile | undefined | any { // TODO: Remove any
       const filter: object = {'name': name, 'valid': true}
@@ -56,6 +75,10 @@ export default class DocsHelper {
           loSet(filter, ['version'], version)
 
       return loFirst( loOrderBy(loFilter(docs.files, filter) , ['version'], ['desc']))
+  }
+
+  static getProposalDescription(docs: DAODocs, proposalId: number): DAODocsFile | undefined { // TODO: Remove any
+    return loFind(docs.files, { proposalId })
   }
 
   static getCategoriesInit(t: Function): string[] {
@@ -117,5 +140,46 @@ export default class DocsHelper {
   static getIndexInFiles(files: DAOFile[], name: string, category: string): number {
       const file_key = this.getKey(name, category)
       return loFindIndex(files, {'key': file_key})
+  }
+
+  static getFilterTypes(t: Function): Record<string, DAODocsFilterTypeItem> {
+    return {
+      link: {
+        name: t('default.link'),
+        type: DAODocsFileType.url,
+        active: false,
+      },
+      pdf: {
+        name: t('default.pdf'),
+        type: DAODocsFileType.binaryPdf,
+        active: false,
+      },
+      html: {
+        name: t('default.document'),
+        type: DAODocsFileType.html,
+        active: false,
+      },
+    }
+  }
+
+  static getSource(file: DAODocsFile): string | undefined {
+    let source: string | undefined = undefined
+
+    switch (file.type) {
+      case DAODocsFileType.url:
+          source = loGet(file, ['value', 'link'])
+        break;
+      case DAODocsFileType.plain:
+          source = loGet(file, ['value', 'text'])
+        break;
+      case DAODocsFileType.html:
+      case DAODocsFileType.binaryPdf:
+          source = loGet(file, ['value', 'cid', 'ipfs']) + ': ' + loGet(file, ['value', 'cid', 'cid'])
+        break;
+      default:
+        break;
+    }
+
+    return source
   }
 }

@@ -14,7 +14,7 @@
       <pdf class="m-3" v-if="doc.type == 'application/pdf'" :src="content" :page="1"></pdf>
       <section class="m-3" v-else-if="doc.type == 'text/html'" v-html="content"></section>
       <section class="m-3" v-else-if="doc.type == 'text/plain'">{{content}}</section>
-      <p class="m-3 text-center" v-else-if="doc.ext == 'url'"><a :href="content" target="_blank"> <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />{{ content }}</a></p>
+      <p class="m-3 text-center" v-else-if="doc.type == 'url'"><a :href="content" target="_blank"> <MDBIcon size="sm" icon="external-link-alt" iconStyle="fas" />{{ content }}</a></p>
     </MDBModalBody>
   </MDBModal>
 </template>
