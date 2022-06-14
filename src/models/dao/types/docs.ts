@@ -18,6 +18,7 @@ export enum DAODocsFileType {
     valid: boolean;
     value: ResourceType;
     tagIds: number[];
+    proposalId?: number;
   }
   
   export type DAODocs = {

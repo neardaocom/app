@@ -14,11 +14,11 @@
     <NoData v-if="workflowsNum == 0" :text="t('default.no_active_activities')" hint="This is a hint" />
 
     <div class="row">
-      <div v-for="workflow in results" :key="workflow.id" class="col-12 mb-4 mb-md-0">
-        <section class="mb-4 text-start">
+      <div v-for="proposal in results" :key="proposal.id" class="col-12 mb-4 mb-md-0">
+        <section v-if="proposal.workflow" class="mb-4 text-start">
           <MDBCard>
             <MDBCardBody>
-              <Workflow :workflow="workflow" showVoting />
+              <Workflow :proposal="proposal" showVoting />
             </MDBCardBody>
           </MDBCard>
           <!-- :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" :walletRights="walletRights" :daoStorage="dao.storage" -->
@@ -40,7 +40,6 @@ import { getTemplate } from "@/models/workflow";
 import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
-import ProposalHelper from '@/models/dao/ProposalHelper';
 import NoData from '@/components/ui/NoData.vue'
 
 export default {
@@ -83,14 +82,14 @@ export default {
   },
   computed: {
     results() {
-      let results = ProposalHelper.getWorkflows(this.dao.proposals)
+      let results = this.dao.proposals
       // filter
-      results = results.filter((item) => item.state !== 'waiting')
+      results = results.filter((item) => item.workflow?.state !== 'waiting')
 
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
       if (searchText.length > 0) {
-        results = results.filter(item => item.search.includes(searchText))
+        results = results.filter((item) => item.workflow.search.includes(searchText))
       }
       // order
       switch (this.order.selected) {
@@ -106,7 +105,7 @@ export default {
       return results
     },
     workflowsNum(){
-      return ProposalHelper.getWorkflows(this.dao.proposals).filter((item) => item.state !== 'waiting').length
+      return this.dao.proposals.filter((item) => item.workflow?.state !== 'waiting').length
     }
   },
   methods: {

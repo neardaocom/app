@@ -5,6 +5,8 @@ import ProposalVotingTransformer from './transformers/ProposalVotingTransformer'
 import { MarketTemplate } from './types/market';
 import { DaoContractService } from '../nearBlockchain';
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
+import { DAODocsFile } from './types/docs';
+import DocsHelper from './DocsHelper';
 
 
 export default class DaoProposal {
@@ -18,7 +20,7 @@ export default class DaoProposal {
 
   list(templatesMeta: MarketTemplate[], walletId: string, walletRights: DAORights[], t: Function, d: Function, n: Function): ProposalVoting[] {
     const proposals: ProposalVoting[] = []
-    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n)
+    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, this.dao.docs)
 
     this.dao.proposals.forEach((proposal) => {
       proposals.push(transformer.transform(proposal))

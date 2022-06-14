@@ -21,6 +21,8 @@ import DateHelper from "@/models/utils/DateHelper";
 import ProposalHelper from "../ProposalHelper";
 import ProposalArgsTransformer from "./ProposalArgsTransformer";
 import { MarketTemplate } from "../types/market";
+import { DAODocs, DAODocsFile } from "../types/docs";
+import DocsHelper from "../DocsHelper";
 
 export default class ProposalVotingTransformer implements TransformerInterface {
     private templates: Record<number, WFTemplate>;
@@ -32,6 +34,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
     private t: Function;
     private d: Function;
     private n: Function;
+    private docs: DAODocs;
     private proposalArgsTransformer: TransformerInterface;
 
     constructor(
@@ -43,7 +46,8 @@ export default class ProposalVotingTransformer implements TransformerInterface {
         walletRights: DAORights[],
         t: Function,
         d: Function,
-        n: Function
+        n: Function,
+        docs: DAODocs
     ) {
         this.templates = templates
         this.templatesMeta = templatesMeta
@@ -54,6 +58,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
         this.t = t
         this.d = d
         this.n = n
+        this.docs = docs
         this.proposalArgsTransformer = new ProposalArgsTransformer(this.templates, this.templatesMeta, t, d, n)
     }
 
@@ -70,7 +75,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             id: value.id,
             code: template.code,
             title: this.t('default.wf_templ_' + template.code + '_v' + template.version + '_s' + value.workflowScenarioId + '_title', args),
-            description: '', // TODO: From IPFS
+            description: DocsHelper.getProposalDescription(this.docs, value.id),
             typeCode: template.code,
             type: this.t('default.wf_templ_' + template.code + '_v' + template.version + '_s' + value.workflowScenarioId),
             stateCode: value.state,
@@ -98,7 +103,6 @@ export default class ProposalVotingTransformer implements TransformerInterface {
 
         trans.search = [
             StringHelper.toSearch(trans.title),
-            StringHelper.toSearch(trans.description),
             StringHelper.toSearch(trans.duration.date),
             StringHelper.toSearch(trans.duration.time),
             StringHelper.toSearch(trans.type),

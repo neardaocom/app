@@ -35,6 +35,7 @@ export default class DaoDocsTransformer implements TransformerInterface {
             valid: value[1].valid,
             value: value[1].type,
             tagIds: value[1].tags,
+            proposalId: value[1].proposal_id,
         };
     }
 }

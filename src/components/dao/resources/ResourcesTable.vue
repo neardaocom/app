@@ -32,7 +32,7 @@
                   <MDBIcon v-if="doc.type.includes('url')" size="sm" icon="external-link-alt" iconStyle="fas" />
                   <MDBIcon v-else-if="doc.type.includes('pdf')" size="sm" icon="file" iconStyle="fas" />
                </a> 
-               <MDBSpinner :style="{visibility: fileLoading && fileClicked === doc.index ? 'visible' : 'hidden'}" size="sm" color="primary" class="ms-2"/>  
+               <MDBSpinner :style="{visibility: fileLoading && fileClicked === doc.id ? 'visible' : 'hidden'}" size="sm" color="primary" class="ms-2"/>  
             </td>
             <td class="text-start"><span class="d-inline-block text-truncate" style="max-width: 250px">{{ doc.source }}</span></td>
             <td class="text-start">{{ doc.category }}</td>

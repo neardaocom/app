@@ -10,6 +10,7 @@ import loFind from 'lodash/find'
 import loGet from 'lodash/get'
 import { NotFoundError } from '../utils/errors';
 import { workflowMetadata } from './data/workflowMetadata'
+import { DAODocs } from './types/docs';
 
 
 export default class DaoWorkflow {
@@ -25,8 +26,8 @@ export default class DaoWorkflow {
     this.service = service
   }
 
-  getProposalVoting(templatesMeta: MarketTemplate[], walletId: string, walletRights: DAORights[], t: Function, d: Function, n: Function): ProposalVoting {
-    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n)
+  getProposalVoting(templatesMeta: MarketTemplate[], walletId: string, walletRights: DAORights[], t: Function, d: Function, n: Function, docs: DAODocs): ProposalVoting {
+    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, docs)
     return transformer.transform(this.getProposal())
   }
 

@@ -77,6 +77,10 @@ export default class DocsHelper {
       return loFirst( loOrderBy(loFilter(docs.files, filter) , ['version'], ['desc']))
   }
 
+  static getProposalDescription(docs: DAODocs, proposalId: number): DAODocsFile | undefined { // TODO: Remove any
+    return loFind(docs.files, { proposalId })
+  }
+
   static getCategoriesInit(t: Function): string[] {
     return this.initStructure.map(item => t('default.' + item.category))
   }

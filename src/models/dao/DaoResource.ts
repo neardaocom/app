@@ -1,5 +1,5 @@
 import IpfsService from "../interfaces/IpfsService.interface";
-import { ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource";
+import { Media, ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource";
 import Resource from "../resource/Resource";
 import { DAO } from "./types/dao";
 import { DAODocs, DAODocsFile, DAODocsFileType, DAOFile } from "./types/docs";
@@ -11,23 +11,39 @@ import DaoFilesTransformer from "./transformers/DaoFilesTransformer";
 export default class DaoResource {
 
     protected resource: Resource
-    private t: Function;
 
-    constructor(ipfsService: IpfsService, t: Function) {
+    constructor(ipfsService: IpfsService) {
         this.resource = new Resource(ipfsService)
-        this.t = t
     }
 
-    async storeDescription(dao: DAO, description: string): Promise<ResourceType|null> {
+    async storeProposalDescription(dao: DAO, description: string): Promise<Media|null> {
+        let media: Media | null = null
+
         const maxProposalId = loMax(dao.proposals.map((proposal) => proposal.id))
-        return this.resource.storeHtml(
+        const resourceType = await this.resource.storeHtml(
             description,
             '[' + dao.wallet + '][' + ((maxProposalId) ? maxProposalId + 1 : '-') + '] Proposal desc.'
         )
+
+        if (resourceType) {
+            const maxProposalId = loMax(dao.proposals.map((proposal) => proposal.id))
+            media = {
+                proposal_id: maxProposalId || null,
+                name: 'Description',
+                category: 'Proposal',
+                type: resourceType,
+                tags: [],
+                version: (maxProposalId ? maxProposalId + 1 : '1') + '.0',
+                valid: true,
+            }
+        }
+        return media
     }
 
-    async storeFile(dao: DAO, name: string, category: string, type: string, plain: string|null, url: string|null, html: string|null, pdf: File[]|null): Promise<ResourceType|null> {
+    async storeFile(dao: DAO, name: string, category: string, version: string, type: string, plain: string|null, url: string|null, html: string|null, pdf: File[]|null): Promise<Media|null> {
         let resourceType: ResourceType | null = null
+        let media: Media | null = null
+
         switch (type) {
             case 'plain': {
                     if (!plain) {
@@ -60,7 +76,21 @@ export default class DaoResource {
             default:
                 break;
         }
-        return resourceType
+
+        if (resourceType) {
+            const maxProposalId = loMax(dao.proposals.map((proposal) => proposal.id))
+            media = {
+                proposal_id: maxProposalId || null,
+                name,
+                category,
+                type: resourceType,
+                tags: [],
+                version,
+                valid: true,
+            }
+        }
+
+        return media
     }
 
     async fetch(file: DAODocsFile): Promise<string | undefined> {
@@ -91,6 +121,6 @@ export default class DaoResource {
     list(daoDocs: DAODocs): DAOFile[] {
         const transformer = new DaoFilesTransformer(daoDocs.categories, daoDocs.tags)
 
-        return transformer.transform(daoDocs.files)
+        return transformer.transform(daoDocs.files.filter((file) => file.proposalId == undefined))
     }
 }

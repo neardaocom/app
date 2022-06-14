@@ -19,7 +19,7 @@ export type Proposal = {
 }
 
 export type ProposalInputs = {
-    description: ResourceType | null;
+    description: Media | null;
     template_id: number;
     template_settings_id: number;
     propose_settings: ProposeSettings;
