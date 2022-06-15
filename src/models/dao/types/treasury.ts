@@ -1,11 +1,12 @@
 import { DaoAsset } from "./asset";
 
-export type TreasuryLockCategory = 'salary' | 'event' | 'activity'
-export type TreasuryAssetUnlockingType = 'linear' | 'none'
+export enum TreasuryAssetUnlockingType {
+    Linear = 'linear',
+    None = 'none',
+}
 
 export type TreasuryLock = {
     id: number;
-    category?:  TreasuryLockCategory; // deprecated
     name: string;
     nextUnlock: Date|null;
     createdBy: string|null;

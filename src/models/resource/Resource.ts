@@ -3,7 +3,7 @@ import IpfsService from "../interfaces/IpfsService.interface"
 import { ResourceType, ResourceTypeCid, ResourceTypeLink, ResourceTypeText } from "../nearBlockchain/types/resource"
 import IpfsUtils from "../services/ipfs/IpfsUtils"
 import StringHelper from "../utils/StringHelper"
-import { DAODocsFile, DAODocsFileType } from "../dao/types/dao"
+import { DAODocsFile, DAODocsFileType } from "../dao/types/docs"
 import loToString from "lodash/toString"
 import loGet from "lodash/get"
 

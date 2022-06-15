@@ -1,11 +1,12 @@
 import { DateFormated } from "@/models/utils/types/generics";
+import { DAODocsFile } from "./docs";
 import { WFInstance, WFSettings } from "./workflow";
 
 export type ProposalVoting = {
     id: number;
     code: string;
     title: string;
-    description: string;
+    description?: DAODocsFile;
     typeCode: string;
     type: string;
     stateCode: string;

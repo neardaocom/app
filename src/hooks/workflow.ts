@@ -43,7 +43,6 @@ export const useDaoWorkflowComputed = (dao: Ref<DAO>) => {
 
 export const useWorkflow = (daoWorkflow: Ref<DaoWorkflow>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>) => {
     const {t, d, n} = useI18n()
-    const proposalVoting = computed(() => daoWorkflow.value.getProposalVoting(templatesMeta.value, wallet.value.accountId, walletRights.value, t, d, n))
     const template = computed(() => daoWorkflow.value.getTemplate())
     const canFinish = computed(() => daoWorkflow.value.canFinish())
     const activityNexts = computed(() => daoWorkflow.value.getNextActivities())
@@ -58,7 +57,7 @@ export const useWorkflow = (daoWorkflow: Ref<DaoWorkflow>, templatesMeta: Ref<Ma
     }))
 
     return {
-        proposalVoting, template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions
+        template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions
     }
 }
 

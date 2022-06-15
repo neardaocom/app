@@ -10,8 +10,8 @@
       <!-- HEAD -->
       <div class="row">
         <div class="col-10">
-          <div class="fs-5" v-html="proposalVoting.title"></div>
-          <div class="mt-n2 small">{{ proposalVoting.type }}</div>
+          <div class="fs-5" v-html="proposal.title"></div>
+          <div class="mt-n2 small">{{ proposal.type }}</div>
         </div>
         <div class="col-2 text-right">
           <!-- TODO: Voting -->
@@ -112,7 +112,7 @@ export default {
     MDBBtnGroup, MDBRadio, MDBBadge,
   },
   props: {
-    workflow: {
+    proposal: {
       type: Object,
       required: true,
     },
@@ -125,25 +125,27 @@ export default {
   setup(props) {
     const { t, d, n } = useI18n();
 
-    const { workflow } = toRefs(props)
+    const { proposal } = toRefs(props)
     const loader = inject('loader')
     const dao = inject('dao')
     const wallet = inject('wallet')
     const walletRights = inject('walletRights')
     const templateMeta = inject('templateMeta')
 
+    const workflow = ref(proposal.value.workflow)
+    // console.log(proposal.value, workflow.value)
     const { daoWorkflow } = useDaoWorkflow(loader, dao, workflow)
-    const { proposalVoting, template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions } = useWorkflow(daoWorkflow, templateMeta, wallet, walletRights)
+    const { template, canFinish, activityNexts, activityLogs, activityNextsRights, nextActivitiesOptions } = useWorkflow(daoWorkflow, templateMeta, wallet, walletRights)
 
     const check = Rights.check
 
     const formNextActivityId = ref(nextActivitiesOptions.value.length > 0 ? nextActivitiesOptions.value[0].value.toString() : '')
 
     return {
-      t, d, n, daoWorkflow, proposalVoting, template, check,
+      t, d, n, daoWorkflow, template, check,
       walletRights, nextActivitiesOptions,
       activityLogs, activityNexts, activityNextsRights, canFinish,
-      formNextActivityId,
+      formNextActivityId, workflow,
     };
   },
   computed: {

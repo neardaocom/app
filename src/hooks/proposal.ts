@@ -13,6 +13,8 @@ import Decimal from "decimal.js";
 import { Config } from "@/config";
 import DaoProposalBasic from "@/models/dao/DaoProposalBasic";
 import loFind from "lodash/find";
+import { useResource } from "./docs";
+import { DAODocsFile } from "@/models/dao/types/docs";
 
 export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>, loader: Ref<Loader>) => {
     const { t, d, n } = useI18n()
@@ -30,6 +32,8 @@ export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wal
 export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
     const daoProposal = ref(new DaoProposal(dao.value, servicePool.value.getContract(dao.value.wallet)))
+    const ipfsService = loader.value.load('services/ipfs')
+    const { daoResource } = useResource(ipfsService)
 
     const vote = (proposalId: number, choice: number) => {
         daoProposal.value.vote(proposalId, choice).catch((e) => {
@@ -53,7 +57,9 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
         });
     }
 
-    return { daoProposal, vote, finish }
+    const fetchDescription = async (file: DAODocsFile) => daoResource.value.fetch(file)
+
+    return { daoProposal, vote, finish, fetchDescription }
 }
 
 export const useProposalComputed = (proposal: Ref<ProposalVoting>, dao: Ref<DAO>) => {
@@ -87,9 +93,8 @@ export const useProposalCounter = (proposal: Ref<ProposalVoting>) => {
 }
 
 export const useProposalBasic = (loader: Ref<Loader>, config: Ref<Config>) => {
-    const { t } = useI18n()
     const servicePool = loader.value.load('dao/ServicePool')
     const ipfsService = loader.value.load('services/ipfs')
-    const proposalBasic = ref(new DaoProposalBasic(config.value.near.wfProviderAccountId, servicePool.value, ipfsService.value, t))
+    const proposalBasic = ref(new DaoProposalBasic(config.value.near.wfProviderAccountId, servicePool.value, ipfsService.value))
     return { proposalBasic }
 }

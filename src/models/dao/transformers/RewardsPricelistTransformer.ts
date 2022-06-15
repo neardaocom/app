@@ -28,11 +28,11 @@ export default class RewardsPricelistTransformer implements TransformerInterface
         let unitSeconds: number | undefined = undefined
 
         if (loGet(value, [1, 'type', 'wage']) !== undefined) {
-            type = 'salary'
+            type = RewardType.Salary
             group = loFind(this.daoGroups, {id: value[1].group_id})
             unitSeconds = loGet(value, [1, 'type', 'wage', 'unit_seconds'])
         } else if (loGet(value, [1, 'type', 'user_activity']) !== undefined) {
-            type = 'activity'
+            type = RewardType.Activity
             group = loFind(this.daoGroups, {id: value[1].group_id})
         } else {
             console.log(loToPairs(value))

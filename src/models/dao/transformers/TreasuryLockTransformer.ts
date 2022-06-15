@@ -1,6 +1,6 @@
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
 import loMin from "lodash/min"
-import { TreasuryLock, TreasuryLockAsset, TreasuryAssetUnlocking } from "../types/treasury";
+import { TreasuryLock, TreasuryLockAsset, TreasuryAssetUnlocking, TreasuryAssetUnlockingType } from "../types/treasury";
 import { TreasuryPartition, AssetFT, PartitionAsset } from "../../nearBlockchain/types/dao";
 import FtMetadataLoader from "@/models/ft/FtMetadataLoader";
 import NearUtils from "../../nearBlockchain/Utils";
@@ -40,7 +40,7 @@ export default class TreasuryLockTransformer implements TransformerInterface {
             unlocking = []
             lockAssetData.lock?.lock.periods.forEach((period) => unlocking.push({
                 targetDate: NearUtils.dateFromChain(period.end_at),
-                type: period.type,
+                type: period.type as TreasuryAssetUnlockingType,
                 amount: period.amount
             }))
 
