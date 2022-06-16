@@ -1,14 +1,9 @@
 import ServicePool from "./ServicePool";
-import { MarketTemplate } from "./types/market";
-import MarketTemplateFromProviderTransformer from "./transformers/MarketTemplateFromProviderTransformer";
-import { DAO, DAORights } from "./types/dao";
+import { DAO } from "./types/dao";
 import ProposalBuilder from "./ProposalBuilder";
 import NearUtils from "../nearBlockchain/Utils";
-import MediaBuilder from "./MediaBuilder";
 import IpfsService from "../interfaces/IpfsService.interface";
 import DaoResource from "./DaoResource";
-import { Media } from "../nearBlockchain/types/resource";
-import { ValidationError } from "../utils/errors";
 import loGet from 'lodash/get'
 
 export default class DaoProposalBasic {

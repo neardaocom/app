@@ -206,6 +206,96 @@ export const templateReward: WFMetaTemplate = {
     actions: [],
 }
 
+export const templateSkyward: WFMetaTemplate = {
+    id: 1,
+    code: 'skyward1',
+    constants: [],
+    inputs: [],
+    activities: [
+        {
+            id: 1,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        fn_call: [
+                            'skyward.v1.neardao.testnet',
+                            'register_tokens',
+                        ]
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+        {
+            id: 2,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        fn_call: [
+                            'wnear.v1.neardao.testnet',
+                            'storage_deposit',
+                        ]
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+        {
+            id: 3,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        fn_call: [
+                            data.tokenId,
+                            'ft_transfer_call',
+                        ]
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+        {
+            id: 4,
+            args: (data: WFData) => {
+                return [{
+                    action: {
+                        fn_call: [
+                            'skyward.v1.neardao.testnet',
+                            'register_tokens',
+                        ]
+                    },
+                    values: {
+                      map: {}
+                    }
+                }]
+            },
+            log: (args: any) => {
+                return {
+                }
+            },
+        },
+    ],
+    actions: [],
+}
+
 export const templateLock: WFMetaTemplate = {
     id: 6,
     code: 'lock1',
@@ -238,4 +328,5 @@ export const workflowMetadata: Record<string, WFMetaTemplate> = {
     'wf_add': templateWfAdd,
     'reward2': templateReward,
     'lock1': templateLock,
+    'skyward1': templateSkyward,
 }
