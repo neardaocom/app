@@ -73,8 +73,6 @@ export default {
       coinGeckoExchange,  nearPriceResolve, nearPriceInterval
       , listInterval, listResolve
     };
-  },
-  created() {
   }
 };
 </script>

@@ -87,6 +87,7 @@
               <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><i class="bi bi-lock pe-2"/>{{ t('default.wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
               <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><i class="bi bi-cash-stack pe-2"/>{{ t('default.wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
               <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 2)"><i class="bi bi-cash-stack pe-2"/>{{ t('default.wf_templ_reward2_v1_s2') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('skyward1') === true && check(walletRights, workflowSettings('skyward1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('skyward1', 1, 1)"><i class="bi bi-hammer pe-2"/>{{ t('default.wf_templ_skyward1_v1_s1') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -265,6 +266,10 @@ export default {
           this.formProps = {}
           this.activeForm = 'SimpleLock'
           break
+        case 'skyward1_v1_s1':
+          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templCode}), proposalCount: this.dao.proposals.length}
+          this.activeForm = 'SkywardProposal'
+          break 
         case 'reward2_v1_s1':
           this.formProps = {}
           this.activeForm = 'Salary'
@@ -277,10 +282,6 @@ export default {
           this.formProps = {contractId: this.dao.wallet, dao: this.dao, daoRights: this.daoRights}
           this.activeForm = 'GeneralProposal'
           break
-        case 'wf_skyward':
-          this.formProps = {tokenName: this.dao.treasury.token.meta.symbol, contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templCode}), proposalCount: this.dao.proposals.length}
-          this.activeForm = 'SkywardProposal'
-          break 
         case 'wf_bounty':
           this.formProps = {contractId: this.dao.wallet, template: loFind(this.dao.templates, {code: templCode}), proposalCount: this.dao.proposals.length}
           this.activeForm = 'BountyProposal'

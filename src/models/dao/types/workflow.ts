@@ -145,6 +145,7 @@ export type WFInstance = {
 
 export type WFData = {
     daoId: string;
+    tokenId?: string;
     proposalId: number;
     constants: CodeValue[];
     inputs: CodeValue[];

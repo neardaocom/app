@@ -108,6 +108,7 @@ export default {
           rights.push({
             text: t("default." + trans.key, trans.params),
             value: index,
+            type: right.type,
           });
         }
       });
@@ -117,7 +118,7 @@ export default {
     const voteRights = computed(() => {
       const rights = [];
       proposeRights.value.forEach((right) => {
-        if (right.value !== DAORightsType.TokenHolder) {
+        if (right.type !== DAORightsType.TokenHolder) {
           rights.push({
             ...right,
             disabled: true,
