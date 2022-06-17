@@ -14,7 +14,7 @@
         :itemContent="itemTemplate"
         v-model="value"
         :filter="filter"
-        maxlength="100"
+        :maxlength="100"
         @change="handleChange"
         @blur="handleBlur($event), handleChange($event)"
         @input="handleBlur"

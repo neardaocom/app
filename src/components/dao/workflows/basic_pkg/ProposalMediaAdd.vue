@@ -86,6 +86,7 @@ import {
 } from "mdb-vue-ui-kit";
 import { MDBFileUpload } from "mdb-vue-file-upload";
 import { useProposalBasic } from '@/hooks/proposal';
+import { useResource } from '@/hooks/docs';
 
 
 export default {
@@ -107,6 +108,7 @@ export default {
             required: false
         },
     },
+    emits: ["isValid"],
     setup (props, {emit}) {
         const { t } = useI18n()
         const { docs } = toRefs(props)
@@ -115,13 +117,15 @@ export default {
         const config = inject('config')
         const { proposalBasic } = useProposalBasic(loader, config)
         const activeTabId = ref('flush-plain');
+        const ipfsService = loader.value.load('services/ipfs')
+        const {files} = useResource(ipfsService, dao)
 
         //console.log(docs.value);
         //const files = transform(docs.value)
         //const files = transform({categories: [], files: [], tags: []})
         //console.log(files);
         // const nameOptions = ref(files.map(item => { return { title: item.name, category: item.category, version: item.version }}))
-        const nameOptions = ref(DocsHelper.getNamesOptions(docs.value, t))
+        const nameOptions = ref(DocsHelper.getNamesOptions(files.value, t))
         const categoryOptions = ref(DocsHelper.getCategories(docs.value, t));
 
         const refWysiwygHtml = ref(null)
@@ -236,10 +240,10 @@ export default {
 
 
         //switch
-        const getIndexOfFile = computed(() => (DocsHelper.getIndexInFiles(docs.value, values.fileName, values.formCategory))) 
+        const getIndexOfFile = computed(() => (DocsHelper.getIndexInFiles(files.value, values.fileName, values.fileCategory)))
         const isNewFile = computed(() => (getIndexOfFile.value == -1 )) 
         const formVersionUpgrageMajor = ref(true)
-        const getVersionOfFile = computed(() => ((getIndexOfFile.value) ? docs.value[getIndexOfFile.value].version : undefined)) 
+        const getVersionOfFile = computed(() => ((!isNewFile.value ) ? files.value[getIndexOfFile.value].version : undefined)) 
         const newVersion = computed(() => {
             let version = '1.0'
             if (isNewFile.value === false) {
@@ -301,7 +305,10 @@ export default {
             refWysiwygHtml,
             refWysiwygDesc,
             values,
-            activeTabId
+            activeTabId,
+            getIndexOfFile,
+            files,
+            getVersionOfFile
         }
     },
 }
