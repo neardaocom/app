@@ -10,7 +10,7 @@ import { ref, onMounted, provide, inject } from "vue";
 import { getConfig } from "@/config"
 import Register from "@/models/utils/Register";
 import { Loader } from "@/loader";
-import { useNearPrice } from "@/hooks/market";
+import { useNearPriceLoader } from "@/hooks/market";
 import { useLoad as useDaoLoad } from "@/hooks/daoList";
 import { useStore } from 'vuex';
 
@@ -51,7 +51,7 @@ export default {
     })
 
     // init
-    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPrice(config.value)
+    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPriceLoader(config.value)
     const { listInterval, listResolve } = useDaoLoad(loader, logger, notify, config.value)
 
     onMounted(async () => {

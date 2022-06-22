@@ -20,7 +20,7 @@ export default class DaoProposal {
 
   list(templatesMeta: MarketTemplate[], walletId: string, walletRights: DAORights[], t: Function, d: Function, n: Function): ProposalVoting[] {
     const proposals: ProposalVoting[] = []
-    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, this.dao.docs)
+    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.members, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, this.dao.docs)
 
     this.dao.proposals.forEach((proposal) => {
       proposals.push(transformer.transform(proposal))

@@ -1,4 +1,4 @@
-import { DAOProposal, DAOTokenHolder } from "./types/dao";
+import { DAOMember, DAOProposal, DAOTokenHolder } from "./types/dao";
 import { WFInstance, WFSettings } from "./types/workflow";
 import GenericsHelper from "../utils/GenericsHelper";
 import Decimal from "decimal.js";
@@ -102,7 +102,7 @@ export default class ProposalHelper {
         }
     }
 
-    static getVotingStats(proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) {
+    static getVotingStats(proposal: DAOProposal, members: DAOMember[], tokenBlocked: number) {
         //console.log(token_holders, token_blocked)
         const results = loClone(this.voteMapper)
         let amountSum: number = 0
@@ -111,18 +111,18 @@ export default class ProposalHelper {
           Object.keys(proposal.votes).forEach((voter: string) => {
             switch (loToInteger(proposal.votes[voter])) {
               case 0:
-                results[0] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[0] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               case 1:
-                results[1] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[1] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               case 2:
-                results[2] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[2] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               default:
                 throw new UnsupportedError('Undefined voting stat: ' + loToInteger(proposal.votes[voter]))
             }
-            amountSum += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0
+            amountSum += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0
           });
         } else { // get stats from results
           results[1] += proposal.votingResults?.yes || 0;

@@ -1,9 +1,11 @@
-import { DAO, DAOGroup, DAOGroupMember, DAORights, DAORightsType, DAOTokenHolder } from "@/models/dao/types/dao";
+import { DAO, DAOGroup, DAOGroupMember, DAORights, DAORightsType } from "@/models/dao/types/dao";
 import { Translate } from "@/models/utils/types/generics";
 import loIsEqual from "lodash/isEqual";
 import loFirst from "lodash/first";
 import loFind from "lodash/find";
+import loIsNil from "lodash/isNil";
 import { ActivityRight } from "../nearBlockchain/types/workflow";
+import DaoHelper from "./DaoHelper";
 
 export default class Rights {
 
@@ -97,9 +99,9 @@ export default class Rights {
         list.push({ type: DAORightsType.Member })
         list.push({ type: DAORightsType.TokenHolder })
 
-        // token holders
-        dao.tokenHolders.forEach((holder: any) => {
-            accounts.push(holder.accountId)
+        // members
+        dao.members.forEach((member: any) => {
+            accounts.push(member.accountId)
         })
 
         // groups
@@ -128,10 +130,10 @@ export default class Rights {
 
         list.push({ type: DAORightsType.Anyone })
 
-        if (walletId !== undefined && walletId !== '') {
-            // token holders
-            const holder: DAOTokenHolder | undefined = loFind(dao.tokenHolders, { accountId: walletId })
-            if (holder !== undefined) list.push({ type: DAORightsType.TokenHolder })
+        if (loIsNil(walletId) === false) {
+            // member
+            const daoMember = DaoHelper.findMember(walletId!, dao.members)
+            if (daoMember !== undefined) list.push({ type: DAORightsType.TokenHolder })
 
             // groups
             let member: DAOGroupMember | undefined
@@ -142,7 +144,7 @@ export default class Rights {
                 if (member !== undefined) {
                     isMember = true
                     list.push({ type: DAORightsType.Group, groupId: group.id })
-                    list.push({ type: DAORightsType.GroupMember, groupId: group.id, accountId: walletId })
+                    list.push({ type: DAORightsType.GroupMember, groupId: group.id, accountId: walletId! })
                     const roleIterator: IterableIterator<number> = member.roles.keys();
                     for (const roleKey of roleIterator) {
                         list.push({ type: DAORightsType.GroupRole, groupId: group.id, roleId: (roleKey + 1) })
@@ -158,7 +160,7 @@ export default class Rights {
             }
 
             // accounts
-            list.push({ type: DAORightsType.Account, accountId: walletId })
+            list.push({ type: DAORightsType.Account, accountId: walletId! })
         }
 
         return list

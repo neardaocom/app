@@ -1,6 +1,6 @@
 <template>
   <div class="container mb-2">
-    <DashboardOverview :nearPrice="nearPrice" />
+    <DashboardOverview :nearPrice="nearPriceUsd" />
     <div class="row mb-4">
       <div class="col-12 col-md-6 col-lg-5 mb-4">
         <About />
@@ -46,6 +46,7 @@ import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
 import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import Rewards from '@/components/dao/dashboard/Rewards.vue';
 import { useAnalytics } from '@/hooks/treasury';
+import { useNearPrice } from '@/hooks/market';
 
 
 
@@ -67,19 +68,16 @@ export default {
     const loader = inject('loader')
     const { dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets, availableNearAmount,  availableTokenAmount } = useAnalytics(dao, loader)
     const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
+    const { nearPriceUsd } = useNearPrice()
 
 
     return {
       dao, t, n, skywardSaleIds,
       treasuryNear, availableNearAmount, treasuryFtAssets,
       treasuryToken, treasuryTotalAssets, treasuryLocks,
-      dataLoaded, availableTokenAmount
+      dataLoaded, availableTokenAmount,
+      nearPriceUsd,
     };
-  },
-  computed: {
-    nearPrice() {
-      return this.$root.near_price
-    },
   },
 };
 </script>

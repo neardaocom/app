@@ -387,20 +387,6 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
     //    members.push(walletId)
     //}
     
-    const tokenHolders: DAOTokenHolder[] = []
-    let walletToken: number | undefined = undefined
-    const balances = await Promise.all(
-        members.map((member) => nearService.getFtBalanceOf(id, member))
-    ).catch((e) => {
-        throw new Error(`DAO[${id}] balances not loaded: ${e}`);
-    });
-
-    members.forEach((accountId: string, index: number) => {
-        tokenHolders.push({accountId: accountId, amount: new Decimal(balances[index] ?? 0).toNumber()})
-        if (accountId == walletId) {
-            walletToken = new Decimal(balances[index] ?? 0).toNumber()
-        }
-    });
     
 
     // DOCs
@@ -594,7 +580,7 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
                 },
                 free: ft_treasury_free,
                 holded: ft_treasury_holded,
-                owned: walletToken,
+                owned: 0.0,
             },
             near: new Decimal(dataHack[10]).toNumber(),
             nearStorageLocked: 6.7, // TODO: Add storage locked
@@ -610,7 +596,6 @@ export const loadById = async (nearService: any, id: string, t: Function, wallet
         groups: groups,
         tags: tags,
         proposals: proposals,
-        tokenHolders: tokenHolders,
         templates: templates,
         workflows: workflows,
         treasuryLocks: [],

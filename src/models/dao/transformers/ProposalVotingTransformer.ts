@@ -1,5 +1,5 @@
 import TransformerInterface from "@/models/interfaces/Transformer.interface";
-import { DAOProposal, DAORights, DAOTokenHolder, DAOVoteType } from "../types/dao";
+import { DAOProposal, DAORights, DAOMember, DAOVote } from "../types/dao";
 import moment from 'moment';
 import loIsBoolean from "lodash/isBoolean"
 import loToString from "lodash/toString"
@@ -27,7 +27,7 @@ import DocsHelper from "../DocsHelper";
 export default class ProposalVotingTransformer implements TransformerInterface {
     private templates: Record<number, WFTemplate>;
     private templatesMeta: MarketTemplate[];
-    private tokenHolders: DAOTokenHolder[];
+    private members: DAOMember[];
     private daoTokenAmount: number;
     private walletId: string;
     private walletRights: DAORights[];
@@ -40,7 +40,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
     constructor(
         templates: Record<number, WFTemplate>,
         templatesMeta: MarketTemplate[],
-        tokenHolders: DAOTokenHolder[],
+        members: DAOMember[],
         daoTokenAmount: number,
         walletId: string,
         walletRights: DAORights[],
@@ -51,7 +51,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
     ) {
         this.templates = templates
         this.templatesMeta = templatesMeta
-        this.tokenHolders = tokenHolders
+        this.members = members
         this.daoTokenAmount = daoTokenAmount
         this.walletId = walletId
         this.walletRights = walletRights
@@ -85,7 +85,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             isOver: ProposalHelper.isOver(value, settings!),
             isVoted: ProposalHelper.isVoted(value, this.walletId),
             args: args,
-            votingStats: ProposalHelper.getVotingStats(value, this.tokenHolders, this.daoTokenAmount),
+            votingStats: ProposalHelper.getVotingStats(value, this.members, this.daoTokenAmount),
             duration: {
                 value: value.end, // TODO: Rewrite to END
                 date: this.d(value.end),
