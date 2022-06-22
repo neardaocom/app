@@ -26,4 +26,5 @@ export type ProposalVoting = {
     templateSettings: WFSettings;
     workflow?: WFInstance;
     search: string;
+    resource?: DAODocsFile; 
 }
