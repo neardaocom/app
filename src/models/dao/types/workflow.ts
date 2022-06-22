@@ -25,6 +25,7 @@ export type WFMetaActivity = {
     id: number;
     args: Function;
     log: Function;
+    form?: WFMetaForm;
 }
 
 export type WFMetaTemplate = {

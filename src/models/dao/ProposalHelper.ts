@@ -1,4 +1,4 @@
-import { DAOMember, DAOProposal, DAOTokenHolder } from "./types/dao";
+import { DAOMember, DAOProposal, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from "./types/dao";
 import { WFInstance, WFSettings } from "./types/workflow";
 import GenericsHelper from "../utils/GenericsHelper";
 import Decimal from "decimal.js";
@@ -11,7 +11,7 @@ import loToInteger from "lodash/toInteger";
 import loToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/models/utils/errors'
 import CollectionHelper from "../utils/CollectionHelper";
-import { CodeValue } from "../utils/types/generics";
+import { CodeValue, Translate } from "../utils/types/generics";
 import ObjectHelper from "../utils/ObjectHelper";
 import { ProposalVoting } from "./types/proposal";
 
@@ -194,4 +194,20 @@ export default class ProposalHelper {
     static getWorkflows(proposals: DAOProposal[]): WFInstance[] {
       return proposals.filter((proposal) => proposal.workflow !== undefined).map((proposal) => proposal.workflow!) || []
     }
+
+    static voteLevelToTranslate(voteLevel: DAOVoteLevel): Translate {
+      const trans: Translate = {key: '', params: {quorum: voteLevel.quorum, approveThreshold: voteLevel.approveThreshold}}
+  
+      switch (voteLevel.type) {
+          case DAOVoteType.Democratic:
+              trans.key = 'vote_level_democratic'
+              break;
+          case DAOVoteType.TokenWeighted:
+              trans.key = 'vote_level_token_weighted'
+              break;
+          default:
+              throw new Error("Unsupported type: " + voteLevel);
+      }
+      return trans
+  }
 }

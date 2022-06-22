@@ -1,6 +1,7 @@
 
 import loFind from "lodash/find"
-import { DAOGroup, DAOGroupMember, DAOMember } from "./types/dao";
+import GroupHelper from "./GroupHelper";
+import { DAO, DAOGroup, DAOGroupMember, DAOMember } from "./types/dao";
 import { Staking } from "./types/staking";
 
 export default class DaoHelper {
@@ -24,11 +25,15 @@ export default class DaoHelper {
       })
     })
 
-    return members;
+    return members
   }
 
   static findMember(accountId: string, members: DAOMember[]): DAOMember | undefined {
     return loFind(members, { 'accountId': accountId })
   }
 
+  static isWalletInCouncil(dao: DAO, walletId: string, t: any): boolean {
+    const group: DAOGroup | undefined = GroupHelper.getGroupCouncil(dao, t)
+    return group ? GroupHelper.getMemberFromGroup(group, walletId) !== undefined : false
+  }
 }

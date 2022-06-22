@@ -151,10 +151,6 @@ export default {
     Activity,
   },
   props: {
-    accountRole: {
-      type: String,
-      required: true,
-    },
     walletRights: {
       type: Object,
       required: true,
