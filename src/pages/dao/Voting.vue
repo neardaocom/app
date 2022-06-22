@@ -31,9 +31,10 @@
         <Search v-model="searchQuery" />
       </div>
       <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
-        <small> <MDBCheckbox  :label="filterState.inProgress.name" inline v-model="filterState.inProgress.active" class="rounded-3"/> </small>
-        <small> <MDBCheckbox  :label="filterState.accepted.name" inline v-model="filterState.accepted.active" class="rounded-3"/> </small>
-        <small> <MDBCheckbox  :label="filterState.invalid.name" inline v-model="filterState.invalid.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterStatus.inProgress.name" inline v-model="filterStatus.inProgress.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterStatus.running.name" inline v-model="filterStatus.running.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterStatus.finished.name" inline v-model="filterStatus.finished.active" class="rounded-3"/> </small>
+        <small> <MDBCheckbox  :label="filterStatus.invalid.name" inline v-model="filterStatus.invalid.active" class="rounded-3"/> </small>
       </div>
       <div class="col-6 col-md-4 col-lg-2 text-end">
         <MDBSelect size="sm" v-model:options="order.options" v-model:selected="order.selected" />
@@ -84,19 +85,24 @@ export default {
     const { list } = useList(dao, templateMeta, wallet, walletRights, loader)
 
     const searchQuery = ref('')
-    const filterState = reactive({
+    const filterStatus = reactive({
       inProgress: {
-        name: t('default.proposal_state_in_progress'),
+        name: t('default.proposal_status_in_progress'),
         state: 'in_progress',
         active: false,
       },
-      accepted: {
-        name: t('default.proposal_state_accepted'),
-        state: 'accepted',
+      running: {
+        name: t('default.proposal_status_running'),
+        state: 'running',
+        active: false,
+      },
+      finished: {
+        name: t('default.proposal_status_finished'),
+        state: 'finished',
         active: false,
       },
       invalid: {
-        name: t('default.proposal_state_invalid'),
+        name: t('default.proposal_status_invalid'),
         state: 'invalid',
         active: false,
       },
@@ -109,16 +115,16 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { dao, t, list, searchQuery, filterState, order };
+    return { dao, t, list, searchQuery, filterStatus, order };
   },
   computed: {
     results() {
       let results = this.list
 
       // filter
-      const filterStates = Object.values(this.filterState).filter(item => item.active).map(item => item.state)
-      if (filterStates.length > 0) {
-        results = results.filter(item => loIntersection([item.stateCode], filterStates).length > 0)
+      const filterStatuses = Object.values(this.filterStatus).filter(item => item.active).map(item => item.state)
+      if (filterStatuses.length > 0) {
+        results = results.filter(item => loIntersection([item.statusCode], filterStatuses).length > 0)
       }
       // searching
       const searchText = StringHelper.toSearch(this.searchQuery)
@@ -139,11 +145,12 @@ export default {
             //sort
             const sortValue = {
               'in_progress': 0,
-              'accepted': 1,
-              'rejected': 2,
-              'invalid': 3,
+              'running': 1,
+              'finished': 2,
+              'rejected': 3,
+              'invalid': 4,
             }
-            results = results.sort((x, y) => sortValue[x.stateCode] - sortValue[y.stateCode])
+            results = results.sort((x, y) => sortValue[x.statusCode] - sortValue[y.statusCode])
           }
           break;
         default:

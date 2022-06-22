@@ -71,6 +71,8 @@ export default class ProposalVotingTransformer implements TransformerInterface {
         const args = this.proposalArgsTransformer.transform(value)
         const choiceIndex = ProposalHelper.getChoice(value, this.walletId)
 
+        const progress = ProposalHelper.getProgress(value.state, settings!, value.end)
+
         const trans = {
             id: value.id,
             code: template.code,
@@ -80,7 +82,8 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             type: this.t('default.wf_templ_' + template.code + '_v' + template.version + '_s' + value.workflowScenarioId),
             stateCode: value.state,
             state: this.t("default.proposal_state_" + value.state),
-            status: value.state,
+            workflowStateCode: value.workflow?.state,
+            statusCode: ProposalHelper.getStatusCode(value.state, value.workflow?.state, progress),
             canVote: Rights.check(this.walletRights, [settings!.voteRight]),
             isOver: ProposalHelper.isOver(value, settings!),
             isVoted: ProposalHelper.isVoted(value, this.walletId),
@@ -93,7 +96,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
             },
             choiceIndex: choiceIndex,
             choice: (choiceIndex) ? this.t("default.vote_type_" + choiceIndex) : null,
-            progress: ProposalHelper.getProgress(value.state, settings!, value.end),
+            progress: progress,
             quorum: settings?.voteLevel.quorum,
             approveThreshold: settings?.voteLevel.approveThreshold,
             templateSettings: settings!,

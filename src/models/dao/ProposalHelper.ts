@@ -32,6 +32,14 @@ export default class ProposalHelper {
             color: 'success',
             icon: 'bi bi-check-circle me-2',
         },
+        running: {
+          color: 'secondary',
+          icon: 'bi bi-check-circle me-2',
+        },
+        finished: {
+            color: 'info',
+            icon: 'bi bi-check-circle me-2',
+        },
         rejected: {
             color: 'danger',
             icon: 'bi bi-x-circle me-2',
@@ -68,14 +76,16 @@ export default class ProposalHelper {
         return progress
     }
 
-    static getStatus(state: string, progress: number): string {
+    static getStatusCode(state: string, workflowState: string | undefined, progress: number): string {
         let code: string = ''
         if (state === 'in_progress' && progress < 100) {
           code = 'in_progress'
         } else if (state === 'in_progress') {
           code = 'finishing'
-        } else if (state === 'accepted') {
-          code = 'accepted'
+        } else if (state === 'accepted' && workflowState !== 'finished') {
+          code = 'running'
+        } else if (state === 'accepted' && workflowState === 'finished') {
+          code = 'finished'
         } else if (state === 'rejected') {
           code = 'rejected'
         } else if (state === 'spam') {
