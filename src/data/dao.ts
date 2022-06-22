@@ -59,8 +59,8 @@ export const daoTestOne = {
     ],
     tags: [],
     proposals: [],
-    tokenHolders: [
-        { accountId: 'token-holder.testnet', amount: 0 },
+    members: [
+        { accountId: 'token-holder.testnet', voteAmount: 0 },
     ],
     templates: [],
     workflows: [],

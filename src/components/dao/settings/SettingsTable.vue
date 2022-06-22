@@ -38,9 +38,9 @@
 </template>
 
 <script>
-import { voteLevelToTranslate } from "@/models/dao"
+import ProposalHelper from "@/models/dao/ProposalHelper"
 import Rights from "@/models/dao/Rights";
-import { getActivityById, settingsConstantsToTranslate, getActivityRights } from "@/models/workflow";
+import WorkflowHelper from "@/models/dao/WorkflowHelper";
 import { useI18n } from 'vue-i18n';
 import { inject } from '@vue/runtime-core';
 
@@ -56,11 +56,11 @@ export default {
       const { t } = useI18n()
 
       const transVoteLevel = (voteLevel) => {
-         const trans = voteLevelToTranslate(voteLevel)
+         const trans = ProposalHelper.voteLevelToTranslate(voteLevel)
          return t('default.' + trans.key, trans.params)
       }
       const transSettingsConstants = (template, settingsId) => {
-         const trans = settingsConstantsToTranslate(template, settingsId)
+         const trans = WorkflowHelper.settingsConstantsToTranslate(template, settingsId)
          return t('default.' + trans.key, trans.params)
       }
       const trans = (right) => {
@@ -68,10 +68,10 @@ export default {
          return t('default.' + trans.key, trans.params)
       }
       const activityName = (template, activitiId) => {
-         return getActivityById(template, activitiId)?.name
+         return WorkflowHelper.getActivityById(template, activitiId)?.name
       }
       const activityRights = (settings, activity) => {
-         return getActivityRights(settings, activity)
+         return WorkflowHelper.getActivityRights(settings, activity)
       }
 
       return {

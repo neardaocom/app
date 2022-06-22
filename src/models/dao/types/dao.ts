@@ -110,7 +110,7 @@ export type DAOToken = {
   meta: FTMeta;
   free: number;
   holded: number;
-  owned?: number;
+  owned?: number | string;
 }
 
 export type DAOFt = {
@@ -130,6 +130,11 @@ export type DAOTreasury = {
 export type DAOTokenHolder = {
   accountId: string;
   amount: number;
+}
+
+export type DAOMember = {
+  accountId: string;
+  voteAmount: number;
 }
 
 export type DAOVotingResults = {
@@ -173,7 +178,7 @@ export type DAO = {
   voteLevels: DAOVoteLevel[];
   groups: DAOGroup[];
   tags: IDValue[];
-  tokenHolders: DAOTokenHolder[];
+  members: DAOMember[];
   templates: Record<number, WFTemplate>;
   proposals: DAOProposal[];
   treasuryLocks: TreasuryLock[];

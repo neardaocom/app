@@ -27,7 +27,7 @@ export default class DaoWorkflow {
   }
 
   getProposalVoting(templatesMeta: MarketTemplate[], walletId: string, walletRights: DAORights[], t: Function, d: Function, n: Function, docs: DAODocs): ProposalVoting {
-    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.tokenHolders, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, docs)
+    const transformer = new ProposalVotingTransformer(this.dao.templates, templatesMeta, this.dao.members, this.dao.staking.totalVoteAmount, walletId, walletRights, t, d, n, docs)
     return transformer.transform(this.getProposal())
   }
 

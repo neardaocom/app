@@ -1,4 +1,4 @@
-import { ref, Ref, reactive, onMounted, onUnmounted } from "vue";
+import { ref, Ref, reactive, onMounted, onUnmounted, computed } from "vue";
 import { Account } from 'near-api-js';
 import { useStore } from 'vuex'
 import { RefFinanceService } from '@/models/services/refFinanceService'
@@ -55,7 +55,7 @@ export const useRefFinance = (account: Account, contract: string) => {
     }
 }
 
-export const useNearPrice = (config: Config) => {
+export const useNearPriceLoader = (config: Config) => {
     const store = useStore()
     const coinGeckoExchange = ref(new CoinGeckoExchange(config.market))
     const nearPriceInterval = ref<any>(null)
@@ -73,4 +73,13 @@ export const useNearPrice = (config: Config) => {
     })
 
     return { coinGeckoExchange,  nearPriceResolve, nearPriceInterval }
+}
+
+export const useNearPrice = () => {
+    const store = useStore()
+    
+    const nearPriceUsd = computed(() => store.getters['market/getNearPrice'])
+    
+
+    return { nearPriceUsd }
 }

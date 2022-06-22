@@ -20,8 +20,8 @@ import { useI18n } from 'vue-i18n'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { ref, computed, toRefs, onMounted, onUnmounted, inject } from 'vue'
 import Decimal from 'decimal.js'
+import DaoHelper from '@/models/dao/DaoHelper'
 // import Analytics from "@/models/analytics"
-import { isWalletInCouncil } from '@/models/dao'
 
 export default {
     components: {
@@ -41,7 +41,7 @@ export default {
         const myTokensAmount = computed(() => dao.value.treasury.token.owned);
         const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(dao.value.treasury.token.owned || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
 
-        const isCouncil = computed(() => isWalletInCouncil(dao.value, walletId.value, t));
+        const isCouncil = computed(() => DaoHelper.isWalletInCouncil(dao.value, walletId.value, t));
 
         // token unclock
         const token_council_to_unlock = ref(null)

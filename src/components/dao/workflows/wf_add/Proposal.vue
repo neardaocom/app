@@ -43,7 +43,7 @@ import { useI18n } from 'vue-i18n';
 //import { useStore } from 'vuex'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { voteLevelToTranslate } from "@/models/dao"
+import ProposalHelper from "@/models/dao/ProposalHelper"
 import Rights from "@/models/dao/Rights";
 import { DAORightsType } from '@/models/dao/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
@@ -97,7 +97,7 @@ export default {
         const workflowsToAdd = ref([])
         const refWysiwyg = ref(null)
 
-        const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0])
+        const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0])
         const proposeRights = computed(() => { 
             const rights = []
             daoRights.value.forEach((right, index) => {  

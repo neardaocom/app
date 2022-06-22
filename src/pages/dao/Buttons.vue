@@ -151,10 +151,6 @@ export default {
     Activity,
   },
   props: {
-    accountRole: {
-      type: String,
-      required: true,
-    },
     walletRights: {
       type: Object,
       required: true,
@@ -222,10 +218,7 @@ export default {
       return this.$store.getters['near/getAccountId']
     },
     canVote() {
-      return Object.keys(this.dao.tokenHolders).includes(this.accountId)
-    },
-    nearService() {
-      return this.$store.getters['near/getService']
+      return Object.keys(this.dao.members).includes(this.accountId)
     },
     possibleUpgrade(){
       return this.dao.version < this.latestDaoVersion &&  Object.values(this.dao.groups.council.wallets).includes(this.accountId)
@@ -314,31 +307,6 @@ export default {
     },
     getLatestDaoVersion(){
       this.latestDaoVersion = '1.0' // TODO: Add version from factory
-    },
-    unlockTokens(group) {
-      console.log(group)
-      this.nearService.unlockAllTokens(this.dao.wallet).then((r) => {
-      // this.nearService.unlockTokens(this.dao.wallet, group).then((r) => {
-        console.log(r)
-      }).catch((e) => {
-        console.log(e)
-      });
-      this.dropdownAction = false
-    },
-    distributeToCouncilTokens() {
-      this.nearService.distributeFt(
-        this.dao.wallet,
-        this.dao.token_stats.council.free,
-        'Council',
-        this.dao.groups.council.wallets,
-        null,
-        0.5
-      ).then((r) => {
-        console.log(r)
-      }).catch((e) => {
-        console.log(e)
-      });
-      this.dropdownAction = false
     },
   }
 };

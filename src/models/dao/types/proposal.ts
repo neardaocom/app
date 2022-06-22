@@ -11,7 +11,8 @@ export type ProposalVoting = {
     type: string;
     stateCode: string;
     state: string;
-    status: string;
+    workflowStateCode: string;
+    statusCode?: string;
     canVote: boolean;
     isOver: boolean;
     isVoted: boolean;

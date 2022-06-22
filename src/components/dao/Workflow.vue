@@ -102,7 +102,7 @@ import {
 import { useI18n } from "vue-i18n";
 import { toRefs, inject, ref } from "vue";
 import loToNumber from "lodash/toNumber";
-import { metaGetActivityForm } from "@/models/workflow";
+import WorkflowHelper from "@/models/dao/WorkflowHelper";
 import Rights from "@/models/dao/Rights";
 import DateHelper from '@/models/utils/DateHelper'
 import { useDaoWorkflow, useWorkflow } from '@/hooks/workflow'
@@ -150,10 +150,10 @@ export default {
   },
   computed: {
     componentName() {
-      return metaGetActivityForm(this.template.code, 'wf_add')?.component
+      return WorkflowHelper.metaGetActivityForm(this.template.code, 'wf_add')?.component
     },
     componentProps() {
-      return {schema: metaGetActivityForm(this.template.code, 'wf_add')?.schema(this.data)}
+      return {schema: WorkflowHelper.metaGetActivityForm(this.template.code, 'wf_add')?.schema(this.data)}
     }
   },
   methods: {

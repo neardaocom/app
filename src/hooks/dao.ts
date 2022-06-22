@@ -63,7 +63,7 @@ export const useLocks = (dao: Ref<DAO>) => {
 }
 
 export const useStats = (dao: Ref<DAO>) => {
-    const users = computed(() => dao.value.tokenHolders.length)
+    const users = computed(() => dao.value.members.length)
     const groupNames = computed(() => dao.value.groups.map((group) => group.name))
 
     return {

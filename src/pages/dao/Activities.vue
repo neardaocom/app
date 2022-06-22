@@ -21,7 +21,6 @@
               <Workflow :proposal="proposal" showVoting />
             </MDBCardBody>
           </MDBCard>
-          <!-- :proposal="proposal(workflow.id)" :template="template(dao.templates, workflow.templateId)" :accountId="dao.wallet" :walletRights="walletRights" :daoStorage="dao.storage" -->
         </section>
       </div>
     </div>
@@ -36,8 +35,6 @@ import { useI18n } from "vue-i18n"
 import Workflow from "@/components/dao/Workflow.vue"
 import orderBy from "lodash/orderBy"
 import StringHelper from '@/models/utils/StringHelper'
-import { getTemplate } from "@/models/workflow";
-import loFind from "lodash/find";
 import { useRouter } from "@/hooks/dao";
 import Search from "@/components/ui/Search.vue"
 import NoData from '@/components/ui/NoData.vue'
@@ -107,14 +104,6 @@ export default {
     workflowsNum(){
       return this.dao.proposals.filter((item) => item.workflow?.state !== 'waiting').length
     }
-  },
-  methods: {
-    template(templates, templateId) {
-      return getTemplate(templates, templateId)
-    },
-    proposal(id) {
-      return loFind(this.dao.proposals, {id: id})
-    },
   }
 };
 </script>

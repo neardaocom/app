@@ -1,18 +1,10 @@
-import { ref, computed, onMounted, Ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, Ref } from 'vue'
 import StringHelper from '@/models/utils/StringHelper'
 import { useI18n } from 'vue-i18n'
-import { WFInstance, WFTemplate } from '@/models/dao/types/workflow'
+import { WFInstance } from '@/models/dao/types/workflow'
 import loOrderBy from "lodash/orderBy"
-import loGet from "lodash/get"
-import loFind from "lodash/find"
 import loFlatten from "lodash/flatten"
-import { accounts } from "@/data/blockchain";
 import IntegerHelper from '@/models/utils/IntegerHelper'
-// import { templatePayout, templateCreateGroup, templateAddMember } from "@/data/workflow";
-import { getStartActivities, getEndActivities, getTransitions } from '@/models/workflow'
-import { Wallet } from '@/models/nearBlockchain/types/blockchain'
-import { useStore } from 'vuex'
 import DaoMarket from '@/models/dao/DaoMarket'
 import { Config } from '@/config'
 import { MarketTemplate } from '@/models/dao/types/market'
@@ -20,7 +12,6 @@ import { Loader } from '@/loader'
 import { DAO, DAORights } from '@/models/dao/types/dao'
 import DaoWorkflow from '@/models/dao/DaoWorkflow'
 import { Account } from 'near-api-js'
-import { template } from 'lodash'
 import WorkflowHelper from '@/models/dao/WorkflowHelper'
 
 export const useDaoWorkflow = (loader: Ref<Loader>, dao: Ref<DAO>, workflow: Ref<WFInstance>) => {
@@ -125,52 +116,5 @@ export const useTemplateList = (loader: Ref<Loader>, config: Ref<Config>) => {
         dataSource, dataResults,
         fetchProgress, fetch,
         filterSearch, filterOrder, filterOrderOptions, filter,
-    }
-}
-
-export const useTemplate = () => {
-    const route = useRoute()
-    const q_id = loGet(route, ['params', 'id'])
-    const template = ref<WFTemplate | undefined>(undefined)
-
-    const fetch = (): WFTemplate | undefined => {
-        const template: WFTemplate | undefined = undefined
-        // prototype
-        switch (q_id) {
-            case '1':
-                //template = templatePayout
-                break;
-            case '2':
-                //template = templateCreateGroup
-                break;
-            case '3':
-                //template = templateAddMember
-                break;
-            default:
-                break;
-        }
-
-        return template;
-    }
-
-    onMounted(() => {
-        template.value = fetch()
-    })
-
-    const startActivities = computed(() => { return template.value ? getStartActivities(template.value) : [] })
-    const endActivities = computed(() => { return template.value ? getEndActivities(template.value) : [] })
-    const transactions = computed(() => { return template.value ? getTransitions(template.value) : [] })
-
-    return {
-        q_id, fetch, template, startActivities, endActivities, transactions
-    }
-}
-
-export const useCreators = () => {
-    const creator: Wallet | undefined = loFind(accounts, {code: 'near_dao'})
-    const provider: Wallet | undefined = loFind(accounts, {code: 'market_near_dao'})
-
-    return {
-        creator, provider
     }
 }

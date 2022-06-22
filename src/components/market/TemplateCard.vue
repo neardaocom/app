@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
    MDBCard,
@@ -46,7 +47,6 @@ import {
    MDBRow,
    MDBCol
 } from 'mdb-vue-ui-kit'
-import { useCreators } from "@/hooks/workflow";
 import { computed } from '@vue/reactivity';
 import { toRefs } from '@vue/reactivity'
 import loGet from "lodash/get";
@@ -72,7 +72,7 @@ export default {
    setup (props, {emit}) {
       const {template} = toRefs(props)
       const { t, n} = useI18n()
-      const { creator } = useCreators()
+      const creator = ref({name: 'NearDAO'})
 
       const colorCard = computed(() => {
          if( template.value.status === t('default.buy')) {
