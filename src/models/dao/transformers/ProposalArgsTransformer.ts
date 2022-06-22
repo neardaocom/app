@@ -10,26 +10,35 @@ import NearUtils from "@/models/nearBlockchain/Utils";
 import DateHelper from "@/models/utils/DateHelper";
 import GenericsHelper from "@/models/utils/GenericsHelper";
 import { MarketTemplate } from "../types/market";
+import { DAODocs, DAODocsFile, DAODocsFileType } from "../types/docs";
+import { ResourceType, ResourceTypeText } from "@/models/nearBlockchain/types/resource";
+import ProposalResourceTransformer from "./ProposalResourceTransformer";
 
 export default class ProposalArgsTransformer implements TransformerInterface {
     private templates: Record<number, WFTemplate>;
     private templatesMeta: MarketTemplate[];
+    private docs: DAODocs;
     private t: Function;
     private d: Function;
     private n: Function;
+    private proposalResourceTransformer: TransformerInterface;
+
 
     constructor(
         templates: Record<number, WFTemplate>,
         templatesMeta: MarketTemplate[],
+        docs: DAODocs,
         t: Function,
         d: Function,
         n: Function
     ) {
         this.templates = templates
         this.templatesMeta = templatesMeta
+        this.docs = docs
         this.t = t
         this.d = d
         this.n = n
+        this.proposalResourceTransformer = new ProposalResourceTransformer()
     }
 
     // static getArgs(value: DAOProposal, templateCode: string, t: Function, d: Function, n: Function):  {
@@ -59,16 +68,13 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                             }
                             break;
                         case '2': {
-                                // TODO: Content?
-                                /*
-                                values = value.content?.Media as Record<string, unknown> ?? {}
-                                if (loGet(value, ['content', 'Media', 'media_type', 'Link']) !== undefined) {
-                                    values.source = loGet(value, ['content', 'Media', 'media_type', 'Link'])
-                                }
-                                if (loGet(value, ['content', 'Media', 'media_type', 'Text']) !== undefined) {
-                                    values.source = loGet(value, ['content', 'Media', 'media_type', 'Text'])
-                                }
-                                */
+                            let resource = loFind(this.docs.files, {category: values.category, name: values.name, version: values.version})
+                            if (!resource){
+                                resource = this.proposalResourceTransformer.transform(values)
+                            }
+                            loAssign(values, {
+                                resource
+                            })
                             }
                             break;
                         case '3': {
