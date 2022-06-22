@@ -33,7 +33,7 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const servicePool = loader.value.load('dao/ServicePool')
     const daoProposal = ref(new DaoProposal(dao.value, servicePool.value.getContract(dao.value.wallet)))
     const ipfsService = loader.value.load('services/ipfs')
-    const { daoResource } = useResource(ipfsService)
+    const { daoResource } = useResource(ipfsService, dao)
 
     const vote = (proposalId: number, choice: number) => {
         daoProposal.value.vote(proposalId, choice).catch((e) => {

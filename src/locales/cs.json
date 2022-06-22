@@ -338,6 +338,8 @@
   "frequency_days": "Dny",
   "frequency_hours": "Hodiny",
   "rewards_start_at": "Začíná",
-  "rewards_ends": "Končí"
+  "rewards_ends": "Končí",
+  "show_file": "Ukázat celý",
+  "open": "Otevřít"
 
 }

@@ -1,30 +1,5 @@
 <template>
   <div class="container mb-2">
-    <!-- Order -->
-    <!-- <div class="d-flex align-items-center mb-2">
-    <hr class="flex-grow-1 my-0" />
-    <p class="mb-0 px-2 small">Řadit podle:</p>
-    <div class="dropdown">
-      <a
-        class="link-dark dropdown-toggle font-weight-bold small"
-        href="#"
-        role="button"
-        id="dropdownMenuLink"
-        data-mdb-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Vytvořeno
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <li><a class="dropdown-item" href="#">Action</a></li>
-        <li><a class="dropdown-item" href="#">Another action</a></li>
-        <li><a class="dropdown-item" href="#">Something else here</a></li>
-      </ul>
-    </div>
-  </div>-->
-    <!-- /Order -->
-
-
     <!-- Filter, checkboxes, order -->
     <div v-if="list.length > 0" class="row my-4 mx-4">
       <div class="col-6 col-md-4 col-lg-3">
@@ -47,10 +22,11 @@
     <div class="row">
       <div v-for="(proposal) in results" :key="proposal.id" class="col-12 col-md-6 mb-4 mb-md-0">
         <section class="mb-4 text-start">
-          <Proposal :proposal="proposal" :contractId="dao.wallet" />
+          <Proposal :proposal="proposal" :contractId="dao.wallet" @openResource="open" :fileLoading="fileLoading"/>
         </section>
       </div>
     </div>
+    <ModalDocument :show="modalDocument" :doc="selectedDoc" :data="docData"/>
   </div>
 </template>
 
@@ -66,11 +42,13 @@ import StringHelper from '@/models/utils/StringHelper'
 import Search from "@/components/ui/Search.vue";
 import { useList } from "@/hooks/proposal"
 import NoData from '@/components/ui/NoData.vue'
+import ModalDocument from './modals/ModalDocument.vue'
+import {useResourceOpening} from '@/hooks/docs'
 
 export default {
   components: {
     MDBCheckbox, MDBSelect
-    , Proposal, Search, NoData
+    , Proposal, Search, NoData, ModalDocument
   },
   props: {
   },
@@ -83,6 +61,9 @@ export default {
     const { t } = useI18n();
 
     const { list } = useList(dao, templateMeta, wallet, walletRights, loader)
+
+    const ipfsService = loader.value.load('services/ipfs')
+    const {fileLoading, selectedDoc, docData, modalDocument, open} = useResourceOpening(ipfsService, dao)
 
     const searchQuery = ref('')
     const filterStatus = reactive({
@@ -115,7 +96,10 @@ export default {
         { text: t('default.order_created_asc'), value: 'created_asc' }
       ],
     })
-    return { dao, t, list, searchQuery, filterStatus, order };
+    return { 
+      dao, t, list, searchQuery, filterStatus, order,
+      fileLoading, selectedDoc, docData, modalDocument, open
+    };
   },
   computed: {
     results() {
@@ -156,7 +140,6 @@ export default {
         default:
           break;
       }
-
       return results
     },
   },

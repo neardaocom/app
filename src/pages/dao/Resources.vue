@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { ref, toRefs, inject } from "vue";
+import { ref, inject } from "vue";
 import { computed, reactive } from "@vue/reactivity";
 import {
   MDBCard, MDBCardBody, MDBCheckbox
@@ -38,15 +38,13 @@ import ModalDocument from './modals/ModalDocument.vue'
 import StringHelper from '@/models/utils/StringHelper'
 import _ from 'lodash'
 
-import loFind from 'lodash/find'
 import { useRouter } from "@/hooks/dao";
-import { useResource } from "@/hooks/docs";
+import { useResource, useResourceOpening } from "@/hooks/docs";
 import Search from "@/components/ui/Search.vue"
 import ResourcesTable from '@/components/dao/resources/ResourcesTable.vue'
 import IntegerHelper from '@/models/utils/IntegerHelper';
 import NoData from '@/components/ui/NoData.vue'
 import DocsHelper from '@/models/dao/DocsHelper';
-import { DAODocsFileType } from '@/models/dao/types/docs';
 
 export default {
   components: {
@@ -60,26 +58,21 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     const config = inject('config')
     const loader = inject('loader')
+    const dao = inject('dao') 
 
     const ipfsService = loader.value.load('services/ipfs')
 
-    const { daoResource } = useResource(ipfsService)
+    const { files } = useResource(ipfsService, dao)
 
-    const { docs } = toRefs(props)
-    // console.log(docs.value);
-    const files = ref(daoResource.value.list(docs.value)) // _.sortBy(transform(docs.value), ['category', 'name'])
+    const {fileLoading, selectedDoc, docData, modalDocument, open} = useResourceOpening(ipfsService, dao)
     // console.log(files)
     const { t } = useI18n();
-    const modalDocument = ref(0)
     const openOldVersion = ref(0)
-    const docData = ref(null)
     const fetchedDocs = ref({})
-    const selectedDoc = ref({})
     const loadingProgress = ref(0)
-    const fileLoading = ref(false)
 
     const { rSearch } = useRouter(config)
 
@@ -110,34 +103,6 @@ export default {
 
     const getLastVersions = (versions) => {
       return _.orderBy(versions, ['index'], ['desc']).slice(0, 3)
-    }
-
-    const open = async (index) => {
-      fileLoading.value = true
-      const doc = loFind(docs.value.files, { id: index})
-      
-      daoResource.value.fetch(doc).then(r => {
-        console.log(r, doc.type);
-        switch (doc.type) {
-          case DAODocsFileType.url: {
-            fileLoading.value = false
-            window.open(r, "_blank");
-            break;
-          }
-          case DAODocsFileType.plain: 
-          case DAODocsFileType.binaryPdf:
-          case DAODocsFileType.html: {
-              selectedDoc.value = doc;
-              docData.value = r
-              fileLoading.value = false
-              modalDocument.value += 1;
-            }
-            break;
-          default:
-            fileLoading.value = false
-            console.log('Undefined doc.type: ' + doc.type);
-        }
-      })
     }
 
     return {

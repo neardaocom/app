@@ -59,7 +59,7 @@ export default class ProposalVotingTransformer implements TransformerInterface {
         this.d = d
         this.n = n
         this.docs = docs
-        this.proposalArgsTransformer = new ProposalArgsTransformer(this.templates, this.templatesMeta, t, d, n)
+        this.proposalArgsTransformer = new ProposalArgsTransformer(this.templates, this.templatesMeta, this.docs, t, d, n)
     }
 
     transform(value: any): ProposalVoting {

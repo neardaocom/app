@@ -98,9 +98,8 @@ export default class DocsHelper {
     return initCategory.concat(others)
   }
 
-  static getNamesOptions(docs: DAODocs, t: Function) {
-    const files = docs.files.map(item => { return { title: item.name, category: item.category, version: item.version }})
-
+  static getNamesOptions(docs: DAOFile[], t: Function) {
+    const files = docs.map(item => { return { title: item.name, category: item.category, version: item.version }})
     this.initStructure.forEach((initCategory) => {
       initCategory.items.forEach((initFile) => {
         if (loFind(files, {title: t('default.' + initFile.name), category: t('default.' + initCategory.category)}) === undefined) {
@@ -112,13 +111,13 @@ export default class DocsHelper {
     return files
   }
 
-  static getNames(docs: DAODocs, category: string, t: Function): string[] {
+  static getNames(docs: DAOFile[], category: string, t: Function): string[] {
     const initCategories = this.getCategoriesInit(t)
     const initNames = this.getNamesInit(t)
     let doc_names: string[] = []
     let names: string[] = []
     if (category.length > 0) {
-      doc_names = docs.files.filter((item: any) => loIsEqual(category, item.category)).map((item: any) => item.name)
+      doc_names = docs.filter((item: any) => loIsEqual(category, item.category)).map((item: any) => item.name)
       if (loIndexOf(initCategories, category) >= 0) { // category in init
           names = loSortedUniq(initNames.concat(doc_names).sort())
       } else {
@@ -126,7 +125,7 @@ export default class DocsHelper {
           console.log('not in init category')
       }
     } else {
-      doc_names = docs.files.map((item: any) => item.name)
+      doc_names = docs.map((item: any) => item.name)
       names = loSortedUniq(initNames.concat(doc_names).sort())
     }
     // console.log(names)
@@ -138,7 +137,7 @@ export default class DocsHelper {
   }
 
   static getIndexInFiles(files: DAOFile[], name: string, category: string): number {
-      const file_key = this.getKey(name, category)
+      const file_key = this.getKey(name, category)      
       return loFindIndex(files, {'key': file_key})
   }
 
