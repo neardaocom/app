@@ -40,10 +40,17 @@
             <td v-if="false" class="text-start">{{ doc.tags.join(', ') }}</td>
             <td class="text-start" ><MDBIcon :class="doc.valid ? 'text-success' : 'text-danger'" style="font-size:25px" :icon="doc.valid ? 'check-circle' : 'times-circle'" iconStyle="far" /></td>
             <td>
-               <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
+            <!-- <DocumentVersion :list="doc.versions" :version="doc.version" :open="openOldVersion"/> -->
                <MDBBtnGroup size="sm" role="toolbar">
-                  <MDBBtn color="secondary" @click.prevent="open(doc.id)">{{ doc.version }}</MDBBtn>
-                  <!-- <MDBBtn v-for="item in getLastVersions(doc.versions)" :key="item.index" color="info" @click="openDoc(item.index)">{{ item.version }}</MDBBtn> -->
+                  <MDBBtn color="secondary" @click.prevent="open(doc.id)">
+                     <MDBSpinner  v-if="fileLoading && fileClicked === doc.id" size="sm" color="white"/>
+                     <template v-else>{{ doc.version }}</template>
+                  </MDBBtn>
+                  <MDBBtn v-for="(item, index ) in getLastVersions(doc.versions)" :key="index" color="secondary" @click="open(item.id)">
+                     <MDBSpinner v-if="fileLoading && fileClicked === item.id" size="sm" color="white"/>
+                     <template v-else >{{ item.version }}</template>
+                     
+                  </MDBBtn>
                </MDBBtnGroup>
             </td>
             </tr>
@@ -58,6 +65,7 @@ import {
 } from 'mdb-vue-ui-kit'
 import { ref } from '@vue/reactivity';
 import DocsHelper from '@/models/dao/DocsHelper';
+import loOrderBy from "lodash/orderBy"
 
 export default {
    components: { 
@@ -89,8 +97,12 @@ export default {
          fileClicked.value = index
       }
 
+      const getLastVersions = (versions) => {
+         return loOrderBy(versions, ['index'], ['desc']).slice(0, 3)
+      }
+
       return {
-         t, getIcon, open, fileClicked
+         t, getIcon, open, fileClicked, getLastVersions
       }
    }
 }
