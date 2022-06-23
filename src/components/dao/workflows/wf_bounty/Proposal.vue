@@ -20,12 +20,11 @@ import { useI18n } from 'vue-i18n';
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import decimal from "decimal.js";
-import { nearToYocto } from '@/utils/near';
+import NearUtils from '@/models/nearBlockchain/Utils';
 import { useNear } from "@/hooks/vuex";
-// import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
 //import { inject } from '@vue/runtime-core';
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
-import { generateStorageKey } from "@/models/proposal";
+import ProposalHelper from '@/models/dao/ProposalHelper';
 
 export default {
     components:{
@@ -46,7 +45,7 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const {t} = useI18n()
 
         const { contractId, template, proposalCount } = toRefs(props)
@@ -69,6 +68,7 @@ export default {
         const { handleSubmit, errors } = useForm({ validationSchema: schema});
 
         const onSubmit = handleSubmit(async values => {
+            emit('isValid', true)
             let ipfs_cid = ''
             /*
             if(refWysiwyg.value.getCode()){
@@ -93,14 +93,15 @@ export default {
                 template.value.settings[0].id,
                 ipfs_cid,
                 [
-                    {U128: nearToYocto(decimal(values.amount).toFixed())},
-                    {U128: nearToYocto(decimal(values.deposit).toFixed())},
+                    {U128: NearUtils.nearToYocto(decimal(values.amount).toFixed())},
+                    {U128: NearUtils.nearToYocto(decimal(values.deposit).toFixed())},
                     {String: values.title},
                 ],
-                'wf_bounty-' + generateStorageKey(proposalCount.value),
+                'wf_bounty-' + ProposalHelper.generateStorageKey(proposalCount.value),
                 1.0
             )
         }, () => {
+            emit('isValid', false)
             console.log(errors.value)
         });
         

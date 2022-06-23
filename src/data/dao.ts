@@ -1,4 +1,5 @@
-import { DAO, DAORights, DAORightsType, DAOVoteLevel, DAOVoteType } from "@/types/dao";
+import { DAO, DAORights, DAORightsType, DAOVoteLevel, DAOVoteType } from "@/models/dao/types/dao";
+import { basicStaking } from "../../tests/fixtures/staking";
 // voting
 export const votingDemocraticHalfOneHour: DAOVoteLevel = { type: DAOVoteType.Democratic, quorum: 50, approveThreshold: 50, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
 export const votingTokenWeightedLow: DAOVoteLevel = { type: DAOVoteType.TokenWeighted, quorum: 20, approveThreshold: 30, duration: { days: 0, hours: 1, minutes: 0 }, voteOnlyOnce: true }
@@ -11,7 +12,7 @@ export const rightTokenGroupCouncil: DAORights = {type: DAORightsType.Group, gro
 export const rightTokenGroupCouncilLeader: DAORights = {type: DAORightsType.GroupLeader, groupId: 1};
 export const rightTokenGroupCouncilRole: DAORights = {type: DAORightsType.GroupRole, groupId: 1, roleId: 1};
 
-export const daoTestOne: DAO = {
+export const daoTestOne = {
     name: 'DAO',
     purpose: 'Testing',
     wallet: 'dao.testnet',
@@ -35,6 +36,7 @@ export const daoTestOne: DAO = {
     location: 'glo',
     lang: 'en',
     created: new Date(),
+    version: '1.0',
     storage: {
 
     },
@@ -52,13 +54,16 @@ export const daoTestOne: DAO = {
             members: [
                 { accountId: 'account.testnet', roles: ['role'] }
             ],
+            parentId: 0,
         },
     ],
     tags: [],
     proposals: [],
-    tokenHolders: [
-        { accountId: 'token-holder.testnet', amount: 0 },
+    members: [
+        { accountId: 'token-holder.testnet', voteAmount: 0 },
     ],
     templates: [],
     workflows: [],
+    treasuryLocks: [],
+    staking: basicStaking()
 }

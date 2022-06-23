@@ -1,20 +1,23 @@
 <template>
-    <label :for="id" class="form-label">{{ labelName }}</label>
-    <MDBSelect 
-        :filter="filter"
-        :preselect="true" 
-        v-model:selected="value"
-        v-model:options="typeOptions"
-        :no-results-text="t('default.no_results')"
-        wrapperClass="mb-4"
-        :id="id"
-        :multiple="multiple"
-        :isValidated="meta.touched"
-        :isValid="!errorMessage"
-        :invalidFeedback="errorMessage" 
-        @blur="handleBlur"
-        @change="handleBlur"
-    />
+    <div class="text-start">
+        <label :for="id" class="form-label">{{ labelName }}</label>
+        <MDBSelect 
+            class="mb-4"
+            :filter="filter"
+            :preselect="true" 
+            v-model:selected="value"
+            v-model:options="typeOptions"
+            :no-results-text="t('default.no_results')"
+            wrapperClass="mb-4"
+            :id="id"
+            :multiple="multiple"
+            :isValidated="meta.touched"
+            :isValid="!errorMessage"
+            :invalidFeedback="errorMessage" 
+            @blur="handleBlur"
+            @change="handleBlur"
+        />
+    </div>
 </template>
 
 <script>

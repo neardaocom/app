@@ -1,33 +1,35 @@
 <template>
-    <div class="d-flex justify-content-between">
-        <label v-if="labelName" :for="id" class="form-label">
-            {{ labelName }}
-            <TooltipLabel v-if="tooltip" :description="tooltip"/>
-        </label>
-        <div v-if="balance" class="small">{{`${t('default.balance')}: ${balanceLocale}`}}</div>
+    <div>
+        <div class="d-flex justify-content-between">
+            <label v-if="labelName" :for="id" class="form-label">
+                {{ labelName }}
+                <TooltipLabel v-if="tooltip" :description="tooltip"/>
+            </label>
+            <div v-if="balance" class="small">{{`${t('default.balance')}: ${balanceLocale}`}}</div>
+        </div>
+        <MDBInput 
+            inputGroup 
+            wrapperClass="mb-4"
+            :disabled="disabled"
+            :id="id" 
+            ref="input" 
+            v-model="displayValue" 
+            :isValidated="meta.touched" 
+            :isValid="!errorMessage" 
+            :invalidFeedback="errorMessage"
+            @change="handleChange"
+            @blur="handleBlur($event), handleChange($event)"
+            @input="handleBlur"
+        >
+            <MDBBtn v-if="max" @click="valueToMax" :id="id" outline="primary" :ripple="{ color: 'dark' }">
+                {{t('default.max')}}
+            </MDBBtn>
+            <template v-if="prepend" #prepend>
+                <span class="input-group-text" id="id">{{ prepend }}</span>
+            </template>
+            <span v-if="addon" class="input-group-text" :id="id">{{ addon }}</span>
+        </MDBInput>
     </div>
-    <MDBInput 
-        inputGroup 
-        wrapperClass="mb-4"
-        :disabled="disabled"
-        :id="id" 
-        ref="input" 
-        v-model="displayValue" 
-        :isValidated="meta.touched" 
-        :isValid="!errorMessage" 
-        :invalidFeedback="errorMessage"
-        @change="handleChange"
-        @blur="handleBlur($event), handleChange($event)"
-        @input="handleBlur"
-    >
-        <MDBBtn v-if="max" @click="valueToMax" :id="id" outline="primary" :ripple="{ color: 'dark' }">
-            {{t('default.max')}}
-        </MDBBtn>
-        <template v-if="prepend" #prepend>
-            <span class="input-group-text" id="id">{{ prepend }}</span>
-        </template>
-        <span v-if="addon" class="input-group-text" :id="id">{{ addon }}</span>
-    </MDBInput>
 </template>
 
 
@@ -35,12 +37,13 @@
 import { useI18n } from "vue-i18n";
 import { computed, ref, toRefs } from '@vue/reactivity'
 import { useField } from 'vee-validate';
-import { stringNumberToLocale } from '@/utils/locale' 
+import LocaleHelper from '@/models/utils/LocaleHelper'
 import TooltipLabel from '@/components/forms/TooltipLabel.vue'
 import {
   MDBInput,
   MDBBtn
 } from "mdb-vue-ui-kit";
+import Decimal from 'decimal.js'
 
 export default {
     components:{
@@ -58,11 +61,11 @@ export default {
             required: true
         },
         balance: {
-            type: Object,
+            type: [Object, Number, String],
             required: false
         },
         max: {
-            type: Object,
+            type: [Object, Number, String],
             required: false
         },
         tooltip: {
@@ -119,7 +122,7 @@ export default {
         //         //         return value.value.replace(/[^0-9]/g,'')
         //         //     }
                 
-        //          return stringNumberToLocale(value.value, locale.value)
+        //          return LocaleHelper.stringNumberToLocale(value.value, locale.value)
 
         //     },
         //     set: (v) => {
@@ -132,13 +135,13 @@ export default {
         //             console.log('set', result);
         //         }
         //         console.log(result);
-        //         //input.value.inputValue = stringNumberToLocale(result, locale.value)
+        //         //input.value.inputValue = LocaleHelper.stringNumberToLocale(result, locale.value)
         //         value.value = result
         //     }
         // })
 
-        const valueToMax = () => displayValue.value = max.value.toFixed()
-        const balanceLocale = computed(() => stringNumberToLocale(balance.value.toFixed(), locale.value))
+        const valueToMax = () => displayValue.value = new Decimal(max.value).toFixed()
+        const balanceLocale = computed(() => LocaleHelper.stringNumberToLocale(new Decimal(balance.value).toFixed(), locale.value))
 
         return{
             t,

@@ -3,53 +3,73 @@
     <div class="card-body">
 
       <!-- header -->
-      <div class="d-flex mb-3 ">
-        <div class="align-self-center">
-            <span class="fs-4 text-white p-2 rounded-circle bg-primary text-center background-light-gray">
-              #{{ proposal.id }}
-            </span>
-        </div>
-
-        <div class="p-2">
-           <h5>{{ proposal.type }}</h5>
-            <div
-              class="mt-n2 text-dark"
-              v-html="proposal.title"
-            />
-        </div>
-
-        <div class="ms-auto p-2">
-          <MDBBadge :color="workflowCodeMapper[workflowCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[workflowCode].icon"></i>{{ proposal.state }}</MDBBadge>
+      <div class="d-flex">
+        <span class="fs-5 text-muted p-2 text-center">
+          #{{ proposal.id }}
+        </span>       
+        <div class="p-2 flex-fill">
+          <div class="d-flex">
+            <div>
+              <div class="fs-5" v-html="proposal.title"></div>
+              <div class="mt-n2 small">{{ proposal.type }}</div>
+            </div>
+            <div class="ms-auto p-1">
+              <MDBBadge :color="workflowCodeMapper[statusCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[statusCode].icon"></i>{{ t('default.proposal_status_' + statusCode) }}</MDBBadge>
+              <template v-if="proposal.description">
+                <br/>
+                <MDBBtn
+                  color="link"
+                  size="sm"
+                  @click="detail()"
+                  aria-controls="collapsibleDescription"
+                  :aria-expanded="collapseDescription"
+                >
+                  {{ t('default.detail') }}
+                  <MDBSpinner v-if="proposalDescriptionLoading" size="sm" color="primary" class="ms-2"/>
+                </MDBBtn>
+              </template>
+            </div>
+          </div>
+          <div v-if="proposal.args.resource" class="small">
+           {{`${prefix} ${source}`}}
+          </div>
+          <a v-if="proposal.args.resource" href="#" @click.prevent="open(proposal.args.resource)" class="small">
+            {{t('default.open')}}
+            <MDBSpinner v-if="fileLoading && clickOpen" size="sm" color="primary" class="ms-2"/>
+          </a>
         </div>
       </div>
 
       <!-- Desctiption -->
-      <TextCollapse v-if="proposalDescriptionLoaded" :content="proposalDescription || ''"/>
+      <MDBCollapse id="collapsibleDescription" v-model="collapseDescription">
+        <hr class="mt-0 mb-2"/>
+        <p v-html="proposalDescription" />
+      </MDBCollapse>
 
       <!-- progress or status -->
       <MDBProgress
-        v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
+        v-if="statusCode === 'in_progress' || statusCode === 'finishing'"
         :height="3"
       >
-        <MDBProgressBar bg="secondary" :value="progress" />
+        <MDBProgressBar bg="secondary" :value="proposalProgress" />
       </MDBProgress>
       <hr v-else class="my-1">
 
       <!-- about -->
-      <ul class="my-2 list-unstyled text-muted list-inline">
+      <ul class="my-2 list-unstyled list-inline">
         <li class="list-inline-item me-4 h6">
-          <i class="bi bi-calendar4 color-secondary me-1"/> {{moment(proposal.duration.value).format("MMMM D, YYYY")}} -
-          <span>{{ proposal.duration.time }}</span>
+          <i class="bi bi-calendar4 text-secondary me-1"/>
+          <span>{{ proposalDate }} - {{ proposalTime }}</span>
         </li>
         <li class="list-inline-item me-4">  
-          <i class="far fa-handshake fa-fw color-secondary me-2 mb-3"></i>
+          <i class="far fa-handshake fa-fw text-secondary me-2 mb-3"></i>
           <span class="h6"
-            >{{ proposal.quorum }}%</span
+            >{{ proposal.approveThreshold }}%</span
           >
         </li>
         <li v-if="proposal.choiceIndex !== ''" class="list-inline-item me-4">
-          <i class="bi bi-archive me-1 color-secondary"/>
-          <span class="h6 text-muted">{{
+          <i class="bi bi-archive me-1 text-secondary"/>
+          <span class="h6">{{
             proposal.choice
           }}</span>
         </li>
@@ -84,20 +104,23 @@
           >
           </MDBProgressBar>
       </MDBProgress>
-      <br/>
+
+      <!-- Workflow -->
+      <MDBAccordion v-if="statusCode === 'running' || statusCode === 'finished'" v-model="accordionWorkflow" flush>
+        <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
+          <Workflow :proposal="proposal" />
+        </MDBAccordionItem>
+      </MDBAccordion>
 
       <!-- Vote -->
       <div
-        v-if="
-          workflowCode === 'in_progress'
-          && proposal.canVote === true
-          && proposal.isVoted === false
-        "
+        v-if="statusCode === 'in_progress' && proposal.canVote === true && proposal.isVoted === false"
+        class="mt-2"
       >
-        <button @click="vote(1)" type="button" class="btn btn-outline-success btn-rounded">
+        <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
           <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
         </button>
-        <button @click="vote(2)" type="button" class="btn btn-outline-danger btn-rounded">
+        <button @click="vote(proposal.id, 2)" type="button" class="btn btn-outline-danger btn-rounded">
           <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->
@@ -105,10 +128,10 @@
         <!--</button> -->
       </div>
       <div
-        v-else-if="workflowCode === 'finishing'"
+        v-else-if="statusCode === 'finishing'"
         role="group"
       >
-        <button v-if="proposal.canVote === true" @click="finalize()" type="button" class="btn btn-outline-primary btn-rounded">
+        <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded mt-2">
           <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
         </button>
       </div>
@@ -118,22 +141,23 @@
 
 <script>
 import {
-  MDBProgress, MDBProgressBar, MDBBadge
-  // , MDBCollapse, MDBBtn, MDBIcon
+  MDBProgress, MDBProgressBar, MDBBadge,
+  MDBAccordion, MDBAccordionItem, MDBBtn, MDBCollapse,
+  MDBSpinner,
 } from "mdb-vue-ui-kit";
 import { useI18n } from "vue-i18n";
-import { ref, toRefs, onMounted, onUnmounted } from "vue";
-import _ from "lodash";
-
-import TextCollapse from '@/components/TextCollapse.vue';
-import { workflowCodeBgMapper, getProgress, getWorkflowCode } from '@/models/proposal';
+import { ref, toRefs, inject, computed, watch } from "vue";
+import ProposalHelper from "@/models/dao/ProposalHelper"
 import moment from 'moment'
+import { useProposal, useProposalCounter, useProposalComputed } from '@/hooks/proposal';
+import Workflow from "@/components/dao/Workflow.vue"
 
 export default {
   components: {
     MDBProgress, MDBProgressBar, MDBBadge,
-    // MDBCollapse, MDBBtn, MDBIcon,
-    TextCollapse
+    MDBAccordion, MDBAccordionItem, Workflow,
+    MDBBtn, MDBCollapse,
+    MDBSpinner,
   },
   props: {
     proposal: {
@@ -144,102 +168,82 @@ export default {
       type: String,
       required: true,
     },
+    fileLoading: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
-  setup(props) {
-    const { proposal } = toRefs(props)
+  setup(props, {emit}) {
+    const { proposal, fileLoading } = toRefs(props)
+    const loader = inject('loader')
+    const dao = inject('dao')
+    const logger = inject('logger')
+    const notify = inject('notify')
+
+    const { vote, finish, fetchDescription } = useProposal(dao, loader)
+
     const { t } = useI18n();
     const proposalDescription = ref('')
-    const proposalDescriptionLoaded = ref(false)
+    const proposalDescriptionLoading = ref(false)
     const collapseDescription = ref(false)
-    const workflowCodeMapper = ref(workflowCodeBgMapper);
+    const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
-    const progress = ref(proposal.value.progress)
-    const progressCounter = () => {
-      progress.value = getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration.value)
-      // console.log('Progress: ' + progress.value)
-    }
-    const progressInterval = ref(null);
+    const { proposalProgress, statusCode, proposalProgressIntervalId } = useProposalCounter(proposal)
+    const { proposalDate, proposalTime } = useProposalComputed(proposal, dao)
 
-    onMounted(() => {
-      progressInterval.value = setInterval(progressCounter, 5_000)
-      //console.log('mounted')
-    })
+    const accordionWorkflow = ref('none');
 
-    onUnmounted(() => {
-      clearInterval(progressInterval.value)
-      //console.log('unmounted')
-    })
-
-    return { t, collapseDescription, workflowCodeMapper, proposalDescription, proposalDescriptionLoaded, progress, progressInterval, moment };
-  },
-  computed: {
-    accountId(){
-      return this.$store.getters['near/getAccountId']
-    },
-    nearService() {
-      return this.$store.getters["near/getService"];
-    },
-    ipfsService() {
-      return this.$store.getters['ipfs/getService']
-    },
-    workflowCode() {
-      return getWorkflowCode(this.proposal.status, this.progress)
-    }
-  },
-  methods: {
-    vote(choice) {
-      // console.log(choice);
-      this.nearService
-        .vote(this.contractId, this.proposal.id, choice)
-        .then((r) => {
-          console.log(r);
+    const detail = () => {
+      if (proposal.value.description && proposalDescription.value === '') {
+        proposalDescriptionLoading.value = true
+        //console.log('loading proposal description')
+        fetchDescription(proposal.value.description)
+        .then(r => {
+            proposalDescription.value = r
+            proposalDescriptionLoading.value = false
+            collapseDescription.value = !collapseDescription.value
         })
         .catch((e) => {
-          this.$logger.error('D', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
-          this.$logger.error('B', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
-          this.$notify.danger(this.t('default.notify_proposal_voting_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_voting_fail_message' , {proposal: this.proposal.title}))
-          this.$notify.flush()
-          console.log(e);
-        });
-    },
-    finalize() {
-      this.nearService
-        .finalize(this.contractId, this.proposal.id)
-        .then((r) => {
-          console.log(r);
+          logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
+          notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+          notify.flush()
+          console.error(e)
         })
-        .catch((e) => {
-          this.$logger.error('D', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
-          this.$logger.error('B', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
-          this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
-          this.$notify.flush()
-          console.log(e);
-        });
-    },
-  },
-  mounted() {
-    //console.log(this.proposal.description)
-    // load description from ipfs
-    if (_.toString(this.proposal.description).length == 59) {
-      //console.log('loading proposal description')
-      this.ipfsService.retrieveFiles(this.proposal.description)
-      .then(r => {
-        //console.log(r)
-        r[0].text().then(text => {
-          this.proposalDescription = text
-          this.proposalDescriptionLoaded = true
-        })
-      })
-      .catch((e) => {
-        this.$logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-        this.$notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
-        this.$notify.flush()
-        console.error(e)})
-    } else {
-      this.proposalDescription = '' // this.proposal.description
-      this.proposalDescriptionLoaded = true
+      } else {
+        collapseDescription.value = !collapseDescription.value
+      }
     }
-  }
+
+    const clickOpen = ref(false)
+    const open = (resource) => {
+        emit('openResource', resource)
+        clickOpen.value = true
+    }
+
+    watch(fileLoading, (newValue) =>{
+      if ( newValue === false){
+        clickOpen.value = false
+      }
+    })
+
+    const source = computed(() => ( proposal.value.args.resource?.source.length > 50 ? proposal.value.args.resource?.source.substring(0, 50) + '...' : proposal.value.args.resource?.source))
+    const prefix = computed(() => {
+      if (proposal.value.args.resource?.type === 'url')
+        return 'Link:'
+      else if(proposal.value.args.resource?.type === 'text/plain')
+        return 'Text:'
+      else
+        return ''
+   })
+
+    return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
+      proposalDescriptionLoading, proposalProgress, proposalProgressIntervalId, 
+      moment, vote, finish, fetchDescription, proposalDate, proposalTime, accordionWorkflow,
+      detail, statusCode,
+      open, clickOpen, source, prefix,
+    };
+  },
 };
 </script>

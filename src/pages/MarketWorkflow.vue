@@ -131,7 +131,7 @@ import {
   MDBCard, MDBCardBody, MDBCardText,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplate, useCreators } from "@/hooks/workflow";
+import { ref } from 'vue'
 
 export default {
   components: {
@@ -141,12 +141,15 @@ export default {
   setup() {
     const { t, n } = useI18n()
 
-    const { q_id, fetch, template, startActivities, endActivities, transactions } = useTemplate()
-    const { creator } = useCreators()
+    const template = ref({})
+    const startActivities = ref([])
+    const endActivities = ref([])
+    const transactions  = ref([])
+    const creator = ref({name: 'unknown'})
 
 
     return {
-      t, n, q_id, fetch, template, creator, startActivities, endActivities, transactions
+      t, n, template, creator, startActivities, endActivities, transactions
     }
   },
 }

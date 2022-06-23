@@ -4,55 +4,134 @@
 </template>
 
 <script>
-import { ref, onMounted, onUnmounted } from "vue";
-import { coinGeckoExchange } from "@/services/exchangeService"
+import { ref, onMounted, provide, inject } from "vue";
+// confings
+// factories
+import { getConfig } from "@/config"
+import Register from "@/models/utils/Register";
+import { Loader } from "@/loader";
+import { useNearPriceLoader } from "@/hooks/market";
+import { useLoad as useDaoLoad } from "@/hooks/daoList";
+import { useStore } from 'vuex';
 
 export default {
   components: {
   },
   setup() {
-    // near price
-    const near_price = ref(null)
-    const near_price_interval = ref(null)
-    const near_price_counter = () => {
-      coinGeckoExchange.getActualPrice('near').then(response => {
-        near_price.value = response
-        // console.log('NEAR price USD: ' + near_price.value)
+    const logger = inject('logger')
+    const notify = inject('notify')
+    const store = useStore()
+    // config
+    const config = ref(getConfig(process.env.NODE_ENV))
+    provide('config', config)
+
+    // wallet
+    const wallet = ref(null)
+    provide('wallet', wallet)
+
+    // loader
+    const loader = ref(new Loader(new Register(), config.value))
+    provide('loader', loader)
+    // init Near
+    loader.value.get('near/WalletAccount').then((walletAccount) => {
+      wallet.value = walletAccount.value
+    }).catch((reason) => {
+      // TODO: Error catch
+      console.log(reason)
+    })
+    // init ServicePool
+    loader.value.get('dao/ServicePool').then(() => {}).catch((reason) => {
+      // TODO: Error catch
+      console.log(reason)
+    })
+    // init ipfs
+    loader.value.get('services/ipfs').then(() => {}).catch((reason) => {
+      // TODO: Error catch
+      console.log(reason)
+    })
+
+    // init
+    const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPriceLoader(config.value)
+    const { listInterval, listResolve } = useDaoLoad(loader, logger, notify, config.value)
+
+    onMounted(async () => {
+      store.dispatch('ipfs/init')
+      store.dispatch('near/init').then(async () => {
+       // await loader.value.get('near/WalletAccount')
+        await nearPriceResolve()
+        await listResolve()
       })
-    }
-    coinGeckoExchange.getActualPrice('near').then(response => {
-      near_price.value = response
-      // console.log('NEAR price USD: ' + near_price.value)
-    })
-
-    onMounted(() => {
-      near_price_interval.value = setInterval(near_price_counter, 5 * 60 * 1_000) // 5 minutes
-      // console.log('App mounted')
-    })
-
-    onUnmounted(() => {
-      clearInterval(near_price_interval.value)
-      // console.log('App unmounted')
+      // Loader
+      // Load NEAR
+      // console.log('Loaded', nearNear.value)
+      //.then(() => {
+      //  listResolve()
+      //})
     })
 
     return {
-      near_price, near_price_interval, near_price_counter
+      coinGeckoExchange,  nearPriceResolve, nearPriceInterval
+      , listInterval, listResolve
     };
-  },
-  created() {
-    this.$store.dispatch('near/init')
-    this.$store.dispatch('ipfs/init')
   }
 };
 </script>
 
-<style>
+<style lang="scss">
+
+// Could be used before $theme-color
+$primary: #5F8AFA;
+$secondary: #70ADCC;
+$success: #ABD055;
+$info: #5F8AFA;
+$warning: #FFC860;
+$danger: #DB5555;
+$dark: #262626;
+$light: #f0f2f5;
+$white: #fff;
+$black: #000;
+$muted: #A7A7A7;
+$light-muted: #A7A7A7;
+
+
+// because I add colors muted, gradiend
+$theme-colors: (
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark,
+  'white': $white,
+  'black': $black,
+  'muted': $muted,
+  'light-muted': $light-muted
+);
+
+@import '~@/../mdb/scss/index.pro.scss';
+
+@for $i from 1 through 30 {
+  .bg-gradient-#{$i * 10} {
+    background: transparent linear-gradient($i * 10deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
+  }
+  .text-gradient-#{$i * 10}{
+    background: -webkit-linear-gradient($i * 10deg, #5F8AFA 0%, #6B6EF9 100%);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+  }
+}
+
 #app {
   font-family: Manrope, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #262626;
 }
 
 #nav {
@@ -63,9 +142,6 @@ body {
   background-color: #f0f2f5;
 }
 
-.bg-light {
-  background-color: #f0f2f5 !important;
-}
 .container {
   max-width: 1140px;
 }
@@ -127,138 +203,37 @@ body {
   }
 }
 
-h1, .h1, .fs-1 {
+h1, .h1 {
  font-weight: 800 !important;
 }
 
-h2, .h2, .fs-2 {
+h2, .h2 {
   font-weight: 800 !important;
 }
 
 
-h3, .h3, .fs-3 {
+h3, .h3 {
   font-weight: 700 !important;
 }
 
-h4, .h4, .fs-4 {
+h4, .h4 {
   font-weight: 700 !important;
 }
 
-h5, .h5, .fs-5 {
+h5, .h5 {
   font-weight: 700 !important;
 }
 
-h6, .h6, .fs-6 {
+h6, .h6 {
   font-weight: 600 !important;
 }
 
-.gradient-background {
-  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
-  font: normal normal normal 18px/24px Manrope;
-  text-transform: uppercase;
+.fw-800{
+  font-weight: 800 !important;
 }
 
-.gradient-background:hover {
-  background: transparent linear-gradient(97deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box !important;
-  font: normal normal normal 18px/24px Manrope;
-  text-transform: uppercase;
+.fw-600{
+  font-weight: 600 !important;
 }
-
-.bg-primary{
-  background-color: #5F8AFA !important;
-}
-
-.color-primary {
-  color: #5F8AFA !important;
-  border-color: #5F8AFA !important
-}
-
-.color-primary:hover {
-  color: #6B6EF9 !important;
-  border-color: #6B6EF9 !important
-}
-
-.bg-secondary {
-  background-color: #70ADCC !important
-}
-
-.color-secondary{
-  color: #70ADCC !important;
-  border-color: #70ADCC !important
-}
-
-.color-secondary:hover{
-  color: #70ADCC !important;
-  border-color: #70ADCC !important
-}
-
-.color-light-gray {
-  color: #C9C9C9 !important;
-  border-color: #C9C9C9 !important
-}
-
-.color-light-gray:hover {
-  color: #C9C9C9 !important;
-  border-color: #C9C9C9 !important
-}
-
-.background-light-gray {
-  background-color: #C9C9C9 !important;
-}
-
-.color-success{
-  color: #ABD055 !important;
-  border-color: #ABD055 !important
-}
-
-.bg-success{
-  background-color: #ABD055 !important
-}
-
-.color-danger {
-  color: #DB5555 !important;
-  border-color: #DB5555 !important
-}
-
-.bg-danger {
-  background-color: #DB5555 !important
-}
-
-.color-warning {
-  color: #FFC860 !important;
-  border-color: #FFC860 !important
-}
-
-.bg-warning {
-  background-color: #FFC860 !important
-}
-
-.color-dark{
-  color: #262626 !important;
-  border-color: #262626 !important
-}
-
-.bg-dark{
-  background-color: #262626 !important;
-}
-
-.color-info {
-  color: #A7A7A7 !important;
-  border-color: #A7A7A7 !important
-}
-
-.bg-info {
-  background-color: #A7A7A7 !important;
-}
-
-.color-muted {
-  color: #A7A7A7 !important;
-  border-color: #A7A7A7 !important
-}
-
-.bg-muted {
-  background-color: #A7A7A7 !important;
-}
-
 
 </style>

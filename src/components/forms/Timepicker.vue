@@ -11,7 +11,7 @@
         @blur="handleBlur($event), handleChange($event)"
         @input="handleBlur"
     />
-    <FromErrorMessage class="mt-3" :show="errorMessage !== null" :message="errorMessage"/>
+    <FromErrorMessage class="mt-3 mb-4" :show="errorMessage !== null" :message="errorMessage"/>
 
 </template>
 

@@ -41,6 +41,18 @@ cp <path_to_downloaded_ui_kit>/mdb-vue-ui-kit-1.4.0.tgz ./mdb
 npm install
 ```
 
+### Update MDB
+```
+vue add mdb5
+? Free or Pro version? Pro
+? Please enter your gitlab token: fXZGxzEqvyUHiWJopk6F
+? Add Roboto font? No
+? Add Font Awesome 5? No
+? Select the styling option: Editable in your project (SCSS)
+? Add MDB welcome page? No
+```
+
+
 ## Testing
 
 ### Unit test

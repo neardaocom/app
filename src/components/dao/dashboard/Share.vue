@@ -1,7 +1,7 @@
 <template>
     <div class="card text-start w-auto p-2" style="width: 18rem">
         <div class="card-body">
-        <h5> <i class="bi bi-pie-chart color-secondary me-2"></i>{{ t("default.my_share") }}</h5>
+        <h5> <i class="bi bi-pie-chart text-secondary me-2"></i>{{ t("default.my_share") }}</h5>
         <h1>
             <NumberFormatter class="ms-4 mt-3" :amount="myTokensShare"/>%
         </h1>
@@ -17,35 +17,31 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import NumberFormatter from "@/components/NumberFormatter.vue"
-import { ref, computed, toRefs, onMounted, onUnmounted } from 'vue'
+import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import { ref, computed, toRefs, onMounted, onUnmounted, inject } from 'vue'
 import Decimal from 'decimal.js'
+import DaoHelper from '@/models/dao/DaoHelper'
 // import Analytics from "@/models/analytics"
-// import { nowToSeconds } from '@/utils/date'
-import { isWalletInCouncil } from '@/models/dao'
 
 export default {
     components: {
         NumberFormatter
     },
     props: {
-        dao: {
-            type: Object,
-            required: true,
-        },
         walletId: {
             type: String,
             required: false,
         },
     },
     setup(props) {
-        const { dao, walletId } = toRefs(props)
+        const { walletId } = toRefs(props)
+        const dao = inject('dao')
         const { t } = useI18n()
 
         const myTokensAmount = computed(() => dao.value.treasury.token.owned);
         const myTokensShare = computed(() => (dao.value.treasury.token.owned > 0) ? new Decimal(dao.value.treasury.token.owned || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
 
-        const isCouncil = computed(() => isWalletInCouncil(dao.value, walletId.value, t));
+        const isCouncil = computed(() => DaoHelper.isWalletInCouncil(dao.value, walletId.value, t));
 
         // token unclock
         const token_council_to_unlock = ref(null)
@@ -81,7 +77,7 @@ export default {
         })
 
         return {
-            t, myTokensAmount, myTokensShare, isCouncil,
+            dao, t, myTokensAmount, myTokensShare, isCouncil,
             token_council_to_unlock,
         }
     }

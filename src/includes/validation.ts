@@ -5,6 +5,7 @@ import store from '@/store'
 import Decimal from 'decimal.js';
 import moment from 'moment'
 import loToNumber from "lodash/toNumber";
+import loIsNil from "lodash/isNil";
 
 const stringLocaleNumber = (value, [localeString]) => {
     if (localeString === 'en') {
@@ -16,12 +17,15 @@ const stringLocaleNumber = (value, [localeString]) => {
 
 const strIsNumber = (value) => {
     if (typeof value !== 'number')
-        return value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g)
+        return (value !== undefined && value.length > 0) ? value.match(/^-?\d+\.?\d*$|^\d*\.?\d+$/g) : true
     else
         return true
 }
 
 const strNumMin = (value, [min]) => {
+    if (loIsNil(value) || value == '') {
+        return true
+    }
     if (strIsNumber(value)){
         return new Decimal(value).gte(min)
     }
@@ -29,6 +33,9 @@ const strNumMin = (value, [min]) => {
 }
 
 const strNumMax = (value, [max]) => {
+    if (loIsNil(value) || value == '') {
+        return true
+    }
     if (strIsNumber(value)){
         return new Decimal(value).lte(max)
     }

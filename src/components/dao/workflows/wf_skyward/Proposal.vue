@@ -45,9 +45,8 @@ import { useForm } from 'vee-validate';
 import { useNear } from "@/hooks/vuex";
 import decimal from "decimal.js";
 import moment from 'moment'
-import { getAccountIdPostfix } from "@/services/nearService/utils"
-import { dateToChain, durationToChain } from "@/utils/near";
-import { generateStorageKey } from "@/models/proposal";
+import NearUtils from '@/models/nearBlockchain/Utils';
+import ProposalHelper from '@/models/dao/ProposalHelper';
 
 export default {
     components:{
@@ -71,14 +70,14 @@ export default {
             required: false
         },
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { t, d } = useI18n()
 
         const { contractId, template, proposalCount } = toRefs(props)
 
-        const { nearService, factoryAccount } = useNear()
+        const { nearService, adminAccountId } = useNear()
 
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
 
         const formatDate = t('default._datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
@@ -106,7 +105,7 @@ export default {
         })
 
         const onSubmit = handleSubmit(values => {
-            console.log('Skyward submit')
+            emit('isValid', true)
             nearService.value.addProposal(
                 null,
                 contractId.value,
@@ -118,13 +117,14 @@ export default {
                     { U128: decimal(values.amount).toFixed() },
                     { String: values.title },
                     { String: '' }, // url
-                    { U64: dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
-                    { U64: durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
+                    { U64: NearUtils.dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
+                    { U64: NearUtils.durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
                 ],
-                'wf_skyward-' + generateStorageKey(proposalCount.value),
+                'wf_skyward-' + ProposalHelper.generateStorageKey(proposalCount.value),
                 1.0
             )
         }, () => {
+            emit('isValid', false)
             console.log(errors.value)
         });
         

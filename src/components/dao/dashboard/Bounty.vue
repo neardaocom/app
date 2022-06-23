@@ -1,10 +1,13 @@
 <template>
-    <div v-if="bounties.length > 0" class="col-6 col-md-4 mb-4">
+    <div v-if="bounties.length > 0" class="col-12 col-md-4 mb-4">
         <div class="card text-start w-auto p-2" style="width: 18rem">
             <div class="card-body">
-                <h5> <i class="bi bi-cash-coin color-primary me-2"></i>{{ t("default.wf_templ_wf_bounty") }}</h5>
+                <h5> <i class="bi bi-cash-coin text-primary me-2"></i>{{ t("default.wf_templ_wf_bounty") }}</h5>
                 <ul v-for="(title, index) in titles" :key="index">
-                    <li v-html="title" />
+                    <li>
+                        <span v-html="title"></span>
+                        <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities', search: '#' + proposals[index].id }}" class="btn btn-outline-secondary btn-rounded btn-sm ms-1">{{ t('default.apply') }}</router-link>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -12,21 +15,13 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, toRefs } from "vue"
+import { inject, onMounted, onUnmounted } from "vue"
 import { useBounties } from "@/hooks/bounty"
 import { useI18n } from 'vue-i18n'
 
 export default {
-    components: {
-    },
-    props: {
-        dao: {
-            type: Object,
-            required: true,
-        }
-    },
-    setup(props) {
-        const { dao } = toRefs(props)
+    setup() {
+        const dao = inject('dao')
         const { t, d, n } = useI18n()
 
         const {
@@ -43,7 +38,7 @@ export default {
         })
 
         return {
-            t, bounties, proposals, titles
+            dao, t, bounties, proposals, titles
         }
     },
 }

@@ -1,4 +1,4 @@
-import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate, WFData } from "@/types/workflow"
+import { WFMetaTemplate, WFAction, WFInstance, WFSettings, WFTemplate, WFData } from "@/models/dao/types/workflow"
 import { rightMember, rightAnyone, rightTokenGroupCouncil, votingTokenWeightedLow } from "@/data/dao"
 import { 
   templateMetaWfNearSend,
@@ -12,13 +12,13 @@ import {
   templateMetaAddWorkflow,
   templateMetaSendFt,
   templateMetaBounty,
- } from "@/data/workflowMeta"
-import { toSearch } from "@/utils/string"
+ } from "@/models/dao/data/workflowMeta"
+import StringHelper from "@/models/utils/StringHelper"
 import moment from "moment"
-import { DAORights } from "@/types/dao"
-import { toObject } from "@/models/rights";
-import { getValueByCode } from "@/utils/generics"
-import { gasDefault, depositDefault } from "@/models/workflow";
+import { DAORights } from "@/models/dao/types/dao"
+import Rights from "@/models/dao/Rights";
+import GenericsHelper from "@/models/utils/GenericsHelper"
+import NearUtils from "@/models/nearBlockchain/Utils";
 
 export const templateMetas: Record<string, WFMetaTemplate> = {
   'wf_add': templateMetaAddWorkflow,
@@ -71,18 +71,19 @@ export const market: Record<string, unknown> = {
   }
 }
 
-export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: gasDefault, deposit: depositDefault, }
+export const actionDAOTreasurySendNear: WFAction = { id: 1, activityId: 1, method: 'treasury_send_near', gas: NearUtils.gasDefault, deposit: NearUtils.depositDefault, }
 
-export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: gasDefault, deposit: depositDefault, }
+export const actionDAOTreasurySendFt: WFAction = { id: 2, activityId: 1, method: 'treasury_send_ft', gas: NearUtils.gasDefault, deposit: NearUtils.depositDefault, }
 
 
-export const actionDAOGroupCreate: WFAction = {id: 3, activityId: 1, method: 'group_create', gas: gasDefault, deposit: depositDefault,}
-export const actionDAOGroupAddMember: WFAction = {id: 4, activityId: 1, method: 'group_add_member', gas: gasDefault, deposit: depositDefault,}
+export const actionDAOGroupCreate: WFAction = {id: 3, activityId: 1, method: 'group_create', gas: NearUtils.gasDefault, deposit: NearUtils.depositDefault,}
+export const actionDAOGroupAddMember: WFAction = {id: 4, activityId: 1, method: 'group_add_member', gas: NearUtils.gasDefault, deposit: NearUtils.depositDefault,}
 
 export const actionMetas: Record<string, WFAction> = {
   treasury_send_near: actionDAOTreasurySendNear,
 }
 
+/*
 export const templatePayoutSettings: WFSettings = {
   id: 1,
   proposeRights: [rightMember, rightAnyone],
@@ -94,7 +95,7 @@ export const templatePayoutSettings: WFSettings = {
     { actionId: 2, rights: [rightTokenGroupCouncil] },
   ]
 }
-
+*/
 /*
 export const templatePayout: WFTemplate = {
     id: 1,
@@ -122,7 +123,7 @@ export const templatePayout: WFTemplate = {
     ],
     startActivityIds: [1,2],
     endActivityIds: [1,2],
-    search: toSearch('Payout NEAR TOKEN'),
+    search: StringHelper.toSearch('Payout NEAR TOKEN'),
     settings: [ templatePayoutSettings ],
 }
 
@@ -313,9 +314,9 @@ export const worlflowTemplateSettingsBuilder = (
   depositProposeReturn: number
 ): Record<string, unknown> => ({
     transition_constraints: transitionConstraints,
-    allowed_proposers: canPropose.map((right) => toObject(right)),
-    allowed_voters: toObject(canVote),
-    activity_rights: activityRights.map((rights: DAORights[]) => rights.map((right) => toObject(right))),
+    allowed_proposers: canPropose.map((right) => Rights.toObject(right)),
+    allowed_voters: Rights.toObject(canVote),
+    activity_rights: activityRights.map((rights: DAORights[]) => rights.map((right) => Rights.toObject(right))),
     scenario: "TokenWeighted",
     duration: duration,
     quorum: quorum,

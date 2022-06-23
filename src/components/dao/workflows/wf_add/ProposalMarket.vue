@@ -41,21 +41,19 @@
 <script>
 import Select from "@/components/forms/Select.vue";
 import { useI18n } from "vue-i18n";
+import { inject } from "vue";
 //import { useStore } from 'vuex'
 import { computed, toRefs } from "@vue/reactivity";
 import { useForm } from "vee-validate";
-import { voteLevelToTranslate } from "@/models/dao";
-import { toTranslate } from "@/models/rights";
-import { DAORightsType } from "@/types/dao";
-import { useNear } from "@/hooks/vuex";
+import ProposalHelper from "@/models/dao/ProposalHelper"
+import Rights from "@/models/dao/Rights";
+import { DAORightsType } from "@/models/dao/types/dao";
+//import { useNear } from "@/hooks/vuex";
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from "lodash/split";
 //import loFind from "lodash/find";
-import loFill from "lodash/fill";
-import loMin from "lodash/min";
-import { getRandom } from "@/utils/integer";
-import moment from "moment";
-import { rightAnyone } from "@/data/dao";
+import loMax from "lodash/max";
+import { useMarket } from '@/hooks/market';
 
 export default {
   components: {
@@ -86,11 +84,17 @@ export default {
   setup(props) {
     const { template, contractId, dao, daoRights, price } = toRefs(props);
     const { t } = useI18n();
-    const { nearService } = useNear();
+    const loader = inject('loader')
+    const config = inject('config')
 
+    console.log(contractId)
+
+    const { market } = useMarket(loader, config)
+
+    // const { nearService } = useNear();
     //console.log('Template', template)
 
-    const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0]);
+    const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0]);
     const proposeRights = computed(() => {
       const rights = [];
       daoRights.value.forEach((right, index) => {
@@ -100,10 +104,11 @@ export default {
           right.type === DAORightsType.TokenHolder ||
           right.type === DAORightsType.Group
         ) {
-          const trans = toTranslate(right, dao.value.groups);
+          const trans = Rights.toTranslate(right, dao.value.groups);
           rights.push({
             text: t("default." + trans.key, trans.params),
             value: index,
+            type: right.type,
           });
         }
       });
@@ -113,7 +118,7 @@ export default {
     const voteRights = computed(() => {
       const rights = [];
       proposeRights.value.forEach((right) => {
-        if (right.value !== DAORightsType.TokenHolder) {
+        if (right.type !== DAORightsType.TokenHolder) {
           rights.push({
             ...right,
             disabled: true,
@@ -144,50 +149,8 @@ export default {
         const canPropose = canProposeArray.map(
           (right) => daoRights.value[right]
         );
-        const storageKey = `${template.value.name}-${template.value.id}-${getRandom(
-          1,
-          999
-        )}-${moment().valueOf()}`;
 
-        const loadTemplate = await nearService.value.providerGet(template.value.id) // TODO: try, catch
-        console.log(loadTemplate)
-        const numActivities = loadTemplate[0].activities.length - 1
-        const activitiesRights = loFill(Array(numActivities), [daoRights.value[values.activities_rights]])
-
-        // Bounty
-        if (template.value.code === 'wf_bounty') { // TODO: Move to code
-            console.log('Bounty')
-            activitiesRights[0] = [rightAnyone]
-        }
-
-        const transitionsConstraints = loadTemplate[0].transitions.map(
-          (trans) => {
-            return trans.map(() => {
-              return { transition_limit: 10, cond: null };
-            });
-          }
-        );
-
-        nearService.value.addWorkflow(
-          contractId.value,
-          0,
-          transitionsConstraints, //transition_constraints,
-          daoRights.value[values.can_vote],
-          canPropose,
-          activitiesRights,
-          '',
-          [{ U16: template.value.id }], //binds
-          storageKey, //storage_key: string, name wokflow, id, provider, date
-          dao.value.voteLevels[0].approveThreshold, // TODO: Resolve vote level
-          dao.value.voteLevels[0].quorum,
-          dao.value.voteLevels[0].duration.days,
-          dao.value.voteLevels[0].duration.hours,
-          dao.value.voteLevels[0].duration.minutes,
-          "0", //depositPropose
-          "0", //depositVote
-          0, //depositProposeReturn
-          loMin([price.value, 1.0])
-        );
+        market.value.install(dao.value, template.value.id, canPropose, daoRights.value[values.can_vote], {}, [daoRights.value[values.activities_rights]], loMax([price.value, 1.0]))
       },
       () => {
         console.log(errors.value);
@@ -201,6 +164,7 @@ export default {
       voteRights,
       activitiesRights,
       onSubmit,
+      market,
     };
   },
 };

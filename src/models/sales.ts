@@ -1,7 +1,6 @@
-import { Sale } from "@/services/refFinanceService/types";
-import { UnsupportedError } from "@/utils/error";
-import { parseNumber } from "@/utils/number";
-import { sharesValidator } from "@/utils/validators";
+import { Sale } from "@/models/services/refFinanceService/types";
+import { UnsupportedError } from "@/models/utils/errors";
+import NumberHelper from "@/models/utils/NumberHelper";
 
 /**
  * Transform data form source to object
@@ -19,11 +18,11 @@ import { sharesValidator } from "@/utils/validators";
                 id: sale.id,
                 title: 'default.pool',
                 url: 'https://app.ref.finance/pool/' + sale.id,
-                total_shares: parseNumber(sale.shares_total_supply),
+                total_shares: NumberHelper.parseNumber(sale.shares_total_supply),
                 shares: sale.shares,
                 token_account_ids: sale.token_account_ids,
-                amounts: [parseNumber(sale.amounts[0]), parseNumber(sale.amounts[1])],
-                fee: parseNumber(sale.total_fee)
+                amounts: [NumberHelper.parseNumber(sale.amounts[0]), NumberHelper.parseNumber(sale.amounts[1])],
+                fee: NumberHelper.parseNumber(sale.total_fee)
             }
             break;
         default:

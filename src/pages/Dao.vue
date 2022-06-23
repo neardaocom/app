@@ -16,7 +16,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :dao="dao" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
+        <Buttons v-if="loaded" :walletRights="walletRights" :daoRights="daoRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -25,16 +25,19 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && rPage === 'overview'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Voting v-if="loaded === true && rPage === 'voting'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Activities v-if="loaded === true && rPage === 'activities'" :dao="dao" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
-        <Treasury v-if="loaded === true && rPage === 'treasury'" :dao="dao" />
-        <DeFi v-if="loaded === true && rPage === 'defi'" :dao="dao" />
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Voting v-if="loaded === true && rPage === 'voting'" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <DeFi v-if="loaded === true && rPage === 'defi'"/>
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
-        <Documents v-if="loaded === true && rPage === 'documents'" :docs="dao.docs" />
-        <About v-if="loaded === true && rPage === 'about'" :dao="dao" />
-        <Settings v-if="loaded === true && rPage === 'settings'" :dao="dao" />
+        <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
+        <About v-if="loaded === true && rPage === 'about'" />
+        <Settings v-if="loaded === true && rPage === 'settings'"/>
+        <Treasury v-if="loaded === true && rPage === 'treasury'"/>
+        <Governance v-if="loaded === true && rPage === 'governance'"/>
+        <Rewards v-if="loaded === true && rPage === 'rewards'"/>
         <SkeletonBody v-if="loaded === false" />
+
       </div>
     </section>
     <!-- /Parts -->
@@ -44,77 +47,111 @@
 </template>
 
 <script>
-import About from '@/components/dao/About.vue'
+import About from './dao/About.vue'
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/dao/Breadcrumb.vue'
-import SkeletonBody from '@/components/dao/SkeletonBody.vue'
-import Buttons from '@/components/dao/Buttons.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
+import SkeletonBody from './dao/SkeletonBody.vue'
+import Buttons from './dao/Buttons.vue'
 import Title from '@/components/dao/Title.vue'
-import DeFi from '@/components/dao/DeFi.vue'
-import Dashboard from '@/components/dao/Dashboard.vue'
-import SkeletonButtons from '@/components/dao/SkeletonButtons.vue'
+import DeFi from './dao/DeFi.vue'
+import Dashboard from './dao/Dashboard.vue'
+import SkeletonButtons from './dao/SkeletonButtons.vue'
 import SkeletonTitle from '@/components/dao/SkeletonTitle.vue'
-import Treasury from '@/components/dao/Treasury.vue'
-import Tokens from '@/components/dao/Tokens.vue'
-import Voting from '@/components/dao/Voting.vue'
-import Documents from '@/components/dao/Documents.vue'
-import Activities from '@/components/dao/Activities.vue'
-import Settings from '@/components/dao/Settings.vue'
+import Tokens from './dao/Tokens.vue'
+import Voting from './dao/Voting.vue'
+import Resources from './dao/Resources.vue'
+import Activities from './dao/Activities.vue'
+import Settings from './dao/Settings.vue'
+import Treasury from './dao/Treasury.vue'
+import Governance from './dao/Governance.vue'
+import Rewards from './dao/Rewards.vue'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted } from 'vue'
-import { getRole, loadById } from "@/models/dao";
-import { getDAORights, getWalletRights } from '@/models/rights'
+import { ref, onMounted, provide, inject, onUnmounted } from 'vue'
+import Rights from '@/models/dao/Rights'
+import DaoLoader from '@/models/dao/DaoLoader'
+import DaoMarket from '@/models/dao/DaoMarket'
 import { useRouter } from "@/hooks/dao";
-import { useStore } from 'vuex'
-import { useNear } from "@/hooks/vuex";
+import { useDao } from "@/hooks/daoList";
+// import { useStore } from 'vuex'
+// import { useNear, useWallet } from "@/hooks/vuex";
+import { useRewards, useClaimableRewards } from "@/hooks/rewards";
 
 export default {
   components: {
-    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Treasury, Tokens, Documents, DeFi, Settings,
-    SkeletonButtons, SkeletonBody,
+    About, Activities, Header, Footer, Breadcrumb, Buttons, Dashboard, Voting, Tokens, Resources, DeFi, Settings,
+    SkeletonButtons, SkeletonBody, Governance, Treasury, Rewards,
     Title,
     SkeletonTitle,
   },
   setup() {
+    const config = inject('config')
+    const loader = inject('loader')
+    const wallet = inject('wallet')
+
     const { t } = useI18n()
-    const store = useStore()
-    const { nearService, wallet } = useNear()
-    const {rDaoId, rPage, rSearch, rOrder} = useRouter()
+    const {rDaoId, rPage, rSearch, rOrder} = useRouter(config)
+    const { daoInfo } = useDao(rDaoId.value)
+
+
     const dao = ref({tags: []})
+    const templateMeta = ref([])
     const loaded = ref(false)
     const daoRights = ref([])
     const walletRights = ref([])
 
-    onMounted(() => {
-      store.commit('near/setContract', rDaoId.value)
-      loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
-        .then(r => {
-          // console.log('load DAO', r)
-          //this.dao_state = r
-          dao.value = r
-          loaded.value = true
-          daoRights.value = getDAORights(r)
-          walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
-          // console.log(this.walletRights)
-        })
-        .catch((e) => {
-          //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-          //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-          //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
-          //this.$notify.flush()
-          console.log(e)
-        })
+    provide('dao', dao)
+    provide('daoRights', daoRights)
+    provide('walletRights', walletRights)
+    provide('templateMeta', templateMeta)
+
+    const { daoRewards } = useRewards(dao, loader)
+    const {
+      rewardsClaimable, rewardsLoadClaimable, rewardsAssetStats,
+      rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsLoadTurnOn, rewardsLoadTurnOff,
+      rewardsCounting, rewardsCountingIntervalId, rewardsCountingTurnOn, rewardsCountingTurnOff,
+    } = useClaimableRewards(
+      dao, wallet, daoRewards, loader
+    )
+    provide('rewardsClaimable', rewardsClaimable)
+    provide('rewardsAssetsStats', rewardsAssetStats)
+
+    onMounted(async () => {
+      // const daoFactory = await loader?.value.get('dao/Factory')
+      // const servicePool = daoFactory.value.createServicePool();
+      const servicePool = await loader?.value.get('dao/ServicePool')
+      const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
+      dao.value = await daoLoader.getDao(wallet.value?.accountId)
+
+      // load templates metadata
+      const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value)
+      templateMeta.value = await daoMarket.list([], t) || []
+
+      //console.log(dao.value)
+      loaded.value = true
+      daoRights.value = Rights.getDAORights(dao.value)
+      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.accountId)
+
+      // rewards
+      rewardsLoadClaimable()
+      rewardsCounting()
+      rewardsLoadTurnOn()
+      rewardsCountingTurnOn()
     })
 
-    return { t, rDaoId, rPage, rSearch, rOrder, dao, loaded, daoRights, wallet, walletRights }
+    onUnmounted(() => {
+      rewardsLoadTurnOff()
+      rewardsCountingTurnOff()
+    })
+
+    return {
+      t, rDaoId, rPage, rSearch, rOrder, dao, daoInfo, loaded, daoRights, wallet, walletRights,
+      daoRewards, rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsCountingIntervalId,
+    }
   },
   computed: {
     accountId() {
       return this.$store.getters["near/getAccountId"];
-    },
-    accountRole() {
-      return getRole(this.dao, this.wallet.getAccountId())
     },
   },
   methods: {
@@ -123,17 +160,17 @@ export default {
 </script>
 
 <style>
-  .title_background_image{
-    background-image: url("/img/cover.png");
+  .title-background-image {
+    background-image: url("/img/cover_cropt.png");
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }
-  .buttons_nav{
+  .buttons_nav {
     background-color: white;
      border-radius: 0px 0px 8px 8px;
   }
 
-  .buttons_dropdown{
+  .buttons_dropdown {
     border-radius: 0px 0px 8px 0px;
   }
 </style>

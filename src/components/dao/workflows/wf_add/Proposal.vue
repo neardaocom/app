@@ -43,20 +43,20 @@ import { useI18n } from 'vue-i18n';
 //import { useStore } from 'vuex'
 import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { voteLevelToTranslate } from "@/models/dao"
-import { toTranslate } from "@/models/rights";
-import { DAORightsType } from '@/types/dao';
+import ProposalHelper from "@/models/dao/ProposalHelper"
+import Rights from "@/models/dao/Rights";
+import { DAORightsType } from '@/models/dao/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
 import { useNear, useIPFS } from "@/hooks/vuex";
 import { inject } from '@vue/runtime-core';
-import { makeFileFromString } from "@/services/ipfsService/IpfsService.js"
+import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
 import loFill from 'lodash/fill'
-import { getRandom } from '@/utils/integer'
+import IntegerHelper from '@/models/utils/IntegerHelper'
 import moment from 'moment'
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { rightAnyone } from "@/data/dao";
@@ -85,7 +85,7 @@ export default {
             required: true
         }
     },
-    setup (props) {
+    setup (props, {emit}) {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
         const { nearService, accountId } = useNear()
@@ -97,12 +97,12 @@ export default {
         const workflowsToAdd = ref([])
         const refWysiwyg = ref(null)
 
-        const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0])
+        const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0])
         const proposeRights = computed(() => { 
             const rights = []
             daoRights.value.forEach((right, index) => {  
                 if(right.type === DAORightsType.Anyone || right.type === DAORightsType.Member || right.type ===  DAORightsType.TokenHolder ||  right.type === DAORightsType.Group ){
-                    const trans = toTranslate(right, dao.value.groups)
+                    const trans = Rights.toTranslate(right, dao.value.groups)
                     rights.push({text: t('default.' + trans.key, trans.params), value: index})
                 }
             })
@@ -149,10 +149,11 @@ export default {
         })
 
         const onSubmit = handleSubmit(async (values) => {
+            emit('isValid', true)
             const canProposeArray = loSplit(values.can_propose, ',')
             const canPropose = canProposeArray.map((right) => (daoRights.value[right]))
             const workflowName = loFind(workflowsToAdd.value, { 'value': values.workflow })
-            const storageKey = `${workflowName.text}-${values.workflow}-${getRandom(1, 999)}-${moment().valueOf()}`
+            const storageKey = `${workflowName.text}-${values.workflow}-${IntegerHelper.getRandom(1, 999)}-${moment().valueOf()}`
 
             // load templete, to count number of activities
             const loadTemplate = await nearService.value.providerGet(values.workflow) // TODO: try, catch
@@ -176,7 +177,7 @@ export default {
             if(refWysiwyg.value.getCode()){
                 try {
                     const name = `${accountId.value}-wf_add-proposal-desc-${moment().valueOf()}`
-                    ipfs_cid = await ipfsService.value.storeFiles(makeFileFromString(refWysiwyg.value.getCode(), name), name)
+                    ipfs_cid = await ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), name), name)
                 } catch(e){
                     //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
                     //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
@@ -202,13 +203,14 @@ export default {
                 dao.value.voteLevels[0].duration.days,
                 dao.value.voteLevels[0].duration.hours,
                 dao.value.voteLevels[0].duration.minutes,
-                '0', //depositPropose
+                '1', //depositPropose
                 '0', //depositVote
                 0, //depositProposeReturn
                 1.0
             )
         }, () => {
-                console.log(errors.value)
+            emit('isValid', false)
+            console.log(errors.value)
         });
         
 

@@ -1,4 +1,4 @@
-import { convertArrayOfObjectToObject } from '@/utils/array'
+import { convertArrayOfObjectToObject } from '@/models/utils/array'
 
 test('convertArrayOfObjectToObject', () => {
     const test1 = [{code: 'name', value: 'Petr'}, {code: 'amount', value: 20}]

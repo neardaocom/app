@@ -21,7 +21,20 @@ const routes = [
   {
     path: '/create',
     name: 'dao-create',
-    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreate2.vue'),
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreate.vue'),
+    beforeEnter: (to: any, from: any, next: any) => {
+      if (store.getters['near/isSignedIn']) {
+        next()
+      } else {
+        store.commit('near/signIn', {successUrl: window.location.origin + to.fullPath, errorUrl: window.location.origin + '/error'})
+        next(false)
+      }
+    }
+  },
+  {
+    path: '/creating',
+    name: 'dao-creating',
+    component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreating.vue'),
     beforeEnter: (to: any, from: any, next: any) => {
       if (store.getters['near/isSignedIn']) {
         next()

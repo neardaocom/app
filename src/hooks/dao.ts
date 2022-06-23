@@ -1,18 +1,19 @@
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
-import { DAO, DAORights } from "@/types/dao";
+import { computed, ref, Ref } from "vue";
+import { DAO, DAORights } from "@/models/dao/types/dao";
 import loGet from "lodash/get";
-import { Translate } from "@/types/generics";
-import { getGroupCouncil } from '@/models/dao'
-import { getDAORights, toTranslate, getWalletRights } from '@/models/rights'
-import Decimal from "decimal.js";
-import { getFile } from "@/models/document"
+import { Translate } from "@/models/utils/types/generics";
+import Rights from '@/models/dao/Rights'
+import DocsHelper from "@/models/dao/DocsHelper"
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { Config } from "@/config";
+import loIsNil from 'lodash/isNil'
+import CollectionHelper from "@/models/utils/CollectionHelper";
+import GroupHelper from "@/models/dao/GroupHelper";
 
-export const useRouter = () => {
+export const useRouter = (config: Config) => {
     const route = useRoute()
-    const rDaoId = computed(() => loGet(route, ['params', 'id']) ?? process.env.VUE_APP_DAO_DEFAULT)
+    const rDaoId = computed(() => loGet(route, ['params', 'id']) ?? config.app.daoDefault)
     const rPage = computed(() => loGet(route, ['query', 'page']) ?? 'overview')
     const rSearch = computed(() => loGet(route, ['query', 'search']))
     const rOrder = computed(() => loGet(route, ['query', 'order']))
@@ -23,15 +24,15 @@ export const useRouter = () => {
 }
 
 export const useLinks = (dao: DAO) => {
-    const web = getFile(dao.docs, 'Web', 'Fundamental', 'url')
-    const whitepaper = getFile(dao.docs, 'Whitepaper', 'Fundamental', 'url')
-    const wiki = getFile(dao.docs, 'Wiki', 'Fundamental', 'url')
-    const sourceCode = getFile(dao.docs, 'Source code', 'Fundamental', 'url')
-    const kycStatus = getFile(dao.docs, 'Legal status', 'KYC', 'url')
-    const kycDocument = getFile(dao.docs, 'Legal document', 'KYC', 'url')
-    const socialTwitter = getFile(dao.docs, 'Twitter', 'Social', 'url')
-    const socialFacebook = getFile(dao.docs, 'Facebook', 'Social', 'url')
-    const chatDiscord = getFile(dao.docs, 'Discord', 'Chat', 'url')
+    const web = DocsHelper.getFile(dao.docs, 'Web', 'Fundamental', 'url')
+    const whitepaper = DocsHelper.getFile(dao.docs, 'Whitepaper', 'Fundamental', 'url')
+    const wiki = DocsHelper.getFile(dao.docs, 'Wiki', 'Fundamental', 'url')
+    const sourceCode = DocsHelper.getFile(dao.docs, 'Source code', 'Fundamental', 'url')
+    const kycStatus = DocsHelper.getFile(dao.docs, 'Legal status', 'KYC', 'url')
+    const kycDocument = DocsHelper.getFile(dao.docs, 'Legal document', 'KYC', 'url')
+    const socialTwitter = DocsHelper.getFile(dao.docs, 'Twitter', 'Social', 'url')
+    const socialFacebook = DocsHelper.getFile(dao.docs, 'Facebook', 'Social', 'url')
+    const chatDiscord = DocsHelper.getFile(dao.docs, 'Discord', 'Chat', 'url')
 
     return {
         web, whitepaper, wiki, sourceCode,
@@ -41,33 +42,42 @@ export const useLinks = (dao: DAO) => {
     }
 }
 
-export const useGroups = (dao: DAO) => {
+export const useGroups = (dao: Ref<DAO>) => {
     const { t } = useI18n()
 
-    const council = computed(() => getGroupCouncil(dao, t))
-    const councilPercent = computed(() => (council.value && council.value.token) ? new Decimal(council.value.token.locked ?? 0).div(dao.treasury.token.meta.amount ?? 1).mul(100).round().toNumber() : undefined)
+    const council = computed(() => GroupHelper.getGroupCouncil(dao.value, t))
+    const councilPercent = computed(() => undefined) // TODO: Move to lock
+    const groupsOptions =  computed(() => CollectionHelper.toOptions(dao.value.groups, ['name'], ['id']))
 
     return {
-        council, councilPercent
+        council, councilPercent, groupsOptions
     }
 }
 
-export const useStats = (dao: DAO) => {
-    const users = computed(() => dao.tokenHolders.length)
+export const useLocks = (dao: Ref<DAO>) => {
+    const locksOptions = computed(() => CollectionHelper.toOptions(dao.value.treasuryLocks, ['name'], ['id']))
 
     return {
-        users
+        locksOptions
     }
 }
 
-export const useRights = (dao: DAO, walletId?: string) => {
+export const useStats = (dao: Ref<DAO>) => {
+    const users = computed(() => dao.value.members.length)
+    const groupNames = computed(() => dao.value.groups.map((group) => group.name))
+
+    return {
+        users, groupNames
+    }
+}
+
+export const useRights = (dao: Ref<DAO>, walletId?: string) => {
     const { t } = useI18n()
-    const rights = getDAORights(dao)
-    const daoRights = ref(rights)
-    const walletRights = ref<DAORights[]>(getWalletRights(dao, walletId))
+    const daoRights = computed(() => loIsNil(dao.value) === false ? Rights.getDAORights(dao.value) : [])
+    const walletRights = computed(() => loIsNil(dao.value) === false && loIsNil(walletId) === false ? Rights.getWalletRights(dao.value, walletId) : [])
     
-    const daoRightsOptions = ref(rights.map((right, index) => {
-        const trans: Translate = toTranslate(right, dao.groups)
+    const daoRightsOptions = computed(() => daoRights.value.map((right, index) => {
+        const trans: Translate = Rights.toTranslate(right, dao.value.groups)
         return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
     }))
 

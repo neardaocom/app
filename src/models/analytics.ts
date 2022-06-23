@@ -1,8 +1,8 @@
-import { ParseError, UnsupportedError, InvalidInputError } from "@/utils/error";
-import { nowToSeconds, parseSeconds, toSeconds } from '@/utils/date'
+import { ParseError, UnsupportedError, InvalidInputError } from "@/models/utils/errors";
+import DateHelper from '@/models/utils/DateHelper'
 import Decimal from "decimal.js";
 import moment, { duration } from "moment";
-import _ from "lodash"
+import loClone from "lodash/clone"
 
 enum Period {
     Day,
@@ -133,20 +133,20 @@ const getPeriodStep = (date: Date, period: Period): Date => {
 const computeUnlockingCashflow = (algorithm: Algorithm, settings: any, period: Period, begin: Date): Cashflow[] => {
     const list: Cashflow[] = []
     let computed: number = 0
-    let increment: Date = _.clone(begin)
-    const limit: Date = parseSeconds(settings.release_end)
+    let increment: Date = loClone(begin)
+    const limit: Date = DateHelper.parseSeconds(settings.release_end)
     let check_loop: number = 0
     while (increment < limit && check_loop < 10000) {
-        computed = computeUnlocking(algorithm, toSeconds(increment), settings)
-        list.push({date: _.clone(increment), value: computed})
+        computed = computeUnlocking(algorithm, DateHelper.toSeconds(increment), settings)
+        list.push({date: loClone(increment), value: computed})
         increment = getPeriodStep(increment, period)
         check_loop += 1
     }
     // add last
     const lastComputed = computed
-    computed = computeUnlocking(algorithm, toSeconds(increment), settings)
+    computed = computeUnlocking(algorithm, DateHelper.toSeconds(increment), settings)
     if (lastComputed < computed) {
-        list.push({date: _.clone(increment), value: computed})
+        list.push({date: loClone(increment), value: computed})
     }
     return list
 }

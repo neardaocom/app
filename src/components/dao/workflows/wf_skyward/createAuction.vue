@@ -4,7 +4,7 @@
     <!-- TokenId -->
     <InputString :labelName="t('default.token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
     <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="{tokenName}"/>
+    <InputNumber :labelName="t('default.amount')" id="amount" :addon="{tokenName}"/>
 
     <!-- From -->
     <div class="row">
@@ -29,12 +29,13 @@
 </template>
 
 <script>
-import InputString from '@/components/forms/InputString.vue'
+// eslint-disable-next-line no-unused-vars
 import InputNumber from '@/components/forms/InputNumber.vue'
+import InputString from '@/components/forms/InputString.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { getAccountIdPostfix } from "@/services/nearService/utils"
+import NearUtils from "@/models/nearBlockchain/Utils";
 import moment from 'moment'
 import { useNear } from '@/hooks/vuex';
 
@@ -55,9 +56,9 @@ export default {
     setup () {
         const {t} = useI18n()
 
-        const {factoryAccount} = useNear()
+        const {adminAccountId} = useNear()
 
-        const accountPostfix = computed(() => getAccountIdPostfix(factoryAccount.value))
+        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
         //const nearService = computed(() => (store.getters['near/getService']))
         //const accountId = computed(() => ( store.getters['near/getAccountId']))
 

@@ -37,11 +37,6 @@ export default {
     },
     setup () {
         const {t} = useI18n()
-        //const store = useStore()   
-
-        //const factoryAccount = computed(() => (store.getters['near/getFactoryAccount']))
-        //const nearService = computed(() => (store.getters['near/getService']))
-        //const accountId = computed(() => ( store.getters['near/getAccountId']))
 
         const description = ref('')
 

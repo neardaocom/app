@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import Widget from "@/components/widget/skywardFinance/Widget.vue"
-import { onMounted, onUnmounted, toRefs, computed } from "vue"
+import Widget from "@/components/skywardFinance/Widget.vue"
+import { onMounted, onUnmounted, toRefs, computed, inject } from "vue"
 import { useStore } from "vuex"
 import { useSkywardFinanace } from "@/hooks/auction"
 
@@ -21,10 +21,6 @@ export default {
             required: true,
             default: 'all'
         },
-        dao: {
-            type: Object,
-            required: true,
-        },
         salesIds: {
             type: Array,
             required: true,
@@ -32,7 +28,7 @@ export default {
     },
     setup(props) {
         const { scenario, salesIds } = toRefs(props)
-
+        const dao = inject('dao')
         const store = useStore()
 
         const account = computed(() => store.getters['near/getAccount'])
@@ -61,8 +57,7 @@ export default {
         )
 
         return {
-            skywardService, skywardSalesIds, skywardList, skywardInterval,
-            sales,
+            dao, skywardService, skywardSalesIds, skywardList, skywardInterval, sales
         }
     },
 }

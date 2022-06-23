@@ -1,8 +1,8 @@
 <template>
-  <Header :daoId="rDaoId"></Header>
+  <Header :daoId="rDaoId" ></Header>
   <main>
     <MDBContainer>
-      <Breadcrumb :daoId="rDaoId" />
+      <Breadcrumb :daoId="rDaoId" listName="market" />
     </MDBContainer>
 
     <MDBContainer>
@@ -11,19 +11,7 @@
 
         <div  class="row mt-5">
           <div class="col-6 col-md-4 col-lg-3">
-            <MDBInput
-              inputGroup
-              formOutline
-              wrapperClass="mb-3 my_filter_form"
-              v-model="filterSearch"
-              size="sm"
-              aria-describedby="search-addon"
-              :aria-label="t('default.search')"
-            >
-              <template #prepend>
-                <span class="input-group-text border-0" id="search-addon"><MDBIcon icon="search" iconStyle="fas" /></span>
-              </template>
-            </MDBInput>
+            <Search v-model="filterSearch"/>
           </div>
           <div class="col-12 col-md-4 col-lg-7 text-start pt-1 ps-4">
           </div>
@@ -33,69 +21,29 @@
         </div>
 
 
-      <div class="row mb-4">
-        <MDBCard>
-          <MDBCardBody>
-            <MDBCardText>
-              <MDBTable responsive borderless striped>
-                <thead>
-                  <tr>
-                    <!-- <th scope="col"></th>-->
-                    <th scope="col">#</th>
-                    <th scope="col" class="text-start">{{ t('default.name') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.description') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.creator') }}</th>
-                    <th scope="col" class="text-start">{{ t('default.version') }}</th>
-                    <th scope="col" class="text-start"></th>
-                  </tr>
-                </thead>
-                <tbody>
+        <MDBProgress class="my-2">
+          <MDBProgressBar bg="secondary" :value="fetchProgress" />
+        </MDBProgress>
 
-                  <tr>
-                    <td colspan="7" class="p-0">
-                      <MDBProgress class="my-1">
-                        <MDBProgressBar bg="secondary" :value="fetchProgress" />
-                      </MDBProgress>
-                    </td>
-                  </tr>
+        <h5 v-if="dao" class="text-start mt-5">Owned sevices</h5>
+        <div class="row gx-5 mt-3">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status === t('default.installed'))" :key="index">
+            <TemplateCard :template="template" @btn-click="open" />
+          </div>
+        </div> 
 
-                  <tr v-for="(template, index) in dataResults" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td class="text-start">
-                      <router-link v-if="false" class="h6" :to="{ name: 'market-workflow', params: {id: template.id}}">{{ template.name }}</router-link>
-                      <span v-else class="h6">{{ t('default.wf_templ_' + template.code) }}</span>
-                    </td>
-                    <td class="text-start">{{ t('default.wf_templ_' + template.code + '_description') }}</td>
-                    <td class="text-start">{{ creator.name }}</td>
-                    <td class="text-start">v{{ template.version }}.0</td>
-                    <td class="text-start">
-                      <button
-                        v-if="template.status === t('default.buy')"
-                        type="button" class="btn btn-rounded px-4 py-1 btn-buy fw-bold"
-                        @click.prevent="open(template)"
-                      ><i class="bi bi-cart me-2 fa-lg"></i>{{ template.status }} {{ getPrice(template.code) }}</button>
-                      <button
-                        v-else-if="template.status === t('default.installed')"
-                        type="button" class="btn btn-rounded px-4 py-1 btn-installed fw-bold"
-                        @click.prevent=""
-                      ><i class="bi bi-check-circle me-2 fa-lg"></i>{{ template.status }}</button>
-                      <button
-                        v-else
-                        type="button" class="btn btn-rounded px-4 py-1 btn-in-progress fw-bold"
-                      ><i class="bi bi-clock me-2 fa-lg"></i>{{ template.status }}</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </MDBTable>
-            </MDBCardText>
-          </MDBCardBody>
-        </MDBCard>
-      </div>
+        <h5 class="text-start mt-5">Services to buy</h5>
+        <div class="row gx-5 mt-3">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status !== t('default.installed'))" :key="index">
+            <TemplateCard :template="template" @btn-click="open"/>
+          </div>
+        </div>
+
     </MDBContainer>
   </main>
 
   <!-- Modals -->
-  <ModalProposal :title="modalTitle" :show="modalProposal" @vote="vote()">
+  <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote()" :submitText="t('default.vote')" size="lg">
     <AddWorkflow ref="form" v-bind="modalProps" />
   </ModalProposal>
 
@@ -109,82 +57,70 @@
 <script>
 import Header from '@/components/layout/Header.vue'
 import Footer from '@/components/layout/Footer.vue'
-import Breadcrumb from '@/components/market/Breadcrumb.vue'
+import Breadcrumb from '@/components/ui/Breadcrumb.vue'
 import {
-  MDBContainer, MDBTable, MDBProgress, MDBProgressBar,
-  MDBCard, MDBCardBody, MDBCardText, MDBInput,
-  MDBIcon,
+  MDBContainer,
+  MDBProgress, 
+  MDBProgressBar,
   MDBSelect,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplateList, useCreators } from "@/hooks/workflow";
-import { onMounted, watch, ref } from 'vue'
-import { useRouter } from "@/hooks/dao";
-import { useNear } from '@/hooks/vuex'
-import { useStore } from 'vuex'
+import { useTemplateList } from "@/hooks/workflow";
+import { onMounted, watch, ref, inject } from 'vue'
+import { useRights, useRouter } from "@/hooks/dao";
+// import { useNear } from '@/hooks/vuex'
+// import { useStore } from 'vuex'
 import { market } from "@/data/workflow";
 import loGet from "lodash/get";
 import loFind from "lodash/find";
-import { loadById } from "@/models/dao";
-import { check, getDAORights, getWalletRights } from '@/models/rights'
-// import { getDAORights } from '@/models/rights'
-import ModalProposal from '@/components/forms/ModalProposal.vue'
+// import { loadById } from "@/models/dao";
+import Rights from '@/models/dao/Rights'
+// import { Rights.getDAORights } from '@/models/rights'
+import ModalProposal from '@/components/proposal/Modal.vue'
 import AddWorkflow from '@/components/dao/workflows/wf_add/ProposalMarket.vue'
 import ModalMessage from '@/components/forms/ModalMessage.vue'
+import TemplateCard from '@/components/market/TemplateCard.vue'
+import Search from "@/components/ui/Search.vue"
+import { useWallet } from '@/hooks/wallet'
+import DaoLoader from '@/models/dao/DaoLoader'
+import { useDao } from "@/hooks/daoList";
 
 export default {
   components: {
-    Header, Breadcrumb, Footer, MDBContainer, MDBTable
-    , MDBProgress, MDBProgressBar
-    , MDBCard, MDBCardBody, MDBCardText
-    , MDBIcon
-    , MDBInput
-    , MDBSelect
-    , ModalProposal, ModalMessage, AddWorkflow,
+    Header, Breadcrumb, Footer, MDBContainer,
+    MDBProgress, MDBProgressBar,
+    MDBSelect,
+    ModalProposal, ModalMessage, AddWorkflow,
+    TemplateCard, Search
   },
   setup() {
     const { t, n } = useI18n()
-    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList()
-    const { creator, provider } = useCreators()
-    const store = useStore()
-    const { nearService, wallet } = useNear()
-    const { rDaoId } = useRouter()
+    const { rDaoId } = useRouter(config)
+    const config = inject('config')
+    const loader = inject('loader')
+    const dao = ref(null)
+    const { wallet } = useWallet(loader)
+    const { daoInfo } = useDao(rDaoId.value)
+    const { daoRights, walletRights } = useRights(dao, wallet.value?.getAccountId())
+    const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList(loader, config)
     const daoTemplatesCodes = ref([])
-    const dao = ref({})
-    const daoRights = ref([])
-    const walletRights = ref([])
 
     const modalProposal = ref(0)
     const modalTitle = t('default.wf_templ_wf_add')
     const modalProps = ref({})
     const modalMessage = ref(0)
 
-    onMounted(() => {
+    onMounted(async () => {
       if (rDaoId.value) {
-        store.commit('near/setContract', rDaoId.value)
+        // fetch dao
+        const servicePool = await loader?.value.get('dao/ServicePool')
+        const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
+        dao.value = await daoLoader.getDao(wallet.value?.getAccountId())
+        console.log(dao.value)
+        daoTemplatesCodes.value = Object.values(dao.value.templates).map((template) => template.code)
 
-        loadById(nearService.value, rDaoId.value, t, wallet.value?.getAccountId())
-          .then(r => {
-            dao.value = r
-            daoRights.value = getDAORights(r)
-            walletRights.value = getWalletRights(r, wallet.value?.getAccountId())
-          })
-          .catch((e) => {
-            //this.$logger.error('D', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-            //this.$logger.error('B', 'app@pages/Dao', 'GetDao', `Dao with id [${this.rDaoId}] failed to load`)
-            //this.$notify.danger(this.t('default.notify_dao_load_fail_title'), this.t('default.notify_blockchain_fail') + " " + this.t('default.notify_dao_load_fail_message', {id: this.rDaoId}))
-            //this.$notify.flush()
-            console.log(e)
-          })
-
-        nearService.value.getWfTemplates(rDaoId.value).then(r => {
-          // daoTemplatesCodes
-          r.forEach((template) => {
-            daoTemplatesCodes.value.push(template[1][0].name)
-          })
-
-          fetch(daoTemplatesCodes.value)
-        })
+        // fetch templates
+        fetch(daoTemplatesCodes.value)
       } else {
         fetch([])
       }
@@ -193,8 +129,8 @@ export default {
     watch([filterSearch, filterOrder], () => { filter() })
 
     return {
-      t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
-      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights,
+      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
+      rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights, wallet,
     }
   },
   methods: {
@@ -204,10 +140,9 @@ export default {
     },
     open(template){
       if (this.rDaoId) {
-        const rights = loFind(this.dao.templates, {code: 'wf_add'})?.settings[0].proposeRights ?? []
-        if (check(this.walletRights, rights)) {
-          this.modalProposal += 1
-          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.code) + ' ' + this.t('default.feature')
+        const rights = loFind(this.dao.templates, {code: 'basic_pkg1'})?.settings[0].proposeRights ?? []
+        if (Rights.check(this.walletRights, rights)) {
+          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.value.code) + ' ' + this.t('default.feature')
           this.modalProps = {
             template: template,
             contractId: this.rDaoId,
@@ -215,6 +150,7 @@ export default {
             daoRights: this.daoRights,
             price: loGet(market, [template.code])?.price ?? 0,
           }
+          this.modalProposal += 1
         } else {
           console.log('no rights')
         }
@@ -228,27 +164,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.btn-buy {
-    color: #FFFFFF;
-    text-transform: none;
-    background: transparent linear-gradient(112deg, #5F8AFA 0%, #6B6EF9 100%) 0% 0% no-repeat padding-box;
-    width: 90%;
-}
-.btn-installed {
-    color: #FFFFFF;
-    text-transform: none;
-    /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #ABD085 0%, #ABD085 100%) 0% 0% no-repeat padding-box;
-    /*ABD085  */
-    width: 90%;
-}
-.btn-in-progress {
-    color: #FFFFFF;
-    text-transform: none;
-    /* background: transparent linear-gradient(297deg, #ABD055 0%, #CDE39D 100%) 0% 0% no-repeat padding-box;*/
-    background: transparent linear-gradient(297deg, #FFC870 0%, #FFC870 100%) 0% 0% no-repeat padding-box;
-    width: 90%;
-}
-</style>
