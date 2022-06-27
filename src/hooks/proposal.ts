@@ -40,7 +40,7 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
             // TODO: logger, notify
             //this.$logger.error('D', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
             //this.$logger.error('B', 'app@components/dao/Proposal', 'Vote-blockchain', `User [${this.accountId}] could not vote in the proposal [${this.proposal.id}]`)
-            //this.$notify.danger(this.t('default.notify_proposal_voting_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_voting_fail_message' , {proposal: this.proposal.title}))
+            //this.$notify.danger(this.t('notify_proposal_voting_fail_title'), this.t('notify_blockchain_fail') + " " +  this.t('notify_proposal_voting_fail_message' , {proposal: this.proposal.title}))
             //this.$notify.flush()
             console.log(e);
         });
@@ -51,7 +51,7 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
             // TODO: logger, notify
             //this.$logger.error('D', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
             //this.$logger.error('B', 'app@components/dao/Proposal', 'Finalize-blockchain', `User [${this.accountId}] could not finalize proposal [${this.proposal.id}`)
-            //this.$notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+            //this.$notify.danger(this.t('notify_proposal_finalize_fail_title'), this.t('notify_blockchain_fail') + " " +  this.t('notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
             //this.$notify.flush()
             console.log(e);
         });

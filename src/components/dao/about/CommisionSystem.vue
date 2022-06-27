@@ -4,23 +4,23 @@
          <div class="d-flex">
             <MDBCardTitle>
                <i class="bi bi-cash-coin text-gradient-180 me-1"/>
-               {{t('default.commission_system')}}
+               {{t('commission_system')}}
             </MDBCardTitle>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
          <div v-if="rewardsSalary.length > 0" class="m-4">
-            <h5>{{t('default.salary')}}</h5>
+            <h5>{{t('salary')}}</h5>
             <RewardsTable :rewards="rewardsSalary"/>
          </div>
          <div v-if="rewardsActivity.length > 0" class="m-4">
-            <h5>{{t('default.activity')}}</h5>
+            <h5>{{t('activity')}}</h5>
             <RewardsTable :rewards="rewardsActivity"/>
          </div>
          <div v-if="rewardsEvent.length > 0" class="m-4">
-            <h5>{{t('default.event')}}</h5>
+            <h5>{{t('event')}}</h5>
             <RewardsTable :rewards="rewardsEvent"/>
          </div>
-         <NoData v-if="rewardsSalary.length === 0 && rewardsActivity.length === 0 && rewardsEvent.length === 0" :text="t('default.no_commision_system')" hint="This is a hint" />
+         <NoData v-if="rewardsSalary.length === 0 && rewardsActivity.length === 0 && rewardsEvent.length === 0" :text="t('no_commision_system')" hint="This is a hint" />
       </MDBCardBody>
    </MDBCard>
 </template>

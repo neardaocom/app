@@ -1,5 +1,5 @@
 <template>
-   <Select :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <Select :labelName="t('delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
 </template>
 
 <script>

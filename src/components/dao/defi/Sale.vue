@@ -1,9 +1,9 @@
 <template>
  <MDBCard text="start">
-    <MDBCardHeader>{{`${t('default.reffinance')} ${t('default.pool')}`}}</MDBCardHeader>
+    <MDBCardHeader>{{`${t('reffinance')} ${t('pool')}`}}</MDBCardHeader>
     <MDBCardBody>
         <MDBCardTitle>
-            <a :href="sale.url" target="_blank">{{`${t('default.pool')} ${sale.id}`}} </a>
+            <a :href="sale.url" target="_blank">{{`${t('pool')} ${sale.id}`}} </a>
         </MDBCardTitle>
         <div class="d-flex justify-content-between">
             <h4>{{ daoTokenName}}</h4> 
@@ -16,23 +16,23 @@
         <hr class="mt-0 mb-3"/>
         <MDBCardText>
             <div class="d-flex justify-content-between">
-                <h6>{{t('default.fee')}}</h6> 
+                <h6>{{t('fee')}}</h6> 
                 {{sale.fee / 100}}
             </div>
             <div class="d-flex justify-content-between">
-                <h6>{{t('default.total_shares')}}</h6> 
+                <h6>{{t('total_shares')}}</h6> 
                 {{ n(+totalShares, { notation: 'compact' }) }}
             </div>
             <div class="d-flex justify-content-between">
-                <h6>{{t('default.shares')}}</h6> 
+                <h6>{{t('shares')}}</h6> 
                 {{ sale.total_shares ? `${(sale.shares / sale.total_shares) * 100}%` : '0%'}}
             </div>
         </MDBCardText>
     </MDBCardBody>
     <MDBCardFooter>
         <div class="d-flex justify-content-center align-self-end">
-            <MDBBtn @click="modalAddLiquidityOpen" color="primary">{{t('default.add_liquidity')}}</MDBBtn>
-            <MDBBtn @click="modalRemoveLiquidityOpen" color="primary">{{t('default.remove_liquidity')}}</MDBBtn>
+            <MDBBtn @click="modalAddLiquidityOpen" color="primary">{{t('add_liquidity')}}</MDBBtn>
+            <MDBBtn @click="modalRemoveLiquidityOpen" color="primary">{{t('remove_liquidity')}}</MDBBtn>
         </div>
     </MDBCardFooter>                  
 </MDBCard>

@@ -10,7 +10,7 @@
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
             </span>
-            <MDBBtn v-if="user.accountId !== wallet?.accountId" @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.delegate')}}</MDBBtn>
+            <MDBBtn v-if="user.accountId !== wallet?.accountId" @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('delegate')}}</MDBBtn>
          </div>
          <div class="text-start small mb-3">
             {{ user.bio }}
@@ -19,8 +19,8 @@
             <MDBBadge color="primary" class="align-self-center"> {{user.tag}} </MDBBadge>
          </div>
          <div class="d-flex">
-            <div>{{t('default.vote_amount')}} <NumberFormatter class="fw-bold ms-1" :amount="user.voteAmount"/></div>
-            <div class="ms-auto"> {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{ user.votesCasted }}</span></div>
+            <div>{{t('vote_amount')}} <NumberFormatter class="fw-bold ms-1" :amount="user.voteAmount"/></div>
+            <div class="ms-auto"> {{t('votes_casted')}} <span class="fw-bold ms-2">{{ user.votesCasted }}</span></div>
          </div>
       </MDBCardBody>
    </MDBCard>
@@ -72,7 +72,7 @@ export default {
 
       const predelegate = () => {
          modalProposal.value += 1
-         submitText.value = t('default.delegate')
+         submitText.value = t('delegate')
       }
 
       const submitModal = () => {

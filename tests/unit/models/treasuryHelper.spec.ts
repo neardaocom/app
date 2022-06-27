@@ -1,12 +1,13 @@
 import TreasuryHelper from '@/models/dao/TreasuryHelper'
-import { TreasuryLockAsset } from "@/models/dao/types/treasury";
+import { DaoAssetType } from '@/models/dao/types/asset';
+import { TreasuryAssetUnlockingType, TreasuryLockAsset } from "@/models/dao/types/treasury";
 
 test('getNextUnlock: now', () => {
     const targetDate = new Date()
     const startFrom = new Date()
     const lockTemplate: TreasuryLockAsset = {
         asset: {
-            type: 'ft',
+            type: DaoAssetType.FT,
             accountId: 'test.near',
             name: 'Test Ft',
             symbol: 'TEST',
@@ -19,7 +20,7 @@ test('getNextUnlock: now', () => {
         unlocked: 0,
         unlocking: [
             {
-                type: 'linear',
+                type: TreasuryAssetUnlockingType.Linear,
                 targetDate: targetDate,
                 amount: 100,
             }

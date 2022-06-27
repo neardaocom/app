@@ -1,8 +1,8 @@
 <template>
-   <InputNumber :labelName="t('default.amount')" id="amount"/>
+   <InputNumber :labelName="t('amount')" id="amount"/>
    <br/>
    <div class="text-start">
-      <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+      <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
    </div>
    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
    </MDBWysiwyg>

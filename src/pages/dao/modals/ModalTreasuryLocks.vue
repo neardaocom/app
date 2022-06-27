@@ -16,7 +16,7 @@
    </div>
 
    <div class="row m-auto col-12 col-md-6 mb-4">
-      <h5 class="text-start"><i class="bi bi-bar-chart text-gradient-180 me-2"/>{{t('default.unlocking_token')}}</h5>
+      <h5 class="text-start"><i class="bi bi-bar-chart text-gradient-180 me-2"/>{{t('unlocking_token')}}</h5>
       <MDBChart type="bar" :data="barChartData" />
    </div>
 </template>

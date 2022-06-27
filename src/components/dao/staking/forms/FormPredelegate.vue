@@ -1,7 +1,7 @@
 <template>
-   <h6 v-if="delegateId">{{`${t('default.delegate_id')}: ${delegateId}`}}</h6>
-   <Select v-if="!delegateId" :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
-   <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
+   <h6 v-if="delegateId">{{`${t('delegate_id')}: ${delegateId}`}}</h6>
+   <Select v-if="!delegateId" :labelName="t('delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <InputNumber :labelName="t('amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
 <script>

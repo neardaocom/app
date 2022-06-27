@@ -1,19 +1,19 @@
 <template>
-      <InputString :labelName="t('default.name')" id="name" />
+      <InputString :labelName="t('name')" id="name" />
 
-      <Select :labelName="t('default.group')" id="group_id" :options="groupsOptions" filter/>
+      <Select :labelName="t('group')" id="group_id" :options="groupsOptions" filter/>
 
-      <Select :labelName="t('default.activity')" id="activity_ids" :options="activityOptions" filter multiple />
+      <Select :labelName="t('activity')" id="activity_ids" :options="activityOptions" filter multiple />
 
-      <Select :labelName="t('default.lock')" id="lock" :options="locksOptions" filter/>
+      <Select :labelName="t('lock')" id="lock" :options="locksOptions" filter/>
 
-      <InputNumber :labelName="`NEAR ${t('default.amount')}`" id="near_amount" />
+      <InputNumber :labelName="`NEAR ${t('amount')}`" id="near_amount" />
 
-      <InputNumber :labelName="`Token ${t('default.amount')}`" id="token_amount" />
+      <InputNumber :labelName="`Token ${t('amount')}`" id="token_amount" />
 
-      <DateTimepicker :labelName="t('default.rewards_start_at')" id="start_at"/>
+      <DateTimepicker :labelName="t('rewards_start_at')" id="start_at"/>
 
-      <DateTimepicker :labelName="t('default.rewards_ends')" id="ends"/>
+      <DateTimepicker :labelName="t('rewards_ends')" id="ends"/>
 </template>
 
 <script>

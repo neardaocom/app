@@ -9,7 +9,7 @@
         :class="[!meta.touched ?  ''  
             : errorMessage ? 'is-invalid' : 'is-valid']"
         :id="id"
-        :no-results-text="t('default.no_results')"
+        :no-results-text="t('no_results')"
         :displayValue="displayValue"
         :itemContent="itemTemplate"
         v-model="value"

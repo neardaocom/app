@@ -1,7 +1,7 @@
 <template>
     <div class="row form-group mt-2">
         <div class="col-8 col-md-4">
-            <InputString :labelName="t('default.token_id')" id="tokenId" />
+            <InputString :labelName="t('token_id')" id="tokenId" />
         </div>
     </div>
 </template>

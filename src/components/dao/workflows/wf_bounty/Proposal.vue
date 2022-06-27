@@ -1,13 +1,13 @@
 <template>
     <!-- Title -->
-    <InputString :labelName=" t('default.title')" id="title"/>
+    <InputString :labelName=" t('title')" id="title"/>
     <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="'Ⓝ'"/>
+    <InputNumber :labelName=" t('amount')" id="amount" :addon="'Ⓝ'"/>
     <!-- Deposit -->
-    <InputNumber :labelName=" t('default.deposit')" id="deposit" :addon="'Ⓝ'"/>
+    <InputNumber :labelName=" t('deposit')" id="deposit" :addon="'Ⓝ'"/>
     <br/>
     <div v-if="false" class="text-start">
-        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+        <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
     </div>
     <MDBWysiwyg v-if="false" :fixedOffsetTop="58" ref="refWysiwyg">
     </MDBWysiwyg>
@@ -78,7 +78,7 @@ export default {
                 } catch(e){
                     //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
                     //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                    notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                    notify.danger(t('notify_save_file_ipfs_fail_title'), t('notify_ipfs_fail') + " " + t('notify_save_file_ipfs_fail_message'))
                     notify.flush()
                     console.log(e);
                     return

@@ -3,37 +3,37 @@
         <div class="card-body">
             <div class="d-flex">
                 <h6 class="text-muted">
-                    {{t('default.governance')}}
+                    {{t('governance')}}
                 </h6>
                 <Tooltip class="ms-auto" text="Tooltip" />
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                <div>
-                  <div class="fw-bold">{{t('default.total_voting_power')}}</div>
+                  <div class="fw-bold">{{t('total_voting_power')}}</div>
                   <InfoAmount :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
                </div>
                <div>
-                  <div class="fw-bold">{{t('default.my_vote_power')}}</div>
+                  <div class="fw-bold">{{t('my_vote_power')}}</div>
                   <InfoAmount :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
                 </div>
             </div>
 
             <hr/>
             <h6 class="text-muted">
-                {{t('default.governance_token')}}
+                {{t('governance_token')}}
             </h6>
             <div class="d-flex justify-content-between align-items-center">
                <div>
-                  <div class="fw-bold">{{t('default.owned')}}</div>
+                  <div class="fw-bold">{{t('owned')}}</div>
                   <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
                </div>
                <div>
-                  <div class="fw-bold">{{t('default.from_delegators')}}</div>
+                  <div class="fw-bold">{{t('from_delegators')}}</div>
                   <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
                 </div>
                 <div>
-                  <div class="fw-bold">{{t('default.delegated')}}</div>
+                  <div class="fw-bold">{{t('delegated')}}</div>
                   <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                                  </div>
             </div>
            

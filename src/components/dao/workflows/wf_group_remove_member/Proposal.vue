@@ -1,9 +1,9 @@
 <template>
-    <Select :labelName="t('default.account_id')" id="account_id" :options="accountsDropdown" />
+    <Select :labelName="t('account_id')" id="account_id" :options="accountsDropdown" />
 
     <br/>
     <div class="text-start">
-        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+        <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
     </div>
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
         <section v-html="description"></section>

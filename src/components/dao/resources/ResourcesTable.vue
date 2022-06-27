@@ -4,13 +4,13 @@
          <tr>
             <th scope="col">#</th>
             <th scope="col"></th>
-            <th scope="col">{{ t("default.name")}}</th>
+            <th scope="col">{{ t("name")}}</th>
             <th scope="col"></th>
-            <th scope="col">{{ t("default.category")}}</th>
-            <th v-if="false" scope="col" style="min-width:200px">{{ t("default.description")}}</th>
-            <th v-if="false" scope="col" style="min-width:200px">{{ t("default.tags")}}</th>
-            <th scope="col">{{ t("default.valid")}}</th>
-            <th scope="col">{{ t("default.version")}}</th>
+            <th scope="col">{{ t("category")}}</th>
+            <th v-if="false" scope="col" style="min-width:200px">{{ t("description")}}</th>
+            <th v-if="false" scope="col" style="min-width:200px">{{ t("tags")}}</th>
+            <th scope="col">{{ t("valid")}}</th>
+            <th scope="col">{{ t("version")}}</th>
          </tr>
       </thead>
       <tbody>

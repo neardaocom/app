@@ -1,5 +1,5 @@
 <template>
-   <InputNumber :labelName="t('default.amount')" :balance="amountMax" :max="amountMax" id="amount" :addon="dao.treasury.token.meta.symbol"/>
+   <InputNumber :labelName="t('amount')" :balance="amountMax" :max="amountMax" id="amount" :addon="dao.treasury.token.meta.symbol"/>
 </template>
 
 <script>

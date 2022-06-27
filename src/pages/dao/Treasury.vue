@@ -1,7 +1,7 @@
 <template>
    <div v-if="dataLoaded" class="container mb-4">
       <div class="mb-7">
-         <h5 class="text-start mb-4">{{t('default.available_assets')}}</h5>
+         <h5 class="text-start mb-4">{{t('available_assets')}}</h5>
          <div class="d-flex flex-wrap gap-3">
             <InfoAmountCard :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" style="min-width: 283px" :icon="treasuryNear.asset.icon"/>
             <InfoAmountCard :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol" style="min-width: 283px" :icon="treasuryToken.asset.icon"/>
@@ -12,14 +12,14 @@
       </div>
       
       <div>
-         <h5 class="text-start me-auto">{{t('default.partitions')}}</h5>
+         <h5 class="text-start me-auto">{{t('partitions')}}</h5>
          <div class="row g-3">
             <div v-for="lock in treasuryLocks" :key="lock.id" class="col-md-6">
                <TreasuryLock :lock="lock" :unlock="unlock"/>
             </div>
          </div>
          <div>
-            <NoData v-if="treasuryLocks.length === 0" :text="t('default.no_locks')" hint="This is a hint" />
+            <NoData v-if="treasuryLocks.length === 0" :text="t('no_locks')" hint="This is a hint" />
          </div>
       </div>
    </div>

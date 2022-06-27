@@ -16,7 +16,7 @@
 
             <!-- Right -->
             <div>
-            <span class="me-3">{{ t('default.connect_with_us') }}:</span>
+            <span class="me-3">{{ t('connect_with_us') }}:</span>
             <a :href="config.app.brandTwitter" target="_blank" class="me-3 text-reset">
                 <i class="fab fa-twitter"></i>
             </a>
@@ -46,12 +46,12 @@
                 <!-- Products -->
                 <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4 text-primary">{{ t('default.about') }}</h6>
+                <h6 class="text-uppercase mb-4 text-primary">{{ t('about') }}</h6>
                 <p>
-                    <a href="https://en.wikipedia.org/wiki/The_DAO_(organization)" class="text-reset" target="_blank">{{ t('default.dao_organization') }}</a>
+                    <a href="https://en.wikipedia.org/wiki/The_DAO_(organization)" class="text-reset" target="_blank">{{ t('dao_organization') }}</a>
                 </p>
                 <p>
-                    <a href="https://medium.com/neardao/neardao-proof-of-concept-is-live-1bdf371441ff" class="text-reset" target="_blank">{{ t('default.neardao_launch') }}</a>
+                    <a href="https://medium.com/neardao/neardao-proof-of-concept-is-live-1bdf371441ff" class="text-reset" target="_blank">{{ t('neardao_launch') }}</a>
                 </p>
                 </div>
                 <!-- Products -->
@@ -59,12 +59,12 @@
                 <!-- Links -->
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                 <!-- Links -->
-                <h6 class="text-uppercase mb-4 text-primary">{{ t('default.useful_links') }}</h6>
+                <h6 class="text-uppercase mb-4 text-primary">{{ t('useful_links') }}</h6>
                 <p>
                     <a href="https://near.org/" class="text-reset">Near.org</a>
                 </p>
                 <p>
-                    <a href="https://wallet.near.org/profile/dao.near" class="text-reset">{{ t('default.wallet') }}</a>
+                    <a href="https://wallet.near.org/profile/dao.near" class="text-reset">{{ t('wallet') }}</a>
                 </p>
                 </div>
                 <!-- Links -->
@@ -72,7 +72,7 @@
                 <!-- Contacts -->
                 <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
                     <!-- Links -->
-                    <h6 class="text-uppercase mb-4 color-primary">{{ t('default.contacts') }}</h6>
+                    <h6 class="text-uppercase mb-4 color-primary">{{ t('contacts') }}</h6>
                     <p><i class="bi bi-house color-primary me-3"/> {{ config.app.brandAddress }}</p>
                     <p><i class="bi bi-envelope color-primary me-3"/> {{ config.app.brandEmail }}</p>
                 </div>
@@ -90,8 +90,8 @@
 
         <!-- Copyright -->
         <div class="text-center p-4" style="background-color: hsla(0, 0%, 17%, 0.04)">
-            © {{ todayYear }} <a class="text-reset fw-bold" :href="config.app.brandWeb">{{ config.app.brandName }}</a> {{ t('default.all_rights_reserved') }}
-            <span class="ms-4 me-1">{{ t('default.powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="config.app.baseUrl + 'img/near.svg'" alt="" style="width: 70px;"/></a>
+            © {{ todayYear }} <a class="text-reset fw-bold" :href="config.app.brandWeb">{{ config.app.brandName }}</a> {{ t('all_rights_reserved') }}
+            <span class="ms-4 me-1">{{ t('powered_by') }}</span><a class="text-reset" href="https://near.org/"><img class="me-1" :src="config.app.baseUrl + 'img/near.svg'" alt="" style="width: 70px;"/></a>
         </div>
     <!-- Copyright -->
     </MDBFooter>

@@ -5,7 +5,7 @@
                 {{ labelName }}
                 <TooltipLabel v-if="tooltip" :description="tooltip"/>
             </label>
-            <div v-if="balance" class="small">{{`${t('default.balance')}: ${balanceLocale}`}}</div>
+            <div v-if="balance" class="small">{{`${t('balance')}: ${balanceLocale}`}}</div>
         </div>
         <MDBInput 
             inputGroup 
@@ -22,7 +22,7 @@
             @input="handleBlur"
         >
             <MDBBtn v-if="max" @click="valueToMax" :id="id" outline="primary" :ripple="{ color: 'dark' }">
-                {{t('default.max')}}
+                {{t('max')}}
             </MDBBtn>
             <template v-if="prepend" #prepend>
                 <span class="input-group-text" id="id">{{ prepend }}</span>

@@ -6,7 +6,7 @@
     v-model="query"
     size="sm"
     aria-describedby="search-addon"
-    :aria-label="t('default.search')"
+    :aria-label="t('search')"
   >
     <template #prepend>
       <span class="input-group-text border-0" id="search-addon"

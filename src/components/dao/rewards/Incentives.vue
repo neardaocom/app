@@ -9,7 +9,7 @@
                <div class="d-flex">
                   <div>
                      <small class="text-muted">
-                        {{t(`default.${reward.pricelist.type}`)}}
+                        {{t(`${reward.pricelist.type}`)}}
                         <template v-if="reward.pricelist.type === 'salary'" >
                             - {{ reward.pricelist.targetGroup?.name }}
                         </template>

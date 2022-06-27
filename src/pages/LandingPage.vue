@@ -10,7 +10,7 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <MDBBtn @click="createDao" color="primary" rounded size="lg" class="fs-6 fw-bold bg-gradient-100 m-2 mb-5" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('default.strat_a_dao') }}</MDBBtn>
+        <MDBBtn @click="createDao" color="primary" rounded size="lg" class="fs-6 fw-bold bg-gradient-100 m-2 mb-5" style="width:228px"><i class="bi bi-plus me-1"/>{{ t('strat_a_dao') }}</MDBBtn>
 
         <h3 v-if="topList" class="mb-3"> Top 3 DAOs </h3>
         <div v-if="topList" class="row g-1 justify-content-center mb-2" >
@@ -34,7 +34,7 @@
           </template>
         </div>
 
-        <MDBBtn @click="organizations"  color="primary" rounded size="lg" class="fs-6 bg-gradient-100 m-2 mb-5" style="width:228px">{{ t('default.see_organizations') }}</MDBBtn>
+        <MDBBtn @click="organizations"  color="primary" rounded size="lg" class="fs-6 bg-gradient-100 m-2 mb-5" style="width:228px">{{ t('see_organizations') }}</MDBBtn>
         <div class="row  justify-content-center">
           <div class="col-10"> 
             <p class="text-muted">
@@ -57,7 +57,7 @@
         <MDBBtn @click="neardao" rounded size="lg" class="text-white bg-gradient-100 m-2 fw-normal mb-8" style="width:228px">Join {{config.app.brandName}}</MDBBtn>
 
         <div class="mb-5">
-          <h6 class="text-muted me-3">{{ t('default.connect_with_us') }}</h6>
+          <h6 class="text-muted me-3">{{ t('connect_with_us') }}</h6>
           <a :href="config.app.brandTwitter" target="_brank" class="me-3 text-reset">
               <i class="fab fa-twitter fa-2x"></i>
           </a>
@@ -68,10 +68,10 @@
 
         <ul class="text-muted list-unstyled list-inline mb-5">
           <li class="list-inline-item">
-            <span class="m-1">© {{ todayYear }} <a class="fw-bold text-dark" :href="config.app.brandWeb">{{ config.app.brandName }}</a> {{ t('default.all_rights_reserved') }}</span>
+            <span class="m-1">© {{ todayYear }} <a class="fw-bold text-dark" :href="config.app.brandWeb">{{ config.app.brandName }}</a> {{ t('all_rights_reserved') }}</span>
           </li>
           <li class="list-inline-item">
-            <span class="m-1">{{ t('default.powered_by') }}<a class="text-reset" href="https://near.org/"><img class="ms-1" :src="'/img/near.svg'" alt="" style="width: 70px;"/></a> </span>
+            <span class="m-1">{{ t('powered_by') }}<a class="text-reset" href="https://near.org/"><img class="ms-1" :src="'/img/near.svg'" alt="" style="width: 70px;"/></a> </span>
           </li>
         </ul>
       </div>

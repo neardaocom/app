@@ -13,7 +13,7 @@
         <slot></slot>
     </MDBModalBody>
     <MDBModalFooter>
-      <MDBBtn outline="secondary" rounded @click="close()">{{ t('default.close') }}</MDBBtn>
+      <MDBBtn outline="secondary" rounded @click="close()">{{ t('close') }}</MDBBtn>
       </MDBModalFooter>
   </MDBModal>
 </template>

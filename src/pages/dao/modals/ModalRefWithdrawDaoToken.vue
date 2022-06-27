@@ -7,22 +7,22 @@
         size="lg"
     >
         <MDBModalHeader>
-            <MDBModalTitle id="modalAddLiguidity"> {{ `${t('default.withdraw')} ${tokenSymbol}`}} </MDBModalTitle>
+            <MDBModalTitle id="modalAddLiguidity"> {{ `${t('withdraw')} ${tokenSymbol}`}} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
           <div class="d-flex justify-content-between">
-              <label for="amount" class="form-label">{{ `${t('default.amount')} ${tokenSymbol}` }}</label>
-              <div class="small">{{`${t('default.balance')}: ${n(balance)}`}}</div>
+              <label for="amount" class="form-label">{{ `${t('amount')} ${tokenSymbol}` }}</label>
+              <div class="small">{{`${t('balance')}: ${n(balance)}`}}</div>
           </div>
           <MDBInput inputGroup id="amount" @input="changeAmount" @keyup="validateAmount" @blur="validateAmount"  :model-value="amountFormated" :isValid="!errors.amount" :isValidated="isValidated.amount" :invalidFeedback="errors.amount">
             <MDBBtn @click="tokenToMax" outline="primary" :ripple="{ color: 'dark' }">
-                  {{t('default.max')}}
+                  {{t('max')}}
               </MDBBtn>
           </MDBInput>
         </MDBModalBody>
         <MDBModalFooter>
-            <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-            <MDBBtn color="primary" @click="withdrawDaoToken">{{ t('default.withdraw') }}</MDBBtn>
+            <MDBBtn color="secondary" @click="close()">{{ t('close') }}</MDBBtn>
+            <MDBBtn color="primary" @click="withdrawDaoToken">{{ t('withdraw') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -120,7 +120,7 @@ export default {
             }).catch((e) => {
                 this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
                 this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
-                this.$notify.danger(this.t('default.notify_upgrade_dao_fail_title'),  this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_upgrade_dao_fail_message'))
+                this.$notify.danger(this.t('notify_upgrade_dao_fail_title'),  this.t('notify_blockchain_fail') + " " +  this.t('notify_upgrade_dao_fail_message'))
                 this.$notify.flush()
                 console.log(e)
             })
@@ -148,13 +148,13 @@ export default {
         const minNumberVal = Validator.minNumber(this.amount, {min: 1})
         const maxNumberVal = Validator.maxNumber(this.amount, {max: this.balance})
         if (isNumberVal.valid === false) {
-            this.errors[field] = this.t('default.' + isNumberVal.message, isNumberVal.params)
+            this.errors[field] = this.t('' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {
-            this.errors[field] = this.t('default.' + requiredVal.message, requiredVal.params)
+            this.errors[field] = this.t('' + requiredVal.message, requiredVal.params)
         }else if (minNumberVal.valid === false) {
-            this.errors[field] = this.t('default.' + minNumberVal.message, minNumberVal.params)
+            this.errors[field] = this.t('' + minNumberVal.message, minNumberVal.params)
         } else if (maxNumberVal.valid === false) {
-            this.errors[field] = this.t('default.' + maxNumberVal.message, maxNumberVal.params)
+            this.errors[field] = this.t('' + maxNumberVal.message, maxNumberVal.params)
         } else {
             this.errors[field] = null
         }

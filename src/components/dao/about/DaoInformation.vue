@@ -4,7 +4,7 @@
          <div class="d-flex mb-2">
             <h5 class="card-title">
                <i class="bi bi-info-square text-gradient-180 me-1"/>
-               {{ t('default.information') }}
+               {{ t('information') }}
             </h5>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
@@ -19,7 +19,7 @@
             </div>
 
             <div class="text-muted small">
-               {{t('default.wallet')}} 
+               {{t('wallet')}} 
                <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.wallet" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
             </div>
          </div>
@@ -32,7 +32,7 @@
                :href="nearWalletUrl + '/accounts/' + dao.wallet"
                target="_blank"
                >
-                  {{ t("default.wallet") }}
+                  {{ t("wallet") }}
                   <i class="bi bi-box-arrow-up-right text-gradient-180 ms-1"/>
                </a>
             </li>

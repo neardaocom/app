@@ -8,8 +8,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <h2>{{ t('default.create_your_dao')}}</h2>
-                        <h6>{{ t('default.create_your_dao_sub')}}</h6>
+                        <h2>{{ t('create_your_dao')}}</h2>
+                        <h6>{{ t('create_your_dao_sub')}}</h6>
                     </div>
                 </div>
                 <div class="card text-start w-auto p-2 mt-4">
@@ -20,8 +20,8 @@
             </div>
         </section>
     </main>
-    <!-- <MDBAlert v-model="fieldErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert>
-    <MDBAlert v-model="createDaoErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('default.invalid_field_form')}} </MDBAlert> -->
+    <!-- <MDBAlert v-model="fieldErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('invalid_field_form')}} </MDBAlert>
+    <MDBAlert v-model="createDaoErrorAlert" width="250px" position="top-center" autohide appendToBody color="danger"> {{t('invalid_field_form')}} </MDBAlert> -->
   <Footer></Footer>
 </template>
 

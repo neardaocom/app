@@ -18,7 +18,7 @@
       <SkywardFinance v-if="skywardSaleIds.length > 0" :scenario="'active'" :salesIds="skywardSaleIds" />
     </div> 
 
-    <h5  class="text-start">{{t('default.dao_assets')}}</h5>
+    <h5  class="text-start">{{t('dao_assets')}}</h5>
     <div  v-if="dataLoaded" class="row">
       <div class="col-12 col-md-6 col-lg-4 mb-4">
         <InfoAmountCard :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" :icon="treasuryNear.asset.icon"/>

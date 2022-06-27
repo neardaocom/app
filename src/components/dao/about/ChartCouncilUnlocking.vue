@@ -7,7 +7,7 @@
 
 <script>
   import { MDBChart } from "mdb-vue-ui-kit";
-  import { ref, onMounted, toRefs, inject } from "vue";
+  import { ref, onMounted } from "@vue/compiler-core";
   import { useI18n } from "vue-i18n";
   // import Analytics from '@/models/analytics'
 
@@ -22,10 +22,10 @@
         required: true,
       },
     },
-    setup(props) {
+    setup() {
       const { t, d } = useI18n()
-      const dao = inject('dao')
-      const { group } = toRefs(props)
+      // const dao = inject('dao')
+      // const { group } = toRefs(props)
       const analytics = ref({})
       const chartOptions = ref({})
 
@@ -38,23 +38,23 @@
         //)
         // console.log(cashflow)
         
-        const labels = cashflow.map(obj => d(obj.date))
-        const dataset = cashflow.map(obj => obj.value)
+        //const labels = cashflow.map(obj => d(obj.date))
+        //const dataset = cashflow.map(obj => obj.value)
         
-        analytics.value = {
-            labels,
-            datasets: [
-              {
-                backgroundColor: ["#6B6EF9"],
-                data: dataset,
-                label: t('default.amount'),
-              }
-            ],
-        }
+        //analytics.value = {
+        //    labels,
+        //    datasets: [
+        //      {
+        //        backgroundColor: ["#6B6EF9"],
+        //        data: dataset,
+        //        label: t('amount'),
+        //      }
+        //    ],
+        //}
 
-        chartOptions.value = {
-          duration: 200,
-        }
+        //chartOptions.value = {
+        //  duration: 200,
+        //}
       });
     
       return {

@@ -1,29 +1,29 @@
 <template>
     <!-- title -->
-    <InputString :labelName="t('default.title')" id="title"/>
+    <InputString :labelName="t('title')" id="title"/>
     <!-- TokenId -->
-    <InputString :labelName="t('default.token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
+    <InputString :labelName="t('token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
     <!-- Amount -->
-    <InputNumber :labelName="t('default.amount')" id="amount" :addon="{tokenName}"/>
+    <InputNumber :labelName="t('amount')" id="amount" :addon="{tokenName}"/>
 
     <!-- From -->
     <div class="row">
         <div class="col-6">
-            <Datepicker :labelName="t('default.token_sale_start_at')" id="date_start"/>
+            <Datepicker :labelName="t('token_sale_start_at')" id="date_start"/>
         </div>
         <div class="col-6">
-            <Timepicker :labelName="t('default.token_sale_start_at')" id="time_start"/>
+            <Timepicker :labelName="t('token_sale_start_at')" id="time_start"/>
         </div>
     </div>
 
     <!-- formDurationDays -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_days')" v-model="durationDays" :min="0" :max="31" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_days')" v-model="durationDays" :min="0" :max="31" />
         <label class="form-label col-md-6 col-3">{{ durationDays }}d</label>
     </div>
     <!-- formDurationHours -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="durationHours" :min="0" :max="23" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_hours')" v-model="durationHours" :min="0" :max="23" />
         <label class="form-label col-md-6 col-3">{{ durationHours }}h</label>
     </div>
 </template>
@@ -66,7 +66,7 @@ export default {
         const durationDays = ref(7)
 
 
-        const formatDate = this.t('default._datepicker_format')
+        const formatDate = this.t('_datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
         const maxDate = moment().startOf('day').add(12, 'M').toDate()
         const schema = computed(() => {

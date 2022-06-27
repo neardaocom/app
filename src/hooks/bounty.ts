@@ -16,7 +16,7 @@ export const useBounties = (dao: DAO, t: Function, d: Function, n: Function) => 
 
     const titles = ref(bounties.value.map((bounty, index) => {
         const proposal: DAOProposal = proposals.value[index]! as DAOProposal
-        return '' // t('default.wf_templ_wf_bounty_title', getArgs(proposal, 'wf_bounty', t, d, n)) // TODO: Rewrite
+        return '' // t('wf_templ_wf_bounty_title', getArgs(proposal, 'wf_bounty', t, d, n)) // TODO: Rewrite
     }))
 
     return {

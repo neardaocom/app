@@ -4,26 +4,26 @@
       <div class="col-12 col-md-8">
         <div class="card text-start">
           <div class="card-body">
-            <h5 class="card-title">{{ t('default.governance_token') }}</h5>
+            <h5 class="card-title">{{ t('governance_token') }}</h5>
             <table class="table">
               <tbody>
                 <tr>
-                  <th scope="col">{{ t('default.amount') }}</th>
+                  <th scope="col">{{ t('amount') }}</th>
                   <td>{{ n(dao.token) }}</td>
                   <td></td>
                 </tr>
                 <tr>
-                  <th scope="col">{{ t('default.released') }}</th>
+                  <th scope="col">{{ t('released') }}</th>
                   <td>{{ n(dao.token_released) }}</td>
                   <td>{{ releasedPercent }}%</td>
                 </tr>
                 <tr>
-                  <th scope="col">{{ t('default.owned') }}</th>
+                  <th scope="col">{{ t('owned') }}</th>
                   <td>{{ n((owned)) }}</td>
                   <td>{{ ownedPercent }}%</td>
                 </tr>
                 <tr>
-                  <th scope="col">{{ t('default.free') }}</th>
+                  <th scope="col">{{ t('free') }}</th>
                   <td>{{ n(dao.token_free) }}</td>
                   <td>{{ freePercent }}%</td>
                 </tr>
@@ -35,11 +35,11 @@
       <div v-if="dao.groups.council.amount > 0" class="col-12 col-md-8">
         <div class="card text-start mt-2">
           <div class="card-body">
-            <h5 class="card-title">{{ t('default.council') }}</h5>
+            <h5 class="card-title">{{ t('council') }}</h5>
             <table class="table">
               <tbody>
                 <tr>
-                  <th>{{ t('default.tokens') }}</th>
+                  <th>{{ t('tokens') }}</th>
                   <td>{{ n(councilAmount) }}</td>
                   <td>{{ dao.groups.council.amount }}%</td>
                 </tr>
@@ -58,11 +58,11 @@
       <div v-if="dao.groups.community.amount > 0" class="col-12 col-md-8">
         <div class="card text-start mt-2">
           <div class="card-body">
-            <h5 class="card-title">{{ t('default.community') }}</h5>
+            <h5 class="card-title">{{ t('community') }}</h5>
             <table class="table">
               <tbody>
                 <tr>
-                  <th>{{ t('default.tokens') }}</th>
+                  <th>{{ t('tokens') }}</th>
                   <td>{{ n(communityAmount) }}</td>
                   <td>{{ dao.groups.community.amount }}%</td>
                 </tr>
@@ -81,11 +81,11 @@
       <div v-if="dao.groups.investor.amount > 0" class="col-12 col-md-8">
         <div class="card text-start mt-2">
           <div class="card-body">
-            <h5 class="card-title">{{ t('default.investor') }}</h5>
+            <h5 class="card-title">{{ t('investor') }}</h5>
             <table class="table">
               <tbody>
                 <tr>
-                  <th>{{ t('default.tokens') }}</th>
+                  <th>{{ t('tokens') }}</th>
                   <td>{{ n(investorAmount) }}</td>
                   <td>{{ dao.groups.investor.amount }}%</td>
                 </tr>
@@ -104,11 +104,11 @@
       <div v-if="dao.groups.public_sale.amount > 0" class="col-12 col-md-8">
         <div class="card text-start mt-2">
           <div class="card-body">
-            <h5 class="card-title">{{ t('default.public_sale') }}</h5>
+            <h5 class="card-title">{{ t('public_sale') }}</h5>
             <table class="table">
               <tbody>
                 <tr>
-                  <th>{{ t('default.tokens') }}</th>
+                  <th>{{ t('tokens') }}</th>
                   <td>{{ n(publicSaleAmount) }}</td>
                   <td>{{ dao.groups.public_sale.amount }}%</td>
                 </tr>

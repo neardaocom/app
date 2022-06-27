@@ -139,7 +139,7 @@ export default class TemplateTransformer implements TransformerInterface {
         return {
             id: loToInteger(value[0]),
             code: value[1][0].code,
-            name: this.t('default.wf_templ_' + value[1][0].code),
+            name: this.t('wf_templ_' + value[1][0].code),
             version: loToString(value[1][0].version),
             autoExecute: value[1][0].auto_exec,
             needStorage: value[1][0].need_storage,
@@ -150,7 +150,7 @@ export default class TemplateTransformer implements TransformerInterface {
             startActivityIds: loUniq(startActivityIds),
             endActivityIds: value[1][0].end,
             settings: settings,
-            search: [StringHelper.toSearch(this.t('default.wf_templ_' + value[1][0].code))].join('-'),
+            search: [StringHelper.toSearch(this.t('wf_templ_' + value[1][0].code))].join('-'),
         }
     }
 }

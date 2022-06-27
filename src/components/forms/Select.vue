@@ -7,7 +7,7 @@
             :preselect="true" 
             v-model:selected="value"
             v-model:options="typeOptions"
-            :no-results-text="t('default.no_results')"
+            :no-results-text="t('no_results')"
             wrapperClass="mb-4"
             :id="id"
             :multiple="multiple"

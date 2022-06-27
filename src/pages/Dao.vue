@@ -119,9 +119,9 @@ export default {
     onMounted(async () => {
       // const daoFactory = await loader?.value.get('dao/Factory')
       // const servicePool = daoFactory.value.createServicePool();
-      const servicePool = await loader?.value.get('dao/ServicePool')
+      const servicePool = await loader.value.get('dao/ServicePool')
       const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
-      dao.value = await daoLoader.getDao(wallet.value?.accountId)
+      dao.value = await daoLoader.getDao(wallet.value.accountId)
 
       // load templates metadata
       const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value)
@@ -130,7 +130,7 @@ export default {
       //console.log(dao.value)
       loaded.value = true
       daoRights.value = Rights.getDAORights(dao.value)
-      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.accountId)
+      walletRights.value = Rights.getWalletRights(dao.value, wallet.value.accountId)
 
       // rewards
       rewardsLoadClaimable()
@@ -161,7 +161,7 @@ export default {
 
 <style>
   .title-background-image {
-    background-image: url("/img/cover_cropt.png");
+    background-image: url("../../public/img/cover_cropt.png");
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }

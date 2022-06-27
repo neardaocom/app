@@ -25,7 +25,7 @@ export const useLoad = (loader: Ref<Loader>, logger: any, notify: any, config: C
         } catch (e) {
             logger.error('D', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
             logger.error('B', 'app@pages/DaoList', 'FetchingDaoList', 'Fetching Dao list failed')
-            notify.warning(t('default.notify_dao_list_fetching_fail_title'), t('default.notify_blockchain_fail') + " " + t('default.notify_dao_list_fetching_fail_message'))
+            notify.warning(t('notify_dao_list_fetching_fail_title'), t('notify_blockchain_fail') + " " + t('notify_dao_list_fetching_fail_message'))
             notify.flush()
             console.log(e)
         }

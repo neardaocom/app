@@ -29,7 +29,7 @@ export const useList = (orderDefault: string, orders: Order[]) => {
         }
 
         // order
-        const order: Order | undefined = loFind(orders, {code: searchOrder.value})
+        const order = loFind(orders, {code: searchOrder.value}) as Order
         if (order !== undefined) {
             list = loOrderBy(list, order.iteratees, order.orders)
         }

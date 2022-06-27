@@ -6,7 +6,7 @@
     </MDBContainer>
 
     <MDBContainer>
-    <h1 class="text-start">{{ t('default.organizations')}}</h1>
+    <h1 class="text-start">{{ t('organizations')}}</h1>
     <div class="row mt-5">
       <div class="col-6 col-md-4 col-lg-3">
         <Search v-model="searchQuery"/>
@@ -76,20 +76,20 @@ export default {
     const searchQuery = ref('')
     const filterTag = reactive({
       agency: {
-        name: t('default.agency'),
+        name: t('agency'),
         active: false,
       },
     // const { nearService, wallet } = useNear()
       startup: {
-        name: t('default.startup'),
+        name: t('startup'),
         active: false,
       },
       project: {
-        name: t('default.project'),
+        name: t('project'),
         active: false,
       },
       club: {
-        name: t('default.club'),
+        name: t('club'),
         active: false,
       },
     })

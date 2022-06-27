@@ -3,11 +3,11 @@
       <thead>
          <tr>
             <th scope="col">#</th>
-            <th scope="col">{{t('default.group')}}</th>
-            <th scope="col">{{t('default.assets')}}</th>
-            <th scope="col">{{t('default.frequency')}}</th>
-            <th scope="col">{{t('default.rewards_start_at')}}</th>
-            <th scope="col">{{t('default.rewards_ends')}}</th>
+            <th scope="col">{{t('group')}}</th>
+            <th scope="col">{{t('assets')}}</th>
+            <th scope="col">{{t('frequency')}}</th>
+            <th scope="col">{{t('rewards_start_at')}}</th>
+            <th scope="col">{{t('rewards_ends')}}</th>
          </tr>
       </thead>
       <tbody>

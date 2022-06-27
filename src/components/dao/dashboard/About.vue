@@ -3,7 +3,7 @@
         <div class="card-body">
             <div class="d-flex">
                 <h6 class="text-muted">
-                    {{t('default.dao')}}
+                    {{t('dao')}}
                 </h6>
                 <Tooltip class="ms-auto" text="Tooltip" />
             </div>
@@ -18,13 +18,13 @@
                 </div>
 
                 <div class="text-muted small">
-                {{t('default.wallet')}} 
+                {{t('wallet')}} 
                 <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.wallet" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
                 </div>
             </div>
 
             <div class="fw-bold mb-2">
-                <i class="bi bi-people me-2 text-info"/>{{ n(users) }} {{ t('default.members')}}<br/>
+                <i class="bi bi-people me-2 text-info"/>{{ n(users) }} {{ t('members')}}<br/>
                 <i class="bi bi-diagram-3 me-2 text-info"/>
                 <template v-for="(group, index) in groupNames" :key="index">
                     <span v-if="index > 0"> | </span>{{ group }}
@@ -36,22 +36,22 @@
                 <ul class="list-inline mb-2">
                     <li v-if="webLink" class="list-inline-item mb-1">
                         <a :href="webLink" class="btn btn-info btn-xs" target="_blank">
-                            <MDBIcon class="me-1" size="sm" icon="globe" iconStyle="fas" />{{ t('default.web') }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                            <MDBIcon class="me-1" size="sm" icon="globe" iconStyle="fas" />{{ t('web') }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                         </a>
                     </li>
                     <li v-if="wikiLink" class="list-inline-item mb-1">
                         <a :href="wikiLink" class="btn btn-info btn-xs" target="_blank">
-                            <MDBIcon class="me-1" size="sm" icon="database" iconStyle="fas" />{{ t("default.wiki") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                            <MDBIcon class="me-1" size="sm" icon="database" iconStyle="fas" />{{ t("wiki") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                         </a>
                     </li>
                     <li v-if="whitepaperLink" class="list-inline-item mb-1" >
                         <a :href="whitepaperLink" class="btn btn-info btn-xs" target="_blank">
-                            <MDBIcon class="me-1" size="sm" icon="book" iconStyle="fas" />{{ t("default.whitepaper") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                            <MDBIcon class="me-1" size="sm" icon="book" iconStyle="fas" />{{ t("whitepaper") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                         </a>
                     </li>
                     <li v-if="sourceCodeLink" class="list-inline-item mb-1">
                         <a :href="sourceCodeLink" class="btn btn-info btn-xs" target="_blank">
-                            <MDBIcon class="me-1" size="sm" icon="file-code" iconStyle="fas" />{{ t("default.source_code") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                            <MDBIcon class="me-1" size="sm" icon="file-code" iconStyle="fas" />{{ t("source_code") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                         </a>
                     </li>
                 </ul>
@@ -64,15 +64,15 @@
                                 v-on:click="kycDropdown = !kycDropdown"
                                 class="dropdown-toggle"
                             >
-                                <MDBIcon class="me-1" size="sm" icon="scroll" iconStyle="fas" />{{ t('default.kyc')}}
+                                <MDBIcon class="me-1" size="sm" icon="scroll" iconStyle="fas" />{{ t('kyc')}}
                             </MDBBtn>
                             <MDBDropdown v-model="kycDropdown" target="#dashboard-about-kyc-dropdown">
                                 <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
                                     <MDBDropdownItem v-if="kycStatusLink" :href="kycStatusLink" newTab>
-                                        {{ t("default.legal_status") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                                        {{ t("legal_status") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                                     </MDBDropdownItem>
                                     <MDBDropdownItem v-if="kycDocumentLink" :href="kycDocumentLink" newTab>
-                                        {{ t("default.legal_document") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
+                                        {{ t("legal_document") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                                     </MDBDropdownItem>
                                 </MDBDropdownMenu>
                             </MDBDropdown>
@@ -86,7 +86,7 @@
                                 v-on:click="socialDropdown = !socialDropdown"
                                 class="dropdown-toggle"
                             >
-                                <MDBIcon class="me-1" size="sm" icon="users" iconStyle="fas" />{{ t('default.social')}}
+                                <MDBIcon class="me-1" size="sm" icon="users" iconStyle="fas" />{{ t('social')}}
                             </MDBBtn>
                             <MDBDropdown v-model="socialDropdown" target="#dashboard-about-social-dropdown">
                                 <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
@@ -108,7 +108,7 @@
                                 v-on:click="chatDropdown = !chatDropdown"
                                 class="dropdown-toggle"
                             >
-                                <MDBIcon class="me-1" size="sm" icon="comments" iconStyle="fas" />{{ t('default.chat')}}
+                                <MDBIcon class="me-1" size="sm" icon="comments" iconStyle="fas" />{{ t('chat')}}
                             </MDBBtn>
                             <MDBDropdown v-model="chatDropdown" target="#dashboard-about-chat-dropdown">
                                 <MDBDropdownMenu aria-labelledby="dropdownMenuButton">
@@ -122,7 +122,7 @@
                 </ul>
             </div>
             <div v-show="false" class="float-end mt-3">
-                <MDBBtn tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" size="sm" style="width: 120px"  color="primary" rounded> {{ t('default.about') }} </MDBBtn>
+                <MDBBtn tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" size="sm" style="width: 120px"  color="primary" rounded> {{ t('about') }} </MDBBtn>
             </div>
         </div>
     </div>

@@ -1,9 +1,9 @@
 <template>
-    <InputString :labelName="t('default.title')" id="title" />
+    <InputString :labelName="t('title')" id="title" />
 
     <br/>
     <div class="text-start">
-        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+        <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
     </div>
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
         <section v-html="description"></section>
@@ -45,8 +45,8 @@ export default {
 
         const onSubmit = handleSubmit(values => {
             let ipfsError = false
-            if (description.value){
-            }
+            //if (description.value){
+            //}
             
             if(!ipfsError){
                 console.log(values.cid);

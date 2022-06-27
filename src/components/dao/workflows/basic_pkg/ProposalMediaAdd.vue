@@ -1,29 +1,29 @@
 <template>
     <div class="row">
         <div class="col-12 col-lg-6 mb-4">
-            <Autocomplete :labelName="t('default.name')" id="fileName" :options="nameOptions" :filtredBy="filterFormName" :valueDisplayed="nameValueDisplayed" :itemContent="nameItemTemplate"/>
+            <Autocomplete :labelName="t('name')" id="fileName" :options="nameOptions" :filtredBy="filterFormName" :valueDisplayed="nameValueDisplayed" :itemContent="nameItemTemplate"/>
         </div>
         <div class="col-12 col-lg-6 mb-4">
-            <Autocomplete :labelName="t('default.category')" id="fileCategory" :options="categoryOptions"/>
+            <Autocomplete :labelName="t('category')" id="fileCategory" :options="categoryOptions"/>
         </div>
     </div>    
     <div class="row">
         <div class="col-12 mt-1 mb-4">
-          <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('default.upgrade_version', {version: newVersion}) : t('default.update_version', {version: newVersion})" v-model="formVersionUpgrageMajor"/>
+          <MDBSwitch :disabled="isNewFile" :label="(formVersionUpgrageMajor) ? t('upgrade_version', {version: newVersion}) : t('update_version', {version: newVersion})" v-model="formVersionUpgrageMajor"/>
         </div>
     </div>
 
     <div class="row">
         <div class="col-12 mb-4">
             <div class="text-start">
-                <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+                <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
             </div>
             <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwygDesc">
             </MDBWysiwyg>
         </div>
     </div>
 
-    <label for="add-document-input" class="form-label mt-2">{{ t('default.document') }}</label>
+    <label for="add-document-input" class="form-label mt-2">{{ t('document') }}</label>
 
     <!-- <MDBAlert color="danger" static v-if="formDocumentType == 'flush-pdf' && errors.formFiles != null">{{ errors.formFiles }}</MDBAlert>
     <MDBAlert color="danger" static v-if="formDocumentType == 'flush-url' && errors.formUrl != null">{{ errors.formUrl }}</MDBAlert>
@@ -41,12 +41,12 @@
         <!-- Tabs content -->
         <MDBTabContent contentClasses="mb-4">
             <MDBTabPane tabId="flush-plain">
-                <InputString :labelName="t('default.text')" id="plain"/>
+                <InputString :labelName="t('text')" id="plain"/>
             </MDBTabPane>
             <MDBTabPane tabId="flush-url">
-                <InputString :labelName="t('default.url')" id="url"/>
+                <InputString :labelName="t('url')" id="url"/>
                 <div class="col-auto">
-                    <span id="add-document-url-input-text" class="form-text"> {{ t('default.url_format') }} </span>
+                    <span id="add-document-url-input-text" class="form-text"> {{ t('url_format') }} </span>
                 </div>
             </MDBTabPane>
             <MDBTabPane tabId="flush-pdf">
@@ -260,17 +260,17 @@ export default {
         const formDocumentType = ref('')
 
         const documentTypeDropdown = computed(() => ({
-            plain: t('default.plain_text'),
-            link: t('default.link'),
-            pdf: t('default.pdf'),
-            editor: t('default.document'),
+            plain: t('plain_text'),
+            link: t('link'),
+            pdf: t('pdf'),
+            editor: t('document'),
         }))
         const fileUploadMsg = computed(() => ({
-            defautlMessage: t('default.file_upload_default_msg'),
-            mainError: t('default.file_upload_main_error'),
-            maxSizeError: t('default.file_upload_max_size_error'),
-            previewMsg: t('default.file_upload_preview_msg'),
-            removeBtn: t('default.file_upload_remove_btn')
+            defautlMessage: t('file_upload_default_msg'),
+            mainError: t('file_upload_main_error'),
+            maxSizeError: t('file_upload_max_size_error'),
+            previewMsg: t('file_upload_preview_msg'),
+            removeBtn: t('file_upload_remove_btn')
         }))
 
         

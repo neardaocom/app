@@ -17,11 +17,11 @@
          </div>
          <div class="d-flex">
             <span>
-               {{t('default.delegated')}}
+               {{t('delegated')}}
                <NumberFormatter class="fw-bold ms-1" :amount="amount"/>
             </span>
-            <!-- <MDBBtn  @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.delegate')}}</MDBBtn> -->
-            <MDBBtn v-if="accountId !== wallet?.accountId" @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.undelegate')}}</MDBBtn>
+            <!-- <MDBBtn  @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('delegate')}}</MDBBtn> -->
+            <MDBBtn v-if="accountId !== wallet?.accountId" @click="undelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('undelegate')}}</MDBBtn>
          </div>
       </MDBCardBody>
    </MDBCard>
@@ -80,7 +80,7 @@ export default {
             accountId:  accountId.value,
             amount: amount
          }
-         submitText.value = t('default.undelegate')
+         submitText.value = t('undelegate')
          activeForm.value = 'FormUndelegate'
       }
 
@@ -90,7 +90,7 @@ export default {
             accountId:  accountId.value,
             amount: amount
          }
-         submitText.value = t('default.delegate')
+         submitText.value = t('delegate')
          activeForm.value = 'FormPredelegate'
       }
 

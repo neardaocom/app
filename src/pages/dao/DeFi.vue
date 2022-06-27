@@ -4,11 +4,11 @@
       :scenario="'active'"
     />
     <section v-if="refFinanceFounds">
-      <h5 class="text-start">{{ t('default.ft_market') }}</h5>
+      <h5 class="text-start">{{ t('ft_market') }}</h5>
       <div v-if="refFinanceFounds" class="col-12 col-md-6 col-lg-4 mb-4">
           <div class="card text-start w-auto p-2" style="width: 18rem">
             <div class="card-body text-center">
-              <h5 class="text-muted">{{ t("default.ref_finance_funds") }}</h5>
+              <h5 class="text-muted">{{ t("ref_finance_funds") }}</h5>
               <hr/>
               <h5 v-if="nearPrice && refFinanceFounds[tokenId]" class="text-center">
                 <NumberFormatter :amount="refFinanceNear" /> <small class="text-muted">{{tokenSymbol}}</small>
@@ -18,8 +18,8 @@
               </h5>
               <hr/>
                 <div v-if="refFinanceFounds[tokenId] && refFinanceFounds[dao.wallet]" class="d-flex justify-content-center align-self-end">
-                  <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{`${t('default.withdraw')} ${tokenSymbol}`}}</MDBBtn>
-                  <MDBBtn @click="modalRefWithdrawDaoTokenOpen" color="primary">{{`${t('default.withdraw')} ${dao.token_name}`}}</MDBBtn>
+                  <MDBBtn @click="modalRefWithdrawNearOpen" color="primary">{{`${t('withdraw')} ${tokenSymbol}`}}</MDBBtn>
+                  <MDBBtn @click="modalRefWithdrawDaoTokenOpen" color="primary">{{`${t('withdraw')} ${dao.token_name}`}}</MDBBtn>
                   <ModalRefWithdrawNear :show="modalRefWithdrawNear" :contractId="dao.wallet" :balance="refFinanceNear" :tokenId="tokenId" :tokenDecimals="tokenDecimals" :tokenSymbol="tokenSymbol" />
                   <ModalRefWithdrawDaoToken :show="modalRefWithdrawDaoToken" :contractId="dao.wallet" :balance="refFinanceDaoToken" :tokenId="dao.wallet" :tokenDecimals="dao.token_stats.decimals" :tokenSymbol="dao.token_name" />
                 </div>  
@@ -31,7 +31,7 @@
       v-if="dao.storage.skywardFinance"
       :nearService="nearService"
     />
-    <NoData v-if="!dao.storage.skywardFinance && !refFinanceFounds" :text="t('default.no_defi')" hint="This is a hint" />
+    <NoData v-if="!dao.storage.skywardFinance && !refFinanceFounds" :text="t('no_defi')" hint="This is a hint" />
 
   </div>
 </template>

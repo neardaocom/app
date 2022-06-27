@@ -2,7 +2,7 @@
    <MDBCard>
       <MDBCardBody class="text-start">
          <div class="d-flex">
-            <h5>{{t('default.next_unlock')}}</h5>
+            <h5>{{t('next_unlock')}}</h5>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
          <i class="bi bi-unlock text-gradient-180 me-2"/> <span class="fw-800"> 2022/06/01 - 12:00am</span>

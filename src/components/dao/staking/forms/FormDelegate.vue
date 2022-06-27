@@ -1,7 +1,7 @@
 <template>
-   <!-- <InputString :labelName="t('default.delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/> -->
-   <Select :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
-   <InputNumber :labelName="t('default.amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
+   <!-- <InputString :labelName="t('delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/> -->
+   <Select :labelName="t('delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <InputNumber :labelName="t('amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
 </template>
 
 <script>

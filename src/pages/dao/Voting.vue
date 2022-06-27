@@ -17,7 +17,7 @@
     </div>
 
     <!-- Proposals -->
-    <NoData  v-if="list.length == 0" :text="t('default.no_active_proposal')" hint="This is a hint" />
+    <NoData  v-if="list.length == 0" :text="t('no_active_proposal')" hint="This is a hint" />
 
     <div class="row">
       <div v-for="(proposal) in results" :key="proposal.id" class="col-12 col-md-6 mb-4 mb-md-0">
@@ -68,22 +68,22 @@ export default {
     const searchQuery = ref('')
     const filterStatus = reactive({
       inProgress: {
-        name: t('default.proposal_status_in_progress'),
+        name: t('proposal_status_in_progress'),
         state: 'in_progress',
         active: false,
       },
       running: {
-        name: t('default.proposal_status_running'),
+        name: t('proposal_status_running'),
         state: 'running',
         active: false,
       },
       finished: {
-        name: t('default.proposal_status_finished'),
+        name: t('proposal_status_finished'),
         state: 'finished',
         active: false,
       },
       invalid: {
-        name: t('default.proposal_status_invalid'),
+        name: t('proposal_status_invalid'),
         state: 'invalid',
         active: false,
       },
@@ -91,9 +91,9 @@ export default {
     const order = reactive({
       selected: 'order_default',
       options: [
-        { text: t('default.order_default'), value: 'default' },
-        { text: t('default.order_created_desc'), value: 'created_desc' },
-        { text: t('default.order_created_asc'), value: 'created_asc' }
+        { text: t('order_default'), value: 'default' },
+        { text: t('order_created_desc'), value: 'created_desc' },
+        { text: t('order_created_asc'), value: 'created_asc' }
       ],
     })
     return { 

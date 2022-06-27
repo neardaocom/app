@@ -3,8 +3,8 @@
       <MDBRow class="g-0">
          <MDBCol col="2" class="d-flex flex-column justify-content-between text-center text-white" :class="colorCard" style="border-radius: 0.5rem 0 0 0.5rem">
             <div class="py-4" > 
-               <i v-if="template.status ===  t('default.installed')" class="bi bi-check-circle fa-2x"/>
-               <i v-else-if="template.status === t('default.buy')" class="bi bi-cart fa-2x"/>
+               <i v-if="template.status ===  t('installed')" class="bi bi-check-circle fa-2x"/>
+               <i v-else-if="template.status === t('buy')" class="bi bi-cart fa-2x"/>
                <i v-else class="bi bi-clock fa-2x"/>
             </div>
             <div> v{{ template.version }}.0 </div>
@@ -12,20 +12,20 @@
          <MDBCol col="10">
             <MDBCardBody>
             <div class="text-muted">
-               {{t("default.service")}}
+               {{t("service")}}
             </div>
-            <MDBCardTitle class="h4">{{ t('default.wf_templ_' + template.code) }}</MDBCardTitle>
+            <MDBCardTitle class="h4">{{ t('wf_templ_' + template.code) }}</MDBCardTitle>
             <MDBCardText class="mb-5">
                <small class="text-muted">
-                  {{ t('default.wf_templ_' + template.code + '_v' + template.version + '_description') }}
+                  {{ t('wf_templ_' + template.code + '_v' + template.version + '_description') }}
                </small>
             </MDBCardText>
             <MDBCardText>
                <div class="d-flex justify-content-between align-items-center">
-                  <span>{{`${t("default.created_by")} ${creator.name}` }} </span>
+                  <span>{{`${t("created_by")} ${creator.name}` }} </span>
                   <MDBBtn rounded @click.prevent="click" class="text-white fw-bold" :class="colorButton" >
                      {{ template.status }}
-                     <span v-if="template.status === t('default.buy')"> {{ getPrice(template.code) }} </span>
+                     <span v-if="template.status === t('buy')"> {{ getPrice(template.code) }} </span>
                   </MDBBtn>
                </div>
             </MDBCardText>
@@ -75,9 +75,9 @@ export default {
       const creator = ref({name: 'NearDAO'})
 
       const colorCard = computed(() => {
-         if( template.value.status === t('default.buy')) {
+         if( template.value.status === t('buy')) {
             return 'bg-gradient-10'
-         } else if(template.value.status === t('default.installed')) {
+         } else if(template.value.status === t('installed')) {
             return 'bg-success'
          } else {
             return 'bg-warning'
@@ -85,9 +85,9 @@ export default {
       })
 
       const colorButton = computed(() => {
-         if( template.value.status === t('default.buy')) {
+         if( template.value.status === t('buy')) {
             return 'bg-gradient-10'
-         } else if(template.value.status === t('default.installed')) {
+         } else if(template.value.status === t('installed')) {
             return 'bg-success'
          } else {
             return 'bg-muted'
@@ -96,11 +96,11 @@ export default {
 
       const getPrice = (templateCode) => {
          const price = loGet(market, [templateCode])?.price ?? 0
-         return (price == 0) ? t('default.free') : n(price) + ' N';
+         return (price == 0) ? t('free') : n(price) + ' N';
       }
 
       const click = () => {
-         if(template.value.status === t('default.buy')){
+         if(template.value.status === t('buy')){
             emit("btn-click", template)
          }
       }

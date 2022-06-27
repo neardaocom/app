@@ -5,16 +5,16 @@ import _ from "lodash"
 
 export const locationList = (t: any): SelectOption[] => {
     const listWorld = [
-        {text: t('default.global'), value: 'glo'},
+        {text: t('global'), value: 'glo'},
     ]
     // continents
     const listContinents = [
-        {text: t('default.asia'), value: 'asi'},
-        {text: t('default.africa'), value: 'afr'},
-        {text: t('default.europe'), value: 'eur'},
-        {text: t('default.north_america'), value: 'nam'},
-        {text: t('default.south_america'), value: 'sam'},
-        {text: t('default.australia'), value: 'aus'},
+        {text: t('asia'), value: 'asi'},
+        {text: t('africa'), value: 'afr'},
+        {text: t('europe'), value: 'eur'},
+        {text: t('north_america'), value: 'nam'},
+        {text: t('south_america'), value: 'sam'},
+        {text: t('australia'), value: 'aus'},
     ]
     listContinents.sort(ObjectHelper.compareByText)
     // states

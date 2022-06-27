@@ -1,6 +1,6 @@
 <template>
-   <h6>{{`${t('default.account_id')}: ${accountId}`}}</h6>
-   <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
+   <h6>{{`${t('account_id')}: ${accountId}`}}</h6>
+   <InputNumber :labelName="t('amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
 <script>

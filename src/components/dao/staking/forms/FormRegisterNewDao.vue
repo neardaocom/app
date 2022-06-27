@@ -1,10 +1,10 @@
 <template>
-   <InputString :labelName="t('default.dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
-   <InputString :labelName="t('default.vote_token')" id="vote_token_id" :addon="`.${accountPostfix}`"/>
+   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
+   <InputString :labelName="t('vote_token')" id="vote_token_id" :addon="`.${accountPostfix}`"/>
 
    <br/>
    <div class="text-start">
-      <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+      <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
    </div>
    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
    </MDBWysiwyg>
