@@ -36,8 +36,6 @@ import {
 } from 'mdb-vue-ui-kit';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from '@vue/runtime-core'
-//import { useRouter } from 'vue-router'
-//import { useNear } from '@/hooks/vuex';
 
 export default {
     components:{
@@ -50,10 +48,8 @@ export default {
     },
     setup(){
         const { t } = useI18n();
-        //const logger = inject('logger')
-        //const router = useRouter()
-        //const { accountId } = useNear()
-        
+
+
         onMounted(() => {
             /*
             if (localStorage.create_dao_account !== undefined && localStorage.create_dao_account !== null && localStorage.create_dao_account.length > 0) {
@@ -64,6 +60,7 @@ export default {
             }
             */
         })
+
         return {
             t
         }

@@ -5,9 +5,8 @@
 <script>
 import { computed } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-// import { useNear } from '@/hooks/vuex'
-import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
+import { useNear } from '@/hooks/near'
 import Select from '@/components/forms/Select.vue'
 import { inject } from '@vue/runtime-core';
 import { useStakeAction } from '@/hooks/staking';
@@ -18,19 +17,17 @@ export default {
    },
    setup () {
       const {t} = useI18n()
-      // const { adminAccountId } = useNear()
       const config = inject('config')
       const dao = inject('dao')
       const loader = inject('loader')
 
       const { runAction } = useStakeAction(dao, loader)
-
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+      const { adminAccountPostfix } = useNear(config)
 
 
       const schema = computed(() => {
          return {
-               delegate_id: `required`,
+               delegate_id: `requifred`,
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
@@ -43,7 +40,7 @@ export default {
         });
 
       return {
-         t, accountPostfix, onSubmit, dao
+         t, adminAccountPostfix, onSubmit, dao
       }
    }
 }

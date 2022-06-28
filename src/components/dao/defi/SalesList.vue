@@ -21,7 +21,7 @@ export default {
     props: {
         nearService: {
             type: Object,
-            required: true,
+            required: false,
         },
     },
     setup(props) {

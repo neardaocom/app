@@ -1,5 +1,5 @@
 <template>
-   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
+   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${adminAccountPostfix}`"/>
 
    <br/>
    <div class="text-start">
@@ -12,23 +12,24 @@
 <script>
 import { computed, ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-import { useNear } from '@/hooks/vuex'
-import NearUtils from '@/models/nearBlockchain/Utils';
+import { useNear } from '@/hooks/near'
 import { useForm } from 'vee-validate';
 import InputString from '@/components/forms/InputString.vue'
+import { inject } from '@vue/runtime-core';
 export default {
    components:{
       InputString
    },
    setup () {
       const {t} = useI18n()
-      const { adminAccountId } = useNear()
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
+      const { adminAccountPostfix } = useNear()
+      const loader = inject('loader')
+      const servicePool = loader.value.load('dao/ServicePool')
 
       const refWysiwyg = ref(null)
       const schema = computed(() => {
          return {
-               dao_id: `required|accountExists:${accountPostfix.value}`,
+               dao_id: `required|accountExists:${adminAccountPostfix.value},${servicePool.value}`,
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
@@ -40,7 +41,7 @@ export default {
         });
 
       return {
-         t, accountPostfix, refWysiwyg, onSubmit
+         t, adminAccountPostfix, refWysiwyg, onSubmit
       }
    }
 }

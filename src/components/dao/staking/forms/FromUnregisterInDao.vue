@@ -11,7 +11,7 @@
 <script>
 import { computed, ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-import { useNear } from '@/hooks/vuex'
+import { useNear } from '@/hooks/near'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputString from '@/components/forms/InputString.vue'

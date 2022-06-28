@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '@/pages/LandingPage.vue'
-import store from '@/store/index'
+import { useAuthStore } from '@/store/auth'
 
 const routes = [
   {
@@ -23,10 +23,11 @@ const routes = [
     name: 'dao-create',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreate.vue'),
     beforeEnter: (to: any, from: any, next: any) => {
-      if (store.getters['near/isSignedIn']) {
+      const store = useAuthStore()
+      if (store.isLoggedIn === true) {
         next()
       } else {
-        store.commit('near/signIn', {successUrl: window.location.origin + to.fullPath, errorUrl: window.location.origin + '/error'})
+        store.login!(window.location.origin + to.fullPath, window.location.origin + '/error')
         next(false)
       }
     }
@@ -36,10 +37,11 @@ const routes = [
     name: 'dao-creating',
     component: () => import(/* webpackChunkName: "dao" */ '@/pages/DaoCreating.vue'),
     beforeEnter: (to: any, from: any, next: any) => {
-      if (store.getters['near/isSignedIn']) {
+      const store = useAuthStore()
+      if (store.isLoggedIn === true) {
         next()
       } else {
-        store.commit('near/signIn', {successUrl: window.location.origin + to.fullPath, errorUrl: window.location.origin + '/error'})
+        store.login!(window.location.origin + to.fullPath, window.location.origin + '/error')
         next(false)
       }
     }

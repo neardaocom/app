@@ -6,7 +6,7 @@
                <i class="bi bi-person fs-4"/>
             </div>
             <span class="fs-6 fw-800">{{accountId}} 
-               <a class="" :href="nearWalletUrl + '/accounts/' + accountId" target="_blank">
+               <a class="" :href="walletUrl + '/accounts/' + accountId" target="_blank">
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
             </span>   
@@ -38,9 +38,9 @@ import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import ModalProposal from '@/components/proposal/Modal.vue'
 import FormUndelegate from '@/components/dao/staking/forms/FormUndelegate.vue'
 import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
-import { computed, ref, toRefs } from '@vue/reactivity';
-import { useStore } from 'vuex';
+import { ref, toRefs } from '@vue/reactivity';
 import { inject } from 'vue';
+import { useNear } from '@/hooks/near';
 export default {
    components: {
       MDBCard,
@@ -64,9 +64,9 @@ export default {
    setup (props) {
       const {accountId, amount} = toRefs(props)
       const {t} = useI18n()
-      const store = useStore()
       const wallet = inject('wallet')
-      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])
+      const config = inject('config')
+      const { walletUrl } = useNear(config)
 
       const modalProposal = ref(0)
       const form = ref(null)
@@ -100,7 +100,7 @@ export default {
 
       return {
          t,
-         nearWalletUrl,
+         walletUrl,
          wallet,
          modalProposal,
          undelegate,

@@ -43,10 +43,9 @@ import {
    MDBCardBody,
    MDBBadge
 } from 'mdb-vue-ui-kit'
-import { useStore } from 'vuex'
-import { computed } from '@vue/reactivity'
 import Icon from "@/components/ui/Icon.vue"
 import InfoAmount from '@/components/ui/InfoAmount.vue'
+import { useNear } from '@/hooks/near'
 
 export default {
    components: {
@@ -66,14 +65,11 @@ export default {
    setup () {
       const config = inject('config')
       const { t } = useI18n()
-      const store = useStore()
 
-      const walletUrl = computed(() => store.getters['near/getWalletUrl']) 
+      const { walletUrl } = useNear(config)
 
       return {
-         t,
-         config,
-         walletUrl
+         t, walletUrl
       }
    }
 }

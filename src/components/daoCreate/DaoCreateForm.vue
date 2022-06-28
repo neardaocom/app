@@ -35,7 +35,7 @@
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('add_founding_members')" id="dao_council" :buttonText="t('add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('add_founding_members')" id="dao_council" :buttonText="t('add')" :addon="`.${adminAccountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-4 mt-2">
@@ -199,14 +199,12 @@ import Summary from '@/components/daoCreate/Summary.vue'
 import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
 import { computed, ref, inject } from 'vue';
-import { useStore } from 'vuex'
 import { onMounted, watch, watchEffect } from '@vue/runtime-core';
-import ObjectHelper from '@/models/utils/ObjectHelper'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
-import NearUtils from "@/models/nearBlockchain/Utils";
 import { useRouter } from 'vue-router'
 import { useFormStep } from "@/hooks/createDao";
+import { useNear } from '@/hooks/near'
 
 export default {
     components: {
@@ -228,30 +226,28 @@ export default {
     },
     setup () {
         const {t} = useI18n()
-        const logger = inject('logger')
-        const notify = inject('notify')
         const config = inject('config')
-        const store = useStore()
+        const wallet = inject('wallet')
+        const loader = inject('loader')
+        const servicePool = loader.value.load('dao/ServicePool')
+
         const router = useRouter()
         const { formSubmited } = useFormStep()
 
+        const { adminAccountId, adminAccountPostfix, ftFactoryAccountId } = useNear(config)
 
-        const adminAccountId = computed(() => (config.value.near.adminAccountId))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
-        const ftFactoryAccountId = computed(() => (config.value.near.ftFactoryAccountId))
-        const nearService = computed(() => (store.getters['near/getService']))
-        const accountId = computed(() => ( store.getters['near/getAccountId']))
+        const accountId = computed(() => wallet.value.accountId)
 
         const schema = computed(() => {
             return {
                 dao_name: 'required|min:3|max:64',
-                dao_account: `required|accountNotExists:${adminAccountId.value}`,
+                dao_account: `required|accountNotExists:${adminAccountId.value}, ${servicePool.value}`,
                 dao_purpose: 'required|min:3|max:160',
                 dao_type: 'required',
-                dao_council: `accountExists:${accountPostfix.value}`,
+                dao_council: `accountExists:${adminAccountPostfix.value}, ${servicePool.value}`,
                 council_array: 'required',
                 dao_ft_name: 'required|min:3|max:64|alpha',
-                dao_ft_account: `required|accountNotExists:${ftFactoryAccountId.value}`,
+                dao_ft_account: `required|accountNotExists:${ftFactoryAccountId.value}, ${servicePool.value}`,
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
                 dao_ft_init_distribution: 'required|strIsNumber|strNumMin:0|strNumMax:100',
                 dao_unlocking_year:'required|strIsNumber|strNumMin:0|strNumMax:20',
@@ -310,7 +306,7 @@ export default {
 
         const addCouncil = () =>{
             if (!errors.value.dao_council && values.dao_council){
-                council.value.push(`${values.dao_council}.${accountPostfix.value}`)
+                council.value.push(`${values.dao_council}.${adminAccountPostfix.value}`)
                 values.dao_council = ''
             }
         }
@@ -328,46 +324,19 @@ export default {
         const daoAccountId = computed(() => values.dao_account ? values.dao_account + '.' + adminAccountId.value : null)
         const ftAccountId = computed(() => values.dao_ft_account ? values.dao_ft_account + '.' + ftFactoryAccountId.value : null)
 
-        /*
-        const createDao = (values) => {
-            const accountId = values.dao_account + '.' + adminAccountId.value
-            // set accountId to localStorage because of redirection
-            localStorage.create_dao_account = accountId
-
-            const councilMembers = values.council_array.map((councilAccount) =>{ return {account_id: councilAccount, tags : [1]}})
-            //create
-            nearService.value.createDao(
-                values.dao_name,
-                values.dao_account,
-                values.dao_purpose,
-                values.dao_ft_name,
-                new Decimal(values.dao_ft_amount).toNumber(), // TODO: when Peta update smartContract toFixed()
-                councilMembers,
-                new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toNumber(), //councilReleaseAmount  TODO: when Peta update smartContract toFixed()
-                new Decimal(values.dao_ft_init_distribution).div(100).mul(ftCouncilShare.value).div(100).mul(values.dao_ft_amount).toNumber(), //councilReleaseInitDistribution  TODO: when Peta update smartContract toFixed()
-                moment.duration().add(Number.parseFloat(values.dao_unlocking_year), 'y').add(Number.parseFloat(values.dao_unlocking_month), 'M').asSeconds(), //councilReleaseDuration
-                voteApproveThreshold.value,
-                voteQuorum.value,
-                voteDurationDays.value,
-                voteDurationHours.value,
-                voteDurationMinutes.value,
-                10
-            )
-        }
-        */
-
         // type loading
         onMounted(() => {
-            nearService.value.getTags().then((tags) => {
-                typeOptions.value = tags.map(tag => { return {text: t('' + tag), value: tag}}).sort(ObjectHelper.compareByText)
+            //nearService.value.getTags().then((tags) => {
+            //    typeOptions.value = tags.map(tag => { return {text: t('' + tag), value: tag}}).sort(ObjectHelper.compareByText) // TODO: Move to service
+                typeOptions.value = []
                 setFieldTouched('dao_type', false)
-            }).catch((e) => {
-                logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
-                logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
-                notify.danger(this.t('notify_proposal_finalize_fail_title'), this.t('notify_blockchain_fail') + " " +  this.t('notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
-                notify.flush()
-                console.log(e);
-            })
+            //}).catch((e) => {
+            //    logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            //    logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            //    notify.danger(this.t('notify_proposal_finalize_fail_title'), this.t('notify_blockchain_fail') + " " +  this.t('notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+            //    notify.flush()
+            //    console.log(e);
+            //})
         })
 
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
@@ -410,7 +379,7 @@ export default {
             formData,
             adminAccountId,
             ftFactoryAccountId,
-            accountPostfix,
+            adminAccountPostfix,
             daoAccountId,
             ftAccountId,
             typeOptions,

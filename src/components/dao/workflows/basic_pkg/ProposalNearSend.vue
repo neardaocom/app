@@ -1,5 +1,5 @@
 <template>
-    <InputString :labelName="t('account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
+    <InputString :labelName="t('account_id')" id="account_id" :addon="`.${adminAccountPostfix}`"/>
     <InputNumber :labelName="t('amount')" id="amount" :balance="availableNearAmount" :max="availableNearAmount" addon="Ⓝ"/>
 
     <br/>
@@ -17,10 +17,10 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import NearUtils from '@/models/nearBlockchain/Utils';
 import { inject } from '@vue/runtime-core';
 import { useAnalytics } from '@/hooks/treasury';
 import { useProposalBasic } from '@/hooks/proposal';
+import { useNear } from '@/hooks/near'
 
 export default {
     components:{
@@ -35,14 +35,13 @@ export default {
         const config = inject('config')
         const {availableNearAmount} = useAnalytics(dao, loader)
         const { proposalBasic } = useProposalBasic(loader, config)
-
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+        const { adminAccountPostfix } = useNear(config)
 
         const refWysiwyg = ref(null)
 
         const schema = computed(() => {
             return {
-                account_id: `required|accountExists:${accountPostfix.value}`,
+                account_id: `required|accountExists:${adminAccountPostfix.value}`,
                 amount: `required|strIsNumber|strNumMin:0|strNumMax:${availableNearAmount.value}`
             }
         });
@@ -51,7 +50,7 @@ export default {
 
         const onSubmit = handleSubmit(async (values) => {
             emit('isValid', true)
-            proposalBasic.value.nearSend(dao.value, values.account_id + '.' + accountPostfix.value, values.amount, refWysiwyg.value.getCode())
+            proposalBasic.value.nearSend(dao.value, values.account_id + '.' + adminAccountPostfix.value, values.amount, refWysiwyg.value.getCode())
         }, () => {
             emit('isValid', false)
             console.log(errors.value)
@@ -61,7 +60,7 @@ export default {
         return {
             t,
             dao,
-            accountPostfix,
+            adminAccountPostfix,
             onSubmit,
             refWysiwyg,
             availableNearAmount

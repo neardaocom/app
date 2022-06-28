@@ -12,7 +12,9 @@ import Register from "@/models/utils/Register";
 import { Loader } from "@/loader";
 import { useNearPriceLoader } from "@/hooks/market";
 import { useLoad as useDaoLoad } from "@/hooks/daoList";
-import { useStore } from 'vuex';
+import { useServiceStore }  from "@/store/service";
+import { useAuthStore }  from "@/store/auth";
+import { useWalletAuth } from './hooks/wallet';
 
 export default {
   components: {
@@ -20,7 +22,11 @@ export default {
   setup() {
     const logger = inject('logger')
     const notify = inject('notify')
-    const store = useStore()
+
+    // store
+    const serviceStore = useServiceStore()
+    const authStore = useAuthStore()
+
     // config
     const config = ref(getConfig(process.env.NODE_ENV))
     provide('config', config)
@@ -34,13 +40,19 @@ export default {
     provide('loader', loader)
     // init Near
     loader.value.get('near/WalletAccount').then((walletAccount) => {
+      // provide
       wallet.value = walletAccount.value
+      // store
+      const { isSignedIn, login, logout } = useWalletAuth(loader, config)
+      authStore.set(isSignedIn.value, wallet.value.accountId, login, logout)
     }).catch((reason) => {
       // TODO: Error catch
       console.log(reason)
     })
     // init ServicePool
-    loader.value.get('dao/ServicePool').then(() => {}).catch((reason) => {
+    loader.value.get('dao/ServicePool').then((servicePool) => {
+      serviceStore.setServicePool(servicePool.value)
+    }).catch((reason) => {
       // TODO: Error catch
       console.log(reason)
     })
@@ -50,23 +62,16 @@ export default {
       console.log(reason)
     })
 
+    // init firebase
+    serviceStore.initFirebase(config.value.firebase)
+
     // init
     const { coinGeckoExchange,  nearPriceResolve, nearPriceInterval } = useNearPriceLoader(config.value)
-    const { listInterval, listResolve } = useDaoLoad(loader, logger, notify, config.value)
+    const { listInterval, listResolve } = useDaoLoad(loader, logger, notify)
 
     onMounted(async () => {
-      store.dispatch('ipfs/init')
-      store.dispatch('near/init').then(async () => {
-       // await loader.value.get('near/WalletAccount')
-        await nearPriceResolve()
-        await listResolve()
-      })
-      // Loader
-      // Load NEAR
-      // console.log('Loaded', nearNear.value)
-      //.then(() => {
-      //  listResolve()
-      //})
+      await nearPriceResolve()
+      await listResolve()
     })
 
     return {

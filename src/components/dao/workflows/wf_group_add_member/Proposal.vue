@@ -1,5 +1,5 @@
 <template>
-    <InputString :labelName="t('account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
+    <InputString :labelName="t('account_id')" id="account_id" :addon="`.${adminAccountPostfix}`"/>
 
     <br/>
     <div class="text-start">
@@ -17,7 +17,7 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
 import { computed, ref, inject } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import NearUtils from "@/models/nearBlockchain/Utils";
+import { useNear } from '@/hooks/near';
 
 
 export default {
@@ -36,14 +36,13 @@ export default {
 
         const {t} = useI18n()
 
-        const adminAccountId = computed(() => (config.near.adminAccountId))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
+        const { adminAccountPostfix } = useNear(config)
 
         const description = ref('')
 
         const schema = computed(() => {
             return {
-                account_id: `required|accountExists:${accountPostfix.value}`,
+                account_id: `required|accountExists:${adminAccountPostfix.value}`,
             }
         });
 
@@ -61,7 +60,7 @@ export default {
         return {
             t,
             adminAccountId,
-            accountPostfix,
+            adminAccountPostfix,
             description,
             onSubmit
         }

@@ -108,7 +108,7 @@ export default {
     const { t } = useI18n();
     const router = useRouter(config)
 
-    const { list, topList, adminAccountId } = useListTop(3, config.value)
+    const { list, topList, adminAccountId } = useListTop(3, config)
 
     const organizations = () => {
       router.push({ name: 'dao-list'})

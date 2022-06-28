@@ -42,7 +42,7 @@ import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { computed, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useNear } from "@/hooks/vuex";
+import { useNear } from "@/hooks/near";
 import decimal from "decimal.js";
 import moment from 'moment'
 import NearUtils from '@/models/nearBlockchain/Utils';

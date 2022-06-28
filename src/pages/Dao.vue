@@ -25,9 +25,9 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="wallet.accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <Voting v-if="loaded === true && rPage === 'voting'" />
-        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="wallet.accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <DeFi v-if="loaded === true && rPage === 'defi'"/>
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
         <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
@@ -73,8 +73,6 @@ import DaoLoader from '@/models/dao/DaoLoader'
 import DaoMarket from '@/models/dao/DaoMarket'
 import { useRouter } from "@/hooks/dao";
 import { useDao } from "@/hooks/daoList";
-// import { useStore } from 'vuex'
-// import { useNear, useWallet } from "@/hooks/vuex";
 import { useRewards, useClaimableRewards } from "@/hooks/rewards";
 
 export default {
@@ -148,13 +146,6 @@ export default {
       t, rDaoId, rPage, rSearch, rOrder, dao, daoInfo, loaded, daoRights, wallet, walletRights,
       daoRewards, rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsCountingIntervalId,
     }
-  },
-  computed: {
-    accountId() {
-      return this.$store.getters["near/getAccountId"];
-    },
-  },
-  methods: {
   }
 }
 </script>

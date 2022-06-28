@@ -1,6 +1,6 @@
 <template>
-   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
-   <InputString :labelName="t('vote_token')" id="vote_token_id" :addon="`.${accountPostfix}`"/>
+   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${adminAccountPostfix}`"/>
+   <InputString :labelName="t('vote_token')" id="vote_token_id" :addon="`.${adminAccountPostfix}`"/>
 
    <br/>
    <div class="text-start">
@@ -13,7 +13,7 @@
 <script>
 import { computed, ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-import { useNear } from '@/hooks/vuex'
+import { useNear } from '@/hooks/near'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputString from '@/components/forms/InputString.vue'
@@ -23,14 +23,15 @@ export default {
    },
    setup () {
       const {t} = useI18n()
-      const { adminAccountId } = useNear()
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
+      const { adminAccountPostfix } = useNear()
+      const loader = inject('loader')
+      const servicePool = loader.value.load('dao/ServicePool')
 
       const refWysiwyg = ref(null)
       const schema = computed(() => {
          return {
-               dao_id: `required|accountExists:${accountPostfix.value}`,
-               vote_token_id: `required|accountExists:${accountPostfix.value}`
+               dao_id: `required|accountExists:${adminAccountPostfix.value},${servicePool.value}`,
+               vote_token_id: `required|accountExists:${adminAccountPostfix.value},${servicePool.value}`
          }
       });
       const { handleSubmit, errors } = useForm({ validationSchema: schema});
@@ -42,7 +43,7 @@ export default {
         });
 
       return {
-         t, accountPostfix, refWysiwyg, onSubmit
+         t, adminAccountPostfix, refWysiwyg, onSubmit
       }
    }
 }

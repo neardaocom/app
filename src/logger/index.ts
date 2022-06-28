@@ -1,20 +1,23 @@
 import { collection, addDoc } from "firebase/firestore"
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import store from '@/store'
-import _ from "lodash"
+import loToString from "lodash/toString"
 import sha256 from 'crypto-js/sha256'
+import { useAuthStore } from "@/store/auth";
+import { useServiceStore } from "@/store/service";
 
 export default {
 
     install: (app: any) =>  {
 
-        const db = store.getters['firebase/getFirestore']
-
         const firestoreLog = async (lvl: string, target: string, action: string, level: string, message: string) => {
-            const walletHash = store.getters['near/isSignedIn'] ? sha256(store.getters['near/getAccountId']).toString() : sha256( _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')).toString()
+            const authStore = useAuthStore()
+            const serviceStore = useServiceStore()
+            const db = serviceStore.firebase!.getFirestore()
+
+            const walletHash = authStore.isLoggedIn ? sha256(authStore.accountId).toString() : sha256( loToString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')).toString()
             const correlationId = walletHash.substr(0, walletHash.length / 2);
-            //const walletHash = store.getters['near/isSignedIn'] ? store.getters['near/getAccountId'] : _.toString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
+            //const walletHash = authStore.isLoggedIn ? authStore.accountId : loToString(process.env.VUE_APP_DAO_DEFAULT).split('.').slice(-2).join('.')
             //const correlationId = walletHash;
             return await addDoc(collection(db, "logs"), {
                 x_correlation_id: correlationId,

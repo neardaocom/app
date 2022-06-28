@@ -42,16 +42,13 @@
 import Select from "@/components/forms/Select.vue";
 import { useI18n } from "vue-i18n";
 import { inject } from "vue";
-//import { useStore } from 'vuex'
 import { computed, toRefs } from "@vue/reactivity";
 import { useForm } from "vee-validate";
 import ProposalHelper from "@/models/dao/ProposalHelper"
 import Rights from "@/models/dao/Rights";
 import { DAORightsType } from "@/models/dao/types/dao";
-//import { useNear } from "@/hooks/vuex";
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from "lodash/split";
-//import loFind from "lodash/find";
 import loMax from "lodash/max";
 import { useMarket } from '@/hooks/market';
 
@@ -90,9 +87,6 @@ export default {
     console.log(contractId)
 
     const { market } = useMarket(loader, config)
-
-    // const { nearService } = useNear();
-    //console.log('Template', template)
 
     const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0]);
     const proposeRights = computed(() => {

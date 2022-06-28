@@ -29,7 +29,6 @@
     </section>
     <SalesList
       v-if="dao.storage.skywardFinance"
-      :nearService="nearService"
     />
     <NoData v-if="!dao.storage.skywardFinance && !refFinanceFounds" :text="t('no_defi')" hint="This is a hint" />
 
@@ -38,14 +37,11 @@
 
 <script>
 import { MDBBtn } from "mdb-vue-ui-kit";
-import { ref, computed, onMounted, inject } from "vue"
-// import { ref, computed } from "vue"
-// import { reactive } from "@vue/reactivity"
+import { ref, onMounted, inject } from "vue"
 import AuctionList from "@/components/skywardFinance/List.vue"
 import SalesList from "@/components/dao/defi/SalesList.vue"
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { useI18n } from "vue-i18n"
-import { useStore } from "vuex";
 import ModalRefWithdrawDaoToken from './modals/ModalRefWithdrawDaoToken.vue'
 import ModalRefWithdrawNear from './modals/ModalRefWithdrawNear.vue'
 import Decimal from 'decimal.js'
@@ -62,16 +58,17 @@ export default {
   },
   setup() {
     const dao = inject('dao')
+    const wallet = inject('wallet')
     const { t } = useI18n();
-    const store = useStore()
+    
     // const account = computed(() => store.getters['near/getAccount'])
-    const nearService = computed(() => store.getters['near/getService'])
-    const daoAccount = nearService.value.getNear().account(dao.value.wallet)
+    // const nearService = computed(() => store.getters['near/getService'])
+    // const daoAccount = nearService.value.getNear().account(dao.value.wallet)
 
     const {
       service, founds: refFinanceFounds, tokenMetadata, tokenId,
       fetchFounds, reloadUp, reloadDown
-    } = useRefFinance(daoAccount, dao.value.wallet)
+    } = useRefFinance(wallet, dao.value.wallet)
 
     // modals
     const modalRefWithdrawDaoToken = ref(0)
@@ -89,7 +86,7 @@ export default {
     })
 
     return {
-      dao, t, nearService,
+      dao, t,
       modalRefWithdrawDaoToken, modalRefWithdrawNear,
       modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen,
       service, refFinanceFounds, tokenMetadata, tokenId,

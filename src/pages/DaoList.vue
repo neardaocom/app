@@ -70,7 +70,7 @@ export default {
     const config = inject('config')
     const { t, n } = useI18n()
 
-    const { loadingProgress, list, adminAccountId } = useList(config.value)
+    const { loadingProgress, list, adminAccountId } = useList(config)
     // const { searchText, searchOrder, searchOrderOptions, search } = useList()
 
     const searchQuery = ref('')

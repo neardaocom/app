@@ -96,33 +96,27 @@ export default {
       t, n, active, amountFormated, isValidated, errors, amount
     };
   },
-
-  computed: {
-    nearService() {
-      return this.$store.getters['near/getService']
-    },
-  },
   methods: {
     removeLiquidity(){
         this.validate()
         if (Validator.isValid(this.errors) === true) {
             // const min_ft = new Decimal(this.sale.amounts[0] * this.amount / this.sale.total_shares).toFixed()
             // const min_near = new Decimal(this.sale.amounts[1] * this.amount / this.sale.total_shares).toFixed()
-             const amount = new Decimal(this.amount).toFixed()
-            this.nearService.executePrivilegedAction(
-                this.contractId,
-                'RefWithdrawLiquidity',
-                { "pool_id": this.sale.id, "shares": amount.toString(), "min_ft": "0", "min_near": "0"}
-            ).then(r => {
-                console.log(r)
-                this.active = false
-            }).catch((e) => {
-                this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
-                this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
-                this.$notify.danger(this.t('notify_upgrade_dao_fail_title'),  this.t('notify_blockchain_fail') + " " +  this.t('notify_upgrade_dao_fail_message'))
-                this.$notify.flush()
-                console.log(e)
-            })
+            // const amount = new Decimal(this.amount).toFixed()
+            //this.nearService.executePrivilegedAction(
+            //    this.contractId,
+            //    'RefWithdrawLiquidity',
+            //     { "pool_id": this.sale.id, "shares": amount.toString(), "min_ft": "0", "min_near": "0"}
+            // ).then(r => {
+            //     console.log(r)
+            //     this.active = false
+            // }).catch((e) => {
+            //     this.$logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+            //     this.$logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${this.contractId}]`)
+            //     this.$notify.danger(this.t('notify_upgrade_dao_fail_title'),  this.t('notify_blockchain_fail') + " " +  this.t('notify_upgrade_dao_fail_message'))
+            //     this.$notify.flush()
+            //     console.log(e)
+            // })
         }
     },
 

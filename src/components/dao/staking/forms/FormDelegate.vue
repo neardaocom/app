@@ -7,7 +7,7 @@
 <script>
 import { computed } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-// import { useNear } from '@/hooks/vuex'
+import { useNear } from '@/hooks/near'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import Select from '@/components/forms/Select.vue'
@@ -28,8 +28,8 @@ export default {
 
       const { walletTokenFree } = useStake(dao)
       const { runAction } = useStakeAction(dao, loader)
-      // const { adminAccountId } = useNear(config)
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+      const { adminAccountId } = useNear(config)
+      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId))
 
       const schema = computed(() => {
          return {

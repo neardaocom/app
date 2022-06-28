@@ -39,14 +39,13 @@
 </template>
 
 <script>
-import { ref, toRefs, watch, computed, inject } from "vue";
+import { ref, toRefs, watch, computed } from "vue";
 import Sale from "../defi/Sale.vue"
 import { reactive } from "@vue/reactivity";
 import { useI18n } from "vue-i18n";
-import { useStore } from 'vuex'
 import Validator from '@/models/utils/Validator'
-import NearUtils from "@/models/nearBlockchain/Utils";
-import Decimal from 'decimal.js'
+//import NearUtils from "@/models/nearBlockchain/Utils";
+//import Decimal from 'decimal.js'
 import {
   MDBBtn,
   MDBInput,
@@ -96,12 +95,11 @@ export default {
     
   },
   setup(props) {
-    const { show, maxToken, maxNear, tokenDecimals, contractId, sale } = toRefs(props)
-    const logger = inject('logger')
-    const notify = inject('notify')
+    // const { show, maxToken, maxNear, tokenDecimals, contractId, sale } = toRefs(props)
+    const { show, maxToken, maxNear } = toRefs(props)
+    //const logger = inject('logger')
+    //const notify = inject('notify')
     const { t, n } = useI18n();
-    const store = useStore()
-    const nearService = computed(() => store.getters['near/getService'])
 
     // modal
     const active = ref(false)
@@ -188,22 +186,22 @@ export default {
     const addLiquidity = () => {
         validate()
         if (Validator.isValid(errors) === true) {
-            const amount_2 = new Decimal(amount2.value).mul(NearUtils.yoctoNear).toFixed();
-            const amount_1 = new Decimal(amount1.value).mul(10 ** tokenDecimals.value).toFixed();
+            //const amount_2 = new Decimal(amount2.value).mul(NearUtils.yoctoNear).toFixed();
+            //const amount_1 = new Decimal(amount1.value).mul(10 ** tokenDecimals.value).toFixed();
 
-            nearService.value.executePrivilegedAction(
-                contractId.value,
-                'RefAddLiquidity',
-                { "pool_id": sale.value.id, "amount_near": amount_2.toString(), "amount_ft": amount_1.toString() }
-            ).then(() => {
-                active.value = false
-            }).catch((e) => {
-                logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
-                logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
-                notify.danger(t('notify_upgrade_dao_fail_title'),  t('notify_blockchain_fail') + " " +  t('notify_upgrade_dao_fail_message'))
-                notify.flush()
-                console.log(e)
-            })
+            //nearService.value.executePrivilegedAction(
+            //    contractId.value,
+            //    'RefAddLiquidity',
+            //    { "pool_id": sale.value.id, "amount_near": amount_2.toString(), "amount_ft": amount_1.toString() }
+            //).then(() => {
+            //    active.value = false
+            //}).catch((e) => {
+            //    logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
+            //    logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
+            //    notify.danger(t('notify_upgrade_dao_fail_title'),  t('notify_blockchain_fail') + " " +  t('notify_upgrade_dao_fail_message'))
+            //    notify.flush()
+            //    console.log(e)
+            //})
         }
     }
 
@@ -216,8 +214,8 @@ export default {
        isValidated, errors, 
        amount1, amount2, 
        validateAmount, validate, 
-       changeAmount, 
-       addLiquidity, nearService
+       changeAmount,
+       addLiquidity
     };
   },
 };

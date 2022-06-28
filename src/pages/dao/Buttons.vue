@@ -128,6 +128,7 @@ import Rights from "@/models/dao/Rights";
 import { useRewards } from '@/hooks/rewards'
 import { useTreasury } from '@/hooks/treasury';
 import { useDaoWorkflowComputed } from '@/hooks/workflow';
+import { useWallet } from '@/hooks/wallet';
 
 export default {
   components: {
@@ -167,11 +168,11 @@ export default {
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
 
+    const { accountId } = useWallet(loader)
+
     const { daoRewards, createSalary } = useRewards(dao, loader)
     const { daoTreasury, createLockSimple } = useTreasury(dao, loader)
     const { installedWorkflow, workflowSettings } = useDaoWorkflowComputed(dao)
-
-    console.log(workflowSettings('lock1'));
 
     const form = ref()
 
@@ -191,8 +192,9 @@ export default {
     return {
       dao,
       t,
-      dropdownAction, 
-      latestDaoVersion,  
+      accountId,
+      dropdownAction,
+      latestDaoVersion,
       modalProposal,
       modalTitle, 
       activeForm, 
@@ -214,9 +216,6 @@ export default {
   },
 
   computed: {
-    accountId() {
-      return this.$store.getters['near/getAccountId']
-    },
     canVote() {
       return Object.keys(this.dao.members).includes(this.accountId)
     },

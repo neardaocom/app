@@ -68,8 +68,6 @@ import { useI18n } from 'vue-i18n'
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch, ref, inject } from 'vue'
 import { useRights, useRouter } from "@/hooks/dao";
-// import { useNear } from '@/hooks/vuex'
-// import { useStore } from 'vuex'
 import { market } from "@/data/workflow";
 import loGet from "lodash/get";
 import loFind from "lodash/find";
@@ -95,9 +93,9 @@ export default {
   },
   setup() {
     const { t, n } = useI18n()
-    const { rDaoId } = useRouter(config)
     const config = inject('config')
     const loader = inject('loader')
+    const { rDaoId } = useRouter(config)
     const dao = ref(null)
     const { wallet } = useWallet(loader)
     const { daoInfo } = useDao(rDaoId.value)

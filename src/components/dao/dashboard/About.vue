@@ -134,7 +134,7 @@ import { useI18n } from 'vue-i18n'
 import { MDBIcon, MDBBtnGroup, MDBBtn, MDBDropdown, MDBDropdownMenu, MDBDropdownItem, MDBBadge } from 'mdb-vue-ui-kit'
 import { useLinks, useStats } from "@/hooks/dao";
 import { useResource } from "@/hooks/docs";
-import { useNear } from "@/hooks/vuex";
+import { useNear } from "@/hooks/near";
 import Icon from '@/components/ui/Icon.vue'
 import Tooltip from '@/components/ui//Tooltip.vue'
 
@@ -150,6 +150,7 @@ export default {
         const { t, n } = useI18n()
         const dao = inject('dao')
         const loader = inject('loader')
+        const config = inject('config')
 
         const ipfsService = loader.value.load('services/ipfs')
 
@@ -185,7 +186,7 @@ export default {
             users, groupNames
         } = useStats(dao)
 
-        const { walletUrl } = useNear()
+        const { walletUrl } = useNear(config)
 
         const kycDropdown = ref(false)
         const socialDropdown = ref(false)

@@ -6,7 +6,7 @@
                <i class="bi bi-person" style="font-size: 1.2rem;"/>
             </div>
             <span class="fs-6 fw-800">{{ user.accountId }}
-               <a class="" :href="nearWalletUrl + '/accounts/' + user.accountId" target="_blank">
+               <a class="" :href="walletUrl + '/accounts/' + user.accountId" target="_blank">
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
             </span>
@@ -33,13 +33,13 @@
 <script>
 import { MDBCard, MDBCardBody, MDBBadge, MDBBtn} from "mdb-vue-ui-kit";
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
-import { computed, ref } from '@vue/reactivity';
+import { ref } from '@vue/reactivity';
 import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
 import { inject } from '@vue/runtime-core';
 import { useStake } from '@/hooks/staking';
 import ModalProposal from '@/components/proposal/Modal.vue'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import { useNear } from '@/hooks/near';
 
 export default {
   components: {
@@ -60,11 +60,11 @@ export default {
       
    setup () {
       const {t} = useI18n()
-      const store = useStore()
       const dao = inject('dao')
       const wallet = inject('wallet')
-      const {walletVotePowerOwned} = useStake(dao)
-      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])
+      const config = inject('config')
+      const { walletVotePowerOwned } = useStake(dao)
+      const { walletUrl } = useNear(config)
       const form = ref(null)
 
       const submitText = ref('')
@@ -80,7 +80,7 @@ export default {
       }
 
       return {
-         t, nearWalletUrl, walletVotePowerOwned, wallet, predelegate, submitModal,
+         t, walletUrl, walletVotePowerOwned, wallet, predelegate, submitModal,
          modalProposal, submitText, form
       }
    }

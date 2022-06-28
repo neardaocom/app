@@ -29,7 +29,7 @@
                <i class="bi bi-wallet2 text-muted me-2"/>
                <a
                class="text-reset"
-               :href="nearWalletUrl + '/accounts/' + dao.wallet"
+               :href="walletUrl + '/accounts/' + dao.wallet"
                target="_blank"
                >
                   {{ t("wallet") }}
@@ -50,16 +50,16 @@
 </template>
 
 <script>
-import { computed, ref } from '@vue/reactivity'
+import { ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n';
 import { inject } from '@vue/runtime-core';
-import { useIPFS } from '@/hooks/vuex';
+import { useNear } from '@/hooks/near';
 import { useLinks } from '@/hooks/dao';
 import Tooltip from '@/components/ui//Tooltip.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { MDBBadge } from 'mdb-vue-ui-kit'
-import { useStore } from 'vuex';
 import InfoAmount from '@/components/ui/InfoAmount.vue'
+import { useResource } from '@/hooks/docs';
 
 
 export default {
@@ -71,18 +71,21 @@ export default {
    },
    setup () {
       const dao = inject('dao')
+      const loader = inject('loader')
+      const config = inject('config')
       const { t, n } = useI18n()
-      const store = useStore()
+      const { walletUrl } = useNear(config)
+   
+      const ipfsService = loader.value.load('services/ipfs')
 
-      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])  
+      const { daoResource } = useResource(ipfsService)
 
-      const { ipfsService } = useIPFS()
       const { web } = useLinks(dao.value)
+
       const webLink = ref(null)
+      if (web) daoResource.value.fetch(web).then(r => {webLink.value = r})
 
-      if (web) fetch(web, ipfsService.value).then(r => {webLink.value = r})
-
-      return { dao, t, n, nearWalletUrl }
+      return { dao, t, n, walletUrl, webLink }
    }
 }
 </script>

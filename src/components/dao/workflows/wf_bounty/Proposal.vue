@@ -21,8 +21,7 @@ import { computed, ref, toRefs } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
 import decimal from "decimal.js";
 import NearUtils from '@/models/nearBlockchain/Utils';
-import { useNear } from "@/hooks/vuex";
-//import { inject } from '@vue/runtime-core';
+import { useNear } from "@/hooks/near";
 import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import ProposalHelper from '@/models/dao/ProposalHelper';
 
@@ -51,11 +50,6 @@ export default {
         const { contractId, template, proposalCount } = toRefs(props)
 
         const { nearService } = useNear()
-        // const { nearService, accountId } = useNear()
-        //const  ipfsService  = useIPFS()
-
-        //const logger = inject('logger')
-        //const notify = inject('notify')
 
         const refWysiwyg = ref(null)
 

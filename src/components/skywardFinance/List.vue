@@ -11,8 +11,6 @@
 <script>
 import Auction from "@/components/skywardFinance/Auction.vue"
 import { onMounted, onUnmounted, computed, ref, inject } from "vue"
-import { useStore } from "vuex"
-// import { testDataset } from "@/models/services/skywardFinanceService/types"
 import { useSkywardFinanace } from "@/hooks/auction"
 import { useI18n } from 'vue-i18n'
 import AuctionModel from '@/models/auction';
@@ -30,11 +28,10 @@ export default {
     },
     setup() {
         const dao = inject('dao')
+        const loader = inject('loader')
         const { t } = useI18n()
 
-        const store = useStore()
-
-        const account = computed(() => store.getters['near/getAccount'])
+        const account = loader.value.load('near/WalletAccount')
         const skywardSaleIds = ref(AuctionModel.getSkywardSaleIds(dao.value.storage))
 
         const {

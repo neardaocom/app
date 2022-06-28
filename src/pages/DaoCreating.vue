@@ -117,9 +117,7 @@ import {
 import { ref, inject, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from '@vue/runtime-core'
-// import { useStore } from 'vuex'
 import { useRouter } from "vue-router";
-//import { useNear } from '@/hooks/vuex';
 import { useCreateToken } from '@/hooks/ft';
 import { useAccounts, useFormStep, useCreateDAO } from "@/hooks/createDao"; // , useCreateDAO
 import { useNearBlockchainTransaction } from "@/hooks/router";
