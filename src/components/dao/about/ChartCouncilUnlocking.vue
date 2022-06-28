@@ -9,7 +9,7 @@
   import { MDBChart } from "mdb-vue-ui-kit";
   import { ref, onMounted, toRefs, inject } from "vue";
   import { useI18n } from "vue-i18n";
-  import Analytics from '@/models/analytics'
+  // import Analytics from '@/models/analytics'
 
 
   export default {
@@ -30,12 +30,12 @@
       const chartOptions = ref({})
 
       onMounted(() => {
-        const cashflow = Analytics.computeUnlockingCashflow(
-            Analytics.parseAlgorithm(group.value.token.algorithm),
-            { release_end: group.value.token.releaseEnd, duration: group.value.token.duration, total: group.value.token.locked, init: group.value.token.init },
-            Analytics.getPeriodFromDuration(group.value.token.duration),
-            dao.value.created
-        )
+        //const cashflow = Analytics.computeUnlockingCashflow(
+        //    Analytics.parseAlgorithm(group.value.token.algorithm),
+        //    { release_end: group.value.token.releaseEnd, duration: group.value.token.duration, total: group.value.token.locked, init: group.value.token.init },
+        //    Analytics.getPeriodFromDuration(group.value.token.duration),
+        //    dao.value.created
+        //)
         // console.log(cashflow)
         
         const labels = cashflow.map(obj => d(obj.date))

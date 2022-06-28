@@ -6,8 +6,7 @@
       <div class="d-flex">
         <span class="fs-5 text-muted p-2 text-center">
           #{{ proposal.id }}
-        </span>
-        
+        </span>       
         <div class="p-2 flex-fill">
           <div class="d-flex">
             <div>
@@ -15,7 +14,7 @@
               <div class="mt-n2 small">{{ proposal.type }}</div>
             </div>
             <div class="ms-auto p-1">
-              <MDBBadge :color="workflowCodeMapper[workflowCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[workflowCode].icon"></i>{{ proposal.state }}</MDBBadge>
+              <MDBBadge :color="workflowCodeMapper[statusCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[statusCode].icon"></i>{{ t('default.proposal_status_' + statusCode) }}</MDBBadge>
               <template v-if="proposal.description">
                 <br/>
                 <MDBBtn
@@ -49,7 +48,7 @@
 
       <!-- progress or status -->
       <MDBProgress
-        v-if="workflowCode === 'in_progress' || workflowCode === 'finishing'"
+        v-if="statusCode === 'in_progress' || statusCode === 'finishing'"
         :height="3"
       >
         <MDBProgressBar bg="secondary" :value="proposalProgress" />
@@ -107,7 +106,7 @@
       </MDBProgress>
 
       <!-- Workflow -->
-      <MDBAccordion v-if="workflowCode === 'accepted'" v-model="accordionWorkflow" flush>
+      <MDBAccordion v-if="statusCode === 'running' || statusCode === 'finished'" v-model="accordionWorkflow" flush>
         <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
           <Workflow :proposal="proposal" />
         </MDBAccordionItem>
@@ -115,7 +114,7 @@
 
       <!-- Vote -->
       <div
-        v-if="workflowCode === 'in_progress' && proposal.canVote === true && proposal.isVoted === false"
+        v-if="statusCode === 'in_progress' && proposal.canVote === true && proposal.isVoted === false"
         class="mt-2"
       >
         <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
@@ -129,7 +128,7 @@
         <!--</button> -->
       </div>
       <div
-        v-else-if="workflowCode === 'finishing'"
+        v-else-if="statusCode === 'finishing'"
         role="group"
       >
         <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded mt-2">
@@ -190,7 +189,7 @@ export default {
     const collapseDescription = ref(false)
     const workflowCodeMapper = ref(ProposalHelper.workflowCodeBgMapper);
 
-    const { proposalProgress, proposalProgressIntervalId } = useProposalCounter(proposal)
+    const { proposalProgress, statusCode, proposalProgressIntervalId } = useProposalCounter(proposal)
     const { proposalDate, proposalTime } = useProposalComputed(proposal, dao)
 
     const accordionWorkflow = ref('none');
@@ -203,6 +202,7 @@ export default {
         .then(r => {
             proposalDescription.value = r
             proposalDescriptionLoading.value = false
+            collapseDescription.value = !collapseDescription.value
         })
         .catch((e) => {
           logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
@@ -211,9 +211,9 @@ export default {
           notify.flush()
           console.error(e)
         })
+      } else {
+        collapseDescription.value = !collapseDescription.value
       }
-
-      collapseDescription.value = !collapseDescription.value
     }
 
     const clickOpen = ref(false)
@@ -241,27 +241,9 @@ export default {
     return { t, collapseDescription, workflowCodeMapper, proposalDescription, 
       proposalDescriptionLoading, proposalProgress, proposalProgressIntervalId, 
       moment, vote, finish, fetchDescription, proposalDate, proposalTime, accordionWorkflow,
-      detail, open, clickOpen, source, prefix
+      detail, statusCode,
+      open, clickOpen, source, prefix,
     };
   },
-  computed: {
-    accountId(){
-      return this.$store.getters['near/getAccountId']
-    },
-    nearService() {
-      return this.$store.getters["near/getService"];
-    },
-    ipfsService() {
-      return this.$store.getters['ipfs/getService']
-    },
-    workflowCode() {
-      //console.log(this.proposal, this.proposalProgress)
-      return ProposalHelper.getStatus(this.proposal.status, this.proposalProgress)
-    }
-  },
-  mounted() {
-    //console.log(this.proposal.description)
-    // load description from ipfs
-  }
 };
 </script>

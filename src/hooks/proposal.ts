@@ -62,7 +62,7 @@ export const useProposal = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     return { daoProposal, vote, finish, fetchDescription }
 }
 
-export const useProposalComputed = (proposal: Ref<ProposalVoting>, dao: Ref<DAO>) => {
+export const useProposalComputed = (proposal: Ref<ProposalVoting>) => {
     const proposalDate = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatDateLong))
     const proposalTime = computed(() => DateHelper.format(proposal.value.duration.value, DateHelper.formatTime))
 
@@ -73,9 +73,10 @@ export const useProposalComputed = (proposal: Ref<ProposalVoting>, dao: Ref<DAO>
 
 export const useProposalCounter = (proposal: Ref<ProposalVoting>) => {
     const proposalProgress = ref(proposal.value.progress)
+    const statusCode = computed(() => ProposalHelper.getStatusCode(proposal.value.stateCode, proposal.value.workflowStateCode, proposalProgress.value))
 
     const progressCounter = () => {
-        proposalProgress.value = new Decimal(ProposalHelper.getProgress(proposal.value.status, proposal.value.templateSettings, proposal.value.duration?.value)).round().toNumber()
+        proposalProgress.value = new Decimal(ProposalHelper.getProgress(proposal.value.stateCode, proposal.value.templateSettings, proposal.value.duration?.value)).round().toNumber()
     }
     const proposalProgressIntervalId = ref<number|undefined>();
 
@@ -88,7 +89,7 @@ export const useProposalCounter = (proposal: Ref<ProposalVoting>) => {
     })
 
     return {
-        proposalProgress, progressCounter, proposalProgressIntervalId
+        proposalProgress, statusCode, progressCounter, proposalProgressIntervalId
     }
 }
 

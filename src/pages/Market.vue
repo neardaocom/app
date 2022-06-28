@@ -65,7 +65,7 @@ import {
   MDBSelect,
 } from 'mdb-vue-ui-kit'
 import { useI18n } from 'vue-i18n'
-import { useTemplateList, useCreators } from "@/hooks/workflow";
+import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch, ref, inject } from 'vue'
 import { useRights, useRouter } from "@/hooks/dao";
 // import { useNear } from '@/hooks/vuex'
@@ -103,9 +103,7 @@ export default {
     const { daoInfo } = useDao(rDaoId.value)
     const { daoRights, walletRights } = useRights(dao, wallet.value?.getAccountId())
     const { dataSource, dataResults, fetchProgress, fetch, filterSearch, filterOrder, filterOrderOptions, filter } = useTemplateList(loader, config)
-    const { creator, provider } = useCreators()
     const daoTemplatesCodes = ref([])
-    
 
     const modalProposal = ref(0)
     const modalTitle = t('default.wf_templ_wf_add')
@@ -131,7 +129,7 @@ export default {
     watch([filterSearch, filterOrder], () => { filter() })
 
     return {
-      t, n, dataSource, dataResults, creator, provider, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
+      t, n, dataSource, dataResults, fetchProgress, filterSearch, filterOrder, filterOrderOptions, filter,
       rDaoId, daoTemplatesCodes, modalProposal, modalTitle, modalProps, modalMessage, dao, daoRights, walletRights, wallet,
     }
   },

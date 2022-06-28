@@ -1,4 +1,4 @@
-import { DAOProposal, DAOTokenHolder } from "./types/dao";
+import { DAOMember, DAOProposal, DAOTokenHolder, DAOVoteLevel, DAOVoteType } from "./types/dao";
 import { WFInstance, WFSettings } from "./types/workflow";
 import GenericsHelper from "../utils/GenericsHelper";
 import Decimal from "decimal.js";
@@ -11,7 +11,7 @@ import loToInteger from "lodash/toInteger";
 import loToNumber from "lodash/toNumber"
 import { UnsupportedError } from '@/models/utils/errors'
 import CollectionHelper from "../utils/CollectionHelper";
-import { CodeValue } from "../utils/types/generics";
+import { CodeValue, Translate } from "../utils/types/generics";
 import ObjectHelper from "../utils/ObjectHelper";
 import { ProposalVoting } from "./types/proposal";
 
@@ -30,6 +30,14 @@ export default class ProposalHelper {
         },
         accepted: {
             color: 'success',
+            icon: 'bi bi-check-circle me-2',
+        },
+        running: {
+          color: 'secondary',
+          icon: 'bi bi-check-circle me-2',
+        },
+        finished: {
+            color: 'info',
             icon: 'bi bi-check-circle me-2',
         },
         rejected: {
@@ -68,14 +76,16 @@ export default class ProposalHelper {
         return progress
     }
 
-    static getStatus(state: string, progress: number): string {
+    static getStatusCode(state: string, workflowState: string | undefined, progress: number): string {
         let code: string = ''
         if (state === 'in_progress' && progress < 100) {
           code = 'in_progress'
         } else if (state === 'in_progress') {
           code = 'finishing'
-        } else if (state === 'accepted') {
-          code = 'accepted'
+        } else if (state === 'accepted' && workflowState !== 'finished') {
+          code = 'running'
+        } else if (state === 'accepted' && workflowState === 'finished') {
+          code = 'finished'
         } else if (state === 'rejected') {
           code = 'rejected'
         } else if (state === 'spam') {
@@ -102,7 +112,7 @@ export default class ProposalHelper {
         }
     }
 
-    static getVotingStats(proposal: DAOProposal, tokenHolders: DAOTokenHolder[], tokenBlocked: number) {
+    static getVotingStats(proposal: DAOProposal, members: DAOMember[], tokenBlocked: number) {
         //console.log(token_holders, token_blocked)
         const results = loClone(this.voteMapper)
         let amountSum: number = 0
@@ -111,18 +121,18 @@ export default class ProposalHelper {
           Object.keys(proposal.votes).forEach((voter: string) => {
             switch (loToInteger(proposal.votes[voter])) {
               case 0:
-                results[0] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[0] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               case 1:
-                results[1] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[1] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               case 2:
-                results[2] += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0;
+                results[2] += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0;
                 break;
               default:
                 throw new UnsupportedError('Undefined voting stat: ' + loToInteger(proposal.votes[voter]))
             }
-            amountSum += loToNumber(CollectionHelper.findParam(tokenHolders, {'accountId': voter}, ['amount'])) ?? 0
+            amountSum += loToNumber(CollectionHelper.findParam(members, {'accountId': voter}, ['voteAmount'])) ?? 0
           });
         } else { // get stats from results
           results[1] += proposal.votingResults?.yes || 0;
@@ -184,4 +194,20 @@ export default class ProposalHelper {
     static getWorkflows(proposals: DAOProposal[]): WFInstance[] {
       return proposals.filter((proposal) => proposal.workflow !== undefined).map((proposal) => proposal.workflow!) || []
     }
+
+    static voteLevelToTranslate(voteLevel: DAOVoteLevel): Translate {
+      const trans: Translate = {key: '', params: {quorum: voteLevel.quorum, approveThreshold: voteLevel.approveThreshold}}
+  
+      switch (voteLevel.type) {
+          case DAOVoteType.Democratic:
+              trans.key = 'vote_level_democratic'
+              break;
+          case DAOVoteType.TokenWeighted:
+              trans.key = 'vote_level_token_weighted'
+              break;
+          default:
+              throw new Error("Unsupported type: " + voteLevel);
+      }
+      return trans
+  }
 }

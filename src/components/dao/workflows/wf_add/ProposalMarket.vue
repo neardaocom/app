@@ -45,7 +45,7 @@ import { inject } from "vue";
 //import { useStore } from 'vuex'
 import { computed, toRefs } from "@vue/reactivity";
 import { useForm } from "vee-validate";
-import { voteLevelToTranslate } from "@/models/dao";
+import ProposalHelper from "@/models/dao/ProposalHelper"
 import Rights from "@/models/dao/Rights";
 import { DAORightsType } from "@/models/dao/types/dao";
 //import { useNear } from "@/hooks/vuex";
@@ -94,7 +94,7 @@ export default {
     // const { nearService } = useNear();
     //console.log('Template', template)
 
-    const voteLevel = voteLevelToTranslate(dao.value.voteLevels[0]);
+    const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0]);
     const proposeRights = computed(() => {
       const rights = [];
       daoRights.value.forEach((right, index) => {

@@ -16,7 +16,7 @@
 
         <!-- /Dashboard -->
         <!-- Buttons -->
-        <Buttons v-if="loaded" :accountRole="accountRole" :walletRights="walletRights" :daoRights="daoRights" />
+        <Buttons v-if="loaded" :walletRights="walletRights" :daoRights="daoRights" />
         <SkeletonButtons v-else />
         <!-- /Buttons -->
       </div>
@@ -68,7 +68,6 @@ import Governance from './dao/Governance.vue'
 import Rewards from './dao/Rewards.vue'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, provide, inject, onUnmounted } from 'vue'
-import { getRole } from "@/models/dao";
 import Rights from '@/models/dao/Rights'
 import DaoLoader from '@/models/dao/DaoLoader'
 import DaoMarket from '@/models/dao/DaoMarket'
@@ -153,9 +152,6 @@ export default {
   computed: {
     accountId() {
       return this.$store.getters["near/getAccountId"];
-    },
-    accountRole() {
-      return getRole(this.dao, this.wallet.accountId)
     },
   },
   methods: {
