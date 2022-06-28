@@ -602,5 +602,9 @@
   "media_description": "Description",
   "media_proposal": "Proposal",
   "show_file": "Show full",
-  "open": "Open"
+  "open": "Open",
+  "tooltip_dao_about": "DAO - basic information about current dao as name, address, members in dao etc.",
+  "tooltip_dao_governance": "Actual governance set up for this dao as total voting power and actual voting power. Actual dao governance token staked (ready for voting etc.)",
+  "tooltip_dao_rewards_to_withdraw": "All rewards from this dao which can be sent to your personal wallet",
+  "tooltip_dao_active_proposals": "All proposals where your actions is needed (open for voting)"
 }

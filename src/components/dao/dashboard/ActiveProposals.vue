@@ -5,7 +5,7 @@
             <h6 class="text-muted">
                {{t('default.active_proposals')}}
             </h6>
-            <Tooltip class="ms-auto" text="Tooltip" />
+            <Tooltip class="ms-auto" :text="t('default.tooltip_dao_active_proposals')" />
          </div>
          <!-- Proposal -->
          <div v-if="proposals.length > 0">

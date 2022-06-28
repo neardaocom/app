@@ -3,7 +3,7 @@
       <MDBCardBody class="text-start">
          <div class="d-flex">
             <h6 class="text-muted">{{t('default.rewards_to_withdraw')}}</h6>
-            <Tooltip class="ms-auto" text="Tooltip" />
+            <Tooltip class="ms-auto" :text="t('default.tooltip_dao_rewards_to_withdraw')" />
          </div>
 
          <template v-if="rewardsAssetsStats?.length > 0">

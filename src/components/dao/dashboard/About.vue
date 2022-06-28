@@ -5,7 +5,7 @@
                 <h6 class="text-muted">
                     {{t('default.dao')}}
                 </h6>
-                <Tooltip class="ms-auto" text="Tooltip" />
+                <Tooltip class="ms-auto" :text="t('default.tooltip_dao_about')" />
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -137,7 +137,6 @@ import { useResource } from "@/hooks/docs";
 import { useNear } from "@/hooks/vuex";
 import Icon from '@/components/ui/Icon.vue'
 import Tooltip from '@/components/ui//Tooltip.vue'
-
 export default {
     components: {
         MDBIcon,
@@ -203,7 +202,7 @@ export default {
             socialTwitterLink, socialFacebookLink,
             chatDiscordLink,
             walletUrl,
-            kycDropdown, socialDropdown, chatDropdown,
+            kycDropdown, socialDropdown, chatDropdown
         }
     }
 }

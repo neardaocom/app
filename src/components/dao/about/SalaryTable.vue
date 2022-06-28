@@ -3,6 +3,7 @@
       <thead>
          <tr>
             <th scope="col">#</th>
+            <th scope="col">{{t('default.name')}}</th>
             <th scope="col">{{t('default.group')}}</th>
             <th scope="col">{{t('default.assets')}}</th>
             <th scope="col">{{t('default.frequency')}}</th>
@@ -13,6 +14,7 @@
       <tbody>
          <tr v-for="(reward) in rewards" :key="reward.id">
             <th scope="row">{{reward.id}}</th>
+            <td>{{reward.name}}</td>
             <td>{{reward.targetGroup.name}}</td>
             <td>
                <div v-for="(asset, index) in reward.amounts" :key="index">
