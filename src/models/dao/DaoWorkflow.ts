@@ -109,6 +109,7 @@ export default class DaoWorkflow {
     const metadataActivity = this.getMetadataActivity(activityId)
     const actionInputs = metadataActivity.args({
       daoId: this.service.getContractId(),
+      tokenId: this.dao.settings.token_id,
       proposalId: this.workflow.id,
       constants: this.workflow.constants,
       inputs: this.workflow.inputs,

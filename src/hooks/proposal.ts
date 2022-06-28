@@ -15,6 +15,7 @@ import DaoProposalBasic from "@/models/dao/DaoProposalBasic";
 import loFind from "lodash/find";
 import { useResource } from "./docs";
 import { DAODocsFile } from "@/models/dao/types/docs";
+import DaoSkyward from "@/models/dao/DaoSkyward";
 
 export const useList = (dao: Ref<DAO>, templatesMeta: Ref<MarketTemplate[]>, wallet: Ref<Account>, walletRights: Ref<DAORights[]>, loader: Ref<Loader>) => {
     const { t, d, n } = useI18n()
@@ -98,4 +99,11 @@ export const useProposalBasic = (loader: Ref<Loader>, config: Ref<Config>) => {
     const ipfsService = loader.value.load('services/ipfs')
     const proposalBasic = ref(new DaoProposalBasic(config.value.near.wfProviderAccountId, servicePool.value, ipfsService.value))
     return { proposalBasic }
+}
+
+export const useSkyward = (loader: Ref<Loader>) => {
+    const servicePool = loader.value.load('dao/ServicePool')
+    const ipfsService = loader.value.load('services/ipfs')
+    const skyward = ref(new DaoSkyward(servicePool.value, ipfsService.value))
+    return { skyward }
 }

@@ -20,7 +20,7 @@ export default class ProposalTransformer implements TransformerInterface {
     }
 
     transform(value: any): DAOProposal {
-        console.log(value)
+        //console.log(value)
 
         const proposalConstants: CodeValue[] = this.constantsTransformer.transform(value[2].constants)
 

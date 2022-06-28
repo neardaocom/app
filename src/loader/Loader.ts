@@ -80,9 +80,9 @@ export default class Loader {
                     throw new UnsupportedError('Key: ' + key)
             }
             this.register.set(key, objectRef!)
-            console.log('Set', key, objectRef!, this.register.getList())
+            //console.log('Set', key, objectRef!, this.register.getList())
         } else {
-            console.log('Get', key, objectRef, this.register.getList())
+            //console.log('Get', key, objectRef, this.register.getList())
         }
 
 

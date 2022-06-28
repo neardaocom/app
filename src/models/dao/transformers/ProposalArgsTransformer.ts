@@ -13,6 +13,7 @@ import { MarketTemplate } from "../types/market";
 import { DAODocs, DAODocsFile, DAODocsFileType } from "../types/docs";
 import { ResourceType, ResourceTypeText } from "@/models/nearBlockchain/types/resource";
 import ProposalResourceTransformer from "./ProposalResourceTransformer";
+import NumberHelper from "@/models/utils/NumberHelper";
 
 export default class ProposalArgsTransformer implements TransformerInterface {
     private templates: Record<number, WFTemplate>;
@@ -68,13 +69,13 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                             }
                             break;
                         case '2': {
-                            let resource = loFind(this.docs.files, {category: values.category, name: values.name, version: values.version})
-                            if (!resource){
-                                resource = this.proposalResourceTransformer.transform(values)
-                            }
-                            loAssign(values, {
-                                resource
-                            })
+                                let resource = loFind(this.docs.files, {category: values.category, name: values.name, version: values.version})
+                                if (!resource){
+                                    resource = this.proposalResourceTransformer.transform(values)
+                                }
+                                loAssign(values, {
+                                    resource
+                                })
                             }
                             break;
                         case '3': {
@@ -98,6 +99,20 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                             break;
                         case '2': {
                                 null;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
+            case 'skyward1': {
+                    switch (value.workflowScenarioId.toString()) {
+                        case '1': {
+                                loSet(values, ['title'], loGet(values, ['sale.title']))
+                                loSet(values, ['startAt'], this.d(NearUtils.dateFromChain(NumberHelper.parseNumber((values.start_time as string) || '0'))))
+                                loSet(values, ['amount'], this.n(NumberHelper.parseNumber(NearUtils.amountFromDecimals((values.offered_amount as string), 24))))
+                                loSet(values, ['tokenId'], loGet(values, ['sale.token_id']))
                             }
                             break;
                         default:

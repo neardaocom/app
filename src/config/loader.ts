@@ -1,4 +1,4 @@
-import { Item } from "@/loader";
+import { Item } from "@/loader/types";
 export type AppConfig = {
     daoDefault: string;
 }
