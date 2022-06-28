@@ -5,7 +5,7 @@
                 <h6 class="text-muted">
                     {{t('governance')}}
                 </h6>
-                <Tooltip class="ms-auto" text="Tooltip" />
+                <Tooltip class="ms-auto" :text="t('tooltip_dao_governance')" />
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">

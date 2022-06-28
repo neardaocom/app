@@ -10,15 +10,15 @@
          </div>
          <div v-if="rewardsSalary.length > 0" class="m-4">
             <h5>{{t('salary')}}</h5>
-            <RewardsTable :rewards="rewardsSalary"/>
+            <SalaryTable :rewards="rewardsSalary"/>
          </div>
          <div v-if="rewardsActivity.length > 0" class="m-4">
             <h5>{{t('activity')}}</h5>
-            <RewardsTable :rewards="rewardsActivity"/>
+            <ActivityTable :rewards="rewardsActivity"/>
          </div>
          <div v-if="rewardsEvent.length > 0" class="m-4">
             <h5>{{t('event')}}</h5>
-            <RewardsTable :rewards="rewardsEvent"/>
+            <SalaryTable :rewards="rewardsEvent"/>
          </div>
          <NoData v-if="rewardsSalary.length === 0 && rewardsActivity.length === 0 && rewardsEvent.length === 0" :text="t('no_commision_system')" hint="This is a hint" />
       </MDBCardBody>
@@ -31,7 +31,8 @@ import { MDBCard, MDBCardBody, MDBCardTitle } from "mdb-vue-ui-kit";
 import Tooltip from '@/components/ui//Tooltip.vue'
 import { inject } from '@vue/runtime-core';
 import { useRewardsList } from "@/hooks/rewards";
-import RewardsTable from '@/components/dao/about/RewardsTable.vue'
+import SalaryTable from '@/components/dao/about/SalaryTable.vue'
+import ActivityTable from '@/components/dao/about/ActivityTable.vue'
 import NoData from '@/components/ui/NoData.vue'
 
 export default {
@@ -40,7 +41,8 @@ export default {
       MDBCardBody,
       MDBCardTitle,
       Tooltip,
-      RewardsTable,
+      SalaryTable,
+      ActivityTable,
       NoData
    },
    setup () {
