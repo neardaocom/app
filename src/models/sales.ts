@@ -16,7 +16,7 @@ import NumberHelper from "@/models/utils/NumberHelper";
         case 'ref.finance':
             trans = {
                 id: sale.id,
-                title: 'default.pool',
+                title: 'pool',
                 url: 'https://app.ref.finance/pool/' + sale.id,
                 total_shares: NumberHelper.parseNumber(sale.shares_total_supply),
                 shares: sale.shares,

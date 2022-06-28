@@ -1,37 +1,37 @@
 <template>
     <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <Select :labelName="t('default.workflow')" id="workflow" :options="workflowsToAdd" />
+            <Select :labelName="t('workflow')" id="workflow" :options="workflowsToAdd" />
         </div>
     </div> 
 
      <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <dt>{{t('default.wf_vote_level')}}:</dt>
-                <dd v-html="t('default.' + voteLevel.key, voteLevel.params)"></dd>
+            <dt>{{t('wf_vote_level')}}:</dt>
+                <dd v-html="t('' + voteLevel.key, voteLevel.params)"></dd>
         </div>
     </div> 
 
     <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <Select :labelName="t('default.wf_can_propose')" id="can_propose" multiple :options="proposeRights" />
+            <Select :labelName="t('wf_can_propose')" id="can_propose" multiple :options="proposeRights" />
         </div>
     </div>
 
     <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <Select :labelName="t('default.wf_can_vote')" id="can_vote" :options="voteRights" />
+            <Select :labelName="t('wf_can_vote')" id="can_vote" :options="voteRights" />
         </div>
     </div>
 
     <div class="row mb-4">
         <div class="col-12 col-md-7">
-            <Select :labelName="t('default.wf_activities_rights')" id="activities_rights" :options="activitiesRights" />   
+            <Select :labelName="t('wf_activities_rights')" id="activities_rights" :options="activitiesRights" />   
         </div>
     </div> 
 
     <div class="text-start">
-        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+        <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
     </div>
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
     </MDBWysiwyg>
@@ -49,9 +49,8 @@ import { DAORightsType } from '@/models/dao/types/dao';
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch } from '@vue/runtime-core';
 import loDifferenceBy from 'lodash/differenceBy'
-import { useNear, useIPFS } from "@/hooks/vuex";
+import { useNear } from "@/hooks/near";
 import { inject } from '@vue/runtime-core';
-import IpfsUtils from "@/models/services/ipfs/IpfsUtils"
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from 'lodash/split'
 import loFind from 'lodash/find'
@@ -89,7 +88,6 @@ export default {
         const { template, contractId, dao, daoRights} = toRefs(props)
         const { t } = useI18n()
         const { nearService, accountId } = useNear()
-        const  ipfsService  = useIPFS()
 
         //const logger = inject('logger')
         const notify = inject('notify')
@@ -103,7 +101,7 @@ export default {
             daoRights.value.forEach((right, index) => {  
                 if(right.type === DAORightsType.Anyone || right.type === DAORightsType.Member || right.type ===  DAORightsType.TokenHolder ||  right.type === DAORightsType.Group ){
                     const trans = Rights.toTranslate(right, dao.value.groups)
-                    rights.push({text: t('default.' + trans.key, trans.params), value: index})
+                    rights.push({text: t('' + trans.key, trans.params), value: index})
                 }
             })
             return rights
@@ -144,7 +142,7 @@ export default {
             const workflows = loDifferenceBy(dataResults.value, dao.value.templates, 'code');
             console.log(workflows);
             console.log(dataResults.value);
-            workflowsToAdd.value = workflows.map((workflow) =>({text: t('default.wf_templ_' + workflow.code), value: workflow.id, code: workflow.code}))
+            workflowsToAdd.value = workflows.map((workflow) =>({text: t('wf_templ_' + workflow.code), value: workflow.id, code: workflow.code}))
             setFieldTouched('workflow', false)
         })
 
@@ -177,11 +175,12 @@ export default {
             if(refWysiwyg.value.getCode()){
                 try {
                     const name = `${accountId.value}-wf_add-proposal-desc-${moment().valueOf()}`
-                    ipfs_cid = await ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), name), name)
+                    console.log(name)
+                    // ipfs_cid = await ipfsService.value.storeFiles(IpfsUtils.makeFileFromString(refWysiwyg.value.getCode(), name), name)
                 } catch(e){
                     //logger.error('D', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
                     //logger.error('B', 'app@components/dao/ModalGeneral', 'StoreFile-ipfs', 'File saving to ipfs failed')
-                    notify.danger(t('default.notify_save_file_ipfs_fail_title'), t('default.notify_ipfs_fail') + " " + t('default.notify_save_file_ipfs_fail_message'))
+                    notify.danger(t('notify_save_file_ipfs_fail_title'), t('notify_ipfs_fail') + " " + t('notify_save_file_ipfs_fail_message'))
                     notify.flush()
                     console.log(e);
                     return

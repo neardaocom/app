@@ -5,20 +5,20 @@
             <div class="d-flex position-absolute top-0 end-0 me-4 mt-3">
               <MDBDropdown btnGroup v-model="dropdown1" >
                 <MDBDropdownToggle @click="dropdown1 = !dropdown1" size="sm" color="secondary" >
-                  <span class="me-1">{{t('default.dao_wallet')}}</span>
+                  <span class="me-1">{{t('dao_wallet')}}</span>
                 </MDBDropdownToggle>
                 <MDBDropdownMenu>
                   <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}">
                     <i class="bi bi-info-square me-1"/> 
-                    {{ t('default.about') }}
+                    {{ t('about') }}
                   </MDBDropdownItem>
                   <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}">
                     <i class="bi bi-gear me-1"/> 
-                    {{ t('default.settings') }}
+                    {{ t('settings') }}
                   </MDBDropdownItem>
                   <MDBDropdownItem tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}">
                     <i class="bi bi-graph-up me-1"/>
-                    {{ t('default.dApps') }}
+                    {{ t('dApps') }}
                   </MDBDropdownItem>
                 </MDBDropdownMenu>
               </MDBDropdown>

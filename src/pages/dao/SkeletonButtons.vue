@@ -4,52 +4,52 @@
       <div class="ps-3">
         <a :class="[isActive('overview') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder " data-mdb-ripple-color="dark">
           <i class="bi bi-columns-gap me-1"/>
-          {{ t('default.dashboard') }}
+          {{ t('dashboard') }}
         </a>
         <a :class="[isActive('voting') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-bar-chart me-1"/>
-          {{ t('default.voting') }}
+          {{ t('voting') }}
         </a>
         <a v-if="false" :class="[isActive('activities') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-check2-circle me-1"/>
-          {{ t('default.in_progress') }}
+          {{ t('in_progress') }}
         </a>
         <a :class="[isActive('rewards') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-coin me-1"/>
-          {{ t('default.rewards') }}
+          {{ t('rewards') }}
         </a>
         <a v-if="false" :class="[isActive('treasury') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.treasury') }}
+          {{ t('treasury') }}
         </a>
         <a v-if="false" :class="[isActive('members') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.members') }}
+          {{ t('members') }}
         </a>
         <a v-if="false" :class="[isActive('tokens') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.tokens') }}
+          {{ t('tokens') }}
         </a>
         <a  v-if="false" :class="[isActive('defi') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-graph-up me-1"/>
-          {{ t('default.dApps') }}
+          {{ t('dApps') }}
         </a>
         <a  v-if="false" :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>
-          {{ t('default.about') }}
+          {{ t('about') }}
         </a>
         <a  v-if="false"  :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
-          {{ t('default.settings') }}
+          {{ t('settings') }}
         </a>
         <a :class="[isActive('treasury') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-wallet2 me-1"/>
-          {{ t('default.treasury') }}
+          {{ t('treasury') }}
         </a>
         <a :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-hammer me-1"/>
-          {{ t('default.governance') }}
+          {{ t('governance') }}
         </a>
         <a :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-files me-1"/>
-          {{ t('default.resources') }}
+          {{ t('resources') }}
         </a>
       </div>
       <!-- Left -->
@@ -59,7 +59,7 @@
         <MDBDropdown btnGroup class="buttons_dropdown">
           <MDBDropdownToggle class="buttons_dropdown bg-gradient-140 fs-6" size="lg">
             <!-- <MDBBtn aria-controls="modalPayout" class="btn btn-primary"  data-mdb-ripple-color="dark"> -->
-              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
+              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('actions')}}</span>
             <!-- </MDBBtn> -->
           </MDBDropdownToggle>
         </MDBDropdown>

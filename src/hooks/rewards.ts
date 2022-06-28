@@ -41,7 +41,7 @@ export const useRewards = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     }
 
     const activityOptions = computed(() => CollectionHelper.toOptions(activities, ['value'], ['id']).map((item) => {
-        item.text = t('default.reward_' + item.text)
+        item.text = t('reward_' + item.text)
         item.value = loToString(item.value)
         return item
     }))

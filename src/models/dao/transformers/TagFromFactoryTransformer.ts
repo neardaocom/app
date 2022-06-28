@@ -9,6 +9,6 @@ export default class TagFromFactoryTransformer implements TransformerInterface {
     }
 
     transform(value: any, params: any) {
-        return this.t('default.' + loToString(value))
+        return this.t('' + loToString(value))
     }
 }

@@ -4,7 +4,7 @@
          <div class="d-flex mb-2">
             <h5 class="card-title">
                <i class="bi bi-info-square text-gradient-180 me-1"/>
-               {{ t('default.information') }}
+               {{ t('information') }}
             </h5>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
@@ -19,7 +19,7 @@
             </div>
 
             <div class="text-muted small">
-               {{t('default.wallet')}} 
+               {{t('wallet')}} 
                <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.wallet" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
             </div>
          </div>
@@ -29,10 +29,10 @@
                <i class="bi bi-wallet2 text-muted me-2"/>
                <a
                class="text-reset"
-               :href="nearWalletUrl + '/accounts/' + dao.wallet"
+               :href="walletUrl + '/accounts/' + dao.wallet"
                target="_blank"
                >
-                  {{ t("default.wallet") }}
+                  {{ t("wallet") }}
                   <i class="bi bi-box-arrow-up-right text-gradient-180 ms-1"/>
                </a>
             </li>
@@ -50,16 +50,16 @@
 </template>
 
 <script>
-import { computed, ref } from '@vue/reactivity'
+import { ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n';
 import { inject } from '@vue/runtime-core';
-import { useIPFS } from '@/hooks/vuex';
+import { useNear } from '@/hooks/near';
 import { useLinks } from '@/hooks/dao';
 import Tooltip from '@/components/ui//Tooltip.vue'
 import Icon from '@/components/ui/Icon.vue'
 import { MDBBadge } from 'mdb-vue-ui-kit'
-import { useStore } from 'vuex';
 import InfoAmount from '@/components/ui/InfoAmount.vue'
+import { useResource } from '@/hooks/docs';
 
 
 export default {
@@ -71,18 +71,21 @@ export default {
    },
    setup () {
       const dao = inject('dao')
+      const loader = inject('loader')
+      const config = inject('config')
       const { t, n } = useI18n()
-      const store = useStore()
+      const { walletUrl } = useNear(config)
+   
+      const ipfsService = loader.value.load('services/ipfs')
 
-      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])  
+      const { daoResource } = useResource(ipfsService)
 
-      const { ipfsService } = useIPFS()
       const { web } = useLinks(dao.value)
+
       const webLink = ref(null)
+      if (web) daoResource.value.fetch(web).then(r => {webLink.value = r})
 
-      if (web) fetch(web, ipfsService.value).then(r => {webLink.value = r})
-
-      return { dao, t, n, nearWalletUrl }
+      return { dao, t, n, walletUrl, webLink }
    }
 }
 </script>

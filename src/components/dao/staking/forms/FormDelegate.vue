@@ -1,13 +1,13 @@
 <template>
-   <!-- <InputString :labelName="t('default.delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/> -->
-   <Select :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
-   <InputNumber :labelName="t('default.amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
+   <!-- <InputString :labelName="t('delegate_id')" id="delegate_id" :addon="`.${accountPostfix}`"/> -->
+   <Select :labelName="t('delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <InputNumber :labelName="t('amount')" :balance="walletTokenFree" :max="walletTokenFree" id="amount" :addon="dao.treasury.token.meta.symbol"/>
 </template>
 
 <script>
 import { computed } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-// import { useNear } from '@/hooks/vuex'
+import { useNear } from '@/hooks/near'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import Select from '@/components/forms/Select.vue'
@@ -28,8 +28,8 @@ export default {
 
       const { walletTokenFree } = useStake(dao)
       const { runAction } = useStakeAction(dao, loader)
-      // const { adminAccountId } = useNear(config)
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+      const { adminAccountId } = useNear(config)
+      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId))
 
       const schema = computed(() => {
          return {

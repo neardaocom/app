@@ -12,8 +12,8 @@ import notification from './notification';
 import VeeValidatePlugin from './includes/validation';
 
 const app = createApp(App);
-app.use(i18n);
 app.use(store);
+app.use(i18n);
 app.use(router);
 app.use(logger);
 app.use(notification);

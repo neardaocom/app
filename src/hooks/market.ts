@@ -1,12 +1,13 @@
 import { ref, Ref, reactive, onMounted, onUnmounted, computed } from "vue";
 import { Account } from 'near-api-js';
-import { useStore } from 'vuex'
+import loGet from 'lodash/get'
 import { RefFinanceService } from '@/models/services/refFinanceService'
 import { GeneralTokenService } from '@/models/services/generalTokenService';
 import { CoinGeckoExchange } from "@/models/services/exchangeService"
 import { Config } from "@/config";
 import { Loader } from "@/loader";
 import DaoMarket from "@/models/dao/DaoMarket";
+import { useCoinGeckoStore } from "@/store/market";
 
 export const useMarket = (loader: Ref<Loader>, config: Ref<Config>) => {
     const servicePool = loader.value.load('dao/ServicePool')
@@ -56,12 +57,12 @@ export const useRefFinance = (account: Account, contract: string) => {
 }
 
 export const useNearPriceLoader = (config: Config) => {
-    const store = useStore()
+    const store = useCoinGeckoStore()
     const coinGeckoExchange = ref(new CoinGeckoExchange(config.market))
     const nearPriceInterval = ref<any>(null)
     const nearPriceResolve = async () => {
         const value = await coinGeckoExchange.value.getActualPrice('near')
-        store.commit('market/setNearPriceUsd', value)
+        store.setNearPriceUsd(value)
     }
 
     onMounted(async () => {
@@ -76,9 +77,9 @@ export const useNearPriceLoader = (config: Config) => {
 }
 
 export const useNearPrice = () => {
-    const store = useStore()
+    const store = useCoinGeckoStore()
     
-    const nearPriceUsd = computed(() => store.getters['market/getNearPrice'])
+    const nearPriceUsd = computed(() => store.nearPriceUsd)
     
 
     return { nearPriceUsd }

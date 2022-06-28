@@ -12,7 +12,7 @@
         <slot :isValid="isValidHandler"></slot>
     </MDBModalBody>
     <MDBModalFooter>
-      <MDBBtn outline="secondary" rounded @click="close()">{{ t('default.close') }}</MDBBtn>
+      <MDBBtn outline="secondary" rounded @click="close()">{{ t('close') }}</MDBBtn>
       <ButtonLoader v-if="submitText" :loading="btnLoad" outline="primary" rounded @click="submit()"> {{ submitText }} </ButtonLoader>
     </MDBModalFooter>
   </MDBModal>

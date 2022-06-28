@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <NoData v-if="workflowsNum == 0" :text="t('default.no_active_activities')" hint="This is a hint" />
+    <NoData v-if="workflowsNum == 0" :text="t('no_active_activities')" hint="This is a hint" />
 
     <div class="row">
       <div v-for="proposal in results" :key="proposal.id" class="col-12 mb-4 mb-md-0">
@@ -71,8 +71,8 @@ export default {
     const order = reactive({
       selected: 'created_desc',
       options: [
-        { text: t('default.order_created_desc'), value: 'created_desc' },
-        { text: t('default.order_created_asc'), value: 'created_asc' }
+        { text: t('order_created_desc'), value: 'created_desc' },
+        { text: t('order_created_asc'), value: 'created_asc' }
       ],
     })
     return { t, dao, searchQuery, filterState, order };

@@ -1,11 +1,13 @@
 import { defineRule,  configure } from 'vee-validate';
 import { required, numeric, max, min, alpha, url } from '@vee-validate/rules';
 import { localize } from '@vee-validate/i18n';
-import store from '@/store'
+// import store from '@/store'
 import Decimal from 'decimal.js';
 import moment from 'moment'
 import loToNumber from "lodash/toNumber";
 import loIsNil from "lodash/isNil";
+import _ from "lodash";
+import { useServiceStore } from '@/store/service';
 
 const stringLocaleNumber = (value, [localeString]) => {
     if (localeString === 'en') {
@@ -44,12 +46,14 @@ const strNumMax = (value, [max]) => {
 
 const accountExists = async (value: string, [accountPosfix]) => {
     try{
-        // console.log("accountExists", `${value.trim()}.${accountPosfix}`)
-        // console.log(store)
-        const newValue = value.trim()
-        const account = await store.getters['near/getService'].getAccountState(accountPosfix ? `${newValue}.${accountPosfix}` : newValue)   
-        if (account){
-            return true
+        if (value) {
+            const store = useServiceStore()
+            const newValue = value.trim()
+            const accountService = await store.servicePool?.getAccount(accountPosfix ? `${newValue}.${accountPosfix}` : newValue)
+            const account = await accountService?.state()
+            if (account){
+                return true
+            }
         }
         return false
     } catch(e) {

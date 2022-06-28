@@ -1,7 +1,7 @@
 <template>
     <div class="row form-group mt-2">
         <div class="col-8 col-md-4">
-            <InputNumber :labelName="t('default.amount')" id="amount" :addon="'Ⓝ'"/>
+            <InputNumber :labelName="t('amount')" id="amount" :addon="'Ⓝ'"/>
         </div>
     </div>
 </template>

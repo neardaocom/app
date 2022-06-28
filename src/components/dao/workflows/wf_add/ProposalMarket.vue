@@ -1,15 +1,15 @@
 <template>
   <div class="row mb-4">
     <div class="col-12 col-md-7">
-      <dt>{{ t("default.wf_vote_level") }}:</dt>
-      <dd v-html="t('default.' + voteLevel.key, voteLevel.params)"></dd>
+      <dt>{{ t("wf_vote_level") }}:</dt>
+      <dd v-html="t('' + voteLevel.key, voteLevel.params)"></dd>
     </div>
   </div>
 
   <div class="row mb-4">
     <div class="col-12 col-md-7">
       <Select
-        :labelName="t('default.wf_can_propose')"
+        :labelName="t('wf_can_propose')"
         id="can_propose"
         multiple
         :options="proposeRights"
@@ -20,7 +20,7 @@
   <div class="row mb-4">
     <div class="col-12 col-md-7">
       <Select
-        :labelName="t('default.wf_can_vote')"
+        :labelName="t('wf_can_vote')"
         id="can_vote"
         :options="voteRights"
       />
@@ -30,7 +30,7 @@
   <div class="row mb-4">
     <div class="col-12 col-md-7">
       <Select
-        :labelName="t('default.wf_can_execute')"
+        :labelName="t('wf_can_execute')"
         id="activities_rights"
         :options="activitiesRights"
       />
@@ -42,16 +42,13 @@
 import Select from "@/components/forms/Select.vue";
 import { useI18n } from "vue-i18n";
 import { inject } from "vue";
-//import { useStore } from 'vuex'
 import { computed, toRefs } from "@vue/reactivity";
 import { useForm } from "vee-validate";
 import ProposalHelper from "@/models/dao/ProposalHelper"
 import Rights from "@/models/dao/Rights";
 import { DAORightsType } from "@/models/dao/types/dao";
-//import { useNear } from "@/hooks/vuex";
 import loCloneDeep from "lodash/cloneDeep";
 import loSplit from "lodash/split";
-//import loFind from "lodash/find";
 import loMax from "lodash/max";
 import { useMarket } from '@/hooks/market';
 
@@ -91,9 +88,6 @@ export default {
 
     const { market } = useMarket(loader, config)
 
-    // const { nearService } = useNear();
-    //console.log('Template', template)
-
     const voteLevel = ProposalHelper.voteLevelToTranslate(dao.value.voteLevels[0]);
     const proposeRights = computed(() => {
       const rights = [];
@@ -106,7 +100,7 @@ export default {
         ) {
           const trans = Rights.toTranslate(right, dao.value.groups);
           rights.push({
-            text: t("default." + trans.key, trans.params),
+            text: t("" + trans.key, trans.params),
             value: index,
             type: right.type,
           });

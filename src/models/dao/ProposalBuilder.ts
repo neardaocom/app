@@ -72,15 +72,15 @@ export default class ProposalBuilder {
     }
 
     addProposeSettingsConstantString(key: string, value: string) {
-        loSet(this.proposeSettingsConstants, key, {'string': value})
+        loSet(this.proposeSettingsConstants, [key], {'string': value})
     }
 
     addProposeSettingsConstantNumber(key: string, value: number) {
-        loSet(this.proposeSettingsConstants, key, {'u64': value})
+        loSet(this.proposeSettingsConstants, [key], {'u64': value})
     }
 
     addProposeSettingsConstantBigNumber(key: string, value: string) {
-        loSet(this.proposeSettingsConstants, key, {'u128': value})
+        loSet(this.proposeSettingsConstants, [key], {'u128': value})
     }
 
     addActivity(actionCount: number = 1) {

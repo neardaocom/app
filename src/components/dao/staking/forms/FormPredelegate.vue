@@ -1,20 +1,19 @@
 <template>
-   <h6 v-if="delegateId">{{`${t('default.delegate_id')}: ${delegateId}`}}</h6>
-   <Select v-if="!delegateId" :labelName="t('default.delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
-   <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
+   <h6 v-if="delegateId">{{`${t('delegate_id')}: ${delegateId}`}}</h6>
+   <Select v-if="!delegateId" :labelName="t('delegate_id')" id="delegate_id" :options="dao.staking.usersToDelegate" filter/>
+   <InputNumber :labelName="t('amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
 <script>
 import { computed, toRefs } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-// import { useNear } from '@/hooks/vuex'
-import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import Select from '@/components/forms/Select.vue'
 import { inject } from '@vue/runtime-core';
 import loFind from 'lodash/find'
 import { useStakeAction } from '@/hooks/staking';
+import { useNear } from '@/hooks/near';
 export default {
    components:{
       InputNumber, Select,
@@ -41,8 +40,7 @@ export default {
       const dao = inject('dao')
       const loader = inject('loader')
       const { runAction } = useStakeAction(dao, loader)
-      
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+      const { adminAccountPostfix } = useNear(config)
 
       const schema = computed(() => {
          return {
@@ -60,7 +58,7 @@ export default {
       });
 
       return {
-         t, accountPostfix, onSubmit, dao
+         t, adminAccountPostfix, onSubmit, dao
       }
    }
 }

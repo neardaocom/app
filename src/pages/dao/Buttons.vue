@@ -4,49 +4,49 @@
       <div class="ps-3">
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'overview' }}" :class="[isActive('overview') ? 'border-bottom border-2 border-secondary text-secondary rounded-0 fw-bolder' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-columns-gap me-1"/>
-          {{ t('default.dashboard') }}
+          {{ t('dashboard') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'voting' }}" :class="[isActive('voting') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-bar-chart me-1"/>
-          {{ t('default.voting') }}
+          {{ t('voting') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'activities' }}" :class="[isActive('activities') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-check2-circle me-1"/>
-          {{ t('default.in_progress') }}
+          {{ t('in_progress') }}
         </router-link>
         <router-link  :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'rewards' }}" :class="[isActive('rewards') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-coin me-1"/>
-          {{ t('default.rewards') }}
+          {{ t('rewards') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'members' }}" :class="[isActive('members') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.members') }}
+          {{ t('members') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'tokens' }}" :class="[isActive('tokens') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
-          {{ t('default.tokens') }}
+          {{ t('tokens') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'defi' }}" :class="[isActive('defi') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-graph-up me-1"/>
-          {{ t('default.dApps') }}
+          {{ t('dApps') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" :class="[isActive('about') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-info-square me-1"/>
-          {{ t('default.about') }}
+          {{ t('about') }}
         </router-link>
         <router-link v-if="false" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'settings' }}" :class="[isActive('settings') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-gear me-1"/>
-          {{ t('default.settings') }}
+          {{ t('settings') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'treasury' }}" :class="[isActive('treasury') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-wallet2 me-1"/>
-          {{ t('default.treasury') }}
+          {{ t('treasury') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'governance' }}" :class="[isActive('governance') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-hammer me-1"/>
-          {{ t('default.governance') }}
+          {{ t('governance') }}
         </router-link>
         <router-link :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'resources' }}" :class="[isActive('resources') ? 'border-bottom border-2 border-secondary text-secondary rounded-0' : 'text-reset']" class="btn btn-link btn-lg px-3 fw-bolder" data-mdb-ripple-color="dark">
           <i class="bi bi-files me-1"/>
-          {{ t('default.resources') }}
+          {{ t('resources') }}
         </router-link>
       </div>
       <!-- Left -->
@@ -58,11 +58,11 @@
             color="primary"
             v-on:click="dropdownAction = !dropdownAction"
             class="dropdown-toggle"
-          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('default.activities') }}&nbsp;&nbsp;</MDBBtn> -->
+          ><MDBIcon icon="ellipsis-h" class="pe-2"/>{{ t('activities') }}&nbsp;&nbsp;</MDBBtn> -->
 
           <MDBDropdown v-model="dropdownAction" btnGroup class="buttons_dropdown" >
             <MDBDropdownToggle class="buttons_dropdown bg-gradient-140 fs-6"  size="lg" @click="dropdownAction = !dropdownAction">
-              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('default.actions')}}</span>
+              <MDBIcon v-if="false" icon="ellipsis-h" class="pe-2"/><span class="me-2">{{ t('actions')}}</span>
             </MDBDropdownToggle>
             <MDBDropdownMenu>
               <!-- <template v-for="templ in dao.templates" :key="templ.id">
@@ -75,19 +75,19 @@
                         @click.prevent="modalOpen(templ, scenarioId)"
                       >
                         <MDBIcon v-if="false" icon="user-plus" class="pe-2"/>
-                        {{ t('default.wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId) }}
+                        {{ t('wf_templ_' + templ.code + '_v' + templ.version + '_s' + scenarioId) }}
                       </MDBDropdownItem>
                     </template>
                   </template>
                 </template>
               </template> -->
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 2)"><i class="bi bi-bag pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s2') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 3)"><i class="bi bi-cash pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s3') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 4)"><i class="bi bi-coin pe-2"/>{{ t('default.wf_templ_basic_pkg1_v1_s4') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><i class="bi bi-lock pe-2"/>{{ t('default.wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><i class="bi bi-cash-stack pe-2"/>{{ t('default.wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 2)"><i class="bi bi-cash-stack pe-2"/>{{ t('default.wf_templ_reward2_v1_s2') }}</MDBDropdownItem>
-              <MDBDropdownItem v-if="installedWorkflow('skyward1') === true && check(walletRights, workflowSettings('skyward1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('skyward1', 1, 1)"><i class="bi bi-hammer pe-2"/>{{ t('default.wf_templ_skyward1_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 2)"><i class="bi bi-bag pe-2"/>{{ t('wf_templ_basic_pkg1_v1_s2') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 3)"><i class="bi bi-cash pe-2"/>{{ t('wf_templ_basic_pkg1_v1_s3') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="check(walletRights, workflowSettings('basic_pkg1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('basic_pkg1', 1, 4)"><i class="bi bi-coin pe-2"/>{{ t('wf_templ_basic_pkg1_v1_s4') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('lock1') === true && check(walletRights, workflowSettings('lock1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('lock1', 1, 1)"><i class="bi bi-lock pe-2"/>{{ t('wf_templ_lock1_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 1)"><i class="bi bi-cash-stack pe-2"/>{{ t('wf_templ_reward2_v1_s1') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('reward2') === true && check(walletRights, workflowSettings('reward2')[0].proposeRights)" tag="button" @click.prevent="modalOpen('reward2', 1, 2)"><i class="bi bi-cash-stack pe-2"/>{{ t('wf_templ_reward2_v1_s2') }}</MDBDropdownItem>
+              <MDBDropdownItem v-if="installedWorkflow('skyward1') === true && check(walletRights, workflowSettings('skyward1')[0].proposeRights)" tag="button" @click.prevent="modalOpen('skyward1', 1, 1)"><i class="bi bi-hammer pe-2"/>{{ t('wf_templ_skyward1_v1_s1') }}</MDBDropdownItem>
             </MDBDropdownMenu>
           </MDBDropdown>
         <!-- </MDBBtnGroup> -->
@@ -97,7 +97,7 @@
     </section>
 
     <!-- Modals -->
-    <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote" :submitText="t('default.vote')" size="lg">
+    <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote" :submitText="t('vote')" size="lg">
       <template #default="{ isValid }">
         <component ref="form" :is="activeForm" @is-valid="isValid" v-bind="formProps"></component>
       </template>
@@ -128,6 +128,7 @@ import Rights from "@/models/dao/Rights";
 import { useRewards } from '@/hooks/rewards'
 import { useTreasury } from '@/hooks/treasury';
 import { useDaoWorkflowComputed } from '@/hooks/workflow';
+import { useWallet } from '@/hooks/wallet';
 
 export default {
   components: {
@@ -167,11 +168,11 @@ export default {
     const dropdownAction = ref(false);
     const latestDaoVersion = ref(0)
 
+    const { accountId } = useWallet(loader)
+
     const { daoRewards, createSalary } = useRewards(dao, loader)
     const { daoTreasury, createLockSimple } = useTreasury(dao, loader)
     const { installedWorkflow, workflowSettings } = useDaoWorkflowComputed(dao)
-
-    console.log(workflowSettings('lock1'));
 
     const form = ref()
 
@@ -191,8 +192,9 @@ export default {
     return {
       dao,
       t,
-      dropdownAction, 
-      latestDaoVersion,  
+      accountId,
+      dropdownAction,
+      latestDaoVersion,
       modalProposal,
       modalTitle, 
       activeForm, 
@@ -214,9 +216,6 @@ export default {
   },
 
   computed: {
-    accountId() {
-      return this.$store.getters['near/getAccountId']
-    },
     canVote() {
       return Object.keys(this.dao.members).includes(this.accountId)
     },
@@ -234,7 +233,7 @@ export default {
 
       this.modalProposal += 1
       this.dropdownAction = false
-      this.modalTitle = this.t('default.wf_templ_' + workflowCode)
+      this.modalTitle = this.t('wf_templ_' + workflowCode)
       this.activeFormCode = templCode
 
       switch (workflowCode) {

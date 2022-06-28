@@ -44,7 +44,7 @@ export const useWorkflow = (daoWorkflow: Ref<DaoWorkflow>, templatesMeta: Ref<Ma
 
     const nextActivitiesOptions = computed(() => activityNexts.value.map( (activity) => {
         // console.log(activity)
-        return { text: t('default.wf_templ_' + template.value?.code + '_v' + template.value?.version + '_' + activity.code), value: activity.id, rights: daoWorkflow.value.getActivityRights(activity.id)}
+        return { text: t('wf_templ_' + template.value?.code + '_v' + template.value?.version + '_' + activity.code), value: activity.id, rights: daoWorkflow.value.getActivityRights(activity.id)}
     }))
 
     return {
@@ -63,10 +63,10 @@ export const useTemplateList = (loader: Ref<Loader>, config: Ref<Config>) => {
     const filterSearch = ref('')
     const filterOrder = ref('most_popular')
     const filterOrderOptions = ref([
-        { text: t('default.most_popular'), value: 'most_popular' },
-        { text: t('default.installed'), value: 'installed' },
-        { text: t('default.order_name_asc'), value: 'name_asc' },
-        { text: t('default.order_name_desc'), value: 'name_desc' },
+        { text: t('most_popular'), value: 'most_popular' },
+        { text: t('installed'), value: 'installed' },
+        { text: t('order_name_asc'), value: 'name_asc' },
+        { text: t('order_name_desc'), value: 'name_desc' },
     ])
 
     const filter = (): void => {

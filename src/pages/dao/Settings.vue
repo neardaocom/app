@@ -2,7 +2,7 @@
   <div class="container mb-2">
     <div class="card mb-3">
       <div class="card-body text-start">
-        <h3>{{ t('default.workflows')}} & {{ t('default.rights')}}</h3>
+        <h3>{{ t('workflows')}} & {{ t('rights')}}</h3>
         <SettingsTable :settings="data"/>
       </div>
     </div>

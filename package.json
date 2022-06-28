@@ -21,6 +21,7 @@
     "axios": "^0.24.0",
     "bn.js": "^5.2.0",
     "bootstrap-icons": "^1.8.1",
+    "buffer": "^6.0.3",
     "core-js": "^3.17.2",
     "crypto-js": "^4.1.1",
     "decimal.js": "^10.3.1",
@@ -32,6 +33,8 @@
     "moment": "^2.29.1",
     "near-api-js": "^0.41.0",
     "pdfvuer": "^2.0.1",
+    "pinia": "^2.0.14",
+    "process": "^0.11.10",
     "sanitize-html": "^2.5.3",
     "valid-url": "^1.0.9",
     "vee-validate": "^4.5.8",
@@ -40,34 +43,35 @@
     "vue-i18n": "^9.1.7",
     "vue-router": "^4.0.11",
     "vue-the-mask": "^0.11.1",
-    "vuex": "^4.0.2",
-    "web3.storage": "3.3.2"
+    "web3.storage": "^3.5.7"
   },
   "devDependencies": {
-    "@intlify/vue-i18n-loader": "^2.1.2",
-    "@types/jest": "^24.0.19",
-    "@typescript-eslint/eslint-plugin": "^4.18.0",
-    "@typescript-eslint/parser": "^4.18.0",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.13",
-    "@vue/cli-plugin-typescript": "^4.5.15",
-    "@vue/cli-plugin-unit-jest": "^4.5.15",
-    "@vue/cli-plugin-vuex": "^4.5.13",
-    "@vue/cli-service": "~4.5.0",
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@intlify/vue-i18n-loader": "^3.0.0",
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-plugin-router": "~5.0.0",
+    "@vue/cli-plugin-typescript": "~5.0.0",
+    "@vue/cli-plugin-unit-jest": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
     "@vue/compiler-sfc": "^3.2.10",
-    "@vue/eslint-config-typescript": "^7.0.0",
+    "@vue/eslint-config-typescript": "^9.1.0",
     "@vue/test-utils": "^2.0.0-0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.3",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.17.0",
+    "@vue/vue3-jest": "^27.0.0-alpha.1",
+    "babel-jest": "^27.0.6",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "jest": "^27.0.5",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "typescript": "~4.1.5",
-    "vue-cli-plugin-i18n": "^2.1.3",
-    "vue-cli-plugin-mdb5": "~1.2.0",
-    "vue-jest": "^5.0.0-0"
+    "ts-jest": "^27.0.4",
+    "typescript": "~4.5.5",
+    "vue-cli-plugin-i18n": "^0.6.1",
+    "vue-cli-plugin-mdb5": "~1.2.0"
   },
   "eslintConfig": {
     "root": true,
@@ -84,7 +88,9 @@
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     },
-    "rules": {},
+    "rules": {
+      "vue/multi-word-component-names": 0
+    },
     "overrides": [
       {
         "files": [
@@ -100,6 +106,7 @@
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not dead"
+    "not dead",
+    "not ie 11"
   ]
 }

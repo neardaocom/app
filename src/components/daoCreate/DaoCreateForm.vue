@@ -2,27 +2,27 @@
     <MDBStepper vertical class="text-start pb-4">
         <MDBStepperStep active>
             <MDBStepperHead class="h4" icon="1">
-                {{ t('default.create') }}
+                {{ t('create') }}
             </MDBStepperHead>
             <MDBStepperContent>
                 <div class="row" >
                     <!-- Name -->
                     <div class="col-12 col-md-6">
-                       <InputString :labelName="t('default.dao_name')" id="dao_name"/>
+                       <InputString :labelName="t('dao_name')" id="dao_name"/>
                     </div>
                     <!-- Account --> 
                     <div class="col-12 col-md-6">
-                        <InputString :labelName="t('default.account')" id="dao_account" :addon="`.${adminAccountId}`"/>
+                        <InputString :labelName="t('account')" id="dao_account" :addon="`.${adminAccountId}`"/>
                     </div>
 
                     <!-- Purpose -->
                     <div class="col-12 col-md-8">
-                        <InputString :labelName="t('default.purpose_short')" id="dao_purpose"/>
+                        <InputString :labelName="t('purpose_short')" id="dao_purpose"/>
                     </div>
 
                     <!-- Type -->
                     <div v-if="false" class="col-12 col-md-6  mb-4">
-                        <Select :labelName="t('default.type')" id="dao_type" :options="typeOptions" :filter="true"/>
+                        <Select :labelName="t('type')" id="dao_type" :options="typeOptions" :filter="true"/>
                     </div>
                 </div>
             </MDBStepperContent>
@@ -30,12 +30,12 @@
 
          <MDBStepperStep>
             <MDBStepperHead class="h4" icon="2">
-                {{ t('default.add_founders') }}
+                {{ t('add_founders') }}
             </MDBStepperHead>
             <MDBStepperContent>
                  <!-- Councils -->
                 <div class="col-12 col-md-6  mb-4">
-                    <InputString :labelName="t('default.add_founding_members')" id="dao_council" :buttonText="t('default.add')" :addon="`.${accountPostfix}`" @button-click="addCouncil"/>
+                    <InputString :labelName="t('add_founding_members')" id="dao_council" :buttonText="t('add')" :addon="`.${adminAccountPostfix}`" @button-click="addCouncil"/>
                 </div>
                 <div class="row">
                     <div class="col-12 mb-4 mt-2">
@@ -50,32 +50,32 @@
 
         <MDBStepperStep>
             <MDBStepperHead class="h4" icon="3">
-                {{ t('default.issue_tokens') }}
+                {{ t('issue_tokens') }}
             </MDBStepperHead>
             <MDBStepperContent class="pb-4 mb-2">
                 <div class = "row">
                     <!-- ftName -->
                     <div class="col-12 col-md-4">
-                        <InputString :labelName="t('default.dao_ft_name')" id="dao_ft_name" :tooltip="t('default.ft_name_tooltip')"/>
+                        <InputString :labelName="t('dao_ft_name')" id="dao_ft_name" :tooltip="t('ft_name_tooltip')"/>
                     </div>
 
                     <!-- Account --> 
                     <div class="col-12 col-md-6">
-                        <InputString :labelName="t('default.account')" id="dao_ft_account" :addon="`.${ftFactoryAccountId}`"/>
+                        <InputString :labelName="t('account')" id="dao_ft_account" :addon="`.${ftFactoryAccountId}`"/>
                     </div>
                 
                     <!-- ftAmount -->
                     <div class="col-12 col-md-4">
-                        <InputNumber :labelName="t('default.total_supply')" id="dao_ft_amount" :tooltip="t('default.ft_amount_tooltip')" />
+                        <InputNumber :labelName="t('total_supply')" id="dao_ft_amount" :tooltip="t('ft_amount_tooltip')" />
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="mt-4 col-12">
-                        <h5>{{ t('default.founders_vs_community') }}</h5>
+                        <h5>{{ t('founders_vs_community') }}</h5>
                     </div>
                     <div class="col-10 col-md-6">
-                        <!-- <label class="form-label">{{ t('default.allocation') }}</label> -->
+                        <!-- <label class="form-label">{{ t('allocation') }}</label> -->
                         <MDBRange  :disabled="false" v-model="ftCouncilShare" :min="0" :max="100"/>
                     </div>
                     <div class="col-2">
@@ -87,26 +87,26 @@
                 <div class="row mt-4">
                     <div class="col-12 col-md-7">
                         <MDBProgress :height="20" class="rounded">
-                            <MDBProgressBar :value="ftCouncilShare" bg="primary">{{ t('default.founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
-                            <MDBProgressBar :value="ftCommunityShare" bg="warning" >{{ t('default.community') }} {{ ftCommunityShare }}%</MDBProgressBar>
+                            <MDBProgressBar :value="ftCouncilShare" bg="primary">{{ t('founders') }} {{ ftCouncilShare }}%</MDBProgressBar>
+                            <MDBProgressBar :value="ftCommunityShare" bg="warning" >{{ t('community') }} {{ ftCommunityShare }}%</MDBProgressBar>
                         </MDBProgress>
                     </div>
                 </div>
 
                 <div class="row mt-4">
                     <div class="col-12">
-                        <h5>{{ t('default.founders_unlock') }}</h5>
+                        <h5>{{ t('founders_unlock') }}</h5>
                     </div>
                     <div class="col-12 col-md-7">
                         <div class="row">
                             <div class="col-4">
-                                <InputNumber :labelName="t('default.dao_ft_init_distribution')" id="dao_ft_init_distribution" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_init_tooltip')" addon="%" />
+                                <InputNumber :labelName="t('dao_ft_init_distribution')" id="dao_ft_init_distribution" :disabled="disabledUnlocking" :tooltip="t('ft_council_init_tooltip')" addon="%" />
                             </div>
                             <div class="col-4">
-                                <InputNumber :labelName="t('default.lenght_founders_vesting')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('default.ft_council_unlocking_tooltip')" :addon="t('default.year')" />
+                                <InputNumber :labelName="t('lenght_founders_vesting')" id="dao_unlocking_year" :disabled="disabledUnlocking" :tooltip="t('ft_council_unlocking_tooltip')" :addon="t('year')" />
                             </div>
                             <div class="col-4">
-                                <InputNumber labelName="&nbsp;" id="dao_unlocking_month" :disabled="disabledUnlocking" :addon="t('default.month')" />
+                                <InputNumber labelName="&nbsp;" id="dao_unlocking_month" :disabled="disabledUnlocking" :addon="t('month')" />
                             </div>
                         </div>
                     </div>
@@ -115,13 +115,13 @@
         </MDBStepperStep>
         <MDBStepperStep>
             <MDBStepperHead class="h4" icon="4">
-                {{ t('default.set_up_voting') }}
+                {{ t('set_up_voting') }}
             </MDBStepperHead>
             <MDBStepperContent>
 
                 <!-- voteApproveThreshold -->
                 <label class="form-label col-md-6 col-3">
-                    {{ t('default.dao_vote_approve_threshold') }}
+                    {{ t('dao_vote_approve_threshold') }}
                     <TooltipLabel description="Percent of vouters agreeing with notion"/>
                 </label>
                 <div class="row mb-4">
@@ -131,7 +131,7 @@
 
                 <!-- voteQuorum -->
                 <label class="form-label col-md-6 col-3">
-                    {{ t('default.dao_vote_quorum') }}
+                    {{ t('dao_vote_quorum') }}
                     <TooltipLabel description="Minimum precent of voter's voting"/>
                 </label>
                 <div class="row mb-4">
@@ -141,19 +141,19 @@
 
                 <!-- voteDurationDays -->
                 <div class="row mb-4">
-                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_days')" v-model="voteDurationDays" :min="0" :max="30" />
+                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_days')" v-model="voteDurationDays" :min="0" :max="30" />
                     <label class="form-label col-md-6 col-3">{{ voteDurationDays }} </label>
                 </div>
 
                 <!-- voteDurationHours -->
                 <div class="row mb-4">
-                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="voteDurationHours" :min="0" :max="23" />
+                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_hours')" v-model="voteDurationHours" :min="0" :max="23" />
                     <label class="form-label col-md-6 col-3">{{ voteDurationHours }}h</label>
                 </div>
 
                 <!-- voteDurationMinutes TODO: Delete in production mode -->
                 <div class="row mb-4"> 
-                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_minutes')" v-model="voteDurationMinutes" :min="0" :max="60" />
+                    <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_minutes')" v-model="voteDurationMinutes" :min="0" :max="60" />
                     <label class="form-label col-md-6 col-3">{{ voteDurationMinutes }}m</label>
                 </div>
             </MDBStepperContent>
@@ -161,14 +161,14 @@
             
         <MDBStepperStep>
             <MDBStepperHead class="h4" icon="5">
-                {{ t('default.summary') }}
+                {{ t('summary') }}
             </MDBStepperHead>
             <MDBStepperContent>
                 <Summary :values="formData" />
-                <!-- <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('default.create_dao') }}</MDBBtn> -->
+                <!-- <MDBBtn wrapperClass="mt-10 mb-2" color="success" @click="onSubmit" size="lg" >{{ t('create_dao') }}</MDBBtn> -->
                 <div class="mt-4 text-center"> 
                     <MDBBtn @click="onSubmit" color="primary" rounded size="lg" class="bg-gradient-100 fs-6" style="width:210px">
-                        {{ t('default.create_dao') }}
+                        {{ t('create_dao') }}
                     </MDBBtn>
                 </div>
             </MDBStepperContent>
@@ -199,14 +199,12 @@ import Summary from '@/components/daoCreate/Summary.vue'
 import loLowerCase from "lodash/lowerCase"
 import { useI18n } from 'vue-i18n';
 import { computed, ref, inject } from 'vue';
-import { useStore } from 'vuex'
 import { onMounted, watch, watchEffect } from '@vue/runtime-core';
-import ObjectHelper from '@/models/utils/ObjectHelper'
 import { useForm, useField } from 'vee-validate';
 import Decimal from 'decimal.js';
-import NearUtils from "@/models/nearBlockchain/Utils";
 import { useRouter } from 'vue-router'
 import { useFormStep } from "@/hooks/createDao";
+import { useNear } from '@/hooks/near'
 
 export default {
     components: {
@@ -228,30 +226,28 @@ export default {
     },
     setup () {
         const {t} = useI18n()
-        const logger = inject('logger')
-        const notify = inject('notify')
         const config = inject('config')
-        const store = useStore()
+        const wallet = inject('wallet')
+        const loader = inject('loader')
+        const servicePool = loader.value.load('dao/ServicePool')
+
         const router = useRouter()
         const { formSubmited } = useFormStep()
 
+        const { adminAccountId, adminAccountPostfix, ftFactoryAccountId } = useNear(config)
 
-        const adminAccountId = computed(() => (config.value.near.adminAccountId))
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
-        const ftFactoryAccountId = computed(() => (config.value.near.ftFactoryAccountId))
-        const nearService = computed(() => (store.getters['near/getService']))
-        const accountId = computed(() => ( store.getters['near/getAccountId']))
+        const accountId = computed(() => wallet.value.accountId)
 
         const schema = computed(() => {
             return {
                 dao_name: 'required|min:3|max:64',
-                dao_account: `required|accountNotExists:${adminAccountId.value}`,
+                dao_account: `required|accountNotExists:${adminAccountId.value}, ${servicePool.value}`,
                 dao_purpose: 'required|min:3|max:160',
                 dao_type: 'required',
-                dao_council: `accountExists:${accountPostfix.value}`,
+                dao_council: `accountExists:${adminAccountPostfix.value}, ${servicePool.value}`,
                 council_array: 'required',
                 dao_ft_name: 'required|min:3|max:64|alpha',
-                dao_ft_account: `required|accountNotExists:${ftFactoryAccountId.value}`,
+                dao_ft_account: `required|accountNotExists:${ftFactoryAccountId.value}, ${servicePool.value}`,
                 dao_ft_amount:'required|strIsNumber|strNumMin:1.0|strNumMax:1000000000.0',
                 dao_ft_init_distribution: 'required|strIsNumber|strNumMin:0|strNumMax:100',
                 dao_unlocking_year:'required|strIsNumber|strNumMin:0|strNumMax:20',
@@ -310,7 +306,7 @@ export default {
 
         const addCouncil = () =>{
             if (!errors.value.dao_council && values.dao_council){
-                council.value.push(`${values.dao_council}.${accountPostfix.value}`)
+                council.value.push(`${values.dao_council}.${adminAccountPostfix.value}`)
                 values.dao_council = ''
             }
         }
@@ -328,46 +324,19 @@ export default {
         const daoAccountId = computed(() => values.dao_account ? values.dao_account + '.' + adminAccountId.value : null)
         const ftAccountId = computed(() => values.dao_ft_account ? values.dao_ft_account + '.' + ftFactoryAccountId.value : null)
 
-        /*
-        const createDao = (values) => {
-            const accountId = values.dao_account + '.' + adminAccountId.value
-            // set accountId to localStorage because of redirection
-            localStorage.create_dao_account = accountId
-
-            const councilMembers = values.council_array.map((councilAccount) =>{ return {account_id: councilAccount, tags : [1]}})
-            //create
-            nearService.value.createDao(
-                values.dao_name,
-                values.dao_account,
-                values.dao_purpose,
-                values.dao_ft_name,
-                new Decimal(values.dao_ft_amount).toNumber(), // TODO: when Peta update smartContract toFixed()
-                councilMembers,
-                new Decimal(ftCouncilShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toNumber(), //councilReleaseAmount  TODO: when Peta update smartContract toFixed()
-                new Decimal(values.dao_ft_init_distribution).div(100).mul(ftCouncilShare.value).div(100).mul(values.dao_ft_amount).toNumber(), //councilReleaseInitDistribution  TODO: when Peta update smartContract toFixed()
-                moment.duration().add(Number.parseFloat(values.dao_unlocking_year), 'y').add(Number.parseFloat(values.dao_unlocking_month), 'M').asSeconds(), //councilReleaseDuration
-                voteApproveThreshold.value,
-                voteQuorum.value,
-                voteDurationDays.value,
-                voteDurationHours.value,
-                voteDurationMinutes.value,
-                10
-            )
-        }
-        */
-
         // type loading
         onMounted(() => {
-            nearService.value.getTags().then((tags) => {
-                typeOptions.value = tags.map(tag => { return {text: t('default.' + tag), value: tag}}).sort(ObjectHelper.compareByText)
+            //nearService.value.getTags().then((tags) => {
+            //    typeOptions.value = tags.map(tag => { return {text: t('' + tag), value: tag}}).sort(ObjectHelper.compareByText) // TODO: Move to service
+                typeOptions.value = []
                 setFieldTouched('dao_type', false)
-            }).catch((e) => {
-                logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
-                logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
-                notify.danger(this.t('default.notify_proposal_finalize_fail_title'), this.t('default.notify_blockchain_fail') + " " +  this.t('default.notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
-                notify.flush()
-                console.log(e);
-            })
+            //}).catch((e) => {
+            //    logger.error('D', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            //    logger.error('B', 'app@pages/DaoCreate', 'GetTags-blockchain', `Tags could not be loaded`)
+            //    notify.danger(this.t('notify_proposal_finalize_fail_title'), this.t('notify_blockchain_fail') + " " +  this.t('notify_proposal_finalize_fail_message', {proposal: this.proposal.title}))
+            //    notify.flush()
+            //    console.log(e);
+            //})
         })
 
         const ftCommunityShareComp = computed(() => new Decimal(ftCommunityShare.value).mul(values.dao_ft_amount ? values.dao_ft_amount : '0').div(100).toFixed())
@@ -410,7 +379,7 @@ export default {
             formData,
             adminAccountId,
             ftFactoryAccountId,
-            accountPostfix,
+            adminAccountPostfix,
             daoAccountId,
             ftAccountId,
             typeOptions,

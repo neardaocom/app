@@ -1,31 +1,31 @@
 <template>
     <!-- title -->
-    <InputString :labelName="t('default.title')" id="title"/>
+    <InputString :labelName="t('title')" id="title"/>
 
     <!-- TokenId -->
-    <InputString :labelName="t('default.token_sale_token_id')" id="tokenId" /> <!-- :addon="`.${accountPostfix}`" -->
+    <InputString :labelName="t('token_sale_token_id')" id="tokenId" /> <!-- :addon="`.${adminAccountPostfix}`" -->
 
     <!-- Amount -->
-    <InputNumber :labelName=" t('default.amount')" id="amount" :addon="tokenName"/>
+    <InputNumber :labelName=" t('amount')" id="amount" :addon="tokenName"/>
 
     <!-- From -->
     <div class="row">
         <div class="col-6">
-            <Datepicker :labelName="t('default.token_sale_start_at')" id="startDate"/>
+            <Datepicker :labelName="t('token_sale_start_at')" id="startDate"/>
         </div>
         <div class="col-6">
-            <Timepicker :labelName="t('default.time')" id="startTime"/>
+            <Timepicker :labelName="t('time')" id="startTime"/>
         </div>
     </div>
 
     <!-- formDurationDays -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_days')" v-model="values.durationDays" :min="0" :max="31" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_days')" v-model="values.durationDays" :min="0" :max="31" />
         <label class="form-label col-md-6 col-3">{{ values.durationDays }}d</label>
     </div>
     <!-- formDurationHours -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="values.durationHours" :min="0" :max="23" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_hours')" v-model="values.durationHours" :min="0" :max="23" />
         <label class="form-label col-md-6 col-3">{{ values.durationHours }}h</label>
     </div>
 </template>
@@ -38,48 +38,36 @@ import Timepicker from '@/components/forms/Timepicker.vue'
 import {
     MDBRange,
 } from "mdb-vue-ui-kit";
-import { onMounted } from 'vue';
+import { inject, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { computed, toRefs } from '@vue/reactivity';
+import { computed } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import { useNear } from "@/hooks/vuex";
+import { useNear } from "@/hooks/near";
 import decimal from "decimal.js";
 import moment from 'moment'
-import NearUtils from '@/models/nearBlockchain/Utils';
-import ProposalHelper from '@/models/dao/ProposalHelper';
+import { useSkyward } from '@/hooks/proposal'
 
 export default {
     components:{
         InputString, InputNumber, Datepicker, Timepicker, MDBRange,
     },
     props:{
-        contractId: {
-            type: String,
-            required: false
-        },
         tokenName: {
             type: String,
             required: true
-        },
-        template: {
-            type: Object,
-            required: true
-        },
-        proposalCount: {
-            type: Number,
-            required: false
-        },
+        }
     },
-    setup (props, {emit}) {
+    setup (_props, {emit}) {
         const { t, d } = useI18n()
 
-        const { contractId, template, proposalCount } = toRefs(props)
+        const config = inject('config')
+        const dao = inject('dao')
+        const loader = inject('loader')
 
-        const { nearService, adminAccountId } = useNear()
+        const { adminAccountPostfix } = useNear()
+        const { skyward } = useSkyward(loader)
 
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
-
-        const formatDate = t('default._datepicker_format')
+        const formatDate = t('_datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
         const maxDate = moment().startOf('day').add(12, 'M').toDate()
         const schema = computed(() => {
@@ -97,7 +85,7 @@ export default {
         const { handleSubmit, errors, values } = useForm({ validationSchema: schema});
 
         onMounted(() => {
-            values.tokenId = 'wrap.testnet' // TODO: Move to config
+            values.tokenId = config.value.blockchain.skywardFinanceTokenId
             values.startDate = d(moment().add(1, 'M').toDate())
             values.startTime = '12:00'
             values.durationDays = 1
@@ -106,22 +94,15 @@ export default {
 
         const onSubmit = handleSubmit(values => {
             emit('isValid', true)
-            nearService.value.addProposal(
-                null,
-                contractId.value,
-                template.value.id,
-                template.value.settings[0].id,
+            skyward.value.createProposal(
+                dao.value,
+                values.title,
+                decimal(values.amount).toNumber(),
+                values.tokenId,
+                moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate(),
+                {days: values.durationDays, hours: values.durationHours},
                 '',
-                [
-                    { String: values.tokenId },
-                    { U128: decimal(values.amount).toFixed() },
-                    { String: values.title },
-                    { String: '' }, // url
-                    { U64: NearUtils.dateToChain(moment(`${values.startDate} ${values.startTime}`, formatDate + ' hh:mm').toDate()).toString() + '000000000' },
-                    { U64: NearUtils.durationToChain({days: values.durationDays, hours: values.durationHours}).toString() + '000000000' },
-                ],
-                'wf_skyward-' + ProposalHelper.generateStorageKey(proposalCount.value),
-                1.0
+                null
             )
         }, () => {
             emit('isValid', false)
@@ -133,7 +114,7 @@ export default {
             t,
             onSubmit,
             values,
-            accountPostfix,
+            adminAccountPostfix,
             minDate, maxDate,
         }
     }

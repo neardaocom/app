@@ -9,7 +9,7 @@
                </slot>
                <div class="text-start">
                   <div class="fs-5 fw-bold me-1">{{ rewardAsset.asset.symbol }}</div>
-                  <div class="text-muted small mt-n2">{{ t('default.asset_type_' + rewardAsset.asset.type) }}</div>
+                  <div class="text-muted small mt-n2">{{ t('asset_type_' + rewardAsset.asset.type) }}</div>
                </div>
             </div>
 
@@ -20,7 +20,7 @@
          </div>
          <div class="d-flex">
             <div class="ms-auto text-end mt-2">
-               <MDBBtn @click="withdraw(rewardAsset.asset, rewardAsset.pricelistIds)" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('default.claim')}}</MDBBtn>
+               <MDBBtn @click="withdraw(rewardAsset.asset, rewardAsset.pricelistIds)" color="primary" size="sm" rounded class="align-self-center" style="width: 144px">{{t('claim')}}</MDBBtn>
             </div>
          </div>
          

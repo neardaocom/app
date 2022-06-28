@@ -8,10 +8,10 @@
               <router-link :to="{ name: 'landing-page' }">{{ appName }}</router-link>
             </li>
             <li class="breadcrumb-item">
-              <router-link :to="{ name: 'market' }">{{ t("default.market") }}</router-link>
+              <router-link :to="{ name: 'market' }">{{ t("market") }}</router-link>
             </li>
             <li class="breadcrumb-item">
-              {{ t("default.workflows") }}
+              {{ t("workflows") }}
             </li>
             <li class="breadcrumb-item active">
               {{ template.name }}

@@ -112,7 +112,7 @@ export default class DaoRewards {
                 console.log(e)
                 // throw new Error(`DataChain not loaded: ${e}`);
             })
-            console.log('Reward', dataChain)
+            //console.log('Reward', dataChain)
             const transformer = new RewardsClaimableTransformer(dao.rewardsPricelists, dao.treasuryLocks, ftMetadataLoader)
             list = await transformer.transform({
                 rewards: loGet(dataChain, [0, 'rewards']) || [],

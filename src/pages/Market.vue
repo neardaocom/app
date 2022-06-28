@@ -6,8 +6,8 @@
     </MDBContainer>
 
     <MDBContainer>
-      <h1 class="text-start">{{ t('default.market')}}</h1>
-      <h6 class="text-start">{{ t('default.market_sub')}}</h6>
+      <h1 class="text-start">{{ t('market')}}</h1>
+      <h6 class="text-start">{{ t('market_sub')}}</h6>
 
         <div  class="row mt-5">
           <div class="col-6 col-md-4 col-lg-3">
@@ -27,14 +27,14 @@
 
         <h5 v-if="dao" class="text-start mt-5">Owned sevices</h5>
         <div class="row gx-5 mt-3">
-          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status === t('default.installed'))" :key="index">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status === t('installed'))" :key="index">
             <TemplateCard :template="template" @btn-click="open" />
           </div>
         </div> 
 
         <h5 class="text-start mt-5">Services to buy</h5>
         <div class="row gx-5 mt-3">
-          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status !== t('default.installed'))" :key="index">
+          <div class="col-md-6" v-for="(template, index) in dataResults.filter((template) => template.status !== t('installed'))" :key="index">
             <TemplateCard :template="template" @btn-click="open"/>
           </div>
         </div>
@@ -43,12 +43,12 @@
   </main>
 
   <!-- Modals -->
-  <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote()" :submitText="t('default.vote')" size="lg">
+  <ModalProposal :title="modalTitle" :show="modalProposal" @submit="vote()" :submitText="t('vote')" size="lg">
     <AddWorkflow ref="form" v-bind="modalProps" />
   </ModalProposal>
 
-  <ModalMessage :title="t('default.market')" :show="modalMessage">
-    <h6 class="text-center my-4">{{ t('default.market_create_or_sign') }}.</h6>
+  <ModalMessage :title="t('market')" :show="modalMessage">
+    <h6 class="text-center my-4">{{ t('market_create_or_sign') }}.</h6>
   </ModalMessage>
 
   <Footer></Footer>
@@ -68,8 +68,6 @@ import { useI18n } from 'vue-i18n'
 import { useTemplateList } from "@/hooks/workflow";
 import { onMounted, watch, ref, inject } from 'vue'
 import { useRights, useRouter } from "@/hooks/dao";
-// import { useNear } from '@/hooks/vuex'
-// import { useStore } from 'vuex'
 import { market } from "@/data/workflow";
 import loGet from "lodash/get";
 import loFind from "lodash/find";
@@ -95,9 +93,9 @@ export default {
   },
   setup() {
     const { t, n } = useI18n()
-    const { rDaoId } = useRouter(config)
     const config = inject('config')
     const loader = inject('loader')
+    const { rDaoId } = useRouter(config)
     const dao = ref(null)
     const { wallet } = useWallet(loader)
     const { daoInfo } = useDao(rDaoId.value)
@@ -106,7 +104,7 @@ export default {
     const daoTemplatesCodes = ref([])
 
     const modalProposal = ref(0)
-    const modalTitle = t('default.wf_templ_wf_add')
+    const modalTitle = t('wf_templ_wf_add')
     const modalProps = ref({})
     const modalMessage = ref(0)
 
@@ -136,13 +134,13 @@ export default {
   methods: {
     getPrice(templateCode) {
       const price = loGet(market, [templateCode])?.price ?? 0
-      return (price == 0) ? this.t('default.free') : this.n(price) + ' N';
+      return (price == 0) ? this.t('free') : this.n(price) + ' N';
     },
     open(template){
       if (this.rDaoId) {
         const rights = loFind(this.dao.templates, {code: 'basic_pkg1'})?.settings[0].proposeRights ?? []
         if (Rights.check(this.walletRights, rights)) {
-          this.modalTitle = this.t('default.implement') + ' ' + this.t('default.wf_templ_' + template.value.code) + ' ' + this.t('default.feature')
+          this.modalTitle = this.t('implement') + ' ' + this.t('wf_templ_' + template.value.code) + ' ' + this.t('feature')
           this.modalProps = {
             template: template,
             contractId: this.rDaoId,

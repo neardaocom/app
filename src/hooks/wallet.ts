@@ -4,8 +4,9 @@ import { Config } from "@/config";
 
 export const useWallet = (loader: Ref<Loader>) => {
     const wallet = computed(() => loader.value.load('near/WalletConnection').value)
+    const accountId = computed(() => loader.value.load('near/WalletConnection').value.accountId)
     
-    return { wallet }
+    return { wallet, accountId }
 }
 
 export const useWalletAuth = (loader: Ref<Loader>, config: Ref<Config>) => {
@@ -17,7 +18,7 @@ export const useWalletAuth = (loader: Ref<Loader>, config: Ref<Config>) => {
 
     const logout = () => {
         walletConnection.value.signOut()
-        window.location.assign('/')
+        window.location.reload()
     }
 
     return { walletConnection, isSignedIn, login, logout }

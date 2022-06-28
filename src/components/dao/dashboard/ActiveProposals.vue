@@ -3,7 +3,7 @@
       <MDBCardBody class="text-start">
          <div class="d-flex">
             <h6 class="text-muted">
-               {{t('default.active_proposals')}}
+               {{t('active_proposals')}}
             </h6>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
@@ -14,7 +14,7 @@
             </div>
          </div>
          <div v-else class="d-flex">
-            <h5>{{ t('default.no_active_proposal') }}</h5>
+            <h5>{{ t('no_active_proposal') }}</h5>
          </div>
       </MDBCardBody>
    </MDBCard>

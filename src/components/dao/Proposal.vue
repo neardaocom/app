@@ -14,7 +14,7 @@
               <div class="mt-n2 small">{{ proposal.type }}</div>
             </div>
             <div class="ms-auto p-1">
-              <MDBBadge :color="workflowCodeMapper[statusCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[statusCode].icon"></i>{{ t('default.proposal_status_' + statusCode) }}</MDBBadge>
+              <MDBBadge :color="workflowCodeMapper[statusCode].color" class="text-uppercase" pill><i :class="workflowCodeMapper[statusCode].icon"></i>{{ t('proposal_status_' + statusCode) }}</MDBBadge>
               <template v-if="proposal.description">
                 <br/>
                 <MDBBtn
@@ -24,7 +24,7 @@
                   aria-controls="collapsibleDescription"
                   :aria-expanded="collapseDescription"
                 >
-                  {{ t('default.detail') }}
+                  {{ t('detail') }}
                   <MDBSpinner v-if="proposalDescriptionLoading" size="sm" color="primary" class="ms-2"/>
                 </MDBBtn>
               </template>
@@ -34,7 +34,7 @@
            {{`${prefix} ${source}`}}
           </div>
           <a v-if="proposal.args.resource" href="#" @click.prevent="open(proposal.args.resource)" class="small">
-            {{t('default.open')}}
+            {{t('open')}}
             <MDBSpinner v-if="fileLoading && clickOpen" size="sm" color="primary" class="ms-2"/>
           </a>
         </div>
@@ -75,7 +75,7 @@
         </li>
         <!-- <li v-for="(choice, index) in proposal.votingStats" :key="index" class="list-inline-item me-4">
           <i class="fas fa-users fa-fw me-2 mb-3"></i>
-          <strong class="me-2">{{ t("default.vote_type_" + choice.choice) }}</strong>
+          <strong class="me-2">{{ t("vote_type_" + choice.choice) }}</strong>
           <span class="font-weight-bold text-black">{{ choice.percent }}%</span>
         </li>
         -->
@@ -88,14 +88,14 @@
             :value="proposal.votingStats[0].percent"
             :bg="proposal.votingStats[0].bg"
           >
-            {{ t("default.vote_type_" + proposal.votingStats[0].choice) }}: {{ proposal.votingStats[0].percent }}%
+            {{ t("vote_type_" + proposal.votingStats[0].choice) }}: {{ proposal.votingStats[0].percent }}%
           </MDBProgressBar>
           <MDBProgressBar
             v-if="proposal.votingStats[1]"
             :value="proposal.votingStats[1].percent"
             :bg="proposal.votingStats[1].bg"
           >
-            {{ t("default.vote_type_" + proposal.votingStats[1].choice) }}: {{ proposal.votingStats[1].percent }}%
+            {{ t("vote_type_" + proposal.votingStats[1].choice) }}: {{ proposal.votingStats[1].percent }}%
           </MDBProgressBar>
           <MDBProgressBar
             v-if="proposal.votingStats[0] && proposal.votingStats[1]"
@@ -107,7 +107,7 @@
 
       <!-- Workflow -->
       <MDBAccordion v-if="statusCode === 'running' || statusCode === 'finished'" v-model="accordionWorkflow" flush>
-        <MDBAccordionItem :headerTitle="t('default.activities')" collapseId="workflow" class="mt-0">
+        <MDBAccordionItem :headerTitle="t('activities')" collapseId="workflow" class="mt-0">
           <Workflow :proposal="proposal" />
         </MDBAccordionItem>
       </MDBAccordion>
@@ -118,13 +118,13 @@
         class="mt-2"
       >
         <button @click="vote(proposal.id, 1)" type="button" class="btn btn-outline-success btn-rounded">
-          <i class="fas fa-check me-2"></i> {{ t("default.vote_type_yes") }}
+          <i class="fas fa-check me-2"></i> {{ t("vote_type_yes") }}
         </button>
         <button @click="vote(proposal.id, 2)" type="button" class="btn btn-outline-danger btn-rounded">
-          <i class="fas fa-times me-2"></i> {{ t("default.vote_type_no") }}
+          <i class="fas fa-times me-2"></i> {{ t("vote_type_no") }}
         </button>
         <!--<button @click="vote(0)" type="button" class="btn btn-dark"> -->
-        <!--  <i class="fas fa-trash me-2"></i> {{ t('default.vote_type_spam') }} -->
+        <!--  <i class="fas fa-trash me-2"></i> {{ t('vote_type_spam') }} -->
         <!--</button> -->
       </div>
       <div
@@ -132,7 +132,7 @@
         role="group"
       >
         <button v-if="proposal.canVote === true" @click="finish(proposal.id)" type="button" class="btn btn-outline-primary btn-rounded mt-2">
-          <i class="fas fa-certificate me-2"></i> {{ t("default.close_voting") }}
+          <i class="fas fa-certificate me-2"></i> {{ t("close_voting") }}
         </button>
       </div>
     </div>
@@ -207,7 +207,7 @@ export default {
         .catch((e) => {
           logger.error('D', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
           logger.error('B', 'app@components/dao/Proposal', 'RetrieveFile-ipfs', `Failed to retrieve file from ipfs with IPFS cid [${this.ipfs_cid}]`)
-          notify.danger(this.t('default.notify_load_file_ipfs_fail_title'), this.t('default.notify_ipfs_fail') + " " + this.t('default.notify_load_file_ipfs_fail_message'))
+          notify.danger(this.t('notify_load_file_ipfs_fail_title'), this.t('notify_ipfs_fail') + " " + this.t('notify_load_file_ipfs_fail_message'))
           notify.flush()
           console.error(e)
         })

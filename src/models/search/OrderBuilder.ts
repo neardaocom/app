@@ -1,4 +1,4 @@
-import { Order } from "./types";
+import { Order, OrderItem } from "./types";
 
 export default class OrderBuilder {
     private orders: Order[] = [];
@@ -10,25 +10,25 @@ export default class OrderBuilder {
     addNameAsc() {
         this.orders.push({
             code: 'name_asc',
-            translateKey: 'default.most_popular',
+            translateKey: 'most_popular',
             iteratees: ['name'],
-            orders: ['asc'],
+            orders: [OrderItem.Asc],
         })
     }
 
     addNameDesc() {
         this.orders.push({
             code: 'name_asc',
-            translateKey: 'default.most_popular',
+            translateKey: 'most_popular',
             iteratees: ['name'],
-            orders: ['desc'],
+            orders: [OrderItem.Desc],
         })
     }
 
-    addMostPopular(iteratees: string[], orders: string[]) {
+    addMostPopular(iteratees: string[], orders: OrderItem[]) {
         this.orders.push({
             code: 'most_popular',
-            translateKey: 'default.most_popular',
+            translateKey: 'most_popular',
             iteratees: iteratees,
             orders: orders,
         })

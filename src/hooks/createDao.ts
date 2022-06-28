@@ -6,14 +6,10 @@ import { useI18n } from "vue-i18n";
 import { NearConfig } from "@/config/near";
 import Decimal from "decimal.js";
 import NearUtils from "@/models/nearBlockchain/Utils";
+import { useNear } from "./near";
 
 export const useAccounts = (config: Ref<Config>, values: Ref<any>) => {
-    const adminAccountId = computed(
-        () => config.value.near.adminAccountId
-    );
-    const ftFactoryAccountId = computed(
-        () => config.value.near.ftFactoryAccountId
-    );
+    const { adminAccountId, ftFactoryAccountId } = useNear(config)
 
     const daoAccountId = computed(() =>
         values.value.dao_account

@@ -21,7 +21,7 @@ export default class DaoList {
     this.n = n
   }
 
-  async load(from: number, limit: number, nearPrice: number) {
+  async load(from: number, limit: number, nearPrice: number | null) {
 
     const tagTransformer = new TagFromFactoryTransformer(this.t)
     const tags = await this.daoFactory.getTags(tagTransformer)
@@ -35,7 +35,7 @@ export default class DaoList {
     // console.log(wallets)
     list.forEach((element, index) => {
       element.treasuryAmount = new Decimal(wallets[index]).toFixed(2)
-      if (nearPrice !== undefined) {
+      if (nearPrice !== undefined && nearPrice !== null) {
         element.treasuryAmountUsd = new Decimal(wallets[index]).times(nearPrice).toFixed(2)
       }
     });

@@ -1,17 +1,16 @@
 <template>
-   <h6>{{`${t('default.account_id')}: ${accountId}`}}</h6>
-   <InputNumber :labelName="t('default.amount')" :balance="amount" :max="amount" id="amount"/>
+   <h6>{{`${t('account_id')}: ${accountId}`}}</h6>
+   <InputNumber :labelName="t('amount')" :balance="amount" :max="amount" id="amount"/>
 </template>
 
 <script>
 import { computed, toRefs } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-// import { useNear } from '@/hooks/vuex'
-import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputNumber from '@/components/forms/InputNumber.vue'
 import { inject } from '@vue/runtime-core';
 import { useStakeAction } from '@/hooks/staking';
+import { useNear } from '@/hooks/near'
 export default {
    components:{
       InputNumber
@@ -35,8 +34,7 @@ export default {
       const loader = inject('loader')
       const wallet = inject('wallet')
       const { runAction } = useStakeAction(dao, loader)
-      
-      const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+      const { adminAccountPostfix } = useNear(config)
 
       const schema = computed(() => {
          return {
@@ -52,7 +50,7 @@ export default {
       });
 
       return {
-         t, accountPostfix, onSubmit
+         t, adminAccountPostfix, onSubmit
       }
    }
 }

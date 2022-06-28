@@ -42,7 +42,7 @@
                               <InfoAmount :amount="asset.unlocked" :suffix="asset.asset.symbol" class="fs-4 fw-bold"/>    
                            </div>
                            <div class="mt-n2" style="margin-left: 33px">
-                              <NumberFormatter :amount="computeUnlocked(asset)"/> <span class="text-muted small"> {{t('default.treasury_locked')}} </span>
+                              <NumberFormatter :amount="computeUnlocked(asset)"/> <span class="text-muted small"> {{t('treasury_locked')}} </span>
                            </div>
                         </div>
                         <div v-if="asset.unlocking.length > 0" class="ms-auto">
@@ -53,7 +53,7 @@
                               role="button" 
                               class="text-dark text-decoration-underline ms-auto"
                            >
-                              {{t('default.unlocking_detail')}}
+                              {{t('unlocking_detail')}}
                            </a>
                         </div>
                      </div>
@@ -66,8 +66,8 @@
                </MDBCardText>
                <MDBCardText>
                   <div class="d-flex justify-content-between">
-                     <MDBBtn v-if="canUnlock" @click="unlock(lock.id)" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{ t('default.treasury_unlock') }}</MDBBtn>
-                     <a v-show="false" href="#" class="text-dark text-decoration-underline ms-auto">{{t('default.detail')}}</a>
+                     <MDBBtn v-if="canUnlock" @click="unlock(lock.id)" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{ t('treasury_unlock') }}</MDBBtn>
+                     <a v-show="false" href="#" class="text-dark text-decoration-underline ms-auto">{{t('detail')}}</a>
                   </div>
                   
                </MDBCardText>

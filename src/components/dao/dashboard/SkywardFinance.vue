@@ -8,7 +8,6 @@
 <script>
 import Widget from "@/components/skywardFinance/Widget.vue"
 import { onMounted, onUnmounted, toRefs, computed, inject } from "vue"
-import { useStore } from "vuex"
 import { useSkywardFinanace } from "@/hooks/auction"
 
 export default {
@@ -29,9 +28,9 @@ export default {
     setup(props) {
         const { scenario, salesIds } = toRefs(props)
         const dao = inject('dao')
-        const store = useStore()
+        const loader = inject('loader')
 
-        const account = computed(() => store.getters['near/getAccount'])
+        const account = loader.value.load('near/WalletAccount')
 
         const {
             service: skywardService,

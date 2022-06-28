@@ -1,10 +1,10 @@
 <template>
-    <InputString :labelName="t('default.account_id')" id="account_id" :addon="`.${accountPostfix}`"/>
-    <InputNumber :labelName="t('default.amount')" id="amount" :balance="availableTokenAmount" :max="availableTokenAmount" :addon="tokenName"/>
+    <InputString :labelName="t('account_id')" id="account_id" :addon="`.${adminAccountPostfix}`"/>
+    <InputNumber :labelName="t('amount')" id="amount" :balance="availableTokenAmount" :max="availableTokenAmount" :addon="tokenName"/>
 
     <br/>
     <div class="text-start">
-        <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+        <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
     </div>
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
     </MDBWysiwyg>
@@ -17,10 +17,10 @@ import { MDBWysiwyg } from "mdb-vue-wysiwyg-editor";
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import NearUtils from "@/models/nearBlockchain/Utils";
 import { inject } from '@vue/runtime-core';
 import { useAnalytics } from '@/hooks/treasury';
 import { useProposalBasic } from '@/hooks/proposal';
+import { useNear } from '@/hooks/near'
 
 export default {
     components:{
@@ -43,15 +43,15 @@ export default {
         //const notify = inject('notify')
         const {availableTokenAmount} = useAnalytics(dao, loader)
         const { proposalBasic } = useProposalBasic(loader, config)
-    
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(config.value.near.adminAccountId))
+        const { adminAccountPostfix } = useNear(config)
+        const servicePool = loader.value.load('dao/ServicePool')
 
         const refWysiwyg = ref(null)
 
         const schema = computed(() => {
             return {
-                account_id: `required|accountExists:${accountPostfix.value}`,
-                amount: `required|strIsNumber|strNumMin:0|strNumMax:${availableTokenAmount.value}`
+                account_id: `required|accountExists:${adminAccountPostfix.value},${servicePool.value}`,
+                amount: `required|strIsNumber|strNumMin:0|strNumMax:${availableTokenAmount.value},${servicePool.value}`
             }
         });
 
@@ -59,7 +59,7 @@ export default {
 
         const onSubmit = handleSubmit(async (values) => {
             emit('isValid', true)
-            proposalBasic.value.tokenSend(dao.value, values.account_id + '.' + accountPostfix.value, values.amount, refWysiwyg.value.getCode())
+            proposalBasic.value.tokenSend(dao.value, values.account_id + '.' + adminAccountPostfix.value, values.amount, refWysiwyg.value.getCode())
         }, () => {
             emit('isValid', false)
             console.log(errors.value)
@@ -68,7 +68,7 @@ export default {
 
         return {
             t,
-            accountPostfix,
+            adminAccountPostfix,
             onSubmit,
             refWysiwyg,
             availableTokenAmount

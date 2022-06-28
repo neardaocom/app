@@ -1,6 +1,6 @@
 <template>
-    <Select :labelName="t('default.group')" id="group" :options="groups" />
-    <Select :labelName="t('default.rights')" id="rights" :options="rights"/>
+    <Select :labelName="t('group')" id="group" :options="groups" />
+    <Select :labelName="t('rights')" id="rights" :options="rights"/>
 
     <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
         <section v-html="description"></section>

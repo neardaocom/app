@@ -8,7 +8,7 @@
               <router-link :to="{ name: 'landing-page' }">{{ config.app.brandName }}</router-link>
             </li>
             <li v-if="daoId" class="breadcrumb-item">
-              <router-link :to="{ name: 'dao-list', query: {} }">{{ t("default.organizations") }}</router-link>
+              <router-link :to="{ name: 'dao-list', query: {} }">{{ t("organizations") }}</router-link>
             </li>
             <li v-if="daoId && listName" class="breadcrumb-item">
               <router-link :to="{ name: 'dao', params: {id: daoId }}">{{ daoId }}</router-link>
@@ -17,7 +17,7 @@
               {{ daoId }}
             </li>
             <li v-if="listName" class="breadcrumb-item active">
-              {{ t("default." + listName) }}
+              {{ t("" + listName) }}
             </li>
           </ol>
         </nav>

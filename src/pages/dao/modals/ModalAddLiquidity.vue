@@ -7,33 +7,33 @@
         size="lg"
     >
         <MDBModalHeader>
-            <MDBModalTitle id="modalAddLiguidity"> {{ t('default.add_liquidity') }} </MDBModalTitle>
+            <MDBModalTitle id="modalAddLiguidity"> {{ t('add_liquidity') }} </MDBModalTitle>
         </MDBModalHeader>
         <MDBModalBody class="text-start">
             <div class="d-flex justify-content-between">
-                <label for="amount1" class="form-label">{{ `${t('default.amount')} ${tokensNames[0]}` }}</label>
-                <div class="small">{{`${t('default.balance')}: ${maxTokenStr}`}}</div>
+                <label for="amount1" class="form-label">{{ `${t('amount')} ${tokensNames[0]}` }}</label>
+                <div class="small">{{`${t('balance')}: ${maxTokenStr}`}}</div>
             </div>
             <MDBInput inputGroup @input="changeAmount($event, 1)" id="amount1" @keyup="validateAmount('amount1', amount1)" @blur="validateAmount('amount1', amount1)"  v-model="amountFormated1" :isValid="!errors.amount1" :isValidated="isValidated.amount1" :invalidFeedback="errors.amount1">
                 <MDBBtn @click="tokenToMax" outline="primary" :ripple="{ color: 'dark' }">
-                    {{t('default.max')}}
+                    {{t('max')}}
                 </MDBBtn>
             </MDBInput>
             <br/>
             <div class="d-flex justify-content-between">
-                <label for="amount2" class="form-label">{{ `${t('default.amount')} ${tokensNames[1]}` }}</label>
-                <div class="small">{{`${t('default.balance')}: ${nearServiceStr}`}}</div>
+                <label for="amount2" class="form-label">{{ `${t('amount')} ${tokensNames[1]}` }}</label>
+                <div class="small">{{`${t('balance')}: ${nearServiceStr}`}}</div>
             </div>
             <MDBInput inputGroup @input="changeAmount($event, 2)" id="amount2" @keyup="validateAmount('amount2', amount2)" @blur="validateAmount('amount2', amount2)"  v-model="amountFormated2" :isValid="!errors.amount2" :isValidated="isValidated.amount2" :invalidFeedback="errors.amount2">
                 <MDBBtn @click="nearToMax" outline="primary" :ripple="{ color: 'dark' }">
-                    {{t('default.max')}}
+                    {{t('max')}}
                 </MDBBtn>
             </MDBInput>
 
         </MDBModalBody>
         <MDBModalFooter>
-            <MDBBtn color="secondary" @click="close()">{{ t('default.close') }}</MDBBtn>
-            <MDBBtn color="primary" @click="addLiquidity">{{ t('default.add_liquidity') }}</MDBBtn>
+            <MDBBtn color="secondary" @click="close()">{{ t('close') }}</MDBBtn>
+            <MDBBtn color="primary" @click="addLiquidity">{{ t('add_liquidity') }}</MDBBtn>
         </MDBModalFooter>
     </MDBModal>
 </template>
@@ -171,13 +171,13 @@ export default {
             maxNumberVal = Validator.maxNumber(amount, {max: maxNear.value})
         }
         if (isNumberVal.valid === false) {
-            errors[field] = t('default.' + isNumberVal.message, isNumberVal.params)
+            errors[field] = t('' + isNumberVal.message, isNumberVal.params)
         }else if (requiredVal.valid === false) {
-            errors[field] = t('default.' + requiredVal.message, requiredVal.params)
+            errors[field] = t('' + requiredVal.message, requiredVal.params)
         }else if (minNumberVal.valid === false) {
-            errors[field] = t('default.' + minNumberVal.message, minNumberVal.params)
+            errors[field] = t('' + minNumberVal.message, minNumberVal.params)
         } else if (maxNumberVal.valid === false) {
-            errors[field] = t('default.' + maxNumberVal.message, maxNumberVal.params)
+            errors[field] = t('' + maxNumberVal.message, maxNumberVal.params)
         } else {
             errors[field] = null
         }
@@ -200,7 +200,7 @@ export default {
             }).catch((e) => {
                 logger.error('D', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
                 logger.error('B', 'app@components/dao/ModalUgprade', 'UpgradeDao-blockchain', `Failed to upgrade DAO [${contractId.value}]`)
-                notify.danger(t('default.notify_upgrade_dao_fail_title'),  t('default.notify_blockchain_fail') + " " +  t('default.notify_upgrade_dao_fail_message'))
+                notify.danger(t('notify_upgrade_dao_fail_title'),  t('notify_blockchain_fail') + " " +  t('notify_upgrade_dao_fail_message'))
                 notify.flush()
                 console.log(e)
             })

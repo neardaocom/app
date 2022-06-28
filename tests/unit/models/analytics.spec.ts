@@ -1,5 +1,5 @@
 import Analytics from '@/models/analytics'
-import { nowToSeconds, toSeconds, nowDate } from '@/models/utils/datetime'
+import DateHelper from '@/models/utils/DateHelper'
 import moment from 'moment'
 
 test('Parsing Algorithm', () => {
@@ -26,39 +26,39 @@ test('Get Period from duration', () => {
 
 test('Compute actual value for "Linear"', () => {
     const duration: number = 60 * 60 * 24 // 1 day
-    let target: number = nowToSeconds() // now in seconds
+    let target: number = DateHelper.nowToSeconds() // now in seconds
 
     const release_end = new Date()
     release_end.setDate(release_end.getDate() + 1)
 
     // start
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)})).toBe(0);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: toSeconds(release_end)})).toBe(500);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(0);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(500);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
     
     // querter
     target += 60 * 60 * 6
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)})).toBe(250);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: toSeconds(release_end)})).toBe(625);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(250);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(625);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
 
     // half
     target += 60 * 60 * 6
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)})).toBe(500);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: toSeconds(release_end)})).toBe(750);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(500);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(750);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
     
     // end
     target += 60 * 60 * 12
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 0, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 500, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.Linear, target, {total: 1000, init: 1000, duration: duration, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
 });
 
 test('Compute actual value for "None"', () => {
-    const target: number = nowToSeconds() // now in seconds
+    const target: number = DateHelper.nowToSeconds() // now in seconds
     const release_end = new Date()
-    expect(Analytics.computeUnlocking(Analytics.Algorithm.None, target, {total: 1000, release_end: toSeconds(release_end)})).toBe(1000);
+    expect(Analytics.computeUnlocking(Analytics.Algorithm.None, target, {total: 1000, release_end: DateHelper.toSeconds(release_end)})).toBe(1000);
 });
 
 test('Period Step', () => {
@@ -73,12 +73,12 @@ test('Period Step', () => {
 });
 
 test('Unlocking cashflow for "None"', () => {
-    const now: Date = nowDate()
+    const now: Date = DateHelper.nowDate()
     // console.log(now)
     const release_end = new Date()
     release_end.setFullYear(release_end.getFullYear() + 1)
 
-    const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.None, {total: 1000, init: 0, release_end: toSeconds(release_end)}, Analytics.Period.Day, now)
+    const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.None, {total: 1000, init: 0, release_end: DateHelper.toSeconds(release_end)}, Analytics.Period.Day, now)
 
     analytics.forEach((element) => {
         expect(element.value).toBe(1000)
@@ -89,12 +89,12 @@ test('Unlocking cashflow for "None"', () => {
 test('Unlocking cashflow for "Linear"', () => {
     const duration: number = 60 * 60 * 24 * 365// 1 year
 
-    const now: Date = nowDate()
+    const now: Date = DateHelper.nowDate()
     // console.log(now)
     const release_end = new Date()
     release_end.setFullYear(release_end.getFullYear() + 1)
 
-    const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.Linear, {total: 1000, init: 0, duration: duration, release_end: toSeconds(release_end)}, Analytics.Period.Month, now)
+    const analytics = Analytics.computeUnlockingCashflow(Analytics.Algorithm.Linear, {total: 1000, init: 0, duration: duration, release_end: DateHelper.toSeconds(release_end)}, Analytics.Period.Month, now)
 
     let last_amount: number | undefined = 0
     analytics.forEach((element) => {

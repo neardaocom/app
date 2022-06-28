@@ -1,8 +1,8 @@
 <template>
-   <InputString :labelName="t('default.dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
+   <InputString :labelName="t('dao')" id="dao_id" :addon="`.${accountPostfix}`"/>
    <br/>
    <div class="text-start">
-      <label for="description-id-input"  class="form-label">{{ t('default.description') }}</label>
+      <label for="description-id-input"  class="form-label">{{ t('description') }}</label>
    </div>
    <MDBWysiwyg :fixedOffsetTop="58" ref="refWysiwyg">
    </MDBWysiwyg>
@@ -11,7 +11,7 @@
 <script>
 import { computed, ref } from '@vue/reactivity'
 import { useI18n } from 'vue-i18n'
-import { useNear } from '@/hooks/vuex'
+import { useNear } from '@/hooks/near'
 import NearUtils from '@/models/nearBlockchain/Utils';
 import { useForm } from 'vee-validate';
 import InputString from '@/components/forms/InputString.vue'

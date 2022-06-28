@@ -1,43 +1,41 @@
 <template>
     <!-- title -->
-    <InputString :labelName="t('default.title')" id="title"/>
+    <InputString :labelName="t('title')" id="title"/>
     <!-- TokenId -->
-    <InputString :labelName="t('default.token_sale_token_id')" id="token_id" :addon="`.${accountPostfix}`"/>
+    <InputString :labelName="t('token_sale_token_id')" id="token_id" :addon="`.${adminAccountPostfix}`"/>
     <!-- Amount -->
-    <InputNumber :labelName="t('default.amount')" id="amount" :addon="{tokenName}"/>
+    <InputNumber :labelName="t('amount')" id="amount" :addon="{tokenName}"/>
 
     <!-- From -->
     <div class="row">
         <div class="col-6">
-            <Datepicker :labelName="t('default.token_sale_start_at')" id="date_start"/>
+            <Datepicker :labelName="t('token_sale_start_at')" id="date_start"/>
         </div>
         <div class="col-6">
-            <Timepicker :labelName="t('default.token_sale_start_at')" id="time_start"/>
+            <Timepicker :labelName="t('token_sale_start_at')" id="time_start"/>
         </div>
     </div>
 
     <!-- formDurationDays -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_days')" v-model="durationDays" :min="0" :max="31" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_days')" v-model="durationDays" :min="0" :max="31" />
         <label class="form-label col-md-6 col-3">{{ durationDays }}d</label>
     </div>
     <!-- formDurationHours -->
     <div class="row mb-4">
-        <MDBRange wrapperClass="col-md-6 col-9" :label="t('default.dao_vote_duration_hours')" v-model="durationHours" :min="0" :max="23" />
+        <MDBRange wrapperClass="col-md-6 col-9" :label="t('dao_vote_duration_hours')" v-model="durationHours" :min="0" :max="23" />
         <label class="form-label col-md-6 col-3">{{ durationHours }}h</label>
     </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import InputNumber from '@/components/forms/InputNumber.vue'
 import InputString from '@/components/forms/InputString.vue'
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from '@vue/reactivity';
 import { useForm } from 'vee-validate';
-import NearUtils from "@/models/nearBlockchain/Utils";
 import moment from 'moment'
-import { useNear } from '@/hooks/vuex';
+import { useNear } from '@/hooks/near';
 
 export default {
     components:{
@@ -56,23 +54,19 @@ export default {
     setup () {
         const {t} = useI18n()
 
-        const {adminAccountId} = useNear()
-
-        const accountPostfix = computed(() => NearUtils.getAccountIdPostfix(adminAccountId.value))
-        //const nearService = computed(() => (store.getters['near/getService']))
-        //const accountId = computed(() => ( store.getters['near/getAccountId']))
+        const { adminAccountPostfix } = useNear()
 
         const durationHours = ref(0)
         const durationDays = ref(7)
 
 
-        const formatDate = this.t('default._datepicker_format')
+        const formatDate = this.t('_datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
         const maxDate = moment().startOf('day').add(12, 'M').toDate()
         const schema = computed(() => {
             return {
                 title: `required|min:5|max:40`,
-                token_id: `required|accountExists:${accountPostfix.value}`, // TODO near root account
+                token_id: `required|accountExists:${adminAccountPostfix.value}`, // TODO near root account
                 amount: 'required|strIsNumber|strNumMin:1|strNumMax:1000000000.0',
                 date_start: `required|minDate:${minDate},${formatDate}|maxDate:${maxDate},${formatDate}`,
                 time_start: `required`,
@@ -92,7 +86,7 @@ export default {
 
         return {
             t,
-            accountPostfix,
+            adminAccountPostfix,
             durationHours,
             durationDays,
             onSubmit

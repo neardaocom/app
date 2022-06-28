@@ -21,7 +21,7 @@
       </MDBCard>
     </div>
 
-    <NoData v-if="docs.files.length == 0" :text="t('default.no_doc_files')" hint="This is a hint" />
+    <NoData v-if="docs.files.length == 0" :text="t('no_doc_files')" hint="This is a hint" />
   </div>
 
   <ModalDocument :show="modalDocument" :doc="selectedDoc" :data="docData"/>

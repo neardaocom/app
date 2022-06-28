@@ -5,7 +5,7 @@
     </label>
     <MDBDatepicker
         v-model="value"
-        :format="t('default._datepicker_format')"
+        :format="t('_datepicker_format')"
         @change="handleChange"
         @blur="handleBlur($event), handleChange($event)"
         @input="handleBlur"

@@ -1,7 +1,7 @@
 <template>
     <dt class="col-6 ps-3">{{name}}:</dt>
     <dd  v-if="value || value === 0 || value === '0'" class="col-6">{{ value }}</dd>
-    <dd v-else class="col-6"><span class="text-danger">{{t('default.empty')}}</span> </dd>
+    <dd v-else class="col-6"><span class="text-danger">{{t('empty')}}</span> </dd>
 </template>
 
 <script>

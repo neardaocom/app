@@ -16,9 +16,9 @@ export default class MarketTemplateFromProviderTransformer implements Transforme
             id: value.id,
             version: loToString(value.version),
             code: value.code,
-            name: this.t('default.wf_templ_' + value.code),
-            status: this.t('default.' + (installedCodes.includes(value.code) ? 'installed' : 'buy')),
-            search: [StringHelper.toSearch(this.t('default.wf_templ_' + value.code)), StringHelper.toSearch(this.t('default.workflow'))].join('-'),
+            name: this.t('wf_templ_' + value.code),
+            status: this.t('' + (installedCodes.includes(value.code) ? 'installed' : 'buy')),
+            search: [StringHelper.toSearch(this.t('wf_templ_' + value.code)), StringHelper.toSearch(this.t('workflow'))].join('-'),
         }
     }
 }

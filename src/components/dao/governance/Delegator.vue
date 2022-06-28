@@ -16,7 +16,7 @@
             </div>
          </div>
          <div class="text-start">
-            {{t('default.delegated')}}
+            {{t('delegated')}}
             <NumberFormatter class="fw-bold ms-1" :amount="amount"/>
          </div>
       </MDBCardBody>

@@ -6,11 +6,11 @@
                <i class="bi bi-person" style="font-size: 1.2rem;"/>
             </div>
             <span class="fs-6 fw-800">{{ user.accountId }}
-               <a class="" :href="nearWalletUrl + '/accounts/' + user.accountId" target="_blank">
+               <a class="" :href="walletUrl + '/accounts/' + user.accountId" target="_blank">
                   <i class="bi bi-box-arrow-up-right text-info ms-1" style="font-size: 0.7rem; vertical-align: 2px;"/>
                </a>
             </span>
-            <MDBBtn v-if="user.accountId !== wallet?.accountId" @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('default.delegate')}}</MDBBtn>
+            <MDBBtn v-if="user.accountId !== wallet?.accountId" @click="predelegate" class="ms-auto" color="primary" size="sm" rounded>{{t('delegate')}}</MDBBtn>
          </div>
          <div class="text-start small mb-3">
             {{ user.bio }}
@@ -19,8 +19,8 @@
             <MDBBadge color="primary" class="align-self-center"> {{user.tag}} </MDBBadge>
          </div>
          <div class="d-flex">
-            <div>{{t('default.vote_amount')}} <NumberFormatter class="fw-bold ms-1" :amount="user.voteAmount"/></div>
-            <div class="ms-auto"> {{t('default.votes_casted')}} <span class="fw-bold ms-2">{{ user.votesCasted }}</span></div>
+            <div>{{t('vote_amount')}} <NumberFormatter class="fw-bold ms-1" :amount="user.voteAmount"/></div>
+            <div class="ms-auto"> {{t('votes_casted')}} <span class="fw-bold ms-2">{{ user.votesCasted }}</span></div>
          </div>
       </MDBCardBody>
    </MDBCard>
@@ -33,13 +33,13 @@
 <script>
 import { MDBCard, MDBCardBody, MDBBadge, MDBBtn} from "mdb-vue-ui-kit";
 import { useI18n } from 'vue-i18n';
-import { useStore } from 'vuex';
-import { computed, ref } from '@vue/reactivity';
+import { ref } from '@vue/reactivity';
 import FormPredelegate from '@/components/dao/staking/forms/FormPredelegate.vue'
 import { inject } from '@vue/runtime-core';
 import { useStake } from '@/hooks/staking';
 import ModalProposal from '@/components/proposal/Modal.vue'
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
+import { useNear } from '@/hooks/near';
 
 export default {
   components: {
@@ -60,11 +60,11 @@ export default {
       
    setup () {
       const {t} = useI18n()
-      const store = useStore()
       const dao = inject('dao')
       const wallet = inject('wallet')
-      const {walletVotePowerOwned} = useStake(dao)
-      const nearWalletUrl = computed(() => store.getters['near/getWalletUrl'])
+      const config = inject('config')
+      const { walletVotePowerOwned } = useStake(dao)
+      const { walletUrl } = useNear(config)
       const form = ref(null)
 
       const submitText = ref('')
@@ -72,7 +72,7 @@ export default {
 
       const predelegate = () => {
          modalProposal.value += 1
-         submitText.value = t('default.delegate')
+         submitText.value = t('delegate')
       }
 
       const submitModal = () => {
@@ -80,7 +80,7 @@ export default {
       }
 
       return {
-         t, nearWalletUrl, walletVotePowerOwned, wallet, predelegate, submitModal,
+         t, walletUrl, walletVotePowerOwned, wallet, predelegate, submitModal,
          modalProposal, submitText, form
       }
    }

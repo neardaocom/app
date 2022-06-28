@@ -4,7 +4,7 @@
          <div class="col-md-4 d-flex align-items-center position-relative bg-gradient-120 text-white text-start p-3" style="border-radius: 0.5rem 0 0 0.5rem">
             <Tooltip class="position-absolute top-0 end-0 mt-1 me-2" color="white" text="Tooltip" />
             <div class="align-items-center">
-               <div class="fw-600 mb-n2">{{t('default.total_amount')}} / {{t('default.staked')}}</div>
+               <div class="fw-600 mb-n2">{{t('total_amount')}} / {{t('staked')}}</div>
                <span class="fs-2 fw-800">
                   <NumberFormatter :amount="walletTokenAmount" />
                   /
@@ -15,26 +15,26 @@
 
          <div class="col-md-6 d-flex align-items-center justify-content-evenly text-start  p-3">
             <div>
-               <div class="fw-600 mb-n2">{{t('default.owned')}}</div>
+               <div class="fw-600 mb-n2">{{t('owned')}}</div>
                <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
-               <div class="fw-600 mb-n2">{{t('default.from_delegators')}}</div>
+               <div class="fw-600 mb-n2">{{t('from_delegators')}}</div>
                <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
-               <div class="fw-600 mb-n2">{{t('default.delegated')}}</div>
+               <div class="fw-600 mb-n2">{{t('delegated')}}</div>
                <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
          </div>
 
          <div class="col-md-2 d-flex flex-column align-items-center justify-content-center p-2">
             <template v-if="canStake">
-               <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.stake')}}</MDBBtn>
-               <MDBBtn @click="predelegate" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.delegate')}}</MDBBtn>
-               <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.unstake')}}</MDBBtn>
+               <MDBBtn @click="stake" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('stake')}}</MDBBtn>
+               <MDBBtn @click="predelegate" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('delegate')}}</MDBBtn>
+               <MDBBtn @click="withdraw" :disabled="walletTokenStaked == 0" class="m-1" color="primary" size="sm" rounded style="width: 144px">{{t('unstake')}}</MDBBtn>
             </template>
-            <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('default.stake_register')}}</MDBBtn>
+            <MDBBtn v-else class="m-1" color="primary" size="sm" rounded style="width: 144px" @click="runAction('register')">{{t('stake_register')}}</MDBBtn>
          </div>
 
          <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="submitText">
@@ -92,19 +92,19 @@ export default {
 
       const stake = () => {
          modalProposal.value += 1
-         submitText.value = t('default.stake')
+         submitText.value = t('stake')
          activeForm.value = 'FormStake'
       }
 
       const withdraw = () => {
          modalProposal.value += 1
-         submitText.value = t('default.withdraw')
+         submitText.value = t('withdraw')
          activeForm.value = 'FormWithdraw'
       }
 
       const delegate = () => {
          modalProposal.value += 1
-         submitText.value = t('default.delegate')
+         submitText.value = t('delegate')
          activeForm.value = 'FormDelegateOwned'
       }
 
@@ -114,7 +114,7 @@ export default {
             accountId:  wallet.value.accountId,
             amount: walletVotePowerOwned.value
          }
-         submitText.value = t('default.delegate')
+         submitText.value = t('delegate')
          activeForm.value = 'FormPredelegate'
       }
 

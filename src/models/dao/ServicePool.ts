@@ -6,8 +6,8 @@ import StakingContractService from "../nearBlockchain/StakingContractService";
 import WfProviderContractService from "../nearBlockchain/WfProviderContractService";
 
 export default class ServicePool {
-    private near: Near;
-    private account: Account;
+    public near: Near;
+    public account: Account;
     private daoPool: { [key: string]: DaoContractService } = {};
     private ftPool: { [key: string]: FtContractService } = {};
     private accountPool: { [key: string]: NearAccountService } = {};

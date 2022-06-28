@@ -25,9 +25,9 @@
     <!-- Parts -->
     <section>
       <div class="container">
-        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Dashboard v-if="loaded === true && rPage === 'overview'" :walletId="wallet.accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <Voting v-if="loaded === true && rPage === 'voting'" />
-        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="accountId" :walletRights="walletRights" :daoRights="daoRights" />
+        <Activities v-if="loaded === true && rPage === 'activities'" :walletId="wallet.accountId" :walletRights="walletRights" :daoRights="daoRights" />
         <DeFi v-if="loaded === true && rPage === 'defi'"/>
         <Tokens v-if="loaded === true && rPage === 'tokens'" :dao="dao" />
         <Resources v-if="loaded === true && rPage === 'resources'" :docs="dao.docs" />
@@ -73,8 +73,6 @@ import DaoLoader from '@/models/dao/DaoLoader'
 import DaoMarket from '@/models/dao/DaoMarket'
 import { useRouter } from "@/hooks/dao";
 import { useDao } from "@/hooks/daoList";
-// import { useStore } from 'vuex'
-// import { useNear, useWallet } from "@/hooks/vuex";
 import { useRewards, useClaimableRewards } from "@/hooks/rewards";
 
 export default {
@@ -119,9 +117,9 @@ export default {
     onMounted(async () => {
       // const daoFactory = await loader?.value.get('dao/Factory')
       // const servicePool = daoFactory.value.createServicePool();
-      const servicePool = await loader?.value.get('dao/ServicePool')
+      const servicePool = await loader.value.get('dao/ServicePool')
       const daoLoader = new DaoLoader(rDaoId.value, servicePool.value, t, daoInfo.value)
-      dao.value = await daoLoader.getDao(wallet.value?.accountId)
+      dao.value = await daoLoader.getDao(wallet.value.accountId)
 
       // load templates metadata
       const daoMarket = new DaoMarket(config.value.near.wfProviderAccountId, servicePool.value)
@@ -130,7 +128,7 @@ export default {
       //console.log(dao.value)
       loaded.value = true
       daoRights.value = Rights.getDAORights(dao.value)
-      walletRights.value = Rights.getWalletRights(dao.value, wallet.value?.accountId)
+      walletRights.value = Rights.getWalletRights(dao.value, wallet.value.accountId)
 
       // rewards
       rewardsLoadClaimable()
@@ -148,20 +146,13 @@ export default {
       t, rDaoId, rPage, rSearch, rOrder, dao, daoInfo, loaded, daoRights, wallet, walletRights,
       daoRewards, rewardsLoadIntervalStep, rewardsLoadIntervalId, rewardsCountingIntervalId,
     }
-  },
-  computed: {
-    accountId() {
-      return this.$store.getters["near/getAccountId"];
-    },
-  },
-  methods: {
   }
 }
 </script>
 
 <style>
   .title-background-image {
-    background-image: url("/img/cover_cropt.png");
+    background-image: url("../../public/img/cover_cropt.png");
     height: 263px;
     border-radius: 8px 8px 0px 0px;
   }

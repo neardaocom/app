@@ -12,7 +12,7 @@
                <small class="text-muted"> #{{ dao.index + 1 }} </small>
             </div>
             <div class="text-muted small">
-               {{t('default.wallet')}} 
+               {{t('wallet')}} 
                <MDBBadge tag="a" :href="walletUrl + '/accounts/' + dao.walletId" color="info" pill style="padding: 0.4rem"><i class="bi bi-wallet2"/></MDBBadge>
             </div>
          </div>
@@ -22,12 +22,12 @@
          <div class="d-flex justify-content-between mt-4">
             <div>
                <template  v-if="dao.tags.length > 0">
-                  <div class="small">{{t('default.tags')}}</div>
+                  <div class="small">{{t('tags')}}</div>
                   <MDBBadge v-for="(tag, index) in dao.tags" :key="index" color="info" class="mt-2">{{ tag }}</MDBBadge>
                </template>
             </div>
             <div v-if="dao.treasuryAmountUsd">
-               <div class="small">{{t('default.dao_funds')}}</div>
+               <div class="small">{{t('dao_funds')}}</div>
                <InfoAmount :amount="dao.treasuryAmountUsd" suffix="USD" suffixNormal class="fs-4 fw-bold" />
             </div>
          </div>
@@ -43,10 +43,9 @@ import {
    MDBCardBody,
    MDBBadge
 } from 'mdb-vue-ui-kit'
-import { useStore } from 'vuex'
-import { computed } from '@vue/reactivity'
 import Icon from "@/components/ui/Icon.vue"
 import InfoAmount from '@/components/ui/InfoAmount.vue'
+import { useNear } from '@/hooks/near'
 
 export default {
    components: {
@@ -66,14 +65,11 @@ export default {
    setup () {
       const config = inject('config')
       const { t } = useI18n()
-      const store = useStore()
 
-      const walletUrl = computed(() => store.getters['near/getWalletUrl']) 
+      const { walletUrl } = useNear(config)
 
       return {
-         t,
-         config,
-         walletUrl
+         t, walletUrl
       }
    }
 }

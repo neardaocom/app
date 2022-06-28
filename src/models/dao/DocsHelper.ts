@@ -82,11 +82,11 @@ export default class DocsHelper {
   }
 
   static getCategoriesInit(t: Function): string[] {
-    return this.initStructure.map(item => t('default.' + item.category))
+    return this.initStructure.map(item => t('' + item.category))
   }
 
   static getNamesInit(t: Function): string[] {
-    return [t('default.founding_document'), t('default.discord'), t('default.web'), t('default.twitter'), t('default.legal_status'), t('default.legal_document')]
+    return [t('founding_document'), t('discord'), t('web'), t('twitter'), t('legal_status'), t('legal_document')]
   }
 
   static getCategories(docs: DAODocs, t: Function): string[] {
@@ -102,8 +102,8 @@ export default class DocsHelper {
     const files = docs.map(item => { return { title: item.name, category: item.category, version: item.version }})
     this.initStructure.forEach((initCategory) => {
       initCategory.items.forEach((initFile) => {
-        if (loFind(files, {title: t('default.' + initFile.name), category: t('default.' + initCategory.category)}) === undefined) {
-          files.push({title: t('default.' + initFile.name), category: t('default.' + initCategory.category), version: '0.0'})
+        if (loFind(files, {title: t('' + initFile.name), category: t('' + initCategory.category)}) === undefined) {
+          files.push({title: t('' + initFile.name), category: t('' + initCategory.category), version: '0.0'})
         }
       })
     })
@@ -144,17 +144,17 @@ export default class DocsHelper {
   static getFilterTypes(t: Function): Record<string, DAODocsFilterTypeItem> {
     return {
       link: {
-        name: t('default.link'),
+        name: t('link'),
         type: DAODocsFileType.url,
         active: false,
       },
       pdf: {
-        name: t('default.pdf'),
+        name: t('pdf'),
         type: DAODocsFileType.binaryPdf,
         active: false,
       },
       html: {
-        name: t('default.document'),
+        name: t('document'),
         type: DAODocsFileType.html,
         active: false,
       },

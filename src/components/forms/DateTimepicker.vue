@@ -12,7 +12,7 @@
             @blur="handleBlur($event), handleChange($event)"
             @input="handleBlur"
             :timepicker="{ hoursFormat: 24 }"
-            :datepicker="{ format: `${t('default._datepicker_format')}` }"
+            :datepicker="{ format: `${t('_datepicker_format')}` }"
         />
         <FromErrorMessage class="mt-3 mb-4" :show="errorMessage !== null" :message="errorMessage"/>
     </div>

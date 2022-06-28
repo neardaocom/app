@@ -2,8 +2,8 @@
    <div class="container mb-2">
 
       <div class="d-flex flex-wrap justify-content-evenly mt-5">
-         <InfoItem :header="t('default.total_voting_power')" :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol"/>
-         <InfoItem :header="t('default.my_vote_power')" :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol">
+         <InfoItem :header="t('total_voting_power')" :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol"/>
+         <InfoItem :header="t('my_vote_power')" :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol">
             <div>
                <NumberFormatter :amount="walletVotePowerPercent" :digits="0"/><span class="ms-1">%</span>
             </div>
@@ -20,8 +20,8 @@
 
       <div v-if="dao.staking.wallet?.delegators.length > 0" class="mb-5">
          <div class="d-flex">
-            <h5 class="text-start mb-3">{{t('default.delegators')}}</h5>
-            <MDBBtn @click="forward" class="ms-auto m-1" color="primary" size="sm" rounded style="width: 144px">{{t('default.forward')}}</MDBBtn>
+            <h5 class="text-start mb-3">{{t('delegators')}}</h5>
+            <MDBBtn @click="forward" class="ms-auto m-1" color="primary" size="sm" rounded style="width: 144px">{{t('forward')}}</MDBBtn>
          </div>
          
          <div class="row g-2">
@@ -32,7 +32,7 @@
       </div>
 
       <div v-if="dao.staking.usersToDelegate.length > 0" class="mb-7">
-         <h5 class="text-start mb-3">{{t('default.users_to_delegate')}}</h5>
+         <h5 class="text-start mb-3">{{t('users_to_delegate')}}</h5>
          <div class="row g-2">
             <div v-for="user in dao.staking.usersToDelegate" :key="user.id" class="col-md-4">
                <UsersToDelegate :user="user" />
@@ -40,7 +40,7 @@
          </div>
       </div>
    </div>
-   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="t('default.forward')">
+   <ModalProposal :show="modalProposal" @submit="submitModal" :submitText="t('forward')">
       <FormDelegate ref="form"/>
    </ModalProposal>
 </template>

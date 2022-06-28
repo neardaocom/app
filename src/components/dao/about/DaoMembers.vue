@@ -4,7 +4,7 @@
          <div class="d-flex mb-2">
             <h5 class="card-title">
                <i class="bi bi-people text-gradient-180 me-1"/>
-               {{ t('default.members') }}
+               {{ t('members') }}
             </h5>
             <Tooltip class="ms-auto" text="Tooltip" />
          </div>
@@ -13,11 +13,11 @@
             <li>
                <i class="bi bi-pie-chart text-muted me-2"/>
                {{ councilPercent || "-" }}%
-               {{ t("default.council") }}
+               {{ t("council") }}
             </li>
          </ul>
 
-         <h6 class="fw-bold">{{ t("default.council") }}</h6>
+         <h6 class="fw-bold">{{ t("council") }}</h6>
          <ul class="mt-n2 list-unstyled">
             <li v-for="(member, index) in council.members" :key="index">
                <i class="bi bi-person text-muted me-2"/> {{ member.accountId }}

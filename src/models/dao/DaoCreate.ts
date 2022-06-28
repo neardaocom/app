@@ -43,7 +43,7 @@ export default class DaoCreate {
             this.config.stakingAccountId,
             ftAccountId
         )
-        builder.addGroup(this.t("default.council"), council, null, 0)
+        builder.addGroup(this.t("council"), council, null, 0)
         // workflow
         const standardFncalls = await this.provider.standardFncalls()
         const workflowBasicPackage = await this.provider.wfBasicPackage()
@@ -57,7 +57,7 @@ export default class DaoCreate {
         builder.addWorkflow(standardFncalls.map((item) => item[0]), standardFncalls.map((item) => item[1]), workflowBasicPackage[1], workflowBasicPackage[2], [workflowBasicPackage[0]], [workflowBasicPackage[3]]);
         // treasury lock
         const assetAmount = Utils.getLockDistributionAmount(ftAmount.toString(), councilSharePercent, councilSharePercentInit)
-        builder.addTreasuryPartitionFt(this.t("default.council") + ' - ' + this.t("default.allocation"), ftAccountId, ftDecimals, new Decimal(assetAmount).toNumber(), councilUnlokingDuration)
+        builder.addTreasuryPartitionFt(this.t("council") + ' - ' + this.t("allocation"), ftAccountId, ftDecimals, new Decimal(assetAmount).toNumber(), councilUnlokingDuration)
 
         const dao = builder.create()
 

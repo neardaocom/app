@@ -5,7 +5,7 @@ export type ParamValue = { value: string; };
 
 export type Param = ParamRef | ParamConfig | ParamValue;
 
-export type Type = 'Class' | 'Factory'
+export type Type = 'Class' | 'Factory';
 
 export type Item = {
     key: ItemKey;
@@ -13,4 +13,4 @@ export type Item = {
     constructor: boolean;
     constructorParams: Param[];
     instance?: Object;
-}
+};

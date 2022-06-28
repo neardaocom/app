@@ -78,7 +78,7 @@ export const useRights = (dao: Ref<DAO>, walletId?: string) => {
     
     const daoRightsOptions = computed(() => daoRights.value.map((right, index) => {
         const trans: Translate = Rights.toTranslate(right, dao.value.groups)
-        return {text: t('default.' + trans.key, trans.params), value: index} // TODO: trans.params
+        return {text: t('' + trans.key, trans.params), value: index} // TODO: trans.params
     }))
 
     return {
