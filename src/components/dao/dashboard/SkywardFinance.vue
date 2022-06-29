@@ -1,7 +1,7 @@
 <template>
-    <!-- v-if="sales.length > 0" -->
-    <div class="col-12 col-md-4 mb-4" v-for="sale in sales" :key="sale.id">
-        <Widget :sale="sale" :dao="dao" />
+    <!-- v-if="auctions.length > 0" -->
+    <div class="col-12 col-md-4 mb-4" v-for="sale in auctions" :key="sale.id">
+        <Widget :sale="sale" />
     </div>
 </template>
 
@@ -20,43 +20,32 @@ export default {
             required: true,
             default: 'all'
         },
-        salesIds: {
-            type: Array,
-            required: true,
-        }
     },
     setup(props) {
-        const { scenario, salesIds } = toRefs(props)
+        const { scenario } = toRefs(props)
         const dao = inject('dao')
         const loader = inject('loader')
-
-        const account = loader.value.load('near/WalletAccount')
+        const config = inject('config')
 
         const {
-            service: skywardService,
-            salesIds: skywardSalesIds,
-            list: skywardList,
-            interval: skywardInterval,
-            fetch: skywardFetch,
-            filter: skywardFilter,
-            reloadUp: skywardReloadUp,
-            reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, salesIds.value) // TODO: 
+            list, interval,
+            fetch, filter, reloadUp, reloadDown
+        } = useSkywardFinanace(dao, loader, config)
 
-        skywardFetch()
+        fetch()
 
-        const sales = computed(() => skywardFilter(scenario.value))
+        const auctions = computed(() => filter(scenario.value))
 
         onMounted(() => {
-            skywardReloadUp(10_000)
+            reloadUp(10_000)
         })
 
         onUnmounted(() => 
-            skywardReloadDown()
+            reloadDown()
         )
 
         return {
-            dao, skywardService, skywardSalesIds, skywardList, skywardInterval, sales
+            list, interval, auctions
         }
     },
 }

@@ -13,8 +13,11 @@ export type TokenOut = {
     referral_bpt: number;
 }
 
-export type Sale = {
+export type Source = "skyward.finance"
+
+export type Auction = {
     id: number;
+    source: Source;
     title: string;
     url: string|null;
     owner_id: string;

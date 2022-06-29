@@ -15,7 +15,7 @@
         <ActiveProposals />
       </div>
       <Bounty/>
-      <SkywardFinance v-if="skywardSaleIds.length > 0" :scenario="'active'" :salesIds="skywardSaleIds" />
+      <SkywardFinance v-if="skywardSaleIds.length > 0" :scenario="'active'" />
     </div> 
 
     <h5  class="text-start">{{t('dao_assets')}}</h5>
@@ -39,7 +39,6 @@ import About from "@/components/dao/dashboard/About.vue";
 import Bounty from "@/components/dao/dashboard/Bounty.vue";
 import Governance from "@/components/dao/dashboard/Governance.vue";
 import { useI18n } from "vue-i18n";
-import Auction from '@/models/auction';
 import { inject, ref } from "vue"
 import DashboardOverview from '../../components/dao/dashboard/DashboardOverview.vue'
 import ActiveProposals from '@/components/dao/dashboard/ActiveProposals.vue'
@@ -47,6 +46,7 @@ import InfoAmountCard from '@/components/ui/InfoAmountCard.vue'
 import Rewards from '@/components/dao/dashboard/Rewards.vue';
 import { useAnalytics } from '@/hooks/treasury';
 import { useNearPrice } from '@/hooks/market';
+import DaoHelper from '@/models/dao/DaoHelper';
 
 
 
@@ -67,7 +67,7 @@ export default {
     const dao = inject('dao')
     const loader = inject('loader')
     const { dataLoaded, treasuryLocks, treasuryTotalAssets, treasuryNear, treasuryToken, treasuryFtAssets, availableNearAmount,  availableTokenAmount } = useAnalytics(dao, loader)
-    const skywardSaleIds = ref(Auction.getSkywardSaleIds(dao.value.storage))
+    const skywardSaleIds = ref(DaoHelper.storageGetValues(dao.value.storage, 'skyward1', 'skyward_auction_id'))
     const { nearPriceUsd } = useNearPrice()
 
 

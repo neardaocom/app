@@ -1,5 +1,6 @@
-import Decimal from 'decimal.js';
-import moment from "moment";
+import Decimal from 'decimal.js'
+import moment from "moment"
+import loMin from "lodash/min"
 
 export default class DateHelper {
 
@@ -57,6 +58,27 @@ export default class DateHelper {
             date = new Date(date)
         }
         return moment(date).format(format);
+    }
+
+    static getProgress(start: Date, finish: Date, now?: Date): number | undefined {
+        let progress: number | undefined;
+        
+        const begin: number = loMin([start.valueOf(), new Date().valueOf()]) ?? start.valueOf()
+        const end: number = finish.valueOf();
+        const target: number = (now) ? now.valueOf() : new Date().valueOf();
+        
+        const targetFromBegin: number = target - begin;
+        const endFromBegin: number = end - begin;
+        // console.log('Progress values: ', begin, target, end);
+        if (target <= begin) {
+            progress = 0
+        } else if (target >= end) {
+            progress = 100
+        } else {
+          progress = new Decimal(targetFromBegin).div(endFromBegin).times(10_000).round().div(100).toNumber()
+        }
+        
+        return progress
     }
 
 }

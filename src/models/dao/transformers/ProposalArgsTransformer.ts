@@ -110,7 +110,7 @@ export default class ProposalArgsTransformer implements TransformerInterface {
                     switch (value.workflowScenarioId.toString()) {
                         case '1': {
                                 loSet(values, ['title'], loGet(values, ['sale.title']))
-                                loSet(values, ['startAt'], this.d(NearUtils.dateFromChain(NumberHelper.parseNumber((values.start_time as string) || '0'))))
+                                loSet(values, ['startAt'], this.d(NearUtils.dateFromChainInNanoseconds((values.start_time as string) || '0')))
                                 loSet(values, ['amount'], this.n(NumberHelper.parseNumber(NearUtils.amountFromDecimals((values.offered_amount as string), 24))))
                                 loSet(values, ['tokenId'], loGet(values, ['sale.token_id']))
                             }

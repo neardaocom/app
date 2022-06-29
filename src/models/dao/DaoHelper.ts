@@ -1,8 +1,15 @@
 
 import loFind from "lodash/find"
+import loGet from "lodash/get"
+import loToPairs from "lodash/toPairs"
+import loStartsWith from "lodash/startsWith"
+import loIsArray from "lodash/isArray"
+import loToString from "lodash/toString"
+
 import GroupHelper from "./GroupHelper";
 import { DAO, DAOGroup, DAOGroupMember, DAOMember } from "./types/dao";
 import { Staking } from "./types/staking";
+import NearUtils from '../nearBlockchain/Utils'
 
 export default class DaoHelper {
 
@@ -36,4 +43,21 @@ export default class DaoHelper {
     const group: DAOGroup | undefined = GroupHelper.getGroupCouncil(dao, t)
     return group ? GroupHelper.getMemberFromGroup(group, walletId) !== undefined : false
   }
+
+  static storageGetValues = (storage: Record<string, unknown>, path: string, key: string): string[] => {
+    const values: string[] = []
+
+    let item: Record<string, unknown>
+    loToPairs(storage).forEach((storageItem) => {
+        // find path
+        if (loStartsWith(storageItem[0], path) && loIsArray(storageItem[1])) {
+            item = NearUtils.parseObjectFromArray(storageItem[1])
+            // find value
+            if (loGet(item, [key]) !== undefined) {
+              values.push(loToString(loGet(item, [key])))
+            }
+        }
+    })
+    return values
+}
 }

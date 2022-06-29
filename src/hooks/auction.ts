@@ -1,31 +1,33 @@
-import { ref, reactive } from "vue";
-import { Sale } from "@/models/services/skywardFinanceService/types"
-import { Account } from 'near-api-js';
-import { SkywardFinance } from "@/models/services/skywardFinanceService";
-import Auction from "@/models/auction"
+import { ref, Ref } from "vue";
+import { Loader } from "@/loader";
+import { Config } from "@/config";
+import DaoSkyward from "@/models/dao/DaoSkyward";
+import { Auction } from "@/models/auction/types";
+import { DAO } from "@/models/dao/types/dao";
 
-export const useSkywardFinanace = (account: Account, contract: string, sales: number[]) => {
+export const useSkyward = (loader: Ref<Loader>, config: Ref<Config>) => {
+    const servicePool = loader.value.load('dao/ServicePool')
+    const ipfsService = loader.value.load('services/ipfs')
+    const skyward = ref(new DaoSkyward(servicePool.value, ipfsService.value, config.value))
+    return { skyward }
+}
 
-    const service = reactive(new SkywardFinance(account, contract))
-    const salesIds = ref(sales)
-    const list = ref([])
+export const useSkywardFinanace = (dao: Ref<DAO>, loader: Ref<Loader>, config: Ref<Config>) => {
+    const { skyward } = useSkyward(loader, config)
+
+    const list = ref<Auction[]>([])
     const interval = ref()
 
-
-    const fetch = () => {
-        if (salesIds.value) {
-            service.getSalesById(salesIds.value).then( sales => {
-                list.value = sales.map( sale => Auction.transform('skyward.finance', sale) )
-            })
-        }
+    const fetch = async () => {
+        list.value = await skyward.value.getList(dao.value)
     }
 
     const filter = (scenario: string) => {
-        let result = []
+        let result: Auction[] = []
         if (list.value && list.value.length > 0) {
             switch (scenario) {
                 case 'active':
-                    result = list.value.filter( (sale: Sale) => sale.remaining_duration > 0 )
+                    result = list.value.filter( (sale: Auction) => sale.remaining_duration > 0 )
                     break;
                 default:
                     break;
@@ -45,7 +47,7 @@ export const useSkywardFinanace = (account: Account, contract: string, sales: nu
     }
 
     return {
-        service, salesIds, list, interval,
+        list, interval,
         fetch, filter, reloadUp, reloadDown
     }
 }

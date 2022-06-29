@@ -12,7 +12,7 @@
 import { RefFinanceService } from '@/models/services/refFinanceService'
 import { onMounted, toRefs, ref, inject } from "vue"
 import Sale from "@/components/dao/defi/Sale.vue"
-import { transformSale } from "@/models/sales"
+import { transformSale } from "@/models/market/sales"
 
 export default {
     components: {

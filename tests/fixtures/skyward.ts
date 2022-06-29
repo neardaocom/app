@@ -1,9 +1,10 @@
-import { Sale } from "@/models/services/skywardFinanceService/types";
+import { Auction } from "@/models/auction/types";
 import moment from "moment";
 
-export const testDataset: Sale[] = [
+export const testDataset: Auction[] = [
     {
         id: 0,
+        source: 'skyward.finance',
         title: 'NearDAO: First token sale of 1%',
         url: null,
         owner_id: 'neardao.testnet',

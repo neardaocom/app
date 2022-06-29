@@ -1,6 +1,7 @@
 <template>
   <div class="container mb-2">
     <AuctionList
+      v-if="skywardSaleIds.length > 0"
       :scenario="'active'"
     />
     <section v-if="refFinanceFounds">
@@ -30,7 +31,7 @@
     <SalesList
       v-if="dao.storage.skywardFinance"
     />
-    <NoData v-if="!dao.storage.skywardFinance && !refFinanceFounds" :text="t('no_defi')" hint="This is a hint" />
+    <NoData v-if="!skywardSaleIds.length && !refFinanceFounds" :text="t('no_defi')" hint="This is a hint" />
 
   </div>
 </template>
@@ -47,6 +48,7 @@ import ModalRefWithdrawNear from './modals/ModalRefWithdrawNear.vue'
 import Decimal from 'decimal.js'
 import { useRefFinance } from "@/hooks/market";
 import NoData from '@/components/ui/NoData.vue'
+import DaoHelper from '@/models/dao/DaoHelper';
 
 export default {
   components: {
@@ -60,6 +62,8 @@ export default {
     const dao = inject('dao')
     const wallet = inject('wallet')
     const { t } = useI18n();
+
+    const skywardSaleIds = ref(DaoHelper.storageGetValues(dao.value.storage, 'skyward1', 'skyward_auction_id'))
     
     // const account = computed(() => store.getters['near/getAccount'])
     // const nearService = computed(() => store.getters['near/getService'])
@@ -90,7 +94,7 @@ export default {
       modalRefWithdrawDaoToken, modalRefWithdrawNear,
       modalRefWithdrawDaoTokenOpen, modalRefWithdrawNearOpen,
       service, refFinanceFounds, tokenMetadata, tokenId,
-      fetchFounds, reloadUp, reloadDown
+      fetchFounds, reloadUp, reloadDown, skywardSaleIds,
     }
   },
   computed: {
