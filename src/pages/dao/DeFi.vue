@@ -86,7 +86,7 @@ export default {
     }
 
     onMounted(() => {
-      fetchFounds()
+      // fetchFounds()
     })
 
     return {
