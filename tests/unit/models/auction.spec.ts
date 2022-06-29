@@ -1,4 +1,4 @@
-import Auction from '@/models/auction'
+import Helper from '@/models/auction/Helper'
 import moment from 'moment'
 
 test('Progress', () => {
@@ -7,17 +7,17 @@ test('Progress', () => {
     const target = moment().startOf('day')
 
     target.subtract(1, 'd').subtract(1, 'm')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(0);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(0);
     target.add(1, 'm')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(0);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(0);
     target.add(12, 'h')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(25);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(25);
     target.add(12, 'h')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(50);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(50);
     target.add(12, 'h')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(75);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(75);
     target.add(12, 'h')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(100);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(100);
     target.add(1, 'm')
-    expect(Auction.getProgress(start, finish, target.toDate())).toBe(100);
+    expect(Helper.getProgress(start, finish, target.toDate())).toBe(100);
 });

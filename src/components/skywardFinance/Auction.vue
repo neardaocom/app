@@ -49,7 +49,7 @@
 
 <script>
 import { ref, toRefs, onMounted, onUnmounted } from "vue"
-import Auction from '@/models/auction';
+import Auction from '@/models/auction/Helper';
 import DateHelper from '@/models/utils/DateHelper'
 import { MDBCard,
     MDBCardHeader,

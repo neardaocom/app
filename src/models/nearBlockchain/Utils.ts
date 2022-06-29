@@ -67,6 +67,14 @@ export default class Utils {
         return new Decimal(moment(value).valueOf()).div(1_000).round().toNumber();
     }
 
+    static dateFromChainInNanoseconds(value: string): Date {
+        return moment(new Decimal(value).div(1_000_000).toNumber()).toDate();
+    }
+
+    static dateToChainInNanoseconds(value: Date): string {
+        return new Decimal(moment(value).valueOf()).mul(1_000_000).toString();
+    }
+
     static durationFromChain(value: number): Interval {
         const duration = moment.duration(value, 'seconds')
         return {
@@ -78,23 +86,23 @@ export default class Utils {
             months: duration.months(),
             years: duration.years(),
         };
-        const interval: Interval = {}
-        let amount: number = value
-        let amountMod: number = 0
-        // days
-        amountMod = new Decimal(amount).mod(86_400).toNumber()
-        interval.days = new Decimal(amount - amountMod).div(86_400).toNumber()
-        amount = amountMod
-        // hours
-        amountMod = new Decimal(amount).mod(3_600).toNumber()
-        interval.hours = new Decimal(amount - amountMod).div(3_600).toNumber()
-        amount = amountMod
-        // minutes
-        amountMod = new Decimal(amount).mod(60).toNumber()
-        interval.minutes = new Decimal(amount - amountMod).div(60).toNumber()
-        amount = amountMod
+    }
 
-        return interval
+    static durationToChainInNanoseconds(duration: Interval): string {
+        return moment.duration(duration).asSeconds().toString() + '000000000'
+    }
+
+    static durationFromChainInNanoseconds(value: string): Interval {
+        const duration = moment.duration(value.slice(0, -9), 'seconds')
+        return {
+            seconds: duration.seconds(),
+            minutes: duration.minutes(),
+            hours: duration.hours(),
+            days: duration.days(),
+            weeks: duration.weeks(),
+            months: duration.months(),
+            years: duration.years(),
+        }
     }
 
     static durationToChain(duration: Interval): number {

@@ -101,9 +101,3 @@ export const useProposalBasic = (loader: Ref<Loader>, config: Ref<Config>) => {
     return { proposalBasic }
 }
 
-export const useSkyward = (loader: Ref<Loader>) => {
-    const servicePool = loader.value.load('dao/ServicePool')
-    const ipfsService = loader.value.load('services/ipfs')
-    const skyward = ref(new DaoSkyward(servicePool.value, ipfsService.value))
-    return { skyward }
-}

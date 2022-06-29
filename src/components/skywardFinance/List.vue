@@ -1,7 +1,7 @@
 <template>
-    <section v-if="sales.length > 0">
+    <section v-if="auctions.length > 0">
         <div class="row">
-            <div class="col-12 col-md-6 mb-4" v-for="auction in sales" :key="auction.id">
+            <div class="col-12 col-md-6 mb-4" v-for="auction in auctions" :key="auction.id">
                 <Auction :auction="auction" />
             </div>
         </div>
@@ -10,10 +10,8 @@
 
 <script>
 import Auction from "@/components/skywardFinance/Auction.vue"
-import { onMounted, onUnmounted, computed, ref, inject } from "vue"
+import { onMounted, onUnmounted, computed, toRefs, inject } from "vue"
 import { useSkywardFinanace } from "@/hooks/auction"
-import { useI18n } from 'vue-i18n'
-import AuctionModel from '@/models/auction';
 
 export default {
     components: {
@@ -26,40 +24,31 @@ export default {
             default: 'all'
         }
     },
-    setup() {
+    setup(props) {
+        const { scenario } = toRefs(props)
         const dao = inject('dao')
         const loader = inject('loader')
-        const { t } = useI18n()
-
-        const account = loader.value.load('near/WalletAccount')
-        const skywardSaleIds = ref(AuctionModel.getSkywardSaleIds(dao.value.storage))
+        const config = inject('config')
 
         const {
-            service: skywardService,
-            salesIds: skywardSalesIds,
-            list: skywardList,
-            interval: skywardInterval,
-            fetch: skywardFetch,
-            filter: skywardFilter,
-            reloadUp: skywardReloadUp,
-            reloadDown: skywardReloadDown
-        } = useSkywardFinanace(account.value, process.env.VUE_APP_SKYWARD_FINANCE_CONTRACT, skywardSaleIds.value)
+            list, interval,
+            fetch, filter, reloadUp, reloadDown
+        } = useSkywardFinanace(dao, loader, config)
 
-        skywardFetch()
+        fetch()
 
-        const sales = computed(() => skywardFilter('active'))
+        const auctions = computed(() => filter(scenario.value))
 
         onMounted(() => {
-            skywardReloadUp(10_000)
+            reloadUp(10_000)
         })
 
         onUnmounted(() => 
-            skywardReloadDown()
+            reloadDown()
         )
 
         return {
-            t, skywardService, skywardSalesIds, skywardList, skywardInterval,
-            sales,
+            list, interval, auctions
         }
     },
 }

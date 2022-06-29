@@ -235,17 +235,30 @@ export const templateSkyward: WFMetaTemplate = {
         {
             id: 2,
             args: (data: WFData) => {
-                return [{
-                    action: {
-                        fn_call: [
-                            'wnear.v1.neardao.testnet',
-                            'storage_deposit',
-                        ]
+                return [
+                    {
+                        action: {
+                            fn_call: [
+                                'wnear.v1.neardao.testnet',
+                                'storage_deposit',
+                            ]
+                        },
+                        values: {
+                        map: {}
+                        }
                     },
-                    values: {
-                      map: {}
-                    }
-                }]
+                    {
+                        action: {
+                            fn_call: [
+                                data.tokenId,
+                                'storage_deposit',
+                            ]
+                        },
+                        values: {
+                        map: {}
+                        }
+                    },
+                ]
             },
             log: (args: any) => {
                 return {
@@ -255,17 +268,19 @@ export const templateSkyward: WFMetaTemplate = {
         {
             id: 3,
             args: (data: WFData) => {
-                return [{
-                    action: {
-                        fn_call: [
-                            data.tokenId,
-                            'ft_transfer_call',
-                        ]
+                return [
+                    {
+                        action: {
+                            fn_call: [
+                                data.tokenId,
+                                'ft_transfer_call',
+                            ]
+                        },
+                            values: {
+                            map: {}
+                        }
                     },
-                    values: {
-                      map: {}
-                    }
-                }]
+                ]
             },
             log: (args: any) => {
                 return {
@@ -279,11 +294,18 @@ export const templateSkyward: WFMetaTemplate = {
                     action: {
                         fn_call: [
                             'skyward.v1.neardao.testnet',
-                            'register_tokens',
+                            'sale_create',
                         ]
                     },
                     values: {
-                      map: {}
+                      map: {
+                        'sale.title': {
+                            "string": GenericsHelper.getValueByCode(data.constants, 'sale.title'),
+                        },
+                        'sale.url': {
+                            "string": GenericsHelper.getValueByCode(data.constants, 'sale.url'),
+                        }
+                      }
                     }
                 }]
             },

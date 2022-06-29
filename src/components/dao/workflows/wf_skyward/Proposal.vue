@@ -3,7 +3,7 @@
     <InputString :labelName="t('title')" id="title"/>
 
     <!-- TokenId -->
-    <InputString :labelName="t('token_sale_token_id')" id="tokenId" /> <!-- :addon="`.${adminAccountPostfix}`" -->
+    <InputString v-show="false" :labelName="t('token_sale_token_id')" id="tokenId" /> <!-- :addon="`.${adminAccountPostfix}`" -->
 
     <!-- Amount -->
     <InputNumber :labelName=" t('amount')" id="amount" :addon="tokenName"/>
@@ -45,7 +45,7 @@ import { useForm } from 'vee-validate';
 import { useNear } from "@/hooks/near";
 import decimal from "decimal.js";
 import moment from 'moment'
-import { useSkyward } from '@/hooks/proposal'
+import { useSkyward } from '@/hooks/auction'
 
 export default {
     components:{
@@ -65,7 +65,7 @@ export default {
         const loader = inject('loader')
 
         const { adminAccountPostfix } = useNear()
-        const { skyward } = useSkyward(loader)
+        const { skyward } = useSkyward(loader, config)
 
         const formatDate = t('_datepicker_format')
         const minDate = moment().startOf('day').add(1, 'M').toDate()
