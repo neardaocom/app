@@ -21,7 +21,7 @@ export default class DaoStaking {
     async registerToken(tokenAccountId: string, nearDeposit: number = 1): Promise<void> {
         return this.stakingService
             .storageDeposit(this.id, true, 50, nearDeposit)
-            .registerNewDao(this.id, tokenAccountId, 50, 1)
+            .registerNewDao(this.id, tokenAccountId, 50, 0.005) // MIN 0.00302
             .actionsRun()
     }
 

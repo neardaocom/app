@@ -59,7 +59,7 @@
                      </div>
                      <MDBCollapse v-if="asset.unlocking.length > 0" :id="`collapsibleContent_${index}`" v-model="collapse[index]">
                         <div class="mt-3">
-                           <MDBChart type="bar" :data="barChartData" />
+                           <MDBChart type="bar" :data="getChart(asset)" />
                         </div>
                      </MDBCollapse>
                   </div>
@@ -94,7 +94,7 @@ import {
 import NumberFormatter from "@/components/ui/NumberFormatter.vue"
 import { ref, toRefs } from '@vue/reactivity'
 import Icon from '@/components/ui/Icon.vue'
-import { useTreasuryLock } from '@/hooks/treasury'
+import { useTreasuryLock, useTreasuryLockAsset } from '@/hooks/treasury'
 import InfoAmount from '@/components/ui/InfoAmount.vue'
 
 export default {
@@ -129,32 +129,13 @@ export default {
 
       const collapse = ref(new Array(lock.value.assets.length).fill(false))
 
-      console.log(collapse);
-      
       const { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime } = useTreasuryLock(lock)
-
-      const barChartData = ref({
-         labels: [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
-         ],
-         datasets: [
-            {
-               backgroundColor: ["#6B6EF9"],
-               label: "",
-               data: [2112, 2343, 2545, 3423, 2365, 1985, 987]
-            }
-         ]
-      });
+      const { getChart } = useTreasuryLockAsset()
 
       return {
          t,
-         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime, collapse, barChartData
+         isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime, collapse,
+         getChart
       }
    }
 }

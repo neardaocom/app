@@ -25,8 +25,8 @@ export type TreasuryLockAsset = {
 
 
 export type TreasuryAssetUnlocking = {
-    targetDate: Date;
     type: TreasuryAssetUnlockingType;
+    targetDate: Date;
     amount: number;
 }
 

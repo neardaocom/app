@@ -5,7 +5,7 @@ import { DAO, DAOGroup, DAOVoteLevel, DAOProposal } from "./types/dao";
 import { DAODocs } from "./types/docs";
 import { WFTemplate } from "./types/workflow";
 import Decimal from "decimal.js";
-import { IDValue, CodeValue } from "../utils/types/generics";
+import { IDValue } from "../utils/types/generics";
 import GenericsHelper from "../utils/GenericsHelper";
 import loUniqWith from "lodash/uniqWith"
 import loIsEqual from "lodash/isEqual"
@@ -16,8 +16,6 @@ import DaoContractService from "../nearBlockchain/DaoContractService";
 import FtContractService from "../nearBlockchain/FtContractService";
 import StakingContractService from "../nearBlockchain/StakingContractService";
 import NearAccountService from "../nearBlockchain/NearAccountService";
-// import { basicStaking } from "../../../tests/fixtures/staking"
-// import { listBasic } from "@/../tests/fixtures/treasury"; // TODO: Fixtures
 import ServicePool from "./ServicePool";
 import { ListItemDto } from "./types/admin";
 import { TreasuryLock } from "./types/treasury";

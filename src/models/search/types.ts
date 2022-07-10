@@ -1,7 +1,7 @@
 export enum OrderItem {
     Asc = "asc",
     Desc = "desc",
-};
+}
 
 export type Order = {
     code: string;

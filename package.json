@@ -49,7 +49,7 @@
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
     "@intlify/vue-i18n-loader": "^3.0.0",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.0.2",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
@@ -60,15 +60,15 @@
     "@vue/cli-service": "~5.0.0",
     "@vue/compiler-sfc": "^3.2.10",
     "@vue/eslint-config-typescript": "^9.1.0",
-    "@vue/test-utils": "^2.0.0-0",
-    "@vue/vue3-jest": "^27.0.0-alpha.1",
-    "babel-jest": "^27.0.6",
+    "@vue/test-utils": "^2.0.0-rc.16",
+    "@vue/vue3-jest": "^27.0.0-alpha.3",
+    "babel-jest": "^27.3.1",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "jest": "^27.0.5",
+    "jest": "^27.3.1",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "ts-jest": "^27.0.4",
+    "ts-jest": "^27.0.7",
     "typescript": "~4.5.5",
     "vue-cli-plugin-i18n": "^0.6.1",
     "vue-cli-plugin-mdb5": "~1.2.0"
@@ -92,6 +92,15 @@
       "vue/multi-word-component-names": 0
     },
     "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      },
       {
         "files": [
           "**/__tests__/*.{j,t}s?(x)",

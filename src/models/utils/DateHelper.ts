@@ -25,6 +25,10 @@ export default class DateHelper {
         return new Decimal(date.valueOf()).div(1000).round().toNumber()
     }
 
+    static createDurationInSeconds(from: Date, to: Date): number {
+        return new Decimal(moment(to).diff(from).valueOf()).div(1_000).round().toNumber()
+    }
+
     static nowToSeconds(): number {
         return new Decimal(new Date().valueOf()).div(1000).round().toNumber()
     }

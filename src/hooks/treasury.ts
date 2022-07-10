@@ -8,6 +8,11 @@ import TreasuryAnalytics from "@/models/dao/analytics/TreasuryAnalytics";
 import DaoTreasury from "@/models/dao/DaoTreasury";
 import TreasuryHelper from "@/models/dao/TreasuryHelper";
 import DateHelper from "@/models/utils/DateHelper";
+import DaoAnalytics from "@/models/dao/DaoAnalytics";
+import Utils from "@/models/analytics/Utils";
+import { useI18n } from "vue-i18n";
+import { Period } from "@/models/analytics/types";
+import loMax from "lodash/max"
 
 export const useAnalytics = (dao: Ref<DAO>, loader: Ref<Loader>) => {
     const dataLoaded = ref<boolean>(false)
@@ -68,4 +73,17 @@ export const useTreasuryLock = (lock: Ref<TreasuryLock>) => {
     })
 
     return { isUnlocked, canUnlock, computeUnlocked, nextUnlockDate, nextUnlockTime }
+}
+
+export const useTreasuryLockAsset = () => {
+    const { t, d } = useI18n()
+    const getChart = (lockAsset: TreasuryLockAsset) => {
+        const analytics = new DaoAnalytics()
+        const period = Utils.getPeriodFromDuration(DateHelper.createDurationInSeconds(lockAsset.startFrom, loMax(lockAsset.unlocking.map((item) => item.targetDate)) || lockAsset.startFrom))
+        const unlockingCashflow = analytics.computeUnlockingCashflow(lockAsset, period)
+        const chart = Utils.getCashflowChart(unlockingCashflow, t, d)
+        return chart
+    }
+
+    return { getChart }
 }
