@@ -40,13 +40,15 @@
                     </div> 
                 </div>
 
-                <h6>{{t('your_assets')}}</h6>
-                <div v-if="walletTokenAmount > 0" class="mb-2">
-                    <i class="bi bi-person me-2 text-info"/>
-                    <InfoAmount :amount="walletTokenAmount" :suffix="dao.treasury.token.meta.symbol"/> 
-                    <span class="mx-2">|</span>
-                    <InfoAmount :amount="walletTokenShare" :digits="0" suffix="%"/> 
-                </div>
+                <template v-if="walletTokenAmount > 0">
+                    <h6>{{t('your_assets')}}</h6>
+                    <div  class="mb-2">
+                        <i class="bi bi-person me-2 text-info"/>
+                        <InfoAmount :amount="walletTokenAmount" :suffix="dao.treasury.token.meta.symbol"/> 
+                        <span class="mx-2">|</span>
+                        <InfoAmount :amount="walletTokenShare" :digits="0" suffix="%"/> 
+                    </div>
+                </template>
             </div>
 
             <ResourcesLinks/>
