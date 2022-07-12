@@ -10,6 +10,7 @@ import { Config } from "@/config";
 import loIsNil from 'lodash/isNil'
 import CollectionHelper from "@/models/utils/CollectionHelper";
 import GroupHelper from "@/models/dao/GroupHelper";
+import DaoHelper from "@/models/dao/DaoHelper";
 
 export const useRouter = (config: Config) => {
     const route = useRoute()
@@ -75,6 +76,11 @@ export const useRights = (dao: Ref<DAO>, walletId?: string) => {
     const { t } = useI18n()
     const daoRights = computed(() => loIsNil(dao.value) === false ? Rights.getDAORights(dao.value) : [])
     const walletRights = computed(() => loIsNil(dao.value) === false && loIsNil(walletId) === false ? Rights.getWalletRights(dao.value, walletId) : [])
+
+    const isDaoMember = computed(() => loIsNil(walletId) === false 
+        ? DaoHelper.findMember(walletId!, dao.value.members) ? true : false 
+        : false
+    )
     
     const daoRightsOptions = computed(() => daoRights.value.map((right, index) => {
         const trans: Translate = Rights.toTranslate(right, dao.value.groups)
@@ -82,6 +88,6 @@ export const useRights = (dao: Ref<DAO>, walletId?: string) => {
     }))
 
     return {
-        daoRights, walletRights, daoRightsOptions
+        daoRights, walletRights, isDaoMember, daoRightsOptions
     }
 }

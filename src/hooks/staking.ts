@@ -16,6 +16,7 @@ export const useStake = (dao: Ref<DAO>) => {
    const walletVotePower = computed(() => dao.value.staking.wallet?.voteAmount || null)
    const walletVotePowerPercent = computed(() => walletVotePower.value ? NumberHelper.toPercentDivision(walletVotePower.value, allVotePower.value) : null)
    const walletTokenAmount = computed(() => new Decimal(dao.value.staking.walletFtAmount || 0).plus(dao.value.staking.wallet?.staked || 0).toNumber())
+   const walletTokenShare = computed(() => dao.value.treasury.token.owned ? new Decimal(walletTokenAmount.value || 0).dividedBy(dao.value.treasury.token.holded).times(100).round().toNumber() : null);
    const walletTokenStaked = computed(() => dao.value.staking.wallet?.staked)
    const walletVotePowerOwned = computed(() => dao.value.staking.wallet?.voteAmount ? dao.value.staking.wallet?.voteAmount - (dao.value.staking.wallet?.delegatorsAmount || 0) : 0)
    const walletVotePowerDelegators = computed(() => dao.value.staking.wallet?.delegatorsAmount)
@@ -23,7 +24,7 @@ export const useStake = (dao: Ref<DAO>) => {
    const walletTokenFree = computed(() => ((walletTokenStaked.value || 0) - (walletVotePowerOwned.value || 0) - (walletVotePowerDelegated.value || 0)))
 
    return {
-      canStake, allVotePower, walletVotePower, walletVotePowerPercent, walletTokenAmount, walletTokenStaked, walletVotePowerOwned, walletVotePowerDelegators, walletVotePowerDelegated, walletTokenFree
+      canStake, allVotePower, walletVotePower, walletVotePowerPercent, walletTokenAmount, walletTokenShare, walletTokenStaked, walletVotePowerOwned, walletVotePowerDelegators, walletVotePowerDelegated, walletTokenFree
    }
 }
 
