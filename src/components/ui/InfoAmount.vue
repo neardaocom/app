@@ -1,7 +1,7 @@
 <template>
    <span>
       <NumberFormatter :class="`text-${amountColor}`" :amount="amount" :digits="digits"/>
-      <span :class="[`text-${suffixColor}`, { 'fw-normal': suffixNormal }]" :style="`font-size:${suffixSize}%`">{{suffix}}</span>
+      <span :class="[`text-${suffixColor}`, { 'fw-normal': suffixNormal }]" :style="`font-size:${suffixSize}%`" style="margin-left: 0.15rem !important;">{{suffix}}</span>
    </span>
 </template>
 

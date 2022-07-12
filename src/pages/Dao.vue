@@ -68,10 +68,10 @@ import Governance from './dao/Governance.vue'
 import Rewards from './dao/Rewards.vue'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, provide, inject, onUnmounted } from 'vue'
-import Rights from '@/models/dao/Rights'
+// import Rights from '@/models/dao/Rights'
 import DaoLoader from '@/models/dao/DaoLoader'
 import DaoMarket from '@/models/dao/DaoMarket'
-import { useRouter } from "@/hooks/dao";
+import { useRouter, useRights } from "@/hooks/dao";
 import { useDao } from "@/hooks/daoList";
 import { useRewards, useClaimableRewards } from "@/hooks/rewards";
 
@@ -95,12 +95,14 @@ export default {
     const dao = ref({tags: []})
     const templateMeta = ref([])
     const loaded = ref(false)
-    const daoRights = ref([])
-    const walletRights = ref([])
+    const {daoRights, walletRights, isDaoMember} = useRights(dao, wallet.value.accountId)
+    // const daoRights = ref([])
+    // const walletRights = ref([])
 
     provide('dao', dao)
     provide('daoRights', daoRights)
     provide('walletRights', walletRights)
+    provide('isDaoMember', isDaoMember)
     provide('templateMeta', templateMeta)
 
     const { daoRewards } = useRewards(dao, loader)
@@ -127,8 +129,8 @@ export default {
 
       //console.log(dao.value)
       loaded.value = true
-      daoRights.value = Rights.getDAORights(dao.value)
-      walletRights.value = Rights.getWalletRights(dao.value, wallet.value.accountId)
+      // daoRights.value = Rights.getDAORights(dao.value)
+      // walletRights.value = Rights.getWalletRights(dao.value, wallet.value.accountId)
 
       // rewards
       rewardsLoadClaimable()
