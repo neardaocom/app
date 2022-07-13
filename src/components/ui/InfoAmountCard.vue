@@ -5,7 +5,7 @@
          <div class="d-flex align-items-center">
             <Icon v-if="suffix==='NEAR'"  icon="NEAR" :size="38"/>
             <Icon v-else :icon="icon" :size="38"/>
-            <InfoAmount :amount="amount" :suffix="suffix" suffixColor="secondary" class="fs-4 fw-800"/> 
+            <InfoAmount :amount="amount" :suffix="suffix" suffixColor="muted" class="fs-4 fw-800"/> 
 
             <!-- <span>
                <span class="" ><NumberFormatter :amount="amount"/></span><span class="h5 text-secondary ps-1">{{suffix}}</span>

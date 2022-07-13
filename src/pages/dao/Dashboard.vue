@@ -2,16 +2,16 @@
   <div class="container mb-2">
     <DashboardOverview :nearPrice="nearPriceUsd" />
     <div class="row mb-4">
-      <div class="col-12 col-md-6 col-lg-5 mb-4">
+      <div class="col-12 col-md-6 mb-4">
         <About />
       </div>
-      <div v-if="isDaoMember" class="col-12 col-md-6 col-lg-5 mb-4">
+      <div v-if="isDaoMember" class="col-12 col-md-6 mb-4">
         <Governance />
       </div>
-      <div v-if="isDaoMember" class="col-12 col-md-6 col-lg-5 mb-4">
+      <div v-if="isDaoMember" class="col-12 col-md-4 mb-4">
         <Rewards />
       </div>
-      <div class="col-12 col-md-6 col-lg-5 mb-4">
+      <div v-if="false" class="col-12 col-md-6 mb-4">
         <ActiveProposals />
       </div>
       <Bounty/>

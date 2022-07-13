@@ -11,11 +11,11 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                <div>
                   <div class="fw-bold">{{t('total_voting_power')}}</div>
-                  <InfoAmount :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
+                  <InfoAmount :amount="allVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>
                </div>
                <div>
                   <div class="fw-bold">{{t('my_vote_power')}}</div>
-                  <InfoAmount :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
+                  <InfoAmount :amount="walletVotePower" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>
                 </div>
             </div>
 
@@ -26,15 +26,15 @@
             <div class="d-flex justify-content-between align-items-center">
                <div>
                   <div class="fw-bold">{{t('owned')}}</div>
-                  <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
+                  <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>                  
                </div>
                <div>
                   <div class="fw-bold">{{t('from_delegators')}}</div>
-                  <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                  
+                  <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>                  
                 </div>
                 <div>
                   <div class="fw-bold">{{t('delegated')}}</div>
-                  <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>                                  </div>
+                  <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>                                  </div>
             </div>
            
             <div v-show="false" class="float-end mt-2">

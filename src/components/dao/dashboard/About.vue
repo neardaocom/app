@@ -23,35 +23,37 @@
                 </div>
             </div>
 
-            <div v-if="dataLoaded" class="fw-bold">
-                <h6>{{t('dao_assets')}}</h6>
-                <div class="d-flex align-items-center mb-2">
-                    <Icon icon="NEAR" :size="25"/>
-                    <InfoAmount :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol"/>  
-                </div>
-                <div class="d-flex align-items-center mb-2">
-                    <Icon :icon="treasuryToken.asset.icon" :size="25"/>
-                    <InfoAmount :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol"/>  
-                </div>
-                <div v-for="(ftAsset, index) in treasuryFtAssets" :key="index">
+            <div v-if="dataLoaded" class="d-flex justify-content-between fw-bold">
+                <div>
+                    <h6>{{t('dao_assets')}}</h6>
                     <div class="d-flex align-items-center mb-2">
-                        <Icon :icon="ftAsset.asset.icon" :size="25"/>
-                        <InfoAmount :amount="ftAsset.amount - ftAsset.amountLockedInLocks" :suffix="ftAsset.asset.symbol"/>  
-                    </div> 
+                        <Icon icon="NEAR" :size="25"/>
+                        <InfoAmount :amount="availableNearAmount" :suffix="treasuryNear.asset.symbol" suffixColor="muted"/>  
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <Icon :icon="treasuryToken.asset.icon" :size="25"/>
+                        <InfoAmount :amount="availableTokenAmount" :suffix="treasuryToken.asset.symbol" suffixColor="muted"/>  
+                    </div>
+                    <div v-for="(ftAsset, index) in treasuryFtAssets" :key="index">
+                        <div class="d-flex align-items-center mb-2">
+                            <Icon :icon="ftAsset.asset.icon" :size="25"/>
+                            <InfoAmount :amount="ftAsset.amount - ftAsset.amountLockedInLocks" :suffix="ftAsset.asset.symbol" suffixColor="muted"/>  
+                        </div> 
+                    </div>
                 </div>
 
-                <template v-if="walletTokenAmount > 0">
+                <div v-if="walletTokenAmount > 0">
                     <h6>{{t('your_assets')}}</h6>
                     <div  class="mb-2">
                         <i class="bi bi-person me-2 text-info"/>
-                        <InfoAmount :amount="walletTokenAmount" :suffix="dao.treasury.token.meta.symbol"/> 
+                        <InfoAmount :amount="walletTokenAmount" :suffix="dao.treasury.token.meta.symbol" suffixColor="muted"/> 
                         <span class="mx-2">|</span>
                         <InfoAmount :amount="walletTokenShare" :digits="0" suffix="%"/> 
                     </div>
-                </template>
+                </div>
             </div>
 
-            <ResourcesLinks/>
+            <ResourcesLinks class="mt-2"/>
 
             <div v-show="false" class="float-end mt-3">
                 <MDBBtn tag="router-link" :to="{ name: 'dao', params: {id: dao.wallet}, query: {page: 'about' }}" size="sm" style="width: 120px"  color="primary" rounded> {{ t('about') }} </MDBBtn>

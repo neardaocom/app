@@ -35,7 +35,7 @@
                   <template v-for="(asset, index) in reward.amounts" :key="index">
                      <div class="d-flex align-items-center">
                         <Icon :icon="asset.asset.type === 'near' ? 'near' : asset.asset.icon" :size="25"/>
-                        <InfoAmount :amount="asset.amount" :suffix="asset.asset.symbol" class="fs-4 fw-bold"/>     
+                        <InfoAmount :amount="asset.amount" :suffix="asset.asset.symbol" suffixColor="muted" class="fs-4 fw-bold"/>     
                      </div>
                      <div v-if="reward.pricelist.type === 'salary'"  class="mt-n2" style="margin-left: 33px">
                         <NumberFormatter :amount="amountFromPricelist(reward.pricelist.amounts,asset.asset.accountId)"/><span class="text-muted small"> per {{frequencyToTime(reward.pricelist.unitSeconds)}} </span>

@@ -16,15 +16,15 @@
          <div class="col-md-6 d-flex align-items-center justify-content-evenly text-start  p-3">
             <div>
                <div class="fw-600 mb-n2">{{t('owned')}}</div>
-               <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
+               <InfoAmount :amount="walletVotePowerOwned" :suffix="dao.treasury.token.meta.symbol" suffixColor="muted" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
                <div class="fw-600 mb-n2">{{t('from_delegators')}}</div>
-               <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
+               <InfoAmount :amount="walletVotePowerDelegators" :suffix="dao.treasury.token.meta.symbol" suffixColor="muted" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
             <div>
                <div class="fw-600 mb-n2">{{t('delegated')}}</div>
-               <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" suffixColor="primary" :suffixSize="50" class="fs-2 fw-800"/>   
+               <InfoAmount :amount="walletVotePowerDelegated" :suffix="dao.treasury.token.meta.symbol" suffixColor="muted" :suffixSize="50" class="fs-2 fw-800"/>   
             </div>
          </div>
 

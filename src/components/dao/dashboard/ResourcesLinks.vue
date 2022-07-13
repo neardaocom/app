@@ -21,8 +21,8 @@
                      <MDBIcon class="me-1" size="sm" icon="file-code" iconStyle="fas" />{{ t("source_code") }}<MDBIcon class="ms-2" size="sm" icon="external-link-alt" iconStyle="fas" />
                </a>
             </li>
-         </ul>
-         <ul class="list-inline mb-0">
+
+            
             <li v-if="kycStatus || kycDocument" class="list-inline-item mb-1">
                <MDBBtnGroup id="dashboard-about-kyc-dropdown">
                      <MDBBtn

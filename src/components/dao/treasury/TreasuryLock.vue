@@ -39,7 +39,7 @@
                         <div>
                            <div class="d-flex align-items-center">
                               <Icon :icon="asset.asset.type === 'near' ? 'near' : asset.asset.icon" :size="25"/>
-                              <InfoAmount :amount="asset.unlocked" :suffix="asset.asset.symbol" class="fs-4 fw-bold"/>    
+                              <InfoAmount :amount="asset.unlocked" :suffix="asset.asset.symbol" suffixColor="muted" class="fs-4 fw-bold"/>    
                            </div>
                            <div class="mt-n2" style="margin-left: 33px">
                               <NumberFormatter :amount="computeUnlocked(asset)"/> <span class="text-muted small"> {{t('treasury_locked')}} </span>

@@ -14,7 +14,7 @@
             </div>
 
             <div class="ms-auto text-start">
-               <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" class="fs-5 fw-bold" suffixNormal/>     
+               <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" class="fs-5 fw-bold" suffixColor="muted"/>     
                <div class="fw-bold text-success">+<NumberFormatter :amount="rewardAsset.amountCounting"/></div>
             </div>
          </div>

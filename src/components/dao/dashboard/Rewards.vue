@@ -11,7 +11,7 @@
                <template v-if="rewardAsset.amount > 0.01">
                   <Icon v-if="rewardAsset.asset.type === 'near'"  icon="NEAR" :size="25"/>
                   <Icon v-else :icon="rewardAsset.asset.icon" :size="25"/>
-                  <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" amountColor="success" suffixNormal class="fw-bold fs-5"/>
+                  <InfoAmount :amount="rewardAsset.amount" :suffix="rewardAsset.asset.symbol" amountColor="success" suffixColor="muted" class="fw-bold fs-5"/>
                </template>
             </div>
          </template>
